@@ -1,0 +1,7 @@
+./bin/power_control &
+./bin/chassis_identify &
+./bin/sensor_ambient &
+./bin/button_power &
+./bin/sensor_host_status &
+./bin/host_control &
+./bin/flash_bios &

@@ -1,0 +1,45 @@
+sensor.xml
+	ambient_sensor
+	altitude_sensor
+	apss_sensors
+	power_capp
+	occ	
+	
+fan.xml
+	fan
+	
+chassis_control.xml
+	chassis_control
+
+button.xml
+	power_button
+	identify_button
+
+led_control.xml
+	identify_led
+	fault_led
+	power_led
+
+watchdog.xml
+	bmc_watchdog
+	host_watchdog
+
+psu.xml
+	psu
+
+ipmi.xml
+	ipmid
+
+parameter.xml
+	parameter_database
+	
+flash.xml
+	bmc_flash
+	bios_flash
+	cpld_flash
+
+
+(no interface)
+	fan_control (uses fan and sensors)
+
+	

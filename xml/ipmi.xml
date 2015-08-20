@@ -1,0 +1,30 @@
+<node>
+	<!--
+		org.openbmc.HostIpmi:
+		@short_description: Watches BT or KCS Interface
+		
+		Abstracts IPMI events
+		-->	
+	<interface name="org.openbmc.HostIpmi">
+		<method name="sendRawMessage">
+			<arg name="message" type="s" direction="in"/>
+		</method>
+		<signal name="HostStatus">
+			<arg name="status" type="i"/>
+		</signal>
+		<signal name="FirmwareBootStatus">
+			<arg name="status" type="i"/>
+		</signal>
+		<signal name="FruUpdate">
+			<arg name="id" type="i"/>
+			<arg name="state" type="i"/>
+		</signal>
+		<signal name="FunctionalSensorUpdate">
+			<arg name="name" type="s"/>
+			<arg name="state" type="i"/>
+		</signal>
+		<signal name="PowerManagementState">
+			<arg name="state" type="i"/>
+		</signal>
+	</interface>
+</node>

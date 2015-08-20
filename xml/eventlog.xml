@@ -1,0 +1,11 @@
+<node>
+	<interface name="org.openbmc.EventLog">
+		<method name="error">
+			<arg name="message" type="s" direction="in"/>
+		</method>
+                <property name="message" type="s" access="read"/>
+		<signal name="ErrorEvent">
+			<arg name="message" type="s"/>
+		</signal>
+	</interface>	
+</node>

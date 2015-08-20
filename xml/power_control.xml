@@ -1,0 +1,20 @@
+<node>
+	<interface name="org.openbmc.PowerControl">
+		<method name="setPowerState">
+			<arg name="trans_id" type="i" direction="in"/>
+			<arg name="state" type="i" direction="in"/>
+		</method>
+		<method name="getPowerState">
+			<arg name="trans_id" type="i" direction="in"/>
+			<arg name="state" type="i" direction="out"/>
+		</method>
+		<signal name="PowerGood">
+			<arg name="trans_id" type="i"/>
+		</signal>
+		<signal name="PowerLost"/>
+			<arg name="trans_id" type="i"/>
+		</signal>
+		<property name="pgood" type="i" access="read"/>
+		<property name="state" type="i" access="read"/>
+	</interface>	
+</node>

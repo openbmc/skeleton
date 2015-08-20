@@ -1,0 +1,14 @@
+<node>
+	<interface name="org.openbmc.Button">
+		<method name="isOn">
+			<arg name="state" type="b" direction="out"/>
+		</method>
+		<method name="simButtonPress"/>
+		<method name="simButtonLongPress"/>
+	
+                <property name="state" type="b" access="read"/>
+		<signal name="ButtonRelease"/>
+		<signal name="ButtonPressed"/>
+		<signal name="ButtonPressedLong"/>
+	</interface>
+</node>

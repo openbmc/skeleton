@@ -1,0 +1,19 @@
+<node>
+	<!--
+		org.openbmc.Fru:
+		@short_description: 
+		-->	
+	<interface name="org.openbmc.Fru">
+		<method name="setState">
+			<arg name="state" type="i" direction="in"/>
+		</method>
+		<method name="getState">
+			<arg name="state" type="i" direction="out"/>
+		</method>
+		<method name="addEventLog">
+			<arg name="entry" type="s" direction="in"/>
+		</method>
+		<signal name="Changed"/>
+	</interface>
+</node>
+

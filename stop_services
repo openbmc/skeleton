@@ -1,0 +1,6 @@
+killall -9 power_control 
+killall -9 chassis_identify 
+killall -9 sensor_ambient 
+killall -9 button_power
+killall -9 sensor_host_status
+killall -9 host_control

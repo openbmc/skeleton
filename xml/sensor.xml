@@ -1,0 +1,44 @@
+<node>
+	<interface name="org.openbmc.SensorInteger">
+		<method name="getValue">
+			<arg name="value" type="i" direction="out"/>
+		</method>
+		<method name="getUnits">
+			<arg name="units" type="s" direction="out"/>
+		</method>
+                <property name="value" type="i" access="read"/>
+		<property name="units" type="s" access="read"/>
+		<signal name="Changed">
+			<arg name="value" type="i"/>
+		</signal>
+	</interface>
+        <interface name="org.openbmc.SensorString">
+                <method name="getValue">
+                        <arg name="value" type="s" direction="out"/>
+                </method>
+		<method name="getUnits">
+			<arg name="units" type="s" direction="out"/>
+		</method>
+                <property name="value" type="i" access="read"/>
+		<property name="units" type="s" access="read"/>
+                <signal name="Changed">
+                        <arg name="value" type="s"/>
+                </signal>
+        </interface>	
+        <interface name="org.openbmc.SensorIntegerSettable">
+                <method name="getValue">
+                        <arg name="value" type="i" direction="out"/>
+                </method>
+                <method name="setValue">
+                        <arg name="value" type="i" direction="in"/>
+                </method>
+		<method name="getUnits">
+			<arg name="units" type="s" direction="out"/>
+		</method>
+                <property name="value" type="i" access="read"/>
+		<property name="units" type="s" access="read"/>
+                <signal name="Changed">
+                        <arg name="value" type="i"/>
+                </signal>
+        </interface>	
+</node>

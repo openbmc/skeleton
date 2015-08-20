@@ -1,0 +1,12 @@
+<node>
+	<!--
+		org.openbmc.Watchdog:
+		@short_description: 
+	-->	
+	<interface name="org.openbmc.Watchdog">
+		<method name="update"/>
+		<method name="start"/>
+		<method name="stop"/>
+	</interface>
+</node>
+

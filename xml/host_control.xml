@@ -1,0 +1,7 @@
+<node>
+	<interface name="org.openbmc.HostControl">
+		<method name="boot"/>
+		<method name="shutdown"/>
+		<signal name="booted"/>
+	</interface>	
+</node>
