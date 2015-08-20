@@ -13,7 +13,16 @@
 		<method name="addEventLog">
 			<arg name="entry" type="s" direction="in"/>
 		</method>
-		<signal name="Changed"/>
+		<method name="getType">
+			<arg name="type" type="s" direction="out"/>
+		</method>
+		<method name="getLocation">
+			<arg name="location" type="s" direction="out"/>
+		</method>
+		<signal name="StateChanged"/>
+		<signal name="UnrecoverableError"/>
+		<signal name="RecoverableError"/>
+		
 	</interface>
 </node>
 

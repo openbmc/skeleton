@@ -1,4 +1,5 @@
 <node>
+	<!--  Can I do have interfaces as children of other interfaces? -->
 	<interface name="org.openbmc.SensorInteger">
 		<method name="getValue">
 			<arg name="value" type="i" direction="out"/>

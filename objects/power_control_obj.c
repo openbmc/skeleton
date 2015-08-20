@@ -5,11 +5,6 @@
 static GDBusObjectManagerServer *manager = NULL;
 static PowerControl *power_control = NULL;
 
-static guint gpio_power = 26;
-static guint gpio_fsiclk = 27;
-static guint gpio_fsidat = 28;
-static guint gpio_pgood = 21;
-
 static guint tmp_pgood = 0;
 
 static gboolean
