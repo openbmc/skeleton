@@ -21,6 +21,9 @@ class ChassisControlObject(dbus.service.Object):
 			host_control_service = bus.get_object('org.openbmc.HostControl','/org/openbmc/HostControl/0')
 			self.host_control_iface = dbus.Interface(host_control_service, 'org.openbmc.HostControl');
 
+			bus.add_signal_receiver(self.power_button_signal_handler, dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed")
+    			bus.add_signal_receiver(self.power_good_signal_handler, dbus_interface = "org.openbmc.PowerControl", signal_name = "PowerGood")
+
 
 		except dbus.exceptions.DBusException, e:
 			# TODO: not sure what to do if can't find other services
@@ -107,9 +110,7 @@ if __name__ == '__main__':
     name = dbus.service.BusName("org.openbmc.ChassisControl", bus)
     object = ChassisControlObject(bus, '/org/openbmc/ChassisControl')
     mainloop = gobject.MainLoop()
-    bus.add_signal_receiver(object.power_button_signal_handler, dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed")
-    bus.add_signal_receiver(object.power_good_signal_handler, dbus_interface = "org.openbmc.PowerControl", signal_name = "PowerGood")
-
+    
     print "Running ChassisControlService"
     mainloop.run()
 
