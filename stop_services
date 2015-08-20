@@ -4,3 +4,4 @@ killall -9 sensor_ambient
 killall -9 button_power
 killall -9 sensor_host_status
 killall -9 host_control
+killall -9 flash_bios
