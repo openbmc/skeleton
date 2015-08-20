@@ -7,8 +7,13 @@
 		<method name="getUnits">
 			<arg name="units" type="s" direction="out"/>
 		</method>
+		<method name="setPollInterval">
+			<arg name="poll_interval" type="i" direction="in"/>
+		</method>
                 <property name="value" type="i" access="read"/>
 		<property name="units" type="s" access="read"/>
+		<property name="poll_interval" type="i" access="read"/>
+		<property name="changed_tolerance" type="i" access="read"/>
 		<signal name="Changed">
 			<arg name="value" type="i"/>
 		</signal>
