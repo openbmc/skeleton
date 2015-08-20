@@ -5,9 +5,12 @@ import dbus
 import dbus.service
 import dbus.mainloop.glib
 
+POWER_OFF = 0
+POWER_ON = 1
+
 class ChassisControlObject(dbus.service.Object):
 	def __init__(self,bus,name):
-		self.power_state=0
+		self.power_sequence = 0
 		dbus.service.Object.__init__(self,bus,name)
 		bus = dbus.SessionBus()
 		try: 
@@ -21,8 +24,10 @@ class ChassisControlObject(dbus.service.Object):
 			host_control_service = bus.get_object('org.openbmc.HostControl','/org/openbmc/HostControl/0')
 			self.host_control_iface = dbus.Interface(host_control_service, 'org.openbmc.HostControl');
 
-			bus.add_signal_receiver(self.power_button_signal_handler, dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed")
-    			bus.add_signal_receiver(self.power_good_signal_handler, dbus_interface = "org.openbmc.PowerControl", signal_name = "PowerGood")
+			bus.add_signal_receiver(self.power_button_signal_handler, 
+						dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed")
+    			bus.add_signal_receiver(self.power_good_signal_handler, 
+						dbus_interface = "org.openbmc.PowerControl", signal_name = "PowerGood")
 
 
 		except dbus.exceptions.DBusException, e:
@@ -55,17 +60,17 @@ class ChassisControlObject(dbus.service.Object):
 		in_signature='', out_signature='')
 	def setPowerOn(self):
 		print "Turn on power and boot"
-		self.power_state=0
+		self.power_sequence = 0
 		if (self.getPowerState()==0):
-			self.power_control_iface.setPowerState(1)
-			self.power_state=1
+			self.power_control_iface.setPowerState(POWER_ON)
+			self.power_sequence = 1
 		return None
 
 	@dbus.service.method("org.openbmc.ChassisControl",
 		in_signature='', out_signature='')
 	def setPowerOff(self):
 		print "Turn off power"
-		self.power_control_iface.setPowerState(0);
+		self.power_control_iface.setPowerState(POWER_OFF);
 		return None
 
 	@dbus.service.method("org.openbmc.ChassisControl",
@@ -88,18 +93,18 @@ class ChassisControlObject(dbus.service.Object):
 	def power_button_signal_handler(self):
 		# only power on if not currently powered on
 		state = self.getPowerState()
-		if state == 0:
+		if state == POWER_OFF:
 			self.setPowerOn()
-		elif state == 1:
+		elif state == POWER_ON:
 			self.setPowerOff();
 		
 		# TODO: handle long press and reset
 
 	## Signal handler
 	def power_good_signal_handler(self):
-		if (self.power_state==1):
+		if (self.power_sequence==1):
 			self.host_control_iface.boot()
-			self.power_state=2
+			self.power_sequence = 2
 
 
 
