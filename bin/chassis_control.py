@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     bus = dbus.SessionBus()
     name = dbus.service.BusName("org.openbmc.ChassisControl", bus)
-    object = ChassisControlObject(bus, '/org/openbmc/ChassisControl')
+    obj = ChassisControlObject(bus, '/org/openbmc/ChassisControl')
     mainloop = gobject.MainLoop()
     
     print "Running ChassisControlService"

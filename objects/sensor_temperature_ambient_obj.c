@@ -5,7 +5,9 @@
 static GDBusObjectManagerServer *manager = NULL;
 static SensorInteger *sensor = NULL;
 
-static guint i2c_bus = 1;
+static gchar* i2c_bus = "";
+static gchar* i2c_address = "";
+static gboolean go = FALSE;
 
 static gboolean
 on_get_units    (SensorInteger  *sen,
@@ -26,6 +28,20 @@ on_get (SensorInteger                 *sen,
   sensor_integer_complete_get_value(sen,invocation,reading);
   return TRUE;
 }
+
+static gboolean
+on_set_config (SensorInteger                 *sen,
+                GDBusMethodInvocation  *invocation,
+		gchar**                  config,
+                gpointer                user_data)
+{
+  g_print("I2C bus = %s\n",config[0]);
+  g_print("I2C addr = %s\n",config[1]);
+  sensor_integer_complete_set_config_data(sen,invocation);
+  go = TRUE;
+  return TRUE;
+}
+
 
 static void 
 on_bus_acquired (GDBusConnection *connection,
@@ -59,6 +75,12 @@ on_bus_acquired (GDBusConnection *connection,
                     G_CALLBACK (on_get_units),
                     NULL); /* user_data */
 
+  g_signal_connect (sensor,
+                    "handle-set-config-data",
+                    G_CALLBACK (on_set_config),
+                    NULL); /* user_data */
+
+
 
   /* Export the object (@manager takes its own reference to @object) */
   g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
@@ -87,18 +109,22 @@ on_name_lost (GDBusConnection *connection,
 static gboolean
 poll_sensor()
 {
-  guint value = sensor_integer_get_value(sensor);
-  //TOOD:  Change to actually read sensor
-
-  g_print("Polling sensor:  %d\n",value);
-
-  //if changed, set property and emit signal
-  if (value != sensor_integer_get_value(sensor))
+  if (go)
   {
-     sensor_integer_set_value(sensor,value);
-     sensor_integer_emit_changed(sensor,value);
+    guint value = sensor_integer_get_value(sensor);
+    //TOOD:  Change to actually read sensor
+    value = value+1;
+    g_print("Polling sensor:  %d\n",value);
+
+    //if changed, set property and emit signal
+    if (value != sensor_integer_get_value(sensor))
+    {
+       g_print("Sensor changed");
+       sensor_integer_set_value(sensor,value);
+       sensor_integer_emit_changed(sensor,value);
+    }
   }
-  return TRUE;
+    return TRUE;
 }
 
 gint

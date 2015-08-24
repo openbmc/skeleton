@@ -10,9 +10,13 @@
 		<method name="setPollInterval">
 			<arg name="poll_interval" type="i" direction="in"/>
 		</method>
+		<method name="setConfigData">
+			<arg name="config" type="as" direction="in"/>
+		</method>
                 <property name="value" type="i" access="read"/>
 		<property name="units" type="s" access="read"/>
 		<property name="poll_interval" type="i" access="read"/>
+		<property name="config_data" type="as" access="read"/>
 		<property name="changed_tolerance" type="i" access="read"/>
 		<signal name="Changed">
 			<arg name="value" type="i"/>
@@ -46,5 +50,26 @@
                 <signal name="Changed">
                         <arg name="value" type="i"/>
                 </signal>
-        </interface>	
+        </interface>
+	<interface name="org.openbmc.SensorIntegerThreshold">
+		<method name="check">
+			<arg name="value" type="i" direction="in"/>
+		</method>
+		<method name="setThresholds">
+			<arg name="critical_upper" type="i" direction="in"/>
+			<arg name="critical_lower" type="i" direction="in"/>
+			<arg name="warning_upper" type="i" direction="in"/>
+			<arg name="warning_lower" type="i" direction="in"/>
+		</method>
+		<signal name="critical">
+			<arg name="over" type="b"/>
+		</signal>
+		<signal name="warning">
+			<arg name="over" type="b"/>
+		</signal>
+		<property name="critical_upper" type="i" access="read"/>
+		<property name="critical_lower" type="i" access="read"/>
+		<property name="warning_upper" type="i" access="read"/>
+		<property name="warning_lower" type="i" access="read"/>
+	</interface>	
 </node>
