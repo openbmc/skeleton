@@ -1,6 +1,8 @@
 #include "interfaces/button.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
+static const gchar* dbus_object_path = "/org/openbmc/buttons/ButtonPower";
+static const gchar* dbus_name        = "org.openbmc.buttons.ButtonPower";
 
 static GDBusObjectManagerServer *manager = NULL;
 static Button *button = NULL;
@@ -39,10 +41,10 @@ on_bus_acquired (GDBusConnection *connection,
 
   g_print ("Acquired a message bus connection: %s\n",name);
 
-  manager = g_dbus_object_manager_server_new ("/org/openbmc/buttons/ButtonPower");
+  manager = g_dbus_object_manager_server_new (dbus_object_path);
 
   gchar *s;
-  s = g_strdup_printf ("/org/openbmc/buttons/ButtonPower/0");
+  s = g_strdup_printf ("%s/0",dbus_object_path);
   object = object_skeleton_new (s);
   g_free (s);
 
@@ -96,7 +98,7 @@ main (gint argc, gchar *argv[])
   loop = g_main_loop_new (NULL, FALSE);
 
   id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                       "org.openbmc.buttons.ButtonPower",
+                       dbus_name,
                        G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
                        G_BUS_NAME_OWNER_FLAGS_REPLACE,
                        on_bus_acquired,

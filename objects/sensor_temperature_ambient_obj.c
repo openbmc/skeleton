@@ -1,6 +1,8 @@
 #include "interfaces/sensor.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
+static const gchar* dbus_object_path = "/org/openbmc/sensors/Temperature/Ambient";
+static const gchar* dbus_name        = "org.openbmc.sensors.Temperature.Ambient";
 
 static GDBusObjectManagerServer *manager = NULL;
 static SensorInteger *sensor = NULL;
@@ -53,10 +55,10 @@ on_bus_acquired (GDBusConnection *connection,
 
   g_print ("Acquired a message bus connection: %s\n",name);
 
-  manager = g_dbus_object_manager_server_new ("/org/openbmc/Sensors/Temperature/Ambient");
+  manager = g_dbus_object_manager_server_new (dbus_object_path);
 
   gchar *s;
-  s = g_strdup_printf ("/org/openbmc/Sensors/Temperature/Ambient/0");
+  s = g_strdup_printf ("%s/0",dbus_object_path);
   object = object_skeleton_new (s);
   g_free (s);
 
@@ -137,7 +139,7 @@ main (gint argc, gchar *argv[])
   loop = g_main_loop_new (NULL, FALSE);
 
   id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                       "org.openbmc.Sensors.Temperature.Ambient",
+                       dbus_name,
                        G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
                        G_BUS_NAME_OWNER_FLAGS_REPLACE,
                        on_bus_acquired,

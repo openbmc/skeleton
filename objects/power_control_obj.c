@@ -1,6 +1,42 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include "interfaces/power_control.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
+static const gchar* dbus_object_path = "/org/openbmc/control/Power";
+static const gchar* dbus_name        = "org.openbmc.control.Power";
+
+// Platform specific config
+
+#define FSI_CLK		4	//GPIOA4
+#define FSI_DAT		5	//GPIOA5
+#define CRONUS_SEL	6	//GPIOA6
+#define PCIE_RST_N	13	//GPIOB5
+#define PEX_PERST_N	14	//GPIOB6
+#define POWER		33    	//GPIOE1
+#define PGOOD		23    	//GPIOC7
+#define FSI_ENABLE      24      //GPIOD0
+
+/* Where to put the firmware image if booting from memory */
+#define MEM_IMG_BASE (0x54000000)
+
+/* Start of flash memory if booting from flash */
+#define FLASH_IMG_BASE (0x30000000)
+
+/* LPC registers */
+#define LPC_BASE		0x1e789000
+#define LPC_HICR6		0x80
+#define LPC_HICR7		0x88
+#define LPC_HICR8		0x8c
+
+
+
 
 static GDBusObjectManagerServer *manager = NULL;
 static PowerControl *power_control = NULL;
@@ -65,10 +101,10 @@ on_bus_acquired (GDBusConnection *connection,
 
   g_print ("Acquired a message bus connection: %s\n",name);
 
-  manager = g_dbus_object_manager_server_new ("/org/openbmc/PowerControl");
+  manager = g_dbus_object_manager_server_new (dbus_object_path);
 
   gchar *s;
-  s = g_strdup_printf ("/org/openbmc/PowerControl/0");
+  s = g_strdup_printf ("%s/0",dbus_object_path);
   object = object_skeleton_new (s);
   g_free (s);
 
@@ -146,7 +182,7 @@ main (gint argc, gchar *argv[])
   loop = g_main_loop_new (NULL, FALSE);
 
   id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                       "org.openbmc.PowerControl",
+                       dbus_name,
                        G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
                        G_BUS_NAME_OWNER_FLAGS_REPLACE,
                        on_bus_acquired,
