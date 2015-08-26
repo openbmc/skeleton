@@ -1,1 +1,2 @@
-from Barreleye import Barreleye
+from Barreleye import BarreleyeSensors
+from Barreleye import BarreleyeGpios
