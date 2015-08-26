@@ -149,21 +149,21 @@ _g_value_equal (const GValue *a, const GValue *b)
 }
 
 /* ------------------------------------------------------------------------
- * Code for interface org.openbmc.PowerControl
+ * Code for interface org.openbmc.control.Power
  * ------------------------------------------------------------------------
  */
 
 /**
- * SECTION:PowerControl
- * @title: PowerControl
- * @short_description: Generated C code for the org.openbmc.PowerControl D-Bus interface
+ * SECTION:ControlPower
+ * @title: ControlPower
+ * @short_description: Generated C code for the org.openbmc.control.Power D-Bus interface
  *
- * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link> D-Bus interface in C.
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link> D-Bus interface in C.
  */
 
-/* ---- Introspection data for org.openbmc.PowerControl ---- */
+/* ---- Introspection data for org.openbmc.control.Power ---- */
 
-static const _ExtendedGDBusArgInfo _power_control_method_info_set_power_state_IN_ARG_state =
+static const _ExtendedGDBusArgInfo _control_power_method_info_set_power_state_IN_ARG_state =
 {
   {
     -1,
@@ -174,18 +174,18 @@ static const _ExtendedGDBusArgInfo _power_control_method_info_set_power_state_IN
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _power_control_method_info_set_power_state_IN_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _control_power_method_info_set_power_state_IN_ARG_pointers[] =
 {
-  &_power_control_method_info_set_power_state_IN_ARG_state,
+  &_control_power_method_info_set_power_state_IN_ARG_state,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _power_control_method_info_set_power_state =
+static const _ExtendedGDBusMethodInfo _control_power_method_info_set_power_state =
 {
   {
     -1,
     (gchar *) "setPowerState",
-    (GDBusArgInfo **) &_power_control_method_info_set_power_state_IN_ARG_pointers,
+    (GDBusArgInfo **) &_control_power_method_info_set_power_state_IN_ARG_pointers,
     NULL,
     NULL
   },
@@ -193,7 +193,7 @@ static const _ExtendedGDBusMethodInfo _power_control_method_info_set_power_state
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo _power_control_method_info_get_power_state_OUT_ARG_state =
+static const _ExtendedGDBusArgInfo _control_power_method_info_get_power_state_OUT_ARG_state =
 {
   {
     -1,
@@ -204,33 +204,33 @@ static const _ExtendedGDBusArgInfo _power_control_method_info_get_power_state_OU
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _power_control_method_info_get_power_state_OUT_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _control_power_method_info_get_power_state_OUT_ARG_pointers[] =
 {
-  &_power_control_method_info_get_power_state_OUT_ARG_state,
+  &_control_power_method_info_get_power_state_OUT_ARG_state,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _power_control_method_info_get_power_state =
+static const _ExtendedGDBusMethodInfo _control_power_method_info_get_power_state =
 {
   {
     -1,
     (gchar *) "getPowerState",
     NULL,
-    (GDBusArgInfo **) &_power_control_method_info_get_power_state_OUT_ARG_pointers,
+    (GDBusArgInfo **) &_control_power_method_info_get_power_state_OUT_ARG_pointers,
     NULL
   },
   "handle-get-power-state",
   FALSE
 };
 
-static const _ExtendedGDBusMethodInfo * const _power_control_method_info_pointers[] =
+static const _ExtendedGDBusMethodInfo * const _control_power_method_info_pointers[] =
 {
-  &_power_control_method_info_set_power_state,
-  &_power_control_method_info_get_power_state,
+  &_control_power_method_info_set_power_state,
+  &_control_power_method_info_get_power_state,
   NULL
 };
 
-static const _ExtendedGDBusSignalInfo _power_control_signal_info_power_good =
+static const _ExtendedGDBusSignalInfo _control_power_signal_info_power_good =
 {
   {
     -1,
@@ -241,7 +241,7 @@ static const _ExtendedGDBusSignalInfo _power_control_signal_info_power_good =
   "power-good"
 };
 
-static const _ExtendedGDBusSignalInfo _power_control_signal_info_power_lost =
+static const _ExtendedGDBusSignalInfo _control_power_signal_info_power_lost =
 {
   {
     -1,
@@ -252,14 +252,14 @@ static const _ExtendedGDBusSignalInfo _power_control_signal_info_power_lost =
   "power-lost"
 };
 
-static const _ExtendedGDBusSignalInfo * const _power_control_signal_info_pointers[] =
+static const _ExtendedGDBusSignalInfo * const _control_power_signal_info_pointers[] =
 {
-  &_power_control_signal_info_power_good,
-  &_power_control_signal_info_power_lost,
+  &_control_power_signal_info_power_good,
+  &_control_power_signal_info_power_lost,
   NULL
 };
 
-static const _ExtendedGDBusPropertyInfo _power_control_property_info_pgood =
+static const _ExtendedGDBusPropertyInfo _control_power_property_info_pgood =
 {
   {
     -1,
@@ -272,7 +272,7 @@ static const _ExtendedGDBusPropertyInfo _power_control_property_info_pgood =
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _power_control_property_info_state =
+static const _ExtendedGDBusPropertyInfo _control_power_property_info_state =
 {
   {
     -1,
@@ -285,52 +285,52 @@ static const _ExtendedGDBusPropertyInfo _power_control_property_info_state =
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo * const _power_control_property_info_pointers[] =
+static const _ExtendedGDBusPropertyInfo * const _control_power_property_info_pointers[] =
 {
-  &_power_control_property_info_pgood,
-  &_power_control_property_info_state,
+  &_control_power_property_info_pgood,
+  &_control_power_property_info_state,
   NULL
 };
 
-static const _ExtendedGDBusInterfaceInfo _power_control_interface_info =
+static const _ExtendedGDBusInterfaceInfo _control_power_interface_info =
 {
   {
     -1,
-    (gchar *) "org.openbmc.PowerControl",
-    (GDBusMethodInfo **) &_power_control_method_info_pointers,
-    (GDBusSignalInfo **) &_power_control_signal_info_pointers,
-    (GDBusPropertyInfo **) &_power_control_property_info_pointers,
+    (gchar *) "org.openbmc.control.Power",
+    (GDBusMethodInfo **) &_control_power_method_info_pointers,
+    (GDBusSignalInfo **) &_control_power_signal_info_pointers,
+    (GDBusPropertyInfo **) &_control_power_property_info_pointers,
     NULL
   },
-  "power-control",
+  "control-power",
 };
 
 
 /**
- * power_control_interface_info:
+ * control_power_interface_info:
  *
- * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link> D-Bus interface.
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link> D-Bus interface.
  *
  * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
  */
 GDBusInterfaceInfo *
-power_control_interface_info (void)
+control_power_interface_info (void)
 {
-  return (GDBusInterfaceInfo *) &_power_control_interface_info.parent_struct;
+  return (GDBusInterfaceInfo *) &_control_power_interface_info.parent_struct;
 }
 
 /**
- * power_control_override_properties:
+ * control_power_override_properties:
  * @klass: The class structure for a #GObject<!-- -->-derived class.
  * @property_id_begin: The property id to assign to the first overridden property.
  *
- * Overrides all #GObject properties in the #PowerControl interface for a concrete class.
+ * Overrides all #GObject properties in the #ControlPower interface for a concrete class.
  * The properties are overridden in the order they are defined.
  *
  * Returns: The last property id.
  */
 guint
-power_control_override_properties (GObjectClass *klass, guint property_id_begin)
+control_power_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "pgood");
   g_object_class_override_property (klass, property_id_begin++, "state");
@@ -340,47 +340,47 @@ power_control_override_properties (GObjectClass *klass, guint property_id_begin)
 
 
 /**
- * PowerControl:
+ * ControlPower:
  *
- * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link>.
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link>.
  */
 
 /**
- * PowerControlIface:
+ * ControlPowerIface:
  * @parent_iface: The parent interface.
- * @handle_get_power_state: Handler for the #PowerControl::handle-get-power-state signal.
- * @handle_set_power_state: Handler for the #PowerControl::handle-set-power-state signal.
- * @get_pgood: Getter for the #PowerControl:pgood property.
- * @get_state: Getter for the #PowerControl:state property.
- * @power_good: Handler for the #PowerControl::power-good signal.
- * @power_lost: Handler for the #PowerControl::power-lost signal.
+ * @handle_get_power_state: Handler for the #ControlPower::handle-get-power-state signal.
+ * @handle_set_power_state: Handler for the #ControlPower::handle-set-power-state signal.
+ * @get_pgood: Getter for the #ControlPower:pgood property.
+ * @get_state: Getter for the #ControlPower:state property.
+ * @power_good: Handler for the #ControlPower::power-good signal.
+ * @power_lost: Handler for the #ControlPower::power-lost signal.
  *
- * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link>.
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link>.
  */
 
-typedef PowerControlIface PowerControlInterface;
-G_DEFINE_INTERFACE (PowerControl, power_control, G_TYPE_OBJECT);
+typedef ControlPowerIface ControlPowerInterface;
+G_DEFINE_INTERFACE (ControlPower, control_power, G_TYPE_OBJECT);
 
 static void
-power_control_default_init (PowerControlIface *iface)
+control_power_default_init (ControlPowerIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
   /**
-   * PowerControl::handle-set-power-state:
-   * @object: A #PowerControl.
+   * ControlPower::handle-set-power-state:
+   * @object: A #ControlPower.
    * @invocation: A #GDBusMethodInvocation.
    * @arg_state: Argument passed by remote caller.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-PowerControl.setPowerState">setPowerState()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-control-Power.setPowerState">setPowerState()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call power_control_complete_set_power_state() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call control_power_complete_set_power_state() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
   g_signal_new ("handle-set-power-state",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (PowerControlIface, handle_set_power_state),
+    G_STRUCT_OFFSET (ControlPowerIface, handle_set_power_state),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -389,20 +389,20 @@ power_control_default_init (PowerControlIface *iface)
     G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT);
 
   /**
-   * PowerControl::handle-get-power-state:
-   * @object: A #PowerControl.
+   * ControlPower::handle-get-power-state:
+   * @object: A #ControlPower.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-PowerControl.getPowerState">getPowerState()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-control-Power.getPowerState">getPowerState()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call power_control_complete_get_power_state() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call control_power_complete_get_power_state() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
   g_signal_new ("handle-get-power-state",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (PowerControlIface, handle_get_power_state),
+    G_STRUCT_OFFSET (ControlPowerIface, handle_get_power_state),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -412,17 +412,17 @@ power_control_default_init (PowerControlIface *iface)
 
   /* GObject signals for received D-Bus signals: */
   /**
-   * PowerControl::power-good:
-   * @object: A #PowerControl.
+   * ControlPower::power-good:
+   * @object: A #ControlPower.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-PowerControl.PowerGood">"PowerGood"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-control-Power.PowerGood">"PowerGood"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
   g_signal_new ("power-good",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (PowerControlIface, power_good),
+    G_STRUCT_OFFSET (ControlPowerIface, power_good),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -430,17 +430,17 @@ power_control_default_init (PowerControlIface *iface)
     0);
 
   /**
-   * PowerControl::power-lost:
-   * @object: A #PowerControl.
+   * ControlPower::power-lost:
+   * @object: A #ControlPower.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-PowerControl.PowerLost">"PowerLost"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-control-Power.PowerLost">"PowerLost"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
   g_signal_new ("power-lost",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (PowerControlIface, power_lost),
+    G_STRUCT_OFFSET (ControlPowerIface, power_lost),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -449,18 +449,18 @@ power_control_default_init (PowerControlIface *iface)
 
   /* GObject properties for D-Bus properties: */
   /**
-   * PowerControl:pgood:
+   * ControlPower:pgood:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-PowerControl.pgood">"pgood"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-control-Power.pgood">"pgood"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("pgood", "pgood", "pgood", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * PowerControl:state:
+   * ControlPower:state:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-PowerControl.state">"state"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-control-Power.state">"state"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
@@ -469,110 +469,110 @@ power_control_default_init (PowerControlIface *iface)
 }
 
 /**
- * power_control_get_pgood: (skip)
- * @object: A #PowerControl.
+ * control_power_get_pgood: (skip)
+ * @object: A #ControlPower.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-PowerControl.pgood">"pgood"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-control-Power.pgood">"pgood"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
 gint 
-power_control_get_pgood (PowerControl *object)
+control_power_get_pgood (ControlPower *object)
 {
-  return POWER_CONTROL_GET_IFACE (object)->get_pgood (object);
+  return CONTROL_POWER_GET_IFACE (object)->get_pgood (object);
 }
 
 /**
- * power_control_set_pgood: (skip)
- * @object: A #PowerControl.
+ * control_power_set_pgood: (skip)
+ * @object: A #ControlPower.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-PowerControl.pgood">"pgood"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-control-Power.pgood">"pgood"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-power_control_set_pgood (PowerControl *object, gint value)
+control_power_set_pgood (ControlPower *object, gint value)
 {
   g_object_set (G_OBJECT (object), "pgood", value, NULL);
 }
 
 /**
- * power_control_get_state: (skip)
- * @object: A #PowerControl.
+ * control_power_get_state: (skip)
+ * @object: A #ControlPower.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-PowerControl.state">"state"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-control-Power.state">"state"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
 gint 
-power_control_get_state (PowerControl *object)
+control_power_get_state (ControlPower *object)
 {
-  return POWER_CONTROL_GET_IFACE (object)->get_state (object);
+  return CONTROL_POWER_GET_IFACE (object)->get_state (object);
 }
 
 /**
- * power_control_set_state: (skip)
- * @object: A #PowerControl.
+ * control_power_set_state: (skip)
+ * @object: A #ControlPower.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-PowerControl.state">"state"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-control-Power.state">"state"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-power_control_set_state (PowerControl *object, gint value)
+control_power_set_state (ControlPower *object, gint value)
 {
   g_object_set (G_OBJECT (object), "state", value, NULL);
 }
 
 /**
- * power_control_emit_power_good:
- * @object: A #PowerControl.
+ * control_power_emit_power_good:
+ * @object: A #ControlPower.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-PowerControl.PowerGood">"PowerGood"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-control-Power.PowerGood">"PowerGood"</link> D-Bus signal.
  */
 void
-power_control_emit_power_good (
-    PowerControl *object)
+control_power_emit_power_good (
+    ControlPower *object)
 {
   g_signal_emit_by_name (object, "power-good");
 }
 
 /**
- * power_control_emit_power_lost:
- * @object: A #PowerControl.
+ * control_power_emit_power_lost:
+ * @object: A #ControlPower.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-PowerControl.PowerLost">"PowerLost"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-control-Power.PowerLost">"PowerLost"</link> D-Bus signal.
  */
 void
-power_control_emit_power_lost (
-    PowerControl *object)
+control_power_emit_power_lost (
+    ControlPower *object)
 {
   g_signal_emit_by_name (object, "power-lost");
 }
 
 /**
- * power_control_call_set_power_state:
- * @proxy: A #PowerControlProxy.
+ * control_power_call_set_power_state:
+ * @proxy: A #ControlPowerProxy.
  * @arg_state: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-PowerControl.setPowerState">setPowerState()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Power.setPowerState">setPowerState()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call power_control_call_set_power_state_finish() to get the result of the operation.
+ * You can then call control_power_call_set_power_state_finish() to get the result of the operation.
  *
- * See power_control_call_set_power_state_sync() for the synchronous, blocking version of this method.
+ * See control_power_call_set_power_state_sync() for the synchronous, blocking version of this method.
  */
 void
-power_control_call_set_power_state (
-    PowerControl *proxy,
+control_power_call_set_power_state (
+    ControlPower *proxy,
     gint arg_state,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
@@ -590,18 +590,18 @@ power_control_call_set_power_state (
 }
 
 /**
- * power_control_call_set_power_state_finish:
- * @proxy: A #PowerControlProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to power_control_call_set_power_state().
+ * control_power_call_set_power_state_finish:
+ * @proxy: A #ControlPowerProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_power_call_set_power_state().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with power_control_call_set_power_state().
+ * Finishes an operation started with control_power_call_set_power_state().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-power_control_call_set_power_state_finish (
-    PowerControl *proxy,
+control_power_call_set_power_state_finish (
+    ControlPower *proxy,
     GAsyncResult *res,
     GError **error)
 {
@@ -617,21 +617,21 @@ _out:
 }
 
 /**
- * power_control_call_set_power_state_sync:
- * @proxy: A #PowerControlProxy.
+ * control_power_call_set_power_state_sync:
+ * @proxy: A #ControlPowerProxy.
  * @arg_state: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-PowerControl.setPowerState">setPowerState()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Power.setPowerState">setPowerState()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See power_control_call_set_power_state() for the asynchronous version of this method.
+ * See control_power_call_set_power_state() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-power_control_call_set_power_state_sync (
-    PowerControl *proxy,
+control_power_call_set_power_state_sync (
+    ControlPower *proxy,
     gint arg_state,
     GCancellable *cancellable,
     GError **error)
@@ -655,21 +655,21 @@ _out:
 }
 
 /**
- * power_control_call_get_power_state:
- * @proxy: A #PowerControlProxy.
+ * control_power_call_get_power_state:
+ * @proxy: A #ControlPowerProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-PowerControl.getPowerState">getPowerState()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Power.getPowerState">getPowerState()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call power_control_call_get_power_state_finish() to get the result of the operation.
+ * You can then call control_power_call_get_power_state_finish() to get the result of the operation.
  *
- * See power_control_call_get_power_state_sync() for the synchronous, blocking version of this method.
+ * See control_power_call_get_power_state_sync() for the synchronous, blocking version of this method.
  */
 void
-power_control_call_get_power_state (
-    PowerControl *proxy,
+control_power_call_get_power_state (
+    ControlPower *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
@@ -685,19 +685,19 @@ power_control_call_get_power_state (
 }
 
 /**
- * power_control_call_get_power_state_finish:
- * @proxy: A #PowerControlProxy.
+ * control_power_call_get_power_state_finish:
+ * @proxy: A #ControlPowerProxy.
  * @out_state: (out): Return location for return parameter or %NULL to ignore.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to power_control_call_get_power_state().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_power_call_get_power_state().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with power_control_call_get_power_state().
+ * Finishes an operation started with control_power_call_get_power_state().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-power_control_call_get_power_state_finish (
-    PowerControl *proxy,
+control_power_call_get_power_state_finish (
+    ControlPower *proxy,
     gint *out_state,
     GAsyncResult *res,
     GError **error)
@@ -715,21 +715,21 @@ _out:
 }
 
 /**
- * power_control_call_get_power_state_sync:
- * @proxy: A #PowerControlProxy.
+ * control_power_call_get_power_state_sync:
+ * @proxy: A #ControlPowerProxy.
  * @out_state: (out): Return location for return parameter or %NULL to ignore.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-PowerControl.getPowerState">getPowerState()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Power.getPowerState">getPowerState()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See power_control_call_get_power_state() for the asynchronous version of this method.
+ * See control_power_call_get_power_state() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-power_control_call_get_power_state_sync (
-    PowerControl *proxy,
+control_power_call_get_power_state_sync (
+    ControlPower *proxy,
     gint *out_state,
     GCancellable *cancellable,
     GError **error)
@@ -753,17 +753,17 @@ _out:
 }
 
 /**
- * power_control_complete_set_power_state:
- * @object: A #PowerControl.
+ * control_power_complete_set_power_state:
+ * @object: A #ControlPower.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-PowerControl.setPowerState">setPowerState()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-control-Power.setPowerState">setPowerState()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-power_control_complete_set_power_state (
-    PowerControl *object,
+control_power_complete_set_power_state (
+    ControlPower *object,
     GDBusMethodInvocation *invocation)
 {
   g_dbus_method_invocation_return_value (invocation,
@@ -771,18 +771,18 @@ power_control_complete_set_power_state (
 }
 
 /**
- * power_control_complete_get_power_state:
- * @object: A #PowerControl.
+ * control_power_complete_get_power_state:
+ * @object: A #ControlPower.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  * @state: Parameter to return.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-PowerControl.getPowerState">getPowerState()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-control-Power.getPowerState">getPowerState()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-power_control_complete_get_power_state (
-    PowerControl *object,
+control_power_complete_get_power_state (
+    ControlPower *object,
     GDBusMethodInvocation *invocation,
     gint state)
 {
@@ -794,45 +794,45 @@ power_control_complete_get_power_state (
 /* ------------------------------------------------------------------------ */
 
 /**
- * PowerControlProxy:
+ * ControlPowerProxy:
  *
- * The #PowerControlProxy structure contains only private data and should only be accessed using the provided API.
+ * The #ControlPowerProxy structure contains only private data and should only be accessed using the provided API.
  */
 
 /**
- * PowerControlProxyClass:
+ * ControlPowerProxyClass:
  * @parent_class: The parent class.
  *
- * Class structure for #PowerControlProxy.
+ * Class structure for #ControlPowerProxy.
  */
 
-struct _PowerControlProxyPrivate
+struct _ControlPowerProxyPrivate
 {
   GData *qdata;
 };
 
-static void power_control_proxy_iface_init (PowerControlIface *iface);
+static void control_power_proxy_iface_init (ControlPowerIface *iface);
 
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (PowerControlProxy, power_control_proxy, G_TYPE_DBUS_PROXY,
-                         G_ADD_PRIVATE (PowerControlProxy)
-                         G_IMPLEMENT_INTERFACE (TYPE_POWER_CONTROL, power_control_proxy_iface_init));
+G_DEFINE_TYPE_WITH_CODE (ControlPowerProxy, control_power_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (ControlPowerProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_CONTROL_POWER, control_power_proxy_iface_init));
 
 #else
-G_DEFINE_TYPE_WITH_CODE (PowerControlProxy, power_control_proxy, G_TYPE_DBUS_PROXY,
-                         G_IMPLEMENT_INTERFACE (TYPE_POWER_CONTROL, power_control_proxy_iface_init));
+G_DEFINE_TYPE_WITH_CODE (ControlPowerProxy, control_power_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_CONTROL_POWER, control_power_proxy_iface_init));
 
 #endif
 static void
-power_control_proxy_finalize (GObject *object)
+control_power_proxy_finalize (GObject *object)
 {
-  PowerControlProxy *proxy = POWER_CONTROL_PROXY (object);
+  ControlPowerProxy *proxy = CONTROL_POWER_PROXY (object);
   g_datalist_clear (&proxy->priv->qdata);
-  G_OBJECT_CLASS (power_control_proxy_parent_class)->finalize (object);
+  G_OBJECT_CLASS (control_power_proxy_parent_class)->finalize (object);
 }
 
 static void
-power_control_proxy_get_property (GObject      *object,
+control_power_proxy_get_property (GObject      *object,
   guint         prop_id,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
@@ -840,7 +840,7 @@ power_control_proxy_get_property (GObject      *object,
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
   g_assert (prop_id != 0 && prop_id - 1 < 2);
-  info = _power_control_property_info_pointers[prop_id - 1];
+  info = _control_power_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
     {
@@ -856,7 +856,7 @@ power_control_proxy_get_property (GObject      *object,
 }
 
 static void
-power_control_proxy_set_property_cb (GDBusProxy *proxy,
+control_power_proxy_set_property_cb (GDBusProxy *proxy,
   GAsyncResult *res,
   gpointer      user_data)
 {
@@ -867,7 +867,7 @@ power_control_proxy_set_property_cb (GDBusProxy *proxy,
   _ret = g_dbus_proxy_call_finish (proxy, res, &error);
   if (!_ret)
     {
-      g_warning ("Error setting property '%s' on interface org.openbmc.PowerControl: %s (%s, %d)",
+      g_warning ("Error setting property '%s' on interface org.openbmc.control.Power: %s (%s, %d)",
                  info->parent_struct.name, 
                  error->message, g_quark_to_string (error->domain), error->code);
       g_error_free (error);
@@ -879,7 +879,7 @@ power_control_proxy_set_property_cb (GDBusProxy *proxy,
 }
 
 static void
-power_control_proxy_set_property (GObject      *object,
+control_power_proxy_set_property (GObject      *object,
   guint         prop_id,
   const GValue *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
@@ -887,19 +887,19 @@ power_control_proxy_set_property (GObject      *object,
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
   g_assert (prop_id != 0 && prop_id - 1 < 2);
-  info = _power_control_property_info_pointers[prop_id - 1];
+  info = _control_power_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
     "org.freedesktop.DBus.Properties.Set",
-    g_variant_new ("(ssv)", "org.openbmc.PowerControl", info->parent_struct.name, variant),
+    g_variant_new ("(ssv)", "org.openbmc.control.Power", info->parent_struct.name, variant),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
-    NULL, (GAsyncReadyCallback) power_control_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+    NULL, (GAsyncReadyCallback) control_power_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
   g_variant_unref (variant);
 }
 
 static void
-power_control_proxy_g_signal (GDBusProxy *proxy,
+control_power_proxy_g_signal (GDBusProxy *proxy,
   const gchar *sender_name G_GNUC_UNUSED,
   const gchar *signal_name,
   GVariant *parameters)
@@ -911,12 +911,12 @@ power_control_proxy_g_signal (GDBusProxy *proxy,
   guint num_params;
   guint n;
   guint signal_id;
-  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_power_control_interface_info.parent_struct, signal_name);
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_control_power_interface_info.parent_struct, signal_name);
   if (info == NULL)
     return;
   num_params = g_variant_n_children (parameters);
   paramv = g_new0 (GValue, num_params + 1);
-  g_value_init (&paramv[0], TYPE_POWER_CONTROL);
+  g_value_init (&paramv[0], TYPE_CONTROL_POWER);
   g_value_set_object (&paramv[0], proxy);
   g_variant_iter_init (&iter, parameters);
   n = 1;
@@ -933,7 +933,7 @@ power_control_proxy_g_signal (GDBusProxy *proxy,
         g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
       g_variant_unref (child);
     }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_POWER_CONTROL);
+  signal_id = g_signal_lookup (info->signal_name, TYPE_CONTROL_POWER);
   g_signal_emitv (paramv, signal_id, 0, NULL);
   for (n = 0; n < num_params + 1; n++)
     g_value_unset (&paramv[n]);
@@ -941,11 +941,11 @@ power_control_proxy_g_signal (GDBusProxy *proxy,
 }
 
 static void
-power_control_proxy_g_properties_changed (GDBusProxy *_proxy,
+control_power_proxy_g_properties_changed (GDBusProxy *_proxy,
   GVariant *changed_properties,
   const gchar *const *invalidated_properties)
 {
-  PowerControlProxy *proxy = POWER_CONTROL_PROXY (_proxy);
+  ControlPowerProxy *proxy = CONTROL_POWER_PROXY (_proxy);
   guint n;
   const gchar *key;
   GVariantIter *iter;
@@ -953,7 +953,7 @@ power_control_proxy_g_properties_changed (GDBusProxy *_proxy,
   g_variant_get (changed_properties, "a{sv}", &iter);
   while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
     {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_power_control_interface_info.parent_struct, key);
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_control_power_interface_info.parent_struct, key);
       g_datalist_remove_data (&proxy->priv->qdata, key);
       if (info != NULL)
         g_object_notify (G_OBJECT (proxy), info->hyphen_name);
@@ -961,7 +961,7 @@ power_control_proxy_g_properties_changed (GDBusProxy *_proxy,
   g_variant_iter_free (iter);
   for (n = 0; invalidated_properties[n] != NULL; n++)
     {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_power_control_interface_info.parent_struct, invalidated_properties[n]);
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_control_power_interface_info.parent_struct, invalidated_properties[n]);
       g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
       if (info != NULL)
         g_object_notify (G_OBJECT (proxy), info->hyphen_name);
@@ -969,9 +969,9 @@ power_control_proxy_g_properties_changed (GDBusProxy *_proxy,
 }
 
 static gint 
-power_control_proxy_get_pgood (PowerControl *object)
+control_power_proxy_get_pgood (ControlPower *object)
 {
-  PowerControlProxy *proxy = POWER_CONTROL_PROXY (object);
+  ControlPowerProxy *proxy = CONTROL_POWER_PROXY (object);
   GVariant *variant;
   gint value = 0;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "pgood");
@@ -984,9 +984,9 @@ power_control_proxy_get_pgood (PowerControl *object)
 }
 
 static gint 
-power_control_proxy_get_state (PowerControl *object)
+control_power_proxy_get_state (ControlPower *object)
 {
-  PowerControlProxy *proxy = POWER_CONTROL_PROXY (object);
+  ControlPowerProxy *proxy = CONTROL_POWER_PROXY (object);
   GVariant *variant;
   gint value = 0;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "state");
@@ -999,48 +999,48 @@ power_control_proxy_get_state (PowerControl *object)
 }
 
 static void
-power_control_proxy_init (PowerControlProxy *proxy)
+control_power_proxy_init (ControlPowerProxy *proxy)
 {
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  proxy->priv = power_control_proxy_get_instance_private (proxy);
+  proxy->priv = control_power_proxy_get_instance_private (proxy);
 #else
-  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_POWER_CONTROL_PROXY, PowerControlProxyPrivate);
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_CONTROL_POWER_PROXY, ControlPowerProxyPrivate);
 #endif
 
-  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), power_control_interface_info ());
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), control_power_interface_info ());
 }
 
 static void
-power_control_proxy_class_init (PowerControlProxyClass *klass)
+control_power_proxy_class_init (ControlPowerProxyClass *klass)
 {
   GObjectClass *gobject_class;
   GDBusProxyClass *proxy_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize     = power_control_proxy_finalize;
-  gobject_class->get_property = power_control_proxy_get_property;
-  gobject_class->set_property = power_control_proxy_set_property;
+  gobject_class->finalize     = control_power_proxy_finalize;
+  gobject_class->get_property = control_power_proxy_get_property;
+  gobject_class->set_property = control_power_proxy_set_property;
 
   proxy_class = G_DBUS_PROXY_CLASS (klass);
-  proxy_class->g_signal = power_control_proxy_g_signal;
-  proxy_class->g_properties_changed = power_control_proxy_g_properties_changed;
+  proxy_class->g_signal = control_power_proxy_g_signal;
+  proxy_class->g_properties_changed = control_power_proxy_g_properties_changed;
 
-  power_control_override_properties (gobject_class, 1);
+  control_power_override_properties (gobject_class, 1);
 
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (PowerControlProxyPrivate));
+  g_type_class_add_private (klass, sizeof (ControlPowerProxyPrivate));
 #endif
 }
 
 static void
-power_control_proxy_iface_init (PowerControlIface *iface)
+control_power_proxy_iface_init (ControlPowerIface *iface)
 {
-  iface->get_pgood = power_control_proxy_get_pgood;
-  iface->get_state = power_control_proxy_get_state;
+  iface->get_pgood = control_power_proxy_get_pgood;
+  iface->get_state = control_power_proxy_get_state;
 }
 
 /**
- * power_control_proxy_new:
+ * control_power_proxy_new:
  * @connection: A #GDBusConnection.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
@@ -1049,15 +1049,15 @@ power_control_proxy_iface_init (PowerControlIface *iface)
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link>. See g_dbus_proxy_new() for more details.
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link>. See g_dbus_proxy_new() for more details.
  *
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call power_control_proxy_new_finish() to get the result of the operation.
+ * You can then call control_power_proxy_new_finish() to get the result of the operation.
  *
- * See power_control_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ * See control_power_proxy_new_sync() for the synchronous, blocking version of this constructor.
  */
 void
-power_control_proxy_new (
+control_power_proxy_new (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1066,20 +1066,20 @@ power_control_proxy_new (
     GAsyncReadyCallback  callback,
     gpointer             user_data)
 {
-  g_async_initable_new_async (TYPE_POWER_CONTROL_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.PowerControl", NULL);
+  g_async_initable_new_async (TYPE_CONTROL_POWER_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.control.Power", NULL);
 }
 
 /**
- * power_control_proxy_new_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to power_control_proxy_new().
+ * control_power_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_power_proxy_new().
  * @error: Return location for error or %NULL
  *
- * Finishes an operation started with power_control_proxy_new().
+ * Finishes an operation started with control_power_proxy_new().
  *
- * Returns: (transfer full) (type PowerControlProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type ControlPowerProxy): The constructed proxy object or %NULL if @error is set.
  */
-PowerControl *
-power_control_proxy_new_finish (
+ControlPower *
+control_power_proxy_new_finish (
     GAsyncResult        *res,
     GError             **error)
 {
@@ -1089,13 +1089,13 @@ power_control_proxy_new_finish (
   ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
   g_object_unref (source_object);
   if (ret != NULL)
-    return POWER_CONTROL (ret);
+    return CONTROL_POWER (ret);
   else
     return NULL;
 }
 
 /**
- * power_control_proxy_new_sync:
+ * control_power_proxy_new_sync:
  * @connection: A #GDBusConnection.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
@@ -1103,16 +1103,16 @@ power_control_proxy_new_finish (
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL
  *
- * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link>. See g_dbus_proxy_new_sync() for more details.
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link>. See g_dbus_proxy_new_sync() for more details.
  *
  * The calling thread is blocked until a reply is received.
  *
- * See power_control_proxy_new() for the asynchronous version of this constructor.
+ * See control_power_proxy_new() for the asynchronous version of this constructor.
  *
- * Returns: (transfer full) (type PowerControlProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type ControlPowerProxy): The constructed proxy object or %NULL if @error is set.
  */
-PowerControl *
-power_control_proxy_new_sync (
+ControlPower *
+control_power_proxy_new_sync (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1121,16 +1121,16 @@ power_control_proxy_new_sync (
     GError             **error)
 {
   GInitable *ret;
-  ret = g_initable_new (TYPE_POWER_CONTROL_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.PowerControl", NULL);
+  ret = g_initable_new (TYPE_CONTROL_POWER_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.control.Power", NULL);
   if (ret != NULL)
-    return POWER_CONTROL (ret);
+    return CONTROL_POWER (ret);
   else
     return NULL;
 }
 
 
 /**
- * power_control_proxy_new_for_bus:
+ * control_power_proxy_new_for_bus:
  * @bus_type: A #GBusType.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: A bus name (well-known or unique).
@@ -1139,15 +1139,15 @@ power_control_proxy_new_sync (
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
  * @user_data: User data to pass to @callback.
  *
- * Like power_control_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ * Like control_power_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
  *
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call power_control_proxy_new_for_bus_finish() to get the result of the operation.
+ * You can then call control_power_proxy_new_for_bus_finish() to get the result of the operation.
  *
- * See power_control_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ * See control_power_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
  */
 void
-power_control_proxy_new_for_bus (
+control_power_proxy_new_for_bus (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1156,20 +1156,20 @@ power_control_proxy_new_for_bus (
     GAsyncReadyCallback  callback,
     gpointer             user_data)
 {
-  g_async_initable_new_async (TYPE_POWER_CONTROL_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.PowerControl", NULL);
+  g_async_initable_new_async (TYPE_CONTROL_POWER_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.control.Power", NULL);
 }
 
 /**
- * power_control_proxy_new_for_bus_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to power_control_proxy_new_for_bus().
+ * control_power_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_power_proxy_new_for_bus().
  * @error: Return location for error or %NULL
  *
- * Finishes an operation started with power_control_proxy_new_for_bus().
+ * Finishes an operation started with control_power_proxy_new_for_bus().
  *
- * Returns: (transfer full) (type PowerControlProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type ControlPowerProxy): The constructed proxy object or %NULL if @error is set.
  */
-PowerControl *
-power_control_proxy_new_for_bus_finish (
+ControlPower *
+control_power_proxy_new_for_bus_finish (
     GAsyncResult        *res,
     GError             **error)
 {
@@ -1179,13 +1179,13 @@ power_control_proxy_new_for_bus_finish (
   ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
   g_object_unref (source_object);
   if (ret != NULL)
-    return POWER_CONTROL (ret);
+    return CONTROL_POWER (ret);
   else
     return NULL;
 }
 
 /**
- * power_control_proxy_new_for_bus_sync:
+ * control_power_proxy_new_for_bus_sync:
  * @bus_type: A #GBusType.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: A bus name (well-known or unique).
@@ -1193,16 +1193,16 @@ power_control_proxy_new_for_bus_finish (
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL
  *
- * Like power_control_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ * Like control_power_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
  *
  * The calling thread is blocked until a reply is received.
  *
- * See power_control_proxy_new_for_bus() for the asynchronous version of this constructor.
+ * See control_power_proxy_new_for_bus() for the asynchronous version of this constructor.
  *
- * Returns: (transfer full) (type PowerControlProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type ControlPowerProxy): The constructed proxy object or %NULL if @error is set.
  */
-PowerControl *
-power_control_proxy_new_for_bus_sync (
+ControlPower *
+control_power_proxy_new_for_bus_sync (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1211,9 +1211,9 @@ power_control_proxy_new_for_bus_sync (
     GError             **error)
 {
   GInitable *ret;
-  ret = g_initable_new (TYPE_POWER_CONTROL_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.PowerControl", NULL);
+  ret = g_initable_new (TYPE_CONTROL_POWER_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.control.Power", NULL);
   if (ret != NULL)
-    return POWER_CONTROL (ret);
+    return CONTROL_POWER (ret);
   else
     return NULL;
 }
@@ -1222,19 +1222,19 @@ power_control_proxy_new_for_bus_sync (
 /* ------------------------------------------------------------------------ */
 
 /**
- * PowerControlSkeleton:
+ * ControlPowerSkeleton:
  *
- * The #PowerControlSkeleton structure contains only private data and should only be accessed using the provided API.
+ * The #ControlPowerSkeleton structure contains only private data and should only be accessed using the provided API.
  */
 
 /**
- * PowerControlSkeletonClass:
+ * ControlPowerSkeletonClass:
  * @parent_class: The parent class.
  *
- * Class structure for #PowerControlSkeleton.
+ * Class structure for #ControlPowerSkeleton.
  */
 
-struct _PowerControlSkeletonPrivate
+struct _ControlPowerSkeletonPrivate
 {
   GValue *properties;
   GList *changed_properties;
@@ -1244,7 +1244,7 @@ struct _PowerControlSkeletonPrivate
 };
 
 static void
-_power_control_skeleton_handle_method_call (
+_control_power_skeleton_handle_method_call (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -1254,7 +1254,7 @@ _power_control_skeleton_handle_method_call (
   GDBusMethodInvocation *invocation,
   gpointer user_data)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (user_data);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (user_data);
   _ExtendedGDBusMethodInfo *info;
   GVariantIter iter;
   GVariant *child;
@@ -1269,7 +1269,7 @@ _power_control_skeleton_handle_method_call (
   num_params = g_variant_n_children (parameters);
   num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
   n = 0;
-  g_value_init (&paramv[n], TYPE_POWER_CONTROL);
+  g_value_init (&paramv[n], TYPE_CONTROL_POWER);
   g_value_set_object (&paramv[n++], skeleton);
   g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
   g_value_set_object (&paramv[n++], invocation);
@@ -1296,7 +1296,7 @@ _power_control_skeleton_handle_method_call (
         g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
       g_variant_unref (child);
     }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_POWER_CONTROL);
+  signal_id = g_signal_lookup (info->signal_name, TYPE_CONTROL_POWER);
   g_value_init (&return_value, G_TYPE_BOOLEAN);
   g_signal_emitv (paramv, signal_id, 0, &return_value);
   if (!g_value_get_boolean (&return_value))
@@ -1308,7 +1308,7 @@ _power_control_skeleton_handle_method_call (
 }
 
 static GVariant *
-_power_control_skeleton_handle_get_property (
+_control_power_skeleton_handle_get_property (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -1317,13 +1317,13 @@ _power_control_skeleton_handle_get_property (
   GError **error,
   gpointer user_data)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (user_data);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (user_data);
   GValue value = G_VALUE_INIT;
   GParamSpec *pspec;
   _ExtendedGDBusPropertyInfo *info;
   GVariant *ret;
   ret = NULL;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_power_control_interface_info.parent_struct, property_name);
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_control_power_interface_info.parent_struct, property_name);
   g_assert (info != NULL);
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
   if (pspec == NULL)
@@ -1341,7 +1341,7 @@ _power_control_skeleton_handle_get_property (
 }
 
 static gboolean
-_power_control_skeleton_handle_set_property (
+_control_power_skeleton_handle_set_property (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -1351,13 +1351,13 @@ _power_control_skeleton_handle_set_property (
   GError **error,
   gpointer user_data)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (user_data);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (user_data);
   GValue value = G_VALUE_INIT;
   GParamSpec *pspec;
   _ExtendedGDBusPropertyInfo *info;
   gboolean ret;
   ret = FALSE;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_power_control_interface_info.parent_struct, property_name);
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_control_power_interface_info.parent_struct, property_name);
   g_assert (info != NULL);
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
   if (pspec == NULL)
@@ -1377,43 +1377,43 @@ _power_control_skeleton_handle_set_property (
   return ret;
 }
 
-static const GDBusInterfaceVTable _power_control_skeleton_vtable =
+static const GDBusInterfaceVTable _control_power_skeleton_vtable =
 {
-  _power_control_skeleton_handle_method_call,
-  _power_control_skeleton_handle_get_property,
-  _power_control_skeleton_handle_set_property,
+  _control_power_skeleton_handle_method_call,
+  _control_power_skeleton_handle_get_property,
+  _control_power_skeleton_handle_set_property,
   {NULL}
 };
 
 static GDBusInterfaceInfo *
-power_control_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+control_power_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
 {
-  return power_control_interface_info ();
+  return control_power_interface_info ();
 }
 
 static GDBusInterfaceVTable *
-power_control_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+control_power_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
 {
-  return (GDBusInterfaceVTable *) &_power_control_skeleton_vtable;
+  return (GDBusInterfaceVTable *) &_control_power_skeleton_vtable;
 }
 
 static GVariant *
-power_control_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+control_power_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (_skeleton);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (_skeleton);
 
   GVariantBuilder builder;
   guint n;
   g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
-  if (_power_control_interface_info.parent_struct.properties == NULL)
+  if (_control_power_interface_info.parent_struct.properties == NULL)
     goto out;
-  for (n = 0; _power_control_interface_info.parent_struct.properties[n] != NULL; n++)
+  for (n = 0; _control_power_interface_info.parent_struct.properties[n] != NULL; n++)
     {
-      GDBusPropertyInfo *info = _power_control_interface_info.parent_struct.properties[n];
+      GDBusPropertyInfo *info = _control_power_interface_info.parent_struct.properties[n];
       if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
         {
           GVariant *value;
-          value = _power_control_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.PowerControl", info->name, NULL, skeleton);
+          value = _control_power_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.control.Power", info->name, NULL, skeleton);
           if (value != NULL)
             {
               g_variant_take_ref (value);
@@ -1426,12 +1426,12 @@ out:
   return g_variant_builder_end (&builder);
 }
 
-static gboolean _power_control_emit_changed (gpointer user_data);
+static gboolean _control_power_emit_changed (gpointer user_data);
 
 static void
-power_control_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+control_power_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (_skeleton);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (_skeleton);
   gboolean emit_changed = FALSE;
 
   g_mutex_lock (&skeleton->priv->lock);
@@ -1444,14 +1444,14 @@ power_control_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
   g_mutex_unlock (&skeleton->priv->lock);
 
   if (emit_changed)
-    _power_control_emit_changed (skeleton);
+    _control_power_emit_changed (skeleton);
 }
 
 static void
-_power_control_on_signal_power_good (
-    PowerControl *object)
+_control_power_on_signal_power_good (
+    ControlPower *object)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
 
   GList      *connections, *l;
   GVariant   *signal_variant;
@@ -1462,7 +1462,7 @@ _power_control_on_signal_power_good (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.PowerControl", "PowerGood",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.control.Power", "PowerGood",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -1470,10 +1470,10 @@ _power_control_on_signal_power_good (
 }
 
 static void
-_power_control_on_signal_power_lost (
-    PowerControl *object)
+_control_power_on_signal_power_lost (
+    ControlPower *object)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
 
   GList      *connections, *l;
   GVariant   *signal_variant;
@@ -1484,28 +1484,28 @@ _power_control_on_signal_power_lost (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.PowerControl", "PowerLost",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.control.Power", "PowerLost",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
   g_list_free_full (connections, g_object_unref);
 }
 
-static void power_control_skeleton_iface_init (PowerControlIface *iface);
+static void control_power_skeleton_iface_init (ControlPowerIface *iface);
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (PowerControlSkeleton, power_control_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_ADD_PRIVATE (PowerControlSkeleton)
-                         G_IMPLEMENT_INTERFACE (TYPE_POWER_CONTROL, power_control_skeleton_iface_init));
+G_DEFINE_TYPE_WITH_CODE (ControlPowerSkeleton, control_power_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (ControlPowerSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_CONTROL_POWER, control_power_skeleton_iface_init));
 
 #else
-G_DEFINE_TYPE_WITH_CODE (PowerControlSkeleton, power_control_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_IMPLEMENT_INTERFACE (TYPE_POWER_CONTROL, power_control_skeleton_iface_init));
+G_DEFINE_TYPE_WITH_CODE (ControlPowerSkeleton, control_power_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_CONTROL_POWER, control_power_skeleton_iface_init));
 
 #endif
 static void
-power_control_skeleton_finalize (GObject *object)
+control_power_skeleton_finalize (GObject *object)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
   guint n;
   for (n = 0; n < 2; n++)
     g_value_unset (&skeleton->priv->properties[n]);
@@ -1515,16 +1515,16 @@ power_control_skeleton_finalize (GObject *object)
     g_source_destroy (skeleton->priv->changed_properties_idle_source);
   g_main_context_unref (skeleton->priv->context);
   g_mutex_clear (&skeleton->priv->lock);
-  G_OBJECT_CLASS (power_control_skeleton_parent_class)->finalize (object);
+  G_OBJECT_CLASS (control_power_skeleton_parent_class)->finalize (object);
 }
 
 static void
-power_control_skeleton_get_property (GObject      *object,
+control_power_skeleton_get_property (GObject      *object,
   guint         prop_id,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
   g_assert (prop_id != 0 && prop_id - 1 < 2);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
@@ -1532,9 +1532,9 @@ power_control_skeleton_get_property (GObject      *object,
 }
 
 static gboolean
-_power_control_emit_changed (gpointer user_data)
+_control_power_emit_changed (gpointer user_data)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (user_data);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (user_data);
   GList *l;
   GVariantBuilder builder;
   GVariantBuilder invalidated_builder;
@@ -1562,7 +1562,7 @@ _power_control_emit_changed (gpointer user_data)
     {
       GList *connections, *ll;
       GVariant *signal_variant;
-      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.PowerControl",
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.control.Power",
                                            &builder, &invalidated_builder));
       connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
       for (ll = connections; ll != NULL; ll = ll->next)
@@ -1592,7 +1592,7 @@ _power_control_emit_changed (gpointer user_data)
 }
 
 static void
-_power_control_schedule_emit_changed (PowerControlSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+_control_power_schedule_emit_changed (ControlPowerSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
 {
   ChangedProperty *cp;
   GList *l;
@@ -1618,17 +1618,17 @@ _power_control_schedule_emit_changed (PowerControlSkeleton *skeleton, const _Ext
 }
 
 static void
-power_control_skeleton_notify (GObject      *object,
+control_power_skeleton_notify (GObject      *object,
   GParamSpec *pspec G_GNUC_UNUSED)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
   g_mutex_lock (&skeleton->priv->lock);
   if (skeleton->priv->changed_properties != NULL &&
       skeleton->priv->changed_properties_idle_source == NULL)
     {
       skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
       g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
-      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _power_control_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _control_power_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
       g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
       g_source_unref (skeleton->priv->changed_properties_idle_source);
     }
@@ -1636,19 +1636,19 @@ power_control_skeleton_notify (GObject      *object,
 }
 
 static void
-power_control_skeleton_set_property (GObject      *object,
+control_power_skeleton_set_property (GObject      *object,
   guint         prop_id,
   const GValue *value,
   GParamSpec   *pspec)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
   g_assert (prop_id != 0 && prop_id - 1 < 2);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
     {
       if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
-        _power_control_schedule_emit_changed (skeleton, _power_control_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+        _control_power_schedule_emit_changed (skeleton, _control_power_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
       g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
       g_object_notify_by_pspec (object, pspec);
     }
@@ -1657,12 +1657,12 @@ power_control_skeleton_set_property (GObject      *object,
 }
 
 static void
-power_control_skeleton_init (PowerControlSkeleton *skeleton)
+control_power_skeleton_init (ControlPowerSkeleton *skeleton)
 {
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  skeleton->priv = power_control_skeleton_get_instance_private (skeleton);
+  skeleton->priv = control_power_skeleton_get_instance_private (skeleton);
 #else
-  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_POWER_CONTROL_SKELETON, PowerControlSkeletonPrivate);
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_CONTROL_POWER_SKELETON, ControlPowerSkeletonPrivate);
 #endif
 
   g_mutex_init (&skeleton->priv->lock);
@@ -1673,9 +1673,9 @@ power_control_skeleton_init (PowerControlSkeleton *skeleton)
 }
 
 static gint 
-power_control_skeleton_get_pgood (PowerControl *object)
+control_power_skeleton_get_pgood (ControlPower *object)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_int (&(skeleton->priv->properties[0]));
@@ -1684,9 +1684,9 @@ power_control_skeleton_get_pgood (PowerControl *object)
 }
 
 static gint 
-power_control_skeleton_get_state (PowerControl *object)
+control_power_skeleton_get_state (ControlPower *object)
 {
-  PowerControlSkeleton *skeleton = POWER_CONTROL_SKELETON (object);
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_int (&(skeleton->priv->properties[1]));
@@ -1695,51 +1695,51 @@ power_control_skeleton_get_state (PowerControl *object)
 }
 
 static void
-power_control_skeleton_class_init (PowerControlSkeletonClass *klass)
+control_power_skeleton_class_init (ControlPowerSkeletonClass *klass)
 {
   GObjectClass *gobject_class;
   GDBusInterfaceSkeletonClass *skeleton_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = power_control_skeleton_finalize;
-  gobject_class->get_property = power_control_skeleton_get_property;
-  gobject_class->set_property = power_control_skeleton_set_property;
-  gobject_class->notify       = power_control_skeleton_notify;
+  gobject_class->finalize = control_power_skeleton_finalize;
+  gobject_class->get_property = control_power_skeleton_get_property;
+  gobject_class->set_property = control_power_skeleton_set_property;
+  gobject_class->notify       = control_power_skeleton_notify;
 
 
-  power_control_override_properties (gobject_class, 1);
+  control_power_override_properties (gobject_class, 1);
 
   skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
-  skeleton_class->get_info = power_control_skeleton_dbus_interface_get_info;
-  skeleton_class->get_properties = power_control_skeleton_dbus_interface_get_properties;
-  skeleton_class->flush = power_control_skeleton_dbus_interface_flush;
-  skeleton_class->get_vtable = power_control_skeleton_dbus_interface_get_vtable;
+  skeleton_class->get_info = control_power_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = control_power_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = control_power_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = control_power_skeleton_dbus_interface_get_vtable;
 
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (PowerControlSkeletonPrivate));
+  g_type_class_add_private (klass, sizeof (ControlPowerSkeletonPrivate));
 #endif
 }
 
 static void
-power_control_skeleton_iface_init (PowerControlIface *iface)
+control_power_skeleton_iface_init (ControlPowerIface *iface)
 {
-  iface->power_good = _power_control_on_signal_power_good;
-  iface->power_lost = _power_control_on_signal_power_lost;
-  iface->get_pgood = power_control_skeleton_get_pgood;
-  iface->get_state = power_control_skeleton_get_state;
+  iface->power_good = _control_power_on_signal_power_good;
+  iface->power_lost = _control_power_on_signal_power_lost;
+  iface->get_pgood = control_power_skeleton_get_pgood;
+  iface->get_state = control_power_skeleton_get_state;
 }
 
 /**
- * power_control_skeleton_new:
+ * control_power_skeleton_new:
  *
- * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link>.
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link>.
  *
- * Returns: (transfer full) (type PowerControlSkeleton): The skeleton object.
+ * Returns: (transfer full) (type ControlPowerSkeleton): The skeleton object.
  */
-PowerControl *
-power_control_skeleton_new (void)
+ControlPower *
+control_power_skeleton_new (void)
 {
-  return POWER_CONTROL (g_object_new (TYPE_POWER_CONTROL_SKELETON, NULL));
+  return CONTROL_POWER (g_object_new (TYPE_CONTROL_POWER_SKELETON, NULL));
 }
 
 /* ------------------------------------------------------------------------
@@ -1775,52 +1775,52 @@ static void
 object_default_init (ObjectIface *iface)
 {
   /**
-   * Object:power-control:
+   * Object:control-power:
    *
-   * The #PowerControl instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link>, if any.
+   * The #ControlPower instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link>, if any.
    *
    * Connect to the #GObject::notify signal to get informed of property changes.
    */
-  g_object_interface_install_property (iface, g_param_spec_object ("power-control", "power-control", "power-control", TYPE_POWER_CONTROL, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+  g_object_interface_install_property (iface, g_param_spec_object ("control-power", "control-power", "control-power", TYPE_CONTROL_POWER, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
 }
 
 /**
- * object_get_power_control:
+ * object_get_control_power:
  * @object: A #Object.
  *
- * Gets the #PowerControl instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link> on @object, if any.
+ * Gets the #ControlPower instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link> on @object, if any.
  *
- * Returns: (transfer full): A #PowerControl that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ * Returns: (transfer full): A #ControlPower that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
  */
-PowerControl *object_get_power_control (Object *object)
+ControlPower *object_get_control_power (Object *object)
 {
   GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.PowerControl");
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
   if (ret == NULL)
     return NULL;
-  return POWER_CONTROL (ret);
+  return CONTROL_POWER (ret);
 }
 
 
 /**
- * object_peek_power_control: (skip)
+ * object_peek_control_power: (skip)
  * @object: A #Object.
  *
- * Like object_get_power_control() but doesn't increase the reference count on the returned object.
+ * Like object_get_control_power() but doesn't increase the reference count on the returned object.
  *
  * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
  *
- * Returns: (transfer none): A #PowerControl or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ * Returns: (transfer none): A #ControlPower or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
  */
-PowerControl *object_peek_power_control (Object *object)
+ControlPower *object_peek_control_power (Object *object)
 {
   GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.PowerControl");
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
   if (ret == NULL)
     return NULL;
   g_object_unref (ret);
-  return POWER_CONTROL (ret);
+  return CONTROL_POWER (ret);
 }
 
 
@@ -1891,7 +1891,7 @@ object_proxy_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.PowerControl");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
@@ -1909,7 +1909,7 @@ object_proxy_class_init (ObjectProxyClass *klass)
   gobject_class->set_property = object_proxy_set_property;
   gobject_class->get_property = object_proxy_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "power-control");
+  g_object_class_override_property (gobject_class, 1, "control-power");
 }
 
 /**
@@ -1980,12 +1980,12 @@ object_skeleton_set_property (GObject      *gobject,
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
-          g_warn_if_fail (IS_POWER_CONTROL (interface));
+          g_warn_if_fail (IS_CONTROL_POWER (interface));
           g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
         }
       else
         {
-          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.PowerControl");
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.control.Power");
         }
       break;
 
@@ -2007,7 +2007,7 @@ object_skeleton_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.PowerControl");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
@@ -2025,7 +2025,7 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
   gobject_class->set_property = object_skeleton_set_property;
   gobject_class->get_property = object_skeleton_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "power-control");
+  g_object_class_override_property (gobject_class, 1, "control-power");
 }
 
 /**
@@ -2044,15 +2044,15 @@ object_skeleton_new (const gchar *object_path)
 }
 
 /**
- * object_skeleton_set_power_control:
+ * object_skeleton_set_control_power:
  * @object: A #ObjectSkeleton.
- * @interface_: (allow-none): A #PowerControl or %NULL to clear the interface.
+ * @interface_: (allow-none): A #ControlPower or %NULL to clear the interface.
  *
- * Sets the #PowerControl instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-PowerControl.top_of_page">org.openbmc.PowerControl</link> on @object.
+ * Sets the #ControlPower instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Power.top_of_page">org.openbmc.control.Power</link> on @object.
  */
-void object_skeleton_set_power_control (ObjectSkeleton *object, PowerControl *interface_)
+void object_skeleton_set_control_power (ObjectSkeleton *object, ControlPower *interface_)
 {
-  g_object_set (G_OBJECT (object), "power-control", interface_, NULL);
+  g_object_set (G_OBJECT (object), "control-power", interface_, NULL);
 }
 
 
@@ -2117,7 +2117,7 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
   if (g_once_init_enter (&once_init_value))
     {
       lookup_hash = g_hash_table_new (g_str_hash, g_str_equal);
-      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.PowerControl", GSIZE_TO_POINTER (TYPE_POWER_CONTROL_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.control.Power", GSIZE_TO_POINTER (TYPE_CONTROL_POWER_PROXY));
       g_once_init_leave (&once_init_value, 1);
     }
   ret = (GType) GPOINTER_TO_SIZE (g_hash_table_lookup (lookup_hash, interface_name));

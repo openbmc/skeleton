@@ -13,104 +13,104 @@ G_BEGIN_DECLS
 
 
 /* ------------------------------------------------------------------------ */
-/* Declarations for org.openbmc.PowerControl */
+/* Declarations for org.openbmc.control.Power */
 
-#define TYPE_POWER_CONTROL (power_control_get_type ())
-#define POWER_CONTROL(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_POWER_CONTROL, PowerControl))
-#define IS_POWER_CONTROL(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_POWER_CONTROL))
-#define POWER_CONTROL_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_POWER_CONTROL, PowerControlIface))
+#define TYPE_CONTROL_POWER (control_power_get_type ())
+#define CONTROL_POWER(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_CONTROL_POWER, ControlPower))
+#define IS_CONTROL_POWER(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_CONTROL_POWER))
+#define CONTROL_POWER_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_CONTROL_POWER, ControlPowerIface))
 
-struct _PowerControl;
-typedef struct _PowerControl PowerControl;
-typedef struct _PowerControlIface PowerControlIface;
+struct _ControlPower;
+typedef struct _ControlPower ControlPower;
+typedef struct _ControlPowerIface ControlPowerIface;
 
-struct _PowerControlIface
+struct _ControlPowerIface
 {
   GTypeInterface parent_iface;
 
 
 
   gboolean (*handle_get_power_state) (
-    PowerControl *object,
+    ControlPower *object,
     GDBusMethodInvocation *invocation);
 
   gboolean (*handle_set_power_state) (
-    PowerControl *object,
+    ControlPower *object,
     GDBusMethodInvocation *invocation,
     gint arg_state);
 
-  gint  (*get_pgood) (PowerControl *object);
+  gint  (*get_pgood) (ControlPower *object);
 
-  gint  (*get_state) (PowerControl *object);
+  gint  (*get_state) (ControlPower *object);
 
   void (*power_good) (
-    PowerControl *object);
+    ControlPower *object);
 
   void (*power_lost) (
-    PowerControl *object);
+    ControlPower *object);
 
 };
 
-GType power_control_get_type (void) G_GNUC_CONST;
+GType control_power_get_type (void) G_GNUC_CONST;
 
-GDBusInterfaceInfo *power_control_interface_info (void);
-guint power_control_override_properties (GObjectClass *klass, guint property_id_begin);
+GDBusInterfaceInfo *control_power_interface_info (void);
+guint control_power_override_properties (GObjectClass *klass, guint property_id_begin);
 
 
 /* D-Bus method call completion functions: */
-void power_control_complete_set_power_state (
-    PowerControl *object,
+void control_power_complete_set_power_state (
+    ControlPower *object,
     GDBusMethodInvocation *invocation);
 
-void power_control_complete_get_power_state (
-    PowerControl *object,
+void control_power_complete_get_power_state (
+    ControlPower *object,
     GDBusMethodInvocation *invocation,
     gint state);
 
 
 
 /* D-Bus signal emissions functions: */
-void power_control_emit_power_good (
-    PowerControl *object);
+void control_power_emit_power_good (
+    ControlPower *object);
 
-void power_control_emit_power_lost (
-    PowerControl *object);
+void control_power_emit_power_lost (
+    ControlPower *object);
 
 
 
 /* D-Bus method calls: */
-void power_control_call_set_power_state (
-    PowerControl *proxy,
+void control_power_call_set_power_state (
+    ControlPower *proxy,
     gint arg_state,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean power_control_call_set_power_state_finish (
-    PowerControl *proxy,
+gboolean control_power_call_set_power_state_finish (
+    ControlPower *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean power_control_call_set_power_state_sync (
-    PowerControl *proxy,
+gboolean control_power_call_set_power_state_sync (
+    ControlPower *proxy,
     gint arg_state,
     GCancellable *cancellable,
     GError **error);
 
-void power_control_call_get_power_state (
-    PowerControl *proxy,
+void control_power_call_get_power_state (
+    ControlPower *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean power_control_call_get_power_state_finish (
-    PowerControl *proxy,
+gboolean control_power_call_get_power_state_finish (
+    ControlPower *proxy,
     gint *out_state,
     GAsyncResult *res,
     GError **error);
 
-gboolean power_control_call_get_power_state_sync (
-    PowerControl *proxy,
+gboolean control_power_call_get_power_state_sync (
+    ControlPower *proxy,
     gint *out_state,
     GCancellable *cancellable,
     GError **error);
@@ -118,41 +118,41 @@ gboolean power_control_call_get_power_state_sync (
 
 
 /* D-Bus property accessors: */
-gint power_control_get_pgood (PowerControl *object);
-void power_control_set_pgood (PowerControl *object, gint value);
+gint control_power_get_pgood (ControlPower *object);
+void control_power_set_pgood (ControlPower *object, gint value);
 
-gint power_control_get_state (PowerControl *object);
-void power_control_set_state (PowerControl *object, gint value);
+gint control_power_get_state (ControlPower *object);
+void control_power_set_state (ControlPower *object, gint value);
 
 
 /* ---- */
 
-#define TYPE_POWER_CONTROL_PROXY (power_control_proxy_get_type ())
-#define POWER_CONTROL_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_POWER_CONTROL_PROXY, PowerControlProxy))
-#define POWER_CONTROL_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_POWER_CONTROL_PROXY, PowerControlProxyClass))
-#define POWER_CONTROL_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_POWER_CONTROL_PROXY, PowerControlProxyClass))
-#define IS_POWER_CONTROL_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_POWER_CONTROL_PROXY))
-#define IS_POWER_CONTROL_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_POWER_CONTROL_PROXY))
+#define TYPE_CONTROL_POWER_PROXY (control_power_proxy_get_type ())
+#define CONTROL_POWER_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_CONTROL_POWER_PROXY, ControlPowerProxy))
+#define CONTROL_POWER_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_CONTROL_POWER_PROXY, ControlPowerProxyClass))
+#define CONTROL_POWER_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_CONTROL_POWER_PROXY, ControlPowerProxyClass))
+#define IS_CONTROL_POWER_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_CONTROL_POWER_PROXY))
+#define IS_CONTROL_POWER_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_CONTROL_POWER_PROXY))
 
-typedef struct _PowerControlProxy PowerControlProxy;
-typedef struct _PowerControlProxyClass PowerControlProxyClass;
-typedef struct _PowerControlProxyPrivate PowerControlProxyPrivate;
+typedef struct _ControlPowerProxy ControlPowerProxy;
+typedef struct _ControlPowerProxyClass ControlPowerProxyClass;
+typedef struct _ControlPowerProxyPrivate ControlPowerProxyPrivate;
 
-struct _PowerControlProxy
+struct _ControlPowerProxy
 {
   /*< private >*/
   GDBusProxy parent_instance;
-  PowerControlProxyPrivate *priv;
+  ControlPowerProxyPrivate *priv;
 };
 
-struct _PowerControlProxyClass
+struct _ControlPowerProxyClass
 {
   GDBusProxyClass parent_class;
 };
 
-GType power_control_proxy_get_type (void) G_GNUC_CONST;
+GType control_power_proxy_get_type (void) G_GNUC_CONST;
 
-void power_control_proxy_new (
+void control_power_proxy_new (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -160,10 +160,10 @@ void power_control_proxy_new (
     GCancellable        *cancellable,
     GAsyncReadyCallback  callback,
     gpointer             user_data);
-PowerControl *power_control_proxy_new_finish (
+ControlPower *control_power_proxy_new_finish (
     GAsyncResult        *res,
     GError             **error);
-PowerControl *power_control_proxy_new_sync (
+ControlPower *control_power_proxy_new_sync (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -171,7 +171,7 @@ PowerControl *power_control_proxy_new_sync (
     GCancellable        *cancellable,
     GError             **error);
 
-void power_control_proxy_new_for_bus (
+void control_power_proxy_new_for_bus (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -179,10 +179,10 @@ void power_control_proxy_new_for_bus (
     GCancellable        *cancellable,
     GAsyncReadyCallback  callback,
     gpointer             user_data);
-PowerControl *power_control_proxy_new_for_bus_finish (
+ControlPower *control_power_proxy_new_for_bus_finish (
     GAsyncResult        *res,
     GError             **error);
-PowerControl *power_control_proxy_new_for_bus_sync (
+ControlPower *control_power_proxy_new_for_bus_sync (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -193,32 +193,32 @@ PowerControl *power_control_proxy_new_for_bus_sync (
 
 /* ---- */
 
-#define TYPE_POWER_CONTROL_SKELETON (power_control_skeleton_get_type ())
-#define POWER_CONTROL_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_POWER_CONTROL_SKELETON, PowerControlSkeleton))
-#define POWER_CONTROL_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_POWER_CONTROL_SKELETON, PowerControlSkeletonClass))
-#define POWER_CONTROL_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_POWER_CONTROL_SKELETON, PowerControlSkeletonClass))
-#define IS_POWER_CONTROL_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_POWER_CONTROL_SKELETON))
-#define IS_POWER_CONTROL_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_POWER_CONTROL_SKELETON))
+#define TYPE_CONTROL_POWER_SKELETON (control_power_skeleton_get_type ())
+#define CONTROL_POWER_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_CONTROL_POWER_SKELETON, ControlPowerSkeleton))
+#define CONTROL_POWER_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_CONTROL_POWER_SKELETON, ControlPowerSkeletonClass))
+#define CONTROL_POWER_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_CONTROL_POWER_SKELETON, ControlPowerSkeletonClass))
+#define IS_CONTROL_POWER_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_CONTROL_POWER_SKELETON))
+#define IS_CONTROL_POWER_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_CONTROL_POWER_SKELETON))
 
-typedef struct _PowerControlSkeleton PowerControlSkeleton;
-typedef struct _PowerControlSkeletonClass PowerControlSkeletonClass;
-typedef struct _PowerControlSkeletonPrivate PowerControlSkeletonPrivate;
+typedef struct _ControlPowerSkeleton ControlPowerSkeleton;
+typedef struct _ControlPowerSkeletonClass ControlPowerSkeletonClass;
+typedef struct _ControlPowerSkeletonPrivate ControlPowerSkeletonPrivate;
 
-struct _PowerControlSkeleton
+struct _ControlPowerSkeleton
 {
   /*< private >*/
   GDBusInterfaceSkeleton parent_instance;
-  PowerControlSkeletonPrivate *priv;
+  ControlPowerSkeletonPrivate *priv;
 };
 
-struct _PowerControlSkeletonClass
+struct _ControlPowerSkeletonClass
 {
   GDBusInterfaceSkeletonClass parent_class;
 };
 
-GType power_control_skeleton_get_type (void) G_GNUC_CONST;
+GType control_power_skeleton_get_type (void) G_GNUC_CONST;
 
-PowerControl *power_control_skeleton_new (void);
+ControlPower *control_power_skeleton_new (void);
 
 
 /* ---- */
@@ -239,8 +239,8 @@ struct _ObjectIface
 
 GType object_get_type (void) G_GNUC_CONST;
 
-PowerControl *object_get_power_control (Object *object);
-PowerControl *object_peek_power_control (Object *object);
+ControlPower *object_get_control_power (Object *object);
+ControlPower *object_peek_control_power (Object *object);
 
 #define TYPE_OBJECT_PROXY (object_proxy_get_type ())
 #define OBJECT_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OBJECT_PROXY, ObjectProxy))
@@ -293,7 +293,7 @@ struct _ObjectSkeletonClass
 
 GType object_skeleton_get_type (void) G_GNUC_CONST;
 ObjectSkeleton *object_skeleton_new (const gchar *object_path);
-void object_skeleton_set_power_control (ObjectSkeleton *object, PowerControl *interface_);
+void object_skeleton_set_control_power (ObjectSkeleton *object, ControlPower *interface_);
 
 /* ---- */
 

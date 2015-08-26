@@ -30,15 +30,15 @@ struct _SensorIntegerIface
 
 
 
+  gboolean (*handle_get_threshold_state) (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation);
+
   gboolean (*handle_get_units) (
     SensorInteger *object,
     GDBusMethodInvocation *invocation);
 
   gboolean (*handle_get_value) (
-    SensorInteger *object,
-    GDBusMethodInvocation *invocation);
-
-  gboolean (*handle_go) (
     SensorInteger *object,
     GDBusMethodInvocation *invocation);
 
@@ -52,11 +52,29 @@ struct _SensorIntegerIface
     GDBusMethodInvocation *invocation,
     gint arg_poll_interval);
 
+  gboolean (*handle_set_thresholds) (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation,
+    gint arg_lower_critical,
+    gint arg_lower_warning,
+    gint arg_upper_warning,
+    gint arg_upper_critical);
+
   gint  (*get_changed_tolerance) (SensorInteger *object);
 
   const gchar *const * (*get_config_data) (SensorInteger *object);
 
   gint  (*get_poll_interval) (SensorInteger *object);
+
+  gint  (*get_threshold_lower_critical) (SensorInteger *object);
+
+  gint  (*get_threshold_lower_warning) (SensorInteger *object);
+
+  gint  (*get_threshold_state) (SensorInteger *object);
+
+  gint  (*get_threshold_upper_critical) (SensorInteger *object);
+
+  gint  (*get_threshold_upper_warning) (SensorInteger *object);
 
   const gchar * (*get_units) (SensorInteger *object);
 
@@ -65,6 +83,12 @@ struct _SensorIntegerIface
   void (*changed) (
     SensorInteger *object,
     gint arg_value);
+
+  void (*critical) (
+    SensorInteger *object);
+
+  void (*warning) (
+    SensorInteger *object);
 
 };
 
@@ -85,6 +109,10 @@ void sensor_integer_complete_get_units (
     GDBusMethodInvocation *invocation,
     const gchar *units);
 
+void sensor_integer_complete_set_thresholds (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation);
+
 void sensor_integer_complete_set_poll_interval (
     SensorInteger *object,
     GDBusMethodInvocation *invocation);
@@ -93,9 +121,10 @@ void sensor_integer_complete_set_config_data (
     SensorInteger *object,
     GDBusMethodInvocation *invocation);
 
-void sensor_integer_complete_go (
+void sensor_integer_complete_get_threshold_state (
     SensorInteger *object,
-    GDBusMethodInvocation *invocation);
+    GDBusMethodInvocation *invocation,
+    gint threshold_state);
 
 
 
@@ -103,6 +132,12 @@ void sensor_integer_complete_go (
 void sensor_integer_emit_changed (
     SensorInteger *object,
     gint arg_value);
+
+void sensor_integer_emit_warning (
+    SensorInteger *object);
+
+void sensor_integer_emit_critical (
+    SensorInteger *object);
 
 
 
@@ -143,6 +178,30 @@ gboolean sensor_integer_call_get_units_sync (
     GCancellable *cancellable,
     GError **error);
 
+void sensor_integer_call_set_thresholds (
+    SensorInteger *proxy,
+    gint arg_lower_critical,
+    gint arg_lower_warning,
+    gint arg_upper_warning,
+    gint arg_upper_critical,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean sensor_integer_call_set_thresholds_finish (
+    SensorInteger *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean sensor_integer_call_set_thresholds_sync (
+    SensorInteger *proxy,
+    gint arg_lower_critical,
+    gint arg_lower_warning,
+    gint arg_upper_warning,
+    gint arg_upper_critical,
+    GCancellable *cancellable,
+    GError **error);
+
 void sensor_integer_call_set_poll_interval (
     SensorInteger *proxy,
     gint arg_poll_interval,
@@ -179,19 +238,21 @@ gboolean sensor_integer_call_set_config_data_sync (
     GCancellable *cancellable,
     GError **error);
 
-void sensor_integer_call_go (
+void sensor_integer_call_get_threshold_state (
     SensorInteger *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean sensor_integer_call_go_finish (
+gboolean sensor_integer_call_get_threshold_state_finish (
     SensorInteger *proxy,
+    gint *out_threshold_state,
     GAsyncResult *res,
     GError **error);
 
-gboolean sensor_integer_call_go_sync (
+gboolean sensor_integer_call_get_threshold_state_sync (
     SensorInteger *proxy,
+    gint *out_threshold_state,
     GCancellable *cancellable,
     GError **error);
 
@@ -204,6 +265,21 @@ void sensor_integer_set_value (SensorInteger *object, gint value);
 const gchar *sensor_integer_get_units (SensorInteger *object);
 gchar *sensor_integer_dup_units (SensorInteger *object);
 void sensor_integer_set_units (SensorInteger *object, const gchar *value);
+
+gint sensor_integer_get_threshold_lower_critical (SensorInteger *object);
+void sensor_integer_set_threshold_lower_critical (SensorInteger *object, gint value);
+
+gint sensor_integer_get_threshold_lower_warning (SensorInteger *object);
+void sensor_integer_set_threshold_lower_warning (SensorInteger *object, gint value);
+
+gint sensor_integer_get_threshold_upper_warning (SensorInteger *object);
+void sensor_integer_set_threshold_upper_warning (SensorInteger *object, gint value);
+
+gint sensor_integer_get_threshold_upper_critical (SensorInteger *object);
+void sensor_integer_set_threshold_upper_critical (SensorInteger *object, gint value);
+
+gint sensor_integer_get_threshold_state (SensorInteger *object);
+void sensor_integer_set_threshold_state (SensorInteger *object, gint value);
 
 gint sensor_integer_get_poll_interval (SensorInteger *object);
 void sensor_integer_set_poll_interval (SensorInteger *object, gint value);

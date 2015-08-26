@@ -1,8 +1,8 @@
 #include "interfaces/led.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
-static const gchar* dbus_object_path = "/org/openbmc/control/ChassisControl";
-static const gchar* dbus_name        = "org.openbmc.control.ChassisControl";
+static const gchar* dbus_object_path = "/org/openbmc/leds/ChassisIdentify";
+static const gchar* dbus_name        = "org.openbmc.leds.ChassisIdentify";
 
 static GDBusObjectManagerServer *manager = NULL;
 //static Led *led = NULL;

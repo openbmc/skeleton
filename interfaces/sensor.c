@@ -223,6 +223,72 @@ static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_get_units =
   FALSE
 };
 
+static const _ExtendedGDBusArgInfo _sensor_integer_method_info_set_thresholds_IN_ARG_lower_critical =
+{
+  {
+    -1,
+    (gchar *) "lower_critical",
+    (gchar *) "i",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _sensor_integer_method_info_set_thresholds_IN_ARG_lower_warning =
+{
+  {
+    -1,
+    (gchar *) "lower_warning",
+    (gchar *) "i",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _sensor_integer_method_info_set_thresholds_IN_ARG_upper_warning =
+{
+  {
+    -1,
+    (gchar *) "upper_warning",
+    (gchar *) "i",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _sensor_integer_method_info_set_thresholds_IN_ARG_upper_critical =
+{
+  {
+    -1,
+    (gchar *) "upper_critical",
+    (gchar *) "i",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _sensor_integer_method_info_set_thresholds_IN_ARG_pointers[] =
+{
+  &_sensor_integer_method_info_set_thresholds_IN_ARG_lower_critical,
+  &_sensor_integer_method_info_set_thresholds_IN_ARG_lower_warning,
+  &_sensor_integer_method_info_set_thresholds_IN_ARG_upper_warning,
+  &_sensor_integer_method_info_set_thresholds_IN_ARG_upper_critical,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_set_thresholds =
+{
+  {
+    -1,
+    (gchar *) "setThresholds",
+    (GDBusArgInfo **) &_sensor_integer_method_info_set_thresholds_IN_ARG_pointers,
+    NULL,
+    NULL
+  },
+  "handle-set-thresholds",
+  FALSE
+};
+
 static const _ExtendedGDBusArgInfo _sensor_integer_method_info_set_poll_interval_IN_ARG_poll_interval =
 {
   {
@@ -283,16 +349,33 @@ static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_set_config_dat
   FALSE
 };
 
-static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_go =
+static const _ExtendedGDBusArgInfo _sensor_integer_method_info_get_threshold_state_OUT_ARG_threshold_state =
 {
   {
     -1,
-    (gchar *) "go",
-    NULL,
-    NULL,
+    (gchar *) "threshold_state",
+    (gchar *) "i",
     NULL
   },
-  "handle-go",
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _sensor_integer_method_info_get_threshold_state_OUT_ARG_pointers[] =
+{
+  &_sensor_integer_method_info_get_threshold_state_OUT_ARG_threshold_state,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_get_threshold_state =
+{
+  {
+    -1,
+    (gchar *) "getThresholdState",
+    NULL,
+    (GDBusArgInfo **) &_sensor_integer_method_info_get_threshold_state_OUT_ARG_pointers,
+    NULL
+  },
+  "handle-get-threshold-state",
   FALSE
 };
 
@@ -300,9 +383,10 @@ static const _ExtendedGDBusMethodInfo * const _sensor_integer_method_info_pointe
 {
   &_sensor_integer_method_info_get_value,
   &_sensor_integer_method_info_get_units,
+  &_sensor_integer_method_info_set_thresholds,
   &_sensor_integer_method_info_set_poll_interval,
   &_sensor_integer_method_info_set_config_data,
-  &_sensor_integer_method_info_go,
+  &_sensor_integer_method_info_get_threshold_state,
   NULL
 };
 
@@ -334,9 +418,33 @@ static const _ExtendedGDBusSignalInfo _sensor_integer_signal_info_changed =
   "changed"
 };
 
+static const _ExtendedGDBusSignalInfo _sensor_integer_signal_info_warning =
+{
+  {
+    -1,
+    (gchar *) "Warning",
+    NULL,
+    NULL
+  },
+  "warning"
+};
+
+static const _ExtendedGDBusSignalInfo _sensor_integer_signal_info_critical =
+{
+  {
+    -1,
+    (gchar *) "Critical",
+    NULL,
+    NULL
+  },
+  "critical"
+};
+
 static const _ExtendedGDBusSignalInfo * const _sensor_integer_signal_info_pointers[] =
 {
   &_sensor_integer_signal_info_changed,
+  &_sensor_integer_signal_info_warning,
+  &_sensor_integer_signal_info_critical,
   NULL
 };
 
@@ -363,6 +471,71 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_units =
     NULL
   },
   "units",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_threshold_lower_critical =
+{
+  {
+    -1,
+    (gchar *) "threshold_lower_critical",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "threshold-lower-critical",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_threshold_lower_warning =
+{
+  {
+    -1,
+    (gchar *) "threshold_lower_warning",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "threshold-lower-warning",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_threshold_upper_warning =
+{
+  {
+    -1,
+    (gchar *) "threshold_upper_warning",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "threshold-upper-warning",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_threshold_upper_critical =
+{
+  {
+    -1,
+    (gchar *) "threshold_upper_critical",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "threshold-upper-critical",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_threshold_state =
+{
+  {
+    -1,
+    (gchar *) "threshold_state",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "threshold-state",
   FALSE
 };
 
@@ -409,6 +582,11 @@ static const _ExtendedGDBusPropertyInfo * const _sensor_integer_property_info_po
 {
   &_sensor_integer_property_info_value,
   &_sensor_integer_property_info_units,
+  &_sensor_integer_property_info_threshold_lower_critical,
+  &_sensor_integer_property_info_threshold_lower_warning,
+  &_sensor_integer_property_info_threshold_upper_warning,
+  &_sensor_integer_property_info_threshold_upper_critical,
+  &_sensor_integer_property_info_threshold_state,
   &_sensor_integer_property_info_poll_interval,
   &_sensor_integer_property_info_config_data,
   &_sensor_integer_property_info_changed_tolerance,
@@ -457,6 +635,11 @@ sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin
 {
   g_object_class_override_property (klass, property_id_begin++, "value");
   g_object_class_override_property (klass, property_id_begin++, "units");
+  g_object_class_override_property (klass, property_id_begin++, "threshold-lower-critical");
+  g_object_class_override_property (klass, property_id_begin++, "threshold-lower-warning");
+  g_object_class_override_property (klass, property_id_begin++, "threshold-upper-warning");
+  g_object_class_override_property (klass, property_id_begin++, "threshold-upper-critical");
+  g_object_class_override_property (klass, property_id_begin++, "threshold-state");
   g_object_class_override_property (klass, property_id_begin++, "poll-interval");
   g_object_class_override_property (klass, property_id_begin++, "config-data");
   g_object_class_override_property (klass, property_id_begin++, "changed-tolerance");
@@ -474,17 +657,25 @@ sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin
 /**
  * SensorIntegerIface:
  * @parent_iface: The parent interface.
+ * @handle_get_threshold_state: Handler for the #SensorInteger::handle-get-threshold-state signal.
  * @handle_get_units: Handler for the #SensorInteger::handle-get-units signal.
  * @handle_get_value: Handler for the #SensorInteger::handle-get-value signal.
- * @handle_go: Handler for the #SensorInteger::handle-go signal.
  * @handle_set_config_data: Handler for the #SensorInteger::handle-set-config-data signal.
  * @handle_set_poll_interval: Handler for the #SensorInteger::handle-set-poll-interval signal.
+ * @handle_set_thresholds: Handler for the #SensorInteger::handle-set-thresholds signal.
  * @get_changed_tolerance: Getter for the #SensorInteger:changed-tolerance property.
  * @get_config_data: Getter for the #SensorInteger:config-data property.
  * @get_poll_interval: Getter for the #SensorInteger:poll-interval property.
+ * @get_threshold_lower_critical: Getter for the #SensorInteger:threshold-lower-critical property.
+ * @get_threshold_lower_warning: Getter for the #SensorInteger:threshold-lower-warning property.
+ * @get_threshold_state: Getter for the #SensorInteger:threshold-state property.
+ * @get_threshold_upper_critical: Getter for the #SensorInteger:threshold-upper-critical property.
+ * @get_threshold_upper_warning: Getter for the #SensorInteger:threshold-upper-warning property.
  * @get_units: Getter for the #SensorInteger:units property.
  * @get_value: Getter for the #SensorInteger:value property.
  * @changed: Handler for the #SensorInteger::changed signal.
+ * @critical: Handler for the #SensorInteger::critical signal.
+ * @warning: Handler for the #SensorInteger::warning signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link>.
  */
@@ -541,6 +732,32 @@ sensor_integer_default_init (SensorIntegerIface *iface)
     G_TYPE_DBUS_METHOD_INVOCATION);
 
   /**
+   * SensorInteger::handle-set-thresholds:
+   * @object: A #SensorInteger.
+   * @invocation: A #GDBusMethodInvocation.
+   * @arg_lower_critical: Argument passed by remote caller.
+   * @arg_lower_warning: Argument passed by remote caller.
+   * @arg_upper_warning: Argument passed by remote caller.
+   * @arg_upper_critical: Argument passed by remote caller.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.setThresholds">setThresholds()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_set_thresholds() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-set-thresholds",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SensorIntegerIface, handle_set_thresholds),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    5,
+    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+
+  /**
    * SensorInteger::handle-set-poll-interval:
    * @object: A #SensorInteger.
    * @invocation: A #GDBusMethodInvocation.
@@ -587,20 +804,20 @@ sensor_integer_default_init (SensorIntegerIface *iface)
     G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRV);
 
   /**
-   * SensorInteger::handle-go:
+   * SensorInteger::handle-get-threshold-state:
    * @object: A #SensorInteger.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.go">go()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.getThresholdState">getThresholdState()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_go() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_get_threshold_state() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
-  g_signal_new ("handle-go",
+  g_signal_new ("handle-get-threshold-state",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, handle_go),
+    G_STRUCT_OFFSET (SensorIntegerIface, handle_get_threshold_state),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -628,6 +845,42 @@ sensor_integer_default_init (SensorIntegerIface *iface)
     G_TYPE_NONE,
     1, G_TYPE_INT);
 
+  /**
+   * SensorInteger::warning:
+   * @object: A #SensorInteger.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorInteger.Warning">"Warning"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("warning",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SensorIntegerIface, warning),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    0);
+
+  /**
+   * SensorInteger::critical:
+   * @object: A #SensorInteger.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorInteger.Critical">"Critical"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("critical",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SensorIntegerIface, critical),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    0);
+
   /* GObject properties for D-Bus properties: */
   /**
    * SensorInteger:value:
@@ -647,6 +900,51 @@ sensor_integer_default_init (SensorIntegerIface *iface)
    */
   g_object_interface_install_property (iface,
     g_param_spec_string ("units", "units", "units", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SensorInteger:threshold-lower-critical:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_lower_critical">"threshold_lower_critical"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("threshold-lower-critical", "threshold_lower_critical", "threshold_lower_critical", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SensorInteger:threshold-lower-warning:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_lower_warning">"threshold_lower_warning"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("threshold-lower-warning", "threshold_lower_warning", "threshold_lower_warning", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SensorInteger:threshold-upper-warning:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_upper_warning">"threshold_upper_warning"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("threshold-upper-warning", "threshold_upper_warning", "threshold_upper_warning", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SensorInteger:threshold-upper-critical:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_upper_critical">"threshold_upper_critical"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("threshold-upper-critical", "threshold_upper_critical", "threshold_upper_critical", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SensorInteger:threshold-state:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_state">"threshold_state"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("threshold-state", "threshold_state", "threshold_state", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
    * SensorInteger:poll-interval:
    *
@@ -756,6 +1054,161 @@ void
 sensor_integer_set_units (SensorInteger *object, const gchar *value)
 {
   g_object_set (G_OBJECT (object), "units", value, NULL);
+}
+
+/**
+ * sensor_integer_get_threshold_lower_critical: (skip)
+ * @object: A #SensorInteger.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_lower_critical">"threshold_lower_critical"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+sensor_integer_get_threshold_lower_critical (SensorInteger *object)
+{
+  return SENSOR_INTEGER_GET_IFACE (object)->get_threshold_lower_critical (object);
+}
+
+/**
+ * sensor_integer_set_threshold_lower_critical: (skip)
+ * @object: A #SensorInteger.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_lower_critical">"threshold_lower_critical"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+sensor_integer_set_threshold_lower_critical (SensorInteger *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "threshold-lower-critical", value, NULL);
+}
+
+/**
+ * sensor_integer_get_threshold_lower_warning: (skip)
+ * @object: A #SensorInteger.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_lower_warning">"threshold_lower_warning"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+sensor_integer_get_threshold_lower_warning (SensorInteger *object)
+{
+  return SENSOR_INTEGER_GET_IFACE (object)->get_threshold_lower_warning (object);
+}
+
+/**
+ * sensor_integer_set_threshold_lower_warning: (skip)
+ * @object: A #SensorInteger.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_lower_warning">"threshold_lower_warning"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+sensor_integer_set_threshold_lower_warning (SensorInteger *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "threshold-lower-warning", value, NULL);
+}
+
+/**
+ * sensor_integer_get_threshold_upper_warning: (skip)
+ * @object: A #SensorInteger.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_upper_warning">"threshold_upper_warning"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+sensor_integer_get_threshold_upper_warning (SensorInteger *object)
+{
+  return SENSOR_INTEGER_GET_IFACE (object)->get_threshold_upper_warning (object);
+}
+
+/**
+ * sensor_integer_set_threshold_upper_warning: (skip)
+ * @object: A #SensorInteger.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_upper_warning">"threshold_upper_warning"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+sensor_integer_set_threshold_upper_warning (SensorInteger *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "threshold-upper-warning", value, NULL);
+}
+
+/**
+ * sensor_integer_get_threshold_upper_critical: (skip)
+ * @object: A #SensorInteger.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_upper_critical">"threshold_upper_critical"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+sensor_integer_get_threshold_upper_critical (SensorInteger *object)
+{
+  return SENSOR_INTEGER_GET_IFACE (object)->get_threshold_upper_critical (object);
+}
+
+/**
+ * sensor_integer_set_threshold_upper_critical: (skip)
+ * @object: A #SensorInteger.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_upper_critical">"threshold_upper_critical"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+sensor_integer_set_threshold_upper_critical (SensorInteger *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "threshold-upper-critical", value, NULL);
+}
+
+/**
+ * sensor_integer_get_threshold_state: (skip)
+ * @object: A #SensorInteger.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_state">"threshold_state"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+sensor_integer_get_threshold_state (SensorInteger *object)
+{
+  return SENSOR_INTEGER_GET_IFACE (object)->get_threshold_state (object);
+}
+
+/**
+ * sensor_integer_set_threshold_state: (skip)
+ * @object: A #SensorInteger.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.threshold_state">"threshold_state"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+sensor_integer_set_threshold_state (SensorInteger *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "threshold-state", value, NULL);
 }
 
 /**
@@ -884,6 +1337,32 @@ sensor_integer_emit_changed (
     gint arg_value)
 {
   g_signal_emit_by_name (object, "changed", arg_value);
+}
+
+/**
+ * sensor_integer_emit_warning:
+ * @object: A #SensorInteger.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorInteger.Warning">"Warning"</link> D-Bus signal.
+ */
+void
+sensor_integer_emit_warning (
+    SensorInteger *object)
+{
+  g_signal_emit_by_name (object, "warning");
+}
+
+/**
+ * sensor_integer_emit_critical:
+ * @object: A #SensorInteger.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorInteger.Critical">"Critical"</link> D-Bus signal.
+ */
+void
+sensor_integer_emit_critical (
+    SensorInteger *object)
+{
+  g_signal_emit_by_name (object, "critical");
 }
 
 /**
@@ -1077,6 +1556,122 @@ sensor_integer_call_get_units_sync (
   g_variant_get (_ret,
                  "(s)",
                  out_units);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * sensor_integer_call_set_thresholds:
+ * @proxy: A #SensorIntegerProxy.
+ * @arg_lower_critical: Argument to pass with the method invocation.
+ * @arg_lower_warning: Argument to pass with the method invocation.
+ * @arg_upper_warning: Argument to pass with the method invocation.
+ * @arg_upper_critical: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.setThresholds">setThresholds()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call sensor_integer_call_set_thresholds_finish() to get the result of the operation.
+ *
+ * See sensor_integer_call_set_thresholds_sync() for the synchronous, blocking version of this method.
+ */
+void
+sensor_integer_call_set_thresholds (
+    SensorInteger *proxy,
+    gint arg_lower_critical,
+    gint arg_lower_warning,
+    gint arg_upper_warning,
+    gint arg_upper_critical,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "setThresholds",
+    g_variant_new ("(iiii)",
+                   arg_lower_critical,
+                   arg_lower_warning,
+                   arg_upper_warning,
+                   arg_upper_critical),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * sensor_integer_call_set_thresholds_finish:
+ * @proxy: A #SensorIntegerProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_set_thresholds().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with sensor_integer_call_set_thresholds().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+sensor_integer_call_set_thresholds_finish (
+    SensorInteger *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * sensor_integer_call_set_thresholds_sync:
+ * @proxy: A #SensorIntegerProxy.
+ * @arg_lower_critical: Argument to pass with the method invocation.
+ * @arg_lower_warning: Argument to pass with the method invocation.
+ * @arg_upper_warning: Argument to pass with the method invocation.
+ * @arg_upper_critical: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.setThresholds">setThresholds()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See sensor_integer_call_set_thresholds() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+sensor_integer_call_set_thresholds_sync (
+    SensorInteger *proxy,
+    gint arg_lower_critical,
+    gint arg_lower_warning,
+    gint arg_upper_warning,
+    gint arg_upper_critical,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "setThresholds",
+    g_variant_new ("(iiii)",
+                   arg_lower_critical,
+                   arg_lower_warning,
+                   arg_upper_warning,
+                   arg_upper_critical),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
   g_variant_unref (_ret);
 _out:
   return _ret != NULL;
@@ -1279,27 +1874,27 @@ _out:
 }
 
 /**
- * sensor_integer_call_go:
+ * sensor_integer_call_get_threshold_state:
  * @proxy: A #SensorIntegerProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.go">go()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getThresholdState">getThresholdState()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_call_go_finish() to get the result of the operation.
+ * You can then call sensor_integer_call_get_threshold_state_finish() to get the result of the operation.
  *
- * See sensor_integer_call_go_sync() for the synchronous, blocking version of this method.
+ * See sensor_integer_call_get_threshold_state_sync() for the synchronous, blocking version of this method.
  */
 void
-sensor_integer_call_go (
+sensor_integer_call_get_threshold_state (
     SensorInteger *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "go",
+    "getThresholdState",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -1309,18 +1904,20 @@ sensor_integer_call_go (
 }
 
 /**
- * sensor_integer_call_go_finish:
+ * sensor_integer_call_get_threshold_state_finish:
  * @proxy: A #SensorIntegerProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_go().
+ * @out_threshold_state: (out): Return location for return parameter or %NULL to ignore.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_get_threshold_state().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with sensor_integer_call_go().
+ * Finishes an operation started with sensor_integer_call_get_threshold_state().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_go_finish (
+sensor_integer_call_get_threshold_state_finish (
     SensorInteger *proxy,
+    gint *out_threshold_state,
     GAsyncResult *res,
     GError **error)
 {
@@ -1329,33 +1926,36 @@ sensor_integer_call_go_finish (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "()");
+                 "(i)",
+                 out_threshold_state);
   g_variant_unref (_ret);
 _out:
   return _ret != NULL;
 }
 
 /**
- * sensor_integer_call_go_sync:
+ * sensor_integer_call_get_threshold_state_sync:
  * @proxy: A #SensorIntegerProxy.
+ * @out_threshold_state: (out): Return location for return parameter or %NULL to ignore.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.go">go()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getThresholdState">getThresholdState()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_call_go() for the asynchronous version of this method.
+ * See sensor_integer_call_get_threshold_state() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_go_sync (
+sensor_integer_call_get_threshold_state_sync (
     SensorInteger *proxy,
+    gint *out_threshold_state,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "go",
+    "getThresholdState",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -1364,7 +1964,8 @@ sensor_integer_call_go_sync (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "()");
+                 "(i)",
+                 out_threshold_state);
   g_variant_unref (_ret);
 _out:
   return _ret != NULL;
@@ -1413,6 +2014,24 @@ sensor_integer_complete_get_units (
 }
 
 /**
+ * sensor_integer_complete_set_thresholds:
+ * @object: A #SensorInteger.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.setThresholds">setThresholds()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+sensor_integer_complete_set_thresholds (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
+}
+
+/**
  * sensor_integer_complete_set_poll_interval:
  * @object: A #SensorInteger.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
@@ -1449,21 +2068,24 @@ sensor_integer_complete_set_config_data (
 }
 
 /**
- * sensor_integer_complete_go:
+ * sensor_integer_complete_get_threshold_state:
  * @object: A #SensorInteger.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
+ * @threshold_state: Parameter to return.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.go">go()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.getThresholdState">getThresholdState()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-sensor_integer_complete_go (
+sensor_integer_complete_get_threshold_state (
     SensorInteger *object,
-    GDBusMethodInvocation *invocation)
+    GDBusMethodInvocation *invocation,
+    gint threshold_state)
 {
   g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
+    g_variant_new ("(i)",
+                   threshold_state));
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1514,7 +2136,7 @@ sensor_integer_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 5);
+  g_assert (prop_id != 0 && prop_id - 1 < 10);
   info = _sensor_integer_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -1561,7 +2183,7 @@ sensor_integer_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 5);
+  g_assert (prop_id != 0 && prop_id - 1 < 10);
   info = _sensor_integer_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -1674,6 +2296,81 @@ sensor_integer_proxy_get_units (SensorInteger *object)
 }
 
 static gint 
+sensor_integer_proxy_get_threshold_lower_critical (SensorInteger *object)
+{
+  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "threshold_lower_critical");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static gint 
+sensor_integer_proxy_get_threshold_lower_warning (SensorInteger *object)
+{
+  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "threshold_lower_warning");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static gint 
+sensor_integer_proxy_get_threshold_upper_warning (SensorInteger *object)
+{
+  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "threshold_upper_warning");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static gint 
+sensor_integer_proxy_get_threshold_upper_critical (SensorInteger *object)
+{
+  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "threshold_upper_critical");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static gint 
+sensor_integer_proxy_get_threshold_state (SensorInteger *object)
+{
+  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "threshold_state");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static gint 
 sensor_integer_proxy_get_poll_interval (SensorInteger *object)
 {
   SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
@@ -1761,6 +2458,11 @@ sensor_integer_proxy_iface_init (SensorIntegerIface *iface)
 {
   iface->get_value = sensor_integer_proxy_get_value;
   iface->get_units = sensor_integer_proxy_get_units;
+  iface->get_threshold_lower_critical = sensor_integer_proxy_get_threshold_lower_critical;
+  iface->get_threshold_lower_warning = sensor_integer_proxy_get_threshold_lower_warning;
+  iface->get_threshold_upper_warning = sensor_integer_proxy_get_threshold_upper_warning;
+  iface->get_threshold_upper_critical = sensor_integer_proxy_get_threshold_upper_critical;
+  iface->get_threshold_state = sensor_integer_proxy_get_threshold_state;
   iface->get_poll_interval = sensor_integer_proxy_get_poll_interval;
   iface->get_config_data = sensor_integer_proxy_get_config_data;
   iface->get_changed_tolerance = sensor_integer_proxy_get_changed_tolerance;
@@ -2198,6 +2900,50 @@ _sensor_integer_on_signal_changed (
   g_list_free_full (connections, g_object_unref);
 }
 
+static void
+_sensor_integer_on_signal_warning (
+    SensorInteger *object)
+{
+  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("()"));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorInteger", "Warning",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void
+_sensor_integer_on_signal_critical (
+    SensorInteger *object)
+{
+  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("()"));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorInteger", "Critical",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
 static void sensor_integer_skeleton_iface_init (SensorIntegerIface *iface);
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
 G_DEFINE_TYPE_WITH_CODE (SensorIntegerSkeleton, sensor_integer_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
@@ -2214,7 +2960,7 @@ sensor_integer_skeleton_finalize (GObject *object)
 {
   SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
   guint n;
-  for (n = 0; n < 5; n++)
+  for (n = 0; n < 10; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -2232,7 +2978,7 @@ sensor_integer_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 5);
+  g_assert (prop_id != 0 && prop_id - 1 < 10);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -2349,7 +3095,7 @@ sensor_integer_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 5);
+  g_assert (prop_id != 0 && prop_id - 1 < 10);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -2374,12 +3120,17 @@ sensor_integer_skeleton_init (SensorIntegerSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 5);
+  skeleton->priv->properties = g_new0 (GValue, 10);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
   g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
-  g_value_init (&skeleton->priv->properties[3], G_TYPE_STRV);
+  g_value_init (&skeleton->priv->properties[3], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[4], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[5], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[6], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[7], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[8], G_TYPE_STRV);
+  g_value_init (&skeleton->priv->properties[9], G_TYPE_INT);
 }
 
 static gint 
@@ -2405,12 +3156,67 @@ sensor_integer_skeleton_get_units (SensorInteger *object)
 }
 
 static gint 
-sensor_integer_skeleton_get_poll_interval (SensorInteger *object)
+sensor_integer_skeleton_get_threshold_lower_critical (SensorInteger *object)
 {
   SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_int (&(skeleton->priv->properties[2]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static gint 
+sensor_integer_skeleton_get_threshold_lower_warning (SensorInteger *object)
+{
+  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[3]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static gint 
+sensor_integer_skeleton_get_threshold_upper_warning (SensorInteger *object)
+{
+  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[4]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static gint 
+sensor_integer_skeleton_get_threshold_upper_critical (SensorInteger *object)
+{
+  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[5]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static gint 
+sensor_integer_skeleton_get_threshold_state (SensorInteger *object)
+{
+  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[6]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static gint 
+sensor_integer_skeleton_get_poll_interval (SensorInteger *object)
+{
+  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[7]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -2421,7 +3227,7 @@ sensor_integer_skeleton_get_config_data (SensorInteger *object)
   SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
   const gchar *const *value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_boxed (&(skeleton->priv->properties[3]));
+  value = g_value_get_boxed (&(skeleton->priv->properties[8]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -2432,7 +3238,7 @@ sensor_integer_skeleton_get_changed_tolerance (SensorInteger *object)
   SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[4]));
+  value = g_value_get_int (&(skeleton->priv->properties[9]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -2467,8 +3273,15 @@ static void
 sensor_integer_skeleton_iface_init (SensorIntegerIface *iface)
 {
   iface->changed = _sensor_integer_on_signal_changed;
+  iface->warning = _sensor_integer_on_signal_warning;
+  iface->critical = _sensor_integer_on_signal_critical;
   iface->get_value = sensor_integer_skeleton_get_value;
   iface->get_units = sensor_integer_skeleton_get_units;
+  iface->get_threshold_lower_critical = sensor_integer_skeleton_get_threshold_lower_critical;
+  iface->get_threshold_lower_warning = sensor_integer_skeleton_get_threshold_lower_warning;
+  iface->get_threshold_upper_warning = sensor_integer_skeleton_get_threshold_upper_warning;
+  iface->get_threshold_upper_critical = sensor_integer_skeleton_get_threshold_upper_critical;
+  iface->get_threshold_state = sensor_integer_skeleton_get_threshold_state;
   iface->get_poll_interval = sensor_integer_skeleton_get_poll_interval;
   iface->get_config_data = sensor_integer_skeleton_get_config_data;
   iface->get_changed_tolerance = sensor_integer_skeleton_get_changed_tolerance;

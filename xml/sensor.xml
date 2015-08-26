@@ -7,20 +7,40 @@
 		<method name="getUnits">
 			<arg name="units" type="s" direction="out"/>
 		</method>
+		<method name="setThresholds">
+			<arg name="lower_critical" type="i" direction="in"/>
+			<arg name="lower_warning"  type="i" direction="in"/>
+			<arg name="upper_warning"  type="i" direction="in"/>
+			<arg name="upper_critical" type="i" direction="in"/>
+		</method>
 		<method name="setPollInterval">
 			<arg name="poll_interval" type="i" direction="in"/>
 		</method>
 		<method name="setConfigData">
 			<arg name="config" type="as" direction="in"/>
 		</method>
+		<method name="getThresholdState">
+			<arg name="threshold_state" type="i" direction="out"/>
+		</method>
+
                 <property name="value" type="i" access="read"/>
 		<property name="units" type="s" access="read"/>
+
+		<property name="threshold_lower_critical" type="i" access="read"/>
+		<property name="threshold_lower_warning"  type="i" access="read"/>
+		<property name="threshold_upper_warning"  type="i" access="read"/>
+		<property name="threshold_upper_critical" type="i" access="read"/>
+		<property name="threshold_state" type="i" access="read"/>
+
 		<property name="poll_interval" type="i" access="read"/>
 		<property name="config_data" type="as" access="read"/>
 		<property name="changed_tolerance" type="i" access="read"/>
+
 		<signal name="Changed">
 			<arg name="value" type="i"/>
 		</signal>
+		<signal name="Warning"/>
+		<signal name="Critical"/>
 	</interface>
         <interface name="org.openbmc.SensorString">
                 <method name="getValue">

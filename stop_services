@@ -3,5 +3,5 @@ killall -9 chassis_identify.exe
 killall -9 sensor_ambient.exe 
 killall -9 button_power.exe
 killall -9 sensor_host_status.exe
-killall -9 host_control.exe
+killall -9 control_host.exe
 killall -9 flash_bios.exe

@@ -1,5 +1,5 @@
 <node>
-	<interface name="org.openbmc.PowerControl">
+	<interface name="org.openbmc.control.Power">
 		<method name="setPowerState">
 			<arg name="state" type="i" direction="in"/>
 		</method>
@@ -8,7 +8,7 @@
 		</method>
 		<signal name="PowerGood">
 		</signal>
-		<signal name="PowerLost"/>
+		<signal name="PowerLost">
 		</signal>
 		<property name="pgood" type="i" access="read"/>
 		<property name="state" type="i" access="read"/>
