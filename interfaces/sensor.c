@@ -379,6 +379,36 @@ static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_get_threshold_
   FALSE
 };
 
+static const _ExtendedGDBusArgInfo _sensor_integer_method_info_get_watchdog_OUT_ARG_watchdog =
+{
+  {
+    -1,
+    (gchar *) "watchdog",
+    (gchar *) "i",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _sensor_integer_method_info_get_watchdog_OUT_ARG_pointers[] =
+{
+  &_sensor_integer_method_info_get_watchdog_OUT_ARG_watchdog,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_get_watchdog =
+{
+  {
+    -1,
+    (gchar *) "getWatchdog",
+    NULL,
+    (GDBusArgInfo **) &_sensor_integer_method_info_get_watchdog_OUT_ARG_pointers,
+    NULL
+  },
+  "handle-get-watchdog",
+  FALSE
+};
+
 static const _ExtendedGDBusMethodInfo * const _sensor_integer_method_info_pointers[] =
 {
   &_sensor_integer_method_info_get_value,
@@ -387,6 +417,7 @@ static const _ExtendedGDBusMethodInfo * const _sensor_integer_method_info_pointe
   &_sensor_integer_method_info_set_poll_interval,
   &_sensor_integer_method_info_set_config_data,
   &_sensor_integer_method_info_get_threshold_state,
+  &_sensor_integer_method_info_get_watchdog,
   NULL
 };
 
@@ -565,16 +596,16 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_config_dat
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_changed_tolerance =
+static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_watchdog =
 {
   {
     -1,
-    (gchar *) "changed_tolerance",
+    (gchar *) "watchdog",
     (gchar *) "i",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
     NULL
   },
-  "changed-tolerance",
+  "watchdog",
   FALSE
 };
 
@@ -589,7 +620,7 @@ static const _ExtendedGDBusPropertyInfo * const _sensor_integer_property_info_po
   &_sensor_integer_property_info_threshold_state,
   &_sensor_integer_property_info_poll_interval,
   &_sensor_integer_property_info_config_data,
-  &_sensor_integer_property_info_changed_tolerance,
+  &_sensor_integer_property_info_watchdog,
   NULL
 };
 
@@ -642,7 +673,7 @@ sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin
   g_object_class_override_property (klass, property_id_begin++, "threshold-state");
   g_object_class_override_property (klass, property_id_begin++, "poll-interval");
   g_object_class_override_property (klass, property_id_begin++, "config-data");
-  g_object_class_override_property (klass, property_id_begin++, "changed-tolerance");
+  g_object_class_override_property (klass, property_id_begin++, "watchdog");
   return property_id_begin - 1;
 }
 
@@ -660,10 +691,10 @@ sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin
  * @handle_get_threshold_state: Handler for the #SensorInteger::handle-get-threshold-state signal.
  * @handle_get_units: Handler for the #SensorInteger::handle-get-units signal.
  * @handle_get_value: Handler for the #SensorInteger::handle-get-value signal.
+ * @handle_get_watchdog: Handler for the #SensorInteger::handle-get-watchdog signal.
  * @handle_set_config_data: Handler for the #SensorInteger::handle-set-config-data signal.
  * @handle_set_poll_interval: Handler for the #SensorInteger::handle-set-poll-interval signal.
  * @handle_set_thresholds: Handler for the #SensorInteger::handle-set-thresholds signal.
- * @get_changed_tolerance: Getter for the #SensorInteger:changed-tolerance property.
  * @get_config_data: Getter for the #SensorInteger:config-data property.
  * @get_poll_interval: Getter for the #SensorInteger:poll-interval property.
  * @get_threshold_lower_critical: Getter for the #SensorInteger:threshold-lower-critical property.
@@ -673,6 +704,7 @@ sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin
  * @get_threshold_upper_warning: Getter for the #SensorInteger:threshold-upper-warning property.
  * @get_units: Getter for the #SensorInteger:units property.
  * @get_value: Getter for the #SensorInteger:value property.
+ * @get_watchdog: Getter for the #SensorInteger:watchdog property.
  * @changed: Handler for the #SensorInteger::changed signal.
  * @critical: Handler for the #SensorInteger::critical signal.
  * @warning: Handler for the #SensorInteger::warning signal.
@@ -825,6 +857,28 @@ sensor_integer_default_init (SensorIntegerIface *iface)
     1,
     G_TYPE_DBUS_METHOD_INVOCATION);
 
+  /**
+   * SensorInteger::handle-get-watchdog:
+   * @object: A #SensorInteger.
+   * @invocation: A #GDBusMethodInvocation.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.getWatchdog">getWatchdog()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_get_watchdog() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-get-watchdog",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SensorIntegerIface, handle_get_watchdog),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
+
   /* GObject signals for received D-Bus signals: */
   /**
    * SensorInteger::changed:
@@ -964,14 +1018,14 @@ sensor_integer_default_init (SensorIntegerIface *iface)
   g_object_interface_install_property (iface,
     g_param_spec_boxed ("config-data", "config_data", "config_data", G_TYPE_STRV, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * SensorInteger:changed-tolerance:
+   * SensorInteger:watchdog:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.changed_tolerance">"changed_tolerance"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.watchdog">"watchdog"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_int ("changed-tolerance", "changed_tolerance", "changed_tolerance", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_int ("watchdog", "watchdog", "watchdog", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -1294,34 +1348,34 @@ sensor_integer_set_config_data (SensorInteger *object, const gchar *const *value
 }
 
 /**
- * sensor_integer_get_changed_tolerance: (skip)
+ * sensor_integer_get_watchdog: (skip)
  * @object: A #SensorInteger.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.changed_tolerance">"changed_tolerance"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.watchdog">"watchdog"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
 gint 
-sensor_integer_get_changed_tolerance (SensorInteger *object)
+sensor_integer_get_watchdog (SensorInteger *object)
 {
-  return SENSOR_INTEGER_GET_IFACE (object)->get_changed_tolerance (object);
+  return SENSOR_INTEGER_GET_IFACE (object)->get_watchdog (object);
 }
 
 /**
- * sensor_integer_set_changed_tolerance: (skip)
+ * sensor_integer_set_watchdog: (skip)
  * @object: A #SensorInteger.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.changed_tolerance">"changed_tolerance"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.watchdog">"watchdog"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-sensor_integer_set_changed_tolerance (SensorInteger *object, gint value)
+sensor_integer_set_watchdog (SensorInteger *object, gint value)
 {
-  g_object_set (G_OBJECT (object), "changed-tolerance", value, NULL);
+  g_object_set (G_OBJECT (object), "watchdog", value, NULL);
 }
 
 /**
@@ -1972,6 +2026,104 @@ _out:
 }
 
 /**
+ * sensor_integer_call_get_watchdog:
+ * @proxy: A #SensorIntegerProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getWatchdog">getWatchdog()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call sensor_integer_call_get_watchdog_finish() to get the result of the operation.
+ *
+ * See sensor_integer_call_get_watchdog_sync() for the synchronous, blocking version of this method.
+ */
+void
+sensor_integer_call_get_watchdog (
+    SensorInteger *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "getWatchdog",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * sensor_integer_call_get_watchdog_finish:
+ * @proxy: A #SensorIntegerProxy.
+ * @out_watchdog: (out): Return location for return parameter or %NULL to ignore.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_get_watchdog().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with sensor_integer_call_get_watchdog().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+sensor_integer_call_get_watchdog_finish (
+    SensorInteger *proxy,
+    gint *out_watchdog,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(i)",
+                 out_watchdog);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * sensor_integer_call_get_watchdog_sync:
+ * @proxy: A #SensorIntegerProxy.
+ * @out_watchdog: (out): Return location for return parameter or %NULL to ignore.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getWatchdog">getWatchdog()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See sensor_integer_call_get_watchdog() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+sensor_integer_call_get_watchdog_sync (
+    SensorInteger *proxy,
+    gint *out_watchdog,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "getWatchdog",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(i)",
+                 out_watchdog);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
  * sensor_integer_complete_get_value:
  * @object: A #SensorInteger.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
@@ -2086,6 +2238,27 @@ sensor_integer_complete_get_threshold_state (
   g_dbus_method_invocation_return_value (invocation,
     g_variant_new ("(i)",
                    threshold_state));
+}
+
+/**
+ * sensor_integer_complete_get_watchdog:
+ * @object: A #SensorInteger.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ * @watchdog: Parameter to return.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.getWatchdog">getWatchdog()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+sensor_integer_complete_get_watchdog (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation,
+    gint watchdog)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("(i)",
+                   watchdog));
 }
 
 /* ------------------------------------------------------------------------ */
@@ -2405,12 +2578,12 @@ sensor_integer_proxy_get_config_data (SensorInteger *object)
 }
 
 static gint 
-sensor_integer_proxy_get_changed_tolerance (SensorInteger *object)
+sensor_integer_proxy_get_watchdog (SensorInteger *object)
 {
   SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
   GVariant *variant;
   gint value = 0;
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "changed_tolerance");
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "watchdog");
   if (variant != NULL)
     {
       value = g_variant_get_int32 (variant);
@@ -2465,7 +2638,7 @@ sensor_integer_proxy_iface_init (SensorIntegerIface *iface)
   iface->get_threshold_state = sensor_integer_proxy_get_threshold_state;
   iface->get_poll_interval = sensor_integer_proxy_get_poll_interval;
   iface->get_config_data = sensor_integer_proxy_get_config_data;
-  iface->get_changed_tolerance = sensor_integer_proxy_get_changed_tolerance;
+  iface->get_watchdog = sensor_integer_proxy_get_watchdog;
 }
 
 /**
@@ -3233,7 +3406,7 @@ sensor_integer_skeleton_get_config_data (SensorInteger *object)
 }
 
 static gint 
-sensor_integer_skeleton_get_changed_tolerance (SensorInteger *object)
+sensor_integer_skeleton_get_watchdog (SensorInteger *object)
 {
   SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
   gint value;
@@ -3284,7 +3457,7 @@ sensor_integer_skeleton_iface_init (SensorIntegerIface *iface)
   iface->get_threshold_state = sensor_integer_skeleton_get_threshold_state;
   iface->get_poll_interval = sensor_integer_skeleton_get_poll_interval;
   iface->get_config_data = sensor_integer_skeleton_get_config_data;
-  iface->get_changed_tolerance = sensor_integer_skeleton_get_changed_tolerance;
+  iface->get_watchdog = sensor_integer_skeleton_get_watchdog;
 }
 
 /**

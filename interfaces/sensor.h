@@ -42,6 +42,10 @@ struct _SensorIntegerIface
     SensorInteger *object,
     GDBusMethodInvocation *invocation);
 
+  gboolean (*handle_get_watchdog) (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation);
+
   gboolean (*handle_set_config_data) (
     SensorInteger *object,
     GDBusMethodInvocation *invocation,
@@ -60,8 +64,6 @@ struct _SensorIntegerIface
     gint arg_upper_warning,
     gint arg_upper_critical);
 
-  gint  (*get_changed_tolerance) (SensorInteger *object);
-
   const gchar *const * (*get_config_data) (SensorInteger *object);
 
   gint  (*get_poll_interval) (SensorInteger *object);
@@ -79,6 +81,8 @@ struct _SensorIntegerIface
   const gchar * (*get_units) (SensorInteger *object);
 
   gint  (*get_value) (SensorInteger *object);
+
+  gint  (*get_watchdog) (SensorInteger *object);
 
   void (*changed) (
     SensorInteger *object,
@@ -125,6 +129,11 @@ void sensor_integer_complete_get_threshold_state (
     SensorInteger *object,
     GDBusMethodInvocation *invocation,
     gint threshold_state);
+
+void sensor_integer_complete_get_watchdog (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation,
+    gint watchdog);
 
 
 
@@ -256,6 +265,24 @@ gboolean sensor_integer_call_get_threshold_state_sync (
     GCancellable *cancellable,
     GError **error);
 
+void sensor_integer_call_get_watchdog (
+    SensorInteger *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean sensor_integer_call_get_watchdog_finish (
+    SensorInteger *proxy,
+    gint *out_watchdog,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean sensor_integer_call_get_watchdog_sync (
+    SensorInteger *proxy,
+    gint *out_watchdog,
+    GCancellable *cancellable,
+    GError **error);
+
 
 
 /* D-Bus property accessors: */
@@ -288,8 +315,8 @@ const gchar *const *sensor_integer_get_config_data (SensorInteger *object);
 gchar **sensor_integer_dup_config_data (SensorInteger *object);
 void sensor_integer_set_config_data (SensorInteger *object, const gchar *const *value);
 
-gint sensor_integer_get_changed_tolerance (SensorInteger *object);
-void sensor_integer_set_changed_tolerance (SensorInteger *object, gint value);
+gint sensor_integer_get_watchdog (SensorInteger *object);
+void sensor_integer_set_watchdog (SensorInteger *object, gint value);
 
 
 /* ---- */
