@@ -1,17 +1,56 @@
 #! /usr/bin/python
 
-def BarreleyeSensors():
+def BarreleyeProcesses():
 	config = {}
 
 	config['org.openbmc.sensors.Temperature.Ambient'] = {
-		'user_label': 'Ambient Temperature',
-		'parameters': ['/dev/i2c0','0xA0'],
-		'poll_interval': 5000,          
-		'lower_critical': 5,
-		'lower_warning' : 10,
-		'upper_warning' : 15,
-		'upper_critical': 20
+		'exe_name' : 'bin/sensor_ambient.exe',
+		'watchdog' : "yes",
+		'instances' : [	
+			{
+				'name' : 'AmbientTemperature1',
+				'user_label': 'Ambient Temperature 1',
+				'parameters': ['/dev/i2c0','0xA0'],
+				'poll_interval': 5000,          
+				'lower_critical': 5,
+				'lower_warning' : 10,
+				'upper_warning' : 15,
+				'upper_critical': 20
+			},
+			{
+				'name' : 'AmbientTemperature2',
+				'user_label': 'Ambient Temperature 2',
+				'parameters': ['/dev/i2c0','0xA2'],
+				'poll_interval': 5000,          
+				'lower_critical': 5,
+				'lower_warning' : 10,
+				'upper_warning' : 15,
+				'upper_critical': 20
+			}
+		]
 	}
+	config['org.openbmc.buttons.ButtonPower'] = {
+		'exe_name' : 'bin/button_power.exe',
+		'watchdog' : 'no',
+		'instances' : [	
+			{
+				'name' : 'PowerButton1',
+				'user_label': 'Main Power Button',
+			}
+		]
+	}
+	config['org.openbmc.leds.ChassisIdentify'] = {
+		'exe_name' : 'bin/chassis_identify.exe',
+		'watchdog' : "no",
+		'instances' : [	
+			{
+				'name' : 'ChassisIdentify',
+				'user_label': 'Chassis Identify LED',
+			}
+		]
+	}
+
+
 	return config
 
 def BarreleyeGpios():
