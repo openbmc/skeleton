@@ -1,23 +1,54 @@
-#include "interfaces/sensor.h"
-
+#include "interfaces/sensor2.h"
+#include "openbmc.h"
+#include "sensor_threshold.h"
 
 
 /* ---------------------------------------------------------------------------------------------------- */
-typedef enum { NORMAL,LOWER_CRITICAL,LOWER_WARNING,UPPER_WARNING,UPPER_CRITICAL } threshold_states;
-
 
 static const gchar* dbus_object_path = "/org/openbmc/sensors/Temperature/Ambient";
 static const gchar* dbus_name        = "org.openbmc.sensors.Temperature.Ambient";
-
-
+static const guint poll_interval = 3000;
+static guint heartbeat = 0;
 
 static GDBusObjectManagerServer *manager = NULL;
-static SensorInteger *sensor = NULL;
 
 static gchar* i2c_bus = "";
 static gchar* i2c_address = "";
-static gboolean thresholds_set = FALSE;
 
+static gboolean
+poll_sensor(gpointer user_data)
+{
+	SensorInteger *sensor = object_get_sensor_integer((Object*)user_data);
+	SensorIntegerThreshold *threshold = object_get_sensor_integer_threshold((Object*)user_data);
+
+ 	guint value = sensor_integer_get_value(sensor);
+	//TOOD:  Change to actually read sensor
+	value = value+1;
+
+	if (heartbeat > 10000)
+	{
+		heartbeat = 0;
+		g_print(">>> Send Heartbeat\n");
+		sensor_integer_emit_heartbeat(sensor);
+	}
+	else
+ 	{
+		heartbeat = heartbeat+poll_interval;
+	}
+
+    // End actually reading sensor
+    g_print("Polling sensor:  %d\n",value);
+
+    //if changed, set property and emit signal
+    if (value != sensor_integer_get_value(sensor))
+    {
+       g_print("Sensor changed\n");
+       sensor_integer_set_value(sensor,value);
+       sensor_integer_emit_changed(sensor,value);
+       check_thresholds(threshold,value);
+    }
+    return TRUE;
+}
 
 
 static gboolean
@@ -52,123 +83,71 @@ on_set_config (SensorInteger                 *sen,
   return TRUE;
 }
 
-static gboolean
-on_set_thresholds (SensorInteger                 *sen,
-                   GDBusMethodInvocation  *invocation,
-		   guint                  lc,
-		   guint                  lw,
-		   guint                  uw,
-		   guint                  uc,
-                   gpointer               user_data)
-{
-  sensor_integer_set_threshold_lower_critical(sen,lc);
-  sensor_integer_set_threshold_lower_warning(sen,lw);
-  sensor_integer_set_threshold_upper_warning(sen,uw);
-  sensor_integer_set_threshold_upper_critical(sen,uc);
-  sensor_integer_complete_set_thresholds(sen,invocation);
-  thresholds_set = TRUE;
-  return TRUE;
-}
-
-static gboolean
-on_get_threshold_state (SensorInteger                 *sen,
-                   GDBusMethodInvocation  *invocation,
-                   gpointer               user_data)
-{
-  guint state = sensor_integer_get_threshold_state(sen);
-  sensor_integer_complete_get_threshold_state(sen,invocation,state);
-  return TRUE;
-}
-
-
-static gboolean
-check_thresholds()
-{
-  if (thresholds_set == TRUE) {
-  threshold_states state = NORMAL;
-  guint value = sensor_integer_get_value(sensor);
-
-  if (value < sensor_integer_get_threshold_lower_critical(sensor)) {
-    state = LOWER_CRITICAL;
-  }
-  else if(value < sensor_integer_get_threshold_lower_warning(sensor)) {
-    state = LOWER_WARNING;
-  }
-  else if(value > sensor_integer_get_threshold_upper_critical(sensor)) {
-    state = UPPER_CRITICAL;
-  }
-  else if(value > sensor_integer_get_threshold_upper_warning(sensor)) {
-    state = UPPER_WARNING;
-  }
-  // only emit signal if threshold state changes
-  if (state != sensor_integer_get_threshold_state(sensor))
-  {
-     sensor_integer_set_threshold_state(sensor,state);
-     if (state == LOWER_CRITICAL || state == UPPER_CRITICAL)
-     {
-       sensor_integer_emit_critical(sensor);
-       g_print("Critical\n");
-     }
-     else if (state == LOWER_WARNING || state == UPPER_WARNING)
-     {
-       sensor_integer_emit_warning(sensor);
-       g_print("Warning\n");
-     }
-  }
-  }
-}
 
 static void 
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  ObjectSkeleton *object;
-  guint n;
+  	g_print ("Acquired a message bus connection: %s\n",name);
 
-  g_print ("Acquired a message bus connection: %s\n",name);
+  	cmdline *cmd = user_data;
+	if (cmd->argc < 2)
+	{
+		g_print("No objects created.  Put object name(s) on command line\n");
+		return;
+	}	
+  	manager = g_dbus_object_manager_server_new (dbus_object_path);
+  	int i=0;
+  	for (i=1;i<cmd->argc;i++)
+  	{
+		gchar *s;
+ 		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+		ObjectSkeleton *object = object_skeleton_new (s);
+		g_free (s);
 
-  manager = g_dbus_object_manager_server_new (dbus_object_path);
+		SensorInteger *sensor = sensor_integer_skeleton_new ();
+  		object_skeleton_set_sensor_integer (object, sensor);
+  		g_object_unref (sensor);
+		
+		SensorIntegerThreshold *threshold = sensor_integer_threshold_skeleton_new();
+		object_skeleton_set_sensor_integer_threshold (object,threshold);
+		g_object_unref (threshold);
 
-  gchar *s;
-  s = g_strdup_printf ("%s/0",dbus_object_path);
-  object = object_skeleton_new (s);
-  g_free (s);
-
-  sensor = sensor_integer_skeleton_new ();
-  object_skeleton_set_sensor_integer (object, sensor);
-  g_object_unref (sensor);
-
-  sensor_integer_set_units(sensor,"C");
-  //define method callbacks here
-  g_signal_connect (sensor,
+  		// set units
+  		sensor_integer_set_units(sensor,"C");
+		sensor_integer_threshold_set_state(threshold,NOT_SET);
+  		//define method callbacks here
+  		g_signal_connect (sensor,
                     "handle-get-value",
                     G_CALLBACK (on_get),
                     NULL); /* user_data */
-  g_signal_connect (sensor,
+  		g_signal_connect (sensor,
                     "handle-get-units",
                     G_CALLBACK (on_get_units),
                     NULL); /* user_data */
 
-  g_signal_connect (sensor,
+  		g_signal_connect (sensor,
                     "handle-set-config-data",
                     G_CALLBACK (on_set_config),
                     NULL); /* user_data */
  
-  g_signal_connect (sensor,
-                    "handle-set-thresholds",
-                    G_CALLBACK (on_set_thresholds),
+  		g_signal_connect (threshold,
+                    "handle-set",
+                    G_CALLBACK (set_thresholds),
                     NULL); /* user_data */
 
-  g_signal_connect (sensor,
-                    "handle-get-threshold-state",
-                    G_CALLBACK (on_get_threshold_state),
+  		g_signal_connect (threshold,
+                    "handle-get-state",
+                    G_CALLBACK (get_threshold_state),
                     NULL); /* user_data */
 
+  		g_timeout_add(poll_interval, poll_sensor, object);
 
-  /* Export the object (@manager takes its own reference to @object) */
-  g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
-  g_object_unref (object);
+  		/* Export the object (@manager takes its own reference to @object) */
+  		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+  		g_object_unref (object);
+	}
 
   /* Export all objects */
   g_dbus_object_manager_server_set_connection (manager, connection);
@@ -190,35 +169,15 @@ on_name_lost (GDBusConnection *connection,
   g_print ("Lost the name %s\n", name);
 }
 
-static gboolean
-poll_sensor()
-{
-    guint value = sensor_integer_get_value(sensor);
-    //TOOD:  Change to actually read sensor
-    value = value+1;
-    g_print("Polling sensor:  %d\n",value);
-
-    //if changed, set property and emit signal
-    if (value != sensor_integer_get_value(sensor))
-    {
-       g_print("Sensor changed\n");
-       sensor_integer_set_value(sensor,value);
-       sensor_integer_emit_changed(sensor,value);
-       if (thresholds_set == TRUE)
-       {
-         check_thresholds();
-       }
-    }
-    return TRUE;
-}
 
 gint
 main (gint argc, gchar *argv[])
 {
   GMainLoop *loop;
-
+  cmdline cmd;
+  cmd.argc = argc;
+  cmd.argv = argv;
   guint id;
-  //g_type_init ();
   loop = g_main_loop_new (NULL, FALSE);
 
   id = g_bus_own_name (G_BUS_TYPE_SESSION,
@@ -228,10 +187,9 @@ main (gint argc, gchar *argv[])
                        on_bus_acquired,
                        on_name_acquired,
                        on_name_lost,
-                       loop,
+                       &cmd,
                        NULL);
 
-  g_timeout_add(5000, poll_sensor, NULL);
   g_main_loop_run (loop);
   
   g_bus_unown_name (id);

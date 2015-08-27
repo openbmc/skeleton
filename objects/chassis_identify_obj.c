@@ -1,22 +1,27 @@
 #include "interfaces/led.h"
+#include "openbmc.h"
+#include "gpio.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/leds/ChassisIdentify";
 static const gchar* dbus_name        = "org.openbmc.leds.ChassisIdentify";
 
 static GDBusObjectManagerServer *manager = NULL;
-//static Led *led = NULL;
-static uint gpio = 12;
+
+GPIO led_gpio = (GPIO){"IDENTIFY"};
 
 static gboolean
 on_set_on       (Led          *led,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-  g_print("Turn on chassis identify led\n");
-  //TODO:  implement in hardware
-  led_complete_set_on(led,invocation);
-  return TRUE;
+	g_print("Turn on chassis identify led\n");
+	led_complete_set_on(led,invocation);
+	gpio_open(&led_gpio);
+	gpio_write(&led_gpio,1); 
+	gpio_close(&led_gpio);
+
+	return TRUE;
 
 }
 
@@ -25,10 +30,13 @@ on_set_off       (Led          *led,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-  g_print("Turn off chassis identify led\n");
-  //TODO:  implement in hardware
-  led_complete_set_off(led,invocation);
-  return TRUE;
+	g_print("Turn off chassis identify led\n");
+	led_complete_set_off(led,invocation);
+	gpio_open(&led_gpio);
+	gpio_write(&led_gpio,0); 
+	gpio_close(&led_gpio);
+
+	return TRUE;
 }
 
 static void 
@@ -36,42 +44,50 @@ on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  ObjectSkeleton *object;
-  Led *led;
-  guint n;
+	ObjectSkeleton *object;
 
-  g_print ("Acquired a message bus connection: %s\n",name);
+	g_print ("Acquired a message bus connection: %s\n",name);
+	cmdline *cmd = user_data;
+	if (cmd->argc < 2)
+	{
+		g_print("No objects created.  Put object name(s) on command line\n");
+		return;
+	}	
 
-  manager = g_dbus_object_manager_server_new (dbus_object_path);
+	manager = g_dbus_object_manager_server_new (dbus_object_path);
+	int i = 0;
+	for (i=1;i<cmd->argc;i++)
+  	{
+		gchar *s;
+		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+		object = object_skeleton_new (s);
+		g_free (s);
 
-  gchar *s;
-  s = g_strdup_printf ("%s/0",dbus_object_path);
-  object = object_skeleton_new (s);
-  g_free (s);
+		Led *led = led_skeleton_new ();
+		object_skeleton_set_led (object, led);
+		g_object_unref (led);
 
-  led = led_skeleton_new ();
-  object_skeleton_set_led (object, led);
-  g_object_unref (led);
-
-  //define method callbacks
-  g_signal_connect (led,
+		//define method callbacks
+		g_signal_connect (led,
                     "handle-set-on",
                     G_CALLBACK (on_set_on),
                     NULL); /* user_data */
-  g_signal_connect (led,
+		g_signal_connect (led,
                     "handle-set-off",
                     G_CALLBACK (on_set_off),
                     NULL);
 
-  led_set_color(led,0);
-  led_set_function(led,"CHASSIS_IDENTIFY");
+		led_set_color(led,0);
+		led_set_function(led,"CHASSIS_IDENTIFY");
  
-  /* Export the object (@manager takes its own reference to @object) */
-  g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
-  g_object_unref (object);
+		/* Export the object (@manager takes its own reference to @object) */
+		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+		g_object_unref (object);
+	}
+	/* Export all objects */
+ 	g_dbus_object_manager_server_set_connection (manager, connection);
+	gpio_init(connection,&led_gpio);
 
-  /* Export all objects */
-  g_dbus_object_manager_server_set_connection (manager, connection);
 }
 
 static void

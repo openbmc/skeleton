@@ -7,7 +7,8 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include "interfaces/power_control.h"
-#include "objects/openbmc_utilities.h"
+#include "openbmc.h"
+#include "gpio.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control/Power";
@@ -17,7 +18,6 @@ GPIO power_pin    = (GPIO){ "POWER_PIN" };
 GPIO pgood        = (GPIO){ "PGOOD" };
 
 static GDBusObjectManagerServer *manager = NULL;
-static ControlPower *control_power = NULL;
 
 static gboolean
 on_set_power_state (ControlPower          *pwr,
@@ -69,32 +69,40 @@ on_bus_acquired (GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
 	g_print ("Acquired a message bus connection: %s\n",name);
+ 	cmdline *cmd = user_data;
+	if (cmd->argc < 2)
+	{
+		g_print("No objects created.  Put object name(s) on command line\n");
+		return;
+	}	
+  	manager = g_dbus_object_manager_server_new (dbus_object_path);
+  	int i=0;
+  	for (i=1;i<cmd->argc;i++)
+  	{
+		gchar *s;
+  		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+  		object = object_skeleton_new (s);
+  		g_free (s);
 
-	manager = g_dbus_object_manager_server_new (dbus_object_path);
-	gchar *s;
-  	s = g_strdup_printf ("%s/0",dbus_object_path);
-  	object = object_skeleton_new (s);
-  	g_free (s);
+		ControlPower* control_power = control_power_skeleton_new ();
+		object_skeleton_set_control_power (object, control_power);
+		g_object_unref (control_power);
 
-	control_power = control_power_skeleton_new ();
-	object_skeleton_set_control_power (object, control_power);
-	g_object_unref (control_power);
+		//define method callbacks here
+		g_signal_connect (control_power,
+        	            "handle-set-power-state",
+                	    G_CALLBACK (on_set_power_state),
+                	    NULL); /* user_data */
 
-	//define method callbacks here
-	g_signal_connect (control_power,
-                    "handle-set-power-state",
-                    G_CALLBACK (on_set_power_state),
-                    NULL); /* user_data */
+		g_signal_connect (control_power,
+                	    "handle-get-power-state",
+                	    G_CALLBACK (on_get_power_state),
+                	    NULL); /* user_data */
 
-	g_signal_connect (control_power,
-                    "handle-get-power-state",
-                    G_CALLBACK (on_get_power_state),
-                    NULL); /* user_data */
-
-	/* Export the object (@manager takes its own reference to @object) */
-	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
-	g_object_unref (object);
-
+		/* Export the object (@manager takes its own reference to @object) */
+		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+		g_object_unref (object);
+	}
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection (manager, connection);
 
@@ -120,9 +128,10 @@ on_name_lost (GDBusConnection *connection,
   g_print ("Lost the name %s\n", name);
 }
 
-static gboolean
-poll_pgood()
+static gboolean poll_pgood(gpointer user_data)
 {
+	ControlPower *control_power = object_get_control_power((Object*)user_data);
+
 	if (pgood.fd >= 0)
 	{
 		uint8_t gpio = gpio_read(&pgood);

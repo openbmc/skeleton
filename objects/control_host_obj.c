@@ -6,7 +6,8 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include "interfaces/control_host.h"
-#include "objects/openbmc_utilities.h"
+#include "openbmc.h"
+#include "gpio.h"
 
 
 /* ---------------------------------------------------------------------------------------------------- */
@@ -14,7 +15,6 @@ static const gchar* dbus_object_path = "/org/openbmc/control/Host";
 static const gchar* dbus_name        = "org.openbmc.control.Host";
 
 static GDBusObjectManagerServer *manager = NULL;
-static ControlHost *control_host = NULL;
 
 GPIO fsi_data     = (GPIO){ "FSI_DATA" };
 GPIO fsi_clk      = (GPIO){ "FSI_CLK" };
@@ -87,26 +87,34 @@ on_bus_acquired (GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
 	g_print ("Acquired a message bus connection: %s\n",name);
-	manager = g_dbus_object_manager_server_new (dbus_object_path);
+ 	cmdline *cmd = user_data;
+	if (cmd->argc < 2)
+	{
+		g_print("No objects created.  Put object name(s) on command line\n");
+		return;
+	}	
+  	manager = g_dbus_object_manager_server_new (dbus_object_path);
+  	int i=0;
+  	for (i=1;i<cmd->argc;i++)
+  	{
+		gchar *s;
+		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+		object = object_skeleton_new (s);
+		g_free (s);
+		ControlHost* control_host = control_host_skeleton_new ();
+		object_skeleton_set_control_host (object, control_host);
+		g_object_unref (control_host);
 
-	gchar *s;
-	s = g_strdup_printf ("%s/0",dbus_object_path);
-	object = object_skeleton_new (s);
-	g_free (s);
-	control_host = control_host_skeleton_new ();
-	object_skeleton_set_control_host (object, control_host);
-	g_object_unref (control_host);
-
-	//define method callbacks here
-	g_signal_connect (control_host,
+		//define method callbacks here
+		g_signal_connect (control_host,
                   "handle-boot",
                   G_CALLBACK (on_boot),
                   NULL); /* user_data */
 
-	/* Export the object (@manager takes its own reference to @object) */
-	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
-	g_object_unref (object);
-
+		/* Export the object (@manager takes its own reference to @object) */
+		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+		g_object_unref (object);
+	}
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection (manager, connection);
 	
