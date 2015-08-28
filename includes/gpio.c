@@ -72,15 +72,15 @@ void gpio_init(GDBusConnection *connection, GPIO* gpio)
 	proxy = g_dbus_proxy_new_sync (connection,
                                  G_DBUS_PROXY_FLAGS_NONE,
                                  NULL,                      /* GDBusInterfaceInfo */
-                                 "org.openbmc.managers.Gpios", /* name */
-                                 "/org/openbmc/managers/Gpios", /* object path */
-                                 "org.openbmc.managers.Gpios",        /* interface */
+                                 "org.openbmc.managers.System", /* name */
+                                 "/org/openbmc/managers/System", /* object path */
+                                 "org.openbmc.managers.System",        /* interface */
                                  NULL, /* GCancellable */
                                  &error);
 	g_assert_no_error (error);
 
 	result = g_dbus_proxy_call_sync (proxy,
-                                   "init",
+                                   "gpioInit",
                                    g_variant_new ("(s)", gpio->name),
                                    G_DBUS_CALL_FLAGS_NONE,
                                    -1,
