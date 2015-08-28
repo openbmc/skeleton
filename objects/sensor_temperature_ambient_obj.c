@@ -25,11 +25,10 @@ poll_sensor(gpointer user_data)
 	//TOOD:  Change to actually read sensor
 	value = value+1;
 
-	if (heartbeat > 10000)
+	if (heartbeat > 30000)
 	{
 		heartbeat = 0;
-		g_print(">>> Send Heartbeat\n");
-		sensor_integer_emit_heartbeat(sensor);
+		sensor_integer_emit_heartbeat(sensor,dbus_name);
 	}
 	else
  	{
@@ -37,12 +36,11 @@ poll_sensor(gpointer user_data)
 	}
 
     // End actually reading sensor
-    g_print("Polling sensor:  %d\n",value);
 
     //if changed, set property and emit signal
     if (value != sensor_integer_get_value(sensor))
     {
-       g_print("Sensor changed\n");
+       //g_print("Sensor changed\n");
        sensor_integer_set_value(sensor,value);
        sensor_integer_emit_changed(sensor,value);
        check_thresholds(threshold,value);
