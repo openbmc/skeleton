@@ -92,9 +92,11 @@ gint
 main (gint argc, gchar *argv[])
 {
   GMainLoop *loop;
+  cmdline cmd;
+  cmd.argc = argc;
+  cmd.argv = argv;
 
   guint id;
-  //g_type_init ();
   loop = g_main_loop_new (NULL, FALSE);
 
   id = g_bus_own_name (G_BUS_TYPE_SESSION,
@@ -104,7 +106,7 @@ main (gint argc, gchar *argv[])
                        on_bus_acquired,
                        on_name_acquired,
                        on_name_lost,
-                       loop,
+                       &cmd,
                        NULL);
 
   g_main_loop_run (loop);
