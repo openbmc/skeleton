@@ -1,0 +1,21 @@
+<node>
+	<!--  Can I do have interfaces as children of other interfaces? -->
+	<interface name="org.openbmc.SensorIntegerThreshold">
+		<method name="setThresholds">
+			<arg name="lower_critical" type="i" direction="in"/>
+			<arg name="lower_warning"  type="i" direction="in"/>
+			<arg name="upper_warning"  type="i" direction="in"/>
+			<arg name="upper_critical" type="i" direction="in"/>
+		</method>
+		<method name="getThresholdState">
+			<arg name="threshold_state" type="i" direction="out"/>
+		</method>
+		<property name="threshold_lower_warning"  type="i" access="read"/>
+		<property name="threshold_upper_warning"  type="i" access="read"/>
+		<property name="threshold_upper_critical" type="i" access="read"/>
+		<property name="threshold_state" type="i" access="read"/>
+
+		<signal name="Warning"/>
+		<signal name="Critical"/>
+        </interface>
+</node>
