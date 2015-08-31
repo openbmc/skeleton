@@ -9,6 +9,16 @@ static const gchar* dbus_name        = "org.openbmc.flash.BIOS";
 static GDBusObjectManagerServer *manager = NULL;
 
 static gboolean
+on_init (Flash          *f,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+  flash_complete_init(f,invocation);
+  return TRUE;
+
+}
+
+static gboolean
 on_update_via_file (Flash          *f,
                 GDBusMethodInvocation  *invocation,
                 gchar*                  write_file,
@@ -62,7 +72,13 @@ on_bus_acquired (GDBusConnection *connection,
                     "handle-update-via-file",
                     G_CALLBACK (on_update_via_file),
                     NULL); /* user_data */
-  
+ 
+		g_signal_connect (flash,
+                    "handle-init",
+                    G_CALLBACK (on_init),
+                    NULL); /* user_data */
+
+ 
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
   		g_object_unref (object);

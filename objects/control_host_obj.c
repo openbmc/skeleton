@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "interfaces/control_host.h"
+#include "interfaces/control.h"
 #include "openbmc.h"
 #include "gpio.h"
 

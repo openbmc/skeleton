@@ -163,73 +163,73 @@ _g_value_equal (const GValue *a, const GValue *b)
 
 /* ---- Introspection data for org.openbmc.EventLog ---- */
 
-static const _ExtendedGDBusArgInfo _event_log_method_info_error_IN_ARG_message =
+static const _ExtendedGDBusArgInfo _event_log_method_info_get_message_OUT_ARG_message =
 {
   {
     -1,
     (gchar *) "message",
-    (gchar *) "s",
+    (gchar *) "a{ss}",
     NULL
   },
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _event_log_method_info_error_IN_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _event_log_method_info_get_message_OUT_ARG_pointers[] =
 {
-  &_event_log_method_info_error_IN_ARG_message,
+  &_event_log_method_info_get_message_OUT_ARG_message,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _event_log_method_info_error =
+static const _ExtendedGDBusMethodInfo _event_log_method_info_get_message =
 {
   {
     -1,
-    (gchar *) "error",
-    (GDBusArgInfo **) &_event_log_method_info_error_IN_ARG_pointers,
+    (gchar *) "getMessage",
     NULL,
+    (GDBusArgInfo **) &_event_log_method_info_get_message_OUT_ARG_pointers,
     NULL
   },
-  "handle-error",
+  "handle-get-message",
   FALSE
 };
 
 static const _ExtendedGDBusMethodInfo * const _event_log_method_info_pointers[] =
 {
-  &_event_log_method_info_error,
+  &_event_log_method_info_get_message,
   NULL
 };
 
-static const _ExtendedGDBusArgInfo _event_log_signal_info_error_event_ARG_message =
+static const _ExtendedGDBusArgInfo _event_log_signal_info_event_ARG_message =
 {
   {
     -1,
     (gchar *) "message",
-    (gchar *) "s",
+    (gchar *) "a{ss}",
     NULL
   },
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _event_log_signal_info_error_event_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _event_log_signal_info_event_ARG_pointers[] =
 {
-  &_event_log_signal_info_error_event_ARG_message,
+  &_event_log_signal_info_event_ARG_message,
   NULL
 };
 
-static const _ExtendedGDBusSignalInfo _event_log_signal_info_error_event =
+static const _ExtendedGDBusSignalInfo _event_log_signal_info_event =
 {
   {
     -1,
-    (gchar *) "ErrorEvent",
-    (GDBusArgInfo **) &_event_log_signal_info_error_event_ARG_pointers,
+    (gchar *) "Event",
+    (GDBusArgInfo **) &_event_log_signal_info_event_ARG_pointers,
     NULL
   },
-  "error-event"
+  "event"
 };
 
 static const _ExtendedGDBusSignalInfo * const _event_log_signal_info_pointers[] =
 {
-  &_event_log_signal_info_error_event,
+  &_event_log_signal_info_event,
   NULL
 };
 
@@ -238,7 +238,7 @@ static const _ExtendedGDBusPropertyInfo _event_log_property_info_message =
   {
     -1,
     (gchar *) "message",
-    (gchar *) "s",
+    (gchar *) "a{ss}",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
     NULL
   },
@@ -307,9 +307,9 @@ event_log_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * EventLogIface:
  * @parent_iface: The parent interface.
- * @handle_error: Handler for the #EventLog::handle-error signal.
+ * @handle_get_message: Handler for the #EventLog::handle-get-message signal.
  * @get_message: Getter for the #EventLog:message property.
- * @error_event: Handler for the #EventLog::error-event signal.
+ * @event: Handler for the #EventLog::event signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-EventLog.top_of_page">org.openbmc.EventLog</link>.
  */
@@ -322,47 +322,46 @@ event_log_default_init (EventLogIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
   /**
-   * EventLog::handle-error:
+   * EventLog::handle-get-message:
    * @object: A #EventLog.
    * @invocation: A #GDBusMethodInvocation.
-   * @arg_message: Argument passed by remote caller.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-EventLog.error">error()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call event_log_complete_error() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call event_log_complete_get_message() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
-  g_signal_new ("handle-error",
+  g_signal_new ("handle-get-message",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (EventLogIface, handle_error),
+    G_STRUCT_OFFSET (EventLogIface, handle_get_message),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_BOOLEAN,
-    2,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING);
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
 
   /* GObject signals for received D-Bus signals: */
   /**
-   * EventLog::error-event:
+   * EventLog::event:
    * @object: A #EventLog.
    * @arg_message: Argument.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-EventLog.ErrorEvent">"ErrorEvent"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-EventLog.Event">"Event"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
-  g_signal_new ("error-event",
+  g_signal_new ("event",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (EventLogIface, error_event),
+    G_STRUCT_OFFSET (EventLogIface, event),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
-    1, G_TYPE_STRING);
+    1, G_TYPE_VARIANT);
 
   /* GObject properties for D-Bus properties: */
   /**
@@ -373,7 +372,7 @@ event_log_default_init (EventLogIface *iface)
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_string ("message", "message", "message", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_variant ("message", "message", "message", G_VARIANT_TYPE ("a{ss}"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -388,7 +387,7 @@ event_log_default_init (EventLogIface *iface)
  *
  * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
  */
-const gchar *
+GVariant *
 event_log_get_message (EventLog *object)
 {
   return EVENT_LOG_GET_IFACE (object)->get_message (object);
@@ -402,12 +401,12 @@ event_log_get_message (EventLog *object)
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
- * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
  */
-gchar *
+GVariant *
 event_log_dup_message (EventLog *object)
 {
-  gchar *value;
+  GVariant *value;
   g_object_get (G_OBJECT (object), "message", &value, NULL);
   return value;
 }
@@ -422,52 +421,49 @@ event_log_dup_message (EventLog *object)
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-event_log_set_message (EventLog *object, const gchar *value)
+event_log_set_message (EventLog *object, GVariant *value)
 {
   g_object_set (G_OBJECT (object), "message", value, NULL);
 }
 
 /**
- * event_log_emit_error_event:
+ * event_log_emit_event:
  * @object: A #EventLog.
  * @arg_message: Argument to pass with the signal.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-EventLog.ErrorEvent">"ErrorEvent"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-EventLog.Event">"Event"</link> D-Bus signal.
  */
 void
-event_log_emit_error_event (
+event_log_emit_event (
     EventLog *object,
-    const gchar *arg_message)
+    GVariant *arg_message)
 {
-  g_signal_emit_by_name (object, "error-event", arg_message);
+  g_signal_emit_by_name (object, "event", arg_message);
 }
 
 /**
- * event_log_call_error:
+ * event_log_call_get_message:
  * @proxy: A #EventLogProxy.
- * @arg_message: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.error">error()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call event_log_call_error_finish() to get the result of the operation.
+ * You can then call event_log_call_get_message_finish() to get the result of the operation.
  *
- * See event_log_call_error_sync() for the synchronous, blocking version of this method.
+ * See event_log_call_get_message_sync() for the synchronous, blocking version of this method.
  */
 void
-event_log_call_error (
+event_log_call_get_message (
     EventLog *proxy,
-    const gchar *arg_message,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "error",
-    g_variant_new ("(s)",
-                   arg_message),
+    "getMessage",
+    g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
     cancellable,
@@ -476,18 +472,20 @@ event_log_call_error (
 }
 
 /**
- * event_log_call_error_finish:
+ * event_log_call_get_message_finish:
  * @proxy: A #EventLogProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to event_log_call_error().
+ * @out_message: (out): Return location for return parameter or %NULL to ignore.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to event_log_call_get_message().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with event_log_call_error().
+ * Finishes an operation started with event_log_call_get_message().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-event_log_call_error_finish (
+event_log_call_get_message_finish (
     EventLog *proxy,
+    GVariant **out_message,
     GAsyncResult *res,
     GError **error)
 {
@@ -496,37 +494,37 @@ event_log_call_error_finish (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "()");
+                 "(@a{ss})",
+                 out_message);
   g_variant_unref (_ret);
 _out:
   return _ret != NULL;
 }
 
 /**
- * event_log_call_error_sync:
+ * event_log_call_get_message_sync:
  * @proxy: A #EventLogProxy.
- * @arg_message: Argument to pass with the method invocation.
+ * @out_message: (out): Return location for return parameter or %NULL to ignore.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.error">error()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See event_log_call_error() for the asynchronous version of this method.
+ * See event_log_call_get_message() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-event_log_call_error_sync (
+event_log_call_get_message_sync (
     EventLog *proxy,
-    const gchar *arg_message,
+    GVariant **out_message,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "error",
-    g_variant_new ("(s)",
-                   arg_message),
+    "getMessage",
+    g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
     cancellable,
@@ -534,28 +532,32 @@ event_log_call_error_sync (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "()");
+                 "(@a{ss})",
+                 out_message);
   g_variant_unref (_ret);
 _out:
   return _ret != NULL;
 }
 
 /**
- * event_log_complete_error:
+ * event_log_complete_get_message:
  * @object: A #EventLog.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
+ * @message: Parameter to return.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-EventLog.error">error()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-event_log_complete_error (
+event_log_complete_get_message (
     EventLog *object,
-    GDBusMethodInvocation *invocation)
+    GDBusMethodInvocation *invocation,
+    GVariant *message)
 {
   g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
+    g_variant_new ("(@a{ss})",
+                   message));
 }
 
 /* ------------------------------------------------------------------------ */
@@ -735,18 +737,16 @@ event_log_proxy_g_properties_changed (GDBusProxy *_proxy,
     }
 }
 
-static const gchar *
+static GVariant *
 event_log_proxy_get_message (EventLog *object)
 {
   EventLogProxy *proxy = EVENT_LOG_PROXY (object);
   GVariant *variant;
-  const gchar *value = NULL;
+  GVariant *value = NULL;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "message");
+  value = variant;
   if (variant != NULL)
-    {
-      value = g_variant_get_string (variant, NULL);
-      g_variant_unref (variant);
-    }
+    g_variant_unref (variant);
   return value;
 }
 
@@ -1199,9 +1199,9 @@ event_log_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 }
 
 static void
-_event_log_on_signal_error_event (
+_event_log_on_signal_event (
     EventLog *object,
-    const gchar *arg_message)
+    GVariant *arg_message)
 {
   EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
 
@@ -1209,13 +1209,13 @@ _event_log_on_signal_error_event (
   GVariant   *signal_variant;
   connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
 
-  signal_variant = g_variant_ref_sink (g_variant_new ("(s)",
+  signal_variant = g_variant_ref_sink (g_variant_new ("(@a{ss})",
                    arg_message));
   for (l = connections; l != NULL; l = l->next)
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.EventLog", "ErrorEvent",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.EventLog", "Event",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -1399,16 +1399,16 @@ event_log_skeleton_init (EventLogSkeleton *skeleton)
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
   skeleton->priv->properties = g_new0 (GValue, 1);
-  g_value_init (&skeleton->priv->properties[0], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_VARIANT);
 }
 
-static const gchar *
+static GVariant *
 event_log_skeleton_get_message (EventLog *object)
 {
   EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
-  const gchar *value;
+  GVariant *value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_string (&(skeleton->priv->properties[0]));
+  value = g_value_get_variant (&(skeleton->priv->properties[0]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -1442,7 +1442,7 @@ event_log_skeleton_class_init (EventLogSkeletonClass *klass)
 static void
 event_log_skeleton_iface_init (EventLogIface *iface)
 {
-  iface->error_event = _event_log_on_signal_error_event;
+  iface->event = _event_log_on_signal_event;
   iface->get_message = event_log_skeleton_get_message;
 }
 
@@ -1458,568 +1458,4 @@ event_log_skeleton_new (void)
 {
   return EVENT_LOG (g_object_new (TYPE_EVENT_LOG_SKELETON, NULL));
 }
-
-/* ------------------------------------------------------------------------
- * Code for Object, ObjectProxy and ObjectSkeleton
- * ------------------------------------------------------------------------
- */
-
-/**
- * SECTION:Object
- * @title: Object
- * @short_description: Specialized GDBusObject types
- *
- * This section contains the #Object, #ObjectProxy, and #ObjectSkeleton types which make it easier to work with objects implementing generated types for D-Bus interfaces.
- */
-
-/**
- * Object:
- *
- * The #Object type is a specialized container of interfaces.
- */
-
-/**
- * ObjectIface:
- * @parent_iface: The parent interface.
- *
- * Virtual table for the #Object interface.
- */
-
-typedef ObjectIface ObjectInterface;
-G_DEFINE_INTERFACE_WITH_CODE (Object, object, G_TYPE_OBJECT, g_type_interface_add_prerequisite (g_define_type_id, G_TYPE_DBUS_OBJECT));
-
-static void
-object_default_init (ObjectIface *iface)
-{
-  /**
-   * Object:event-log:
-   *
-   * The #EventLog instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-EventLog.top_of_page">org.openbmc.EventLog</link>, if any.
-   *
-   * Connect to the #GObject::notify signal to get informed of property changes.
-   */
-  g_object_interface_install_property (iface, g_param_spec_object ("event-log", "event-log", "event-log", TYPE_EVENT_LOG, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
-
-}
-
-/**
- * object_get_event_log:
- * @object: A #Object.
- *
- * Gets the #EventLog instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-EventLog.top_of_page">org.openbmc.EventLog</link> on @object, if any.
- *
- * Returns: (transfer full): A #EventLog that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
- */
-EventLog *object_get_event_log (Object *object)
-{
-  GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
-  if (ret == NULL)
-    return NULL;
-  return EVENT_LOG (ret);
-}
-
-
-/**
- * object_peek_event_log: (skip)
- * @object: A #Object.
- *
- * Like object_get_event_log() but doesn't increase the reference count on the returned object.
- *
- * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
- *
- * Returns: (transfer none): A #EventLog or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
- */
-EventLog *object_peek_event_log (Object *object)
-{
-  GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
-  if (ret == NULL)
-    return NULL;
-  g_object_unref (ret);
-  return EVENT_LOG (ret);
-}
-
-
-static void
-object_notify (GDBusObject *object, GDBusInterface *interface)
-{
-  _ExtendedGDBusInterfaceInfo *info = (_ExtendedGDBusInterfaceInfo *) g_dbus_interface_get_info (interface);
-  /* info can be NULL if the other end is using a D-Bus interface we don't know
-   * anything about, for example old generated code in this process talking to
-   * newer generated code in the other process. */
-  if (info != NULL)
-    g_object_notify (G_OBJECT (object), info->hyphen_name);
-}
-
-/**
- * ObjectProxy:
- *
- * The #ObjectProxy structure contains only private data and should only be accessed using the provided API.
- */
-
-/**
- * ObjectProxyClass:
- * @parent_class: The parent class.
- *
- * Class structure for #ObjectProxy.
- */
-
-static void
-object_proxy__object_iface_init (ObjectIface *iface G_GNUC_UNUSED)
-{
-}
-
-static void
-object_proxy__g_dbus_object_iface_init (GDBusObjectIface *iface)
-{
-  iface->interface_added = object_notify;
-  iface->interface_removed = object_notify;
-}
-
-
-G_DEFINE_TYPE_WITH_CODE (ObjectProxy, object_proxy, G_TYPE_DBUS_OBJECT_PROXY,
-                         G_IMPLEMENT_INTERFACE (TYPE_OBJECT, object_proxy__object_iface_init)
-                         G_IMPLEMENT_INTERFACE (G_TYPE_DBUS_OBJECT, object_proxy__g_dbus_object_iface_init));
-
-static void
-object_proxy_init (ObjectProxy *object G_GNUC_UNUSED)
-{
-}
-
-static void
-object_proxy_set_property (GObject      *gobject,
-  guint         prop_id,
-  const GValue *value G_GNUC_UNUSED,
-  GParamSpec   *pspec)
-{
-  G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
-}
-
-static void
-object_proxy_get_property (GObject      *gobject,
-  guint         prop_id,
-  GValue       *value,
-  GParamSpec   *pspec)
-{
-  ObjectProxy *object = OBJECT_PROXY (gobject);
-  GDBusInterface *interface;
-
-  switch (prop_id)
-    {
-    case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
-      g_value_take_object (value, interface);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
-      break;
-  }
-}
-
-static void
-object_proxy_class_init (ObjectProxyClass *klass)
-{
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  gobject_class->set_property = object_proxy_set_property;
-  gobject_class->get_property = object_proxy_get_property;
-
-  g_object_class_override_property (gobject_class, 1, "event-log");
-}
-
-/**
- * object_proxy_new:
- * @connection: A #GDBusConnection.
- * @object_path: An object path.
- *
- * Creates a new proxy object.
- *
- * Returns: (transfer full): The proxy object.
- */
-ObjectProxy *
-object_proxy_new (GDBusConnection *connection,
-  const gchar *object_path)
-{
-  g_return_val_if_fail (G_IS_DBUS_CONNECTION (connection), NULL);
-  g_return_val_if_fail (g_variant_is_object_path (object_path), NULL);
-  return OBJECT_PROXY (g_object_new (TYPE_OBJECT_PROXY, "g-connection", connection, "g-object-path", object_path, NULL));
-}
-
-/**
- * ObjectSkeleton:
- *
- * The #ObjectSkeleton structure contains only private data and should only be accessed using the provided API.
- */
-
-/**
- * ObjectSkeletonClass:
- * @parent_class: The parent class.
- *
- * Class structure for #ObjectSkeleton.
- */
-
-static void
-object_skeleton__object_iface_init (ObjectIface *iface G_GNUC_UNUSED)
-{
-}
-
-
-static void
-object_skeleton__g_dbus_object_iface_init (GDBusObjectIface *iface)
-{
-  iface->interface_added = object_notify;
-  iface->interface_removed = object_notify;
-}
-
-G_DEFINE_TYPE_WITH_CODE (ObjectSkeleton, object_skeleton, G_TYPE_DBUS_OBJECT_SKELETON,
-                         G_IMPLEMENT_INTERFACE (TYPE_OBJECT, object_skeleton__object_iface_init)
-                         G_IMPLEMENT_INTERFACE (G_TYPE_DBUS_OBJECT, object_skeleton__g_dbus_object_iface_init));
-
-static void
-object_skeleton_init (ObjectSkeleton *object G_GNUC_UNUSED)
-{
-}
-
-static void
-object_skeleton_set_property (GObject      *gobject,
-  guint         prop_id,
-  const GValue *value,
-  GParamSpec   *pspec)
-{
-  ObjectSkeleton *object = OBJECT_SKELETON (gobject);
-  GDBusInterfaceSkeleton *interface;
-
-  switch (prop_id)
-    {
-    case 1:
-      interface = g_value_get_object (value);
-      if (interface != NULL)
-        {
-          g_warn_if_fail (IS_EVENT_LOG (interface));
-          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
-        }
-      else
-        {
-          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.EventLog");
-        }
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
-      break;
-  }
-}
-
-static void
-object_skeleton_get_property (GObject      *gobject,
-  guint         prop_id,
-  GValue       *value,
-  GParamSpec   *pspec)
-{
-  ObjectSkeleton *object = OBJECT_SKELETON (gobject);
-  GDBusInterface *interface;
-
-  switch (prop_id)
-    {
-    case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
-      g_value_take_object (value, interface);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
-      break;
-  }
-}
-
-static void
-object_skeleton_class_init (ObjectSkeletonClass *klass)
-{
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  gobject_class->set_property = object_skeleton_set_property;
-  gobject_class->get_property = object_skeleton_get_property;
-
-  g_object_class_override_property (gobject_class, 1, "event-log");
-}
-
-/**
- * object_skeleton_new:
- * @object_path: An object path.
- *
- * Creates a new skeleton object.
- *
- * Returns: (transfer full): The skeleton object.
- */
-ObjectSkeleton *
-object_skeleton_new (const gchar *object_path)
-{
-  g_return_val_if_fail (g_variant_is_object_path (object_path), NULL);
-  return OBJECT_SKELETON (g_object_new (TYPE_OBJECT_SKELETON, "g-object-path", object_path, NULL));
-}
-
-/**
- * object_skeleton_set_event_log:
- * @object: A #ObjectSkeleton.
- * @interface_: (allow-none): A #EventLog or %NULL to clear the interface.
- *
- * Sets the #EventLog instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-EventLog.top_of_page">org.openbmc.EventLog</link> on @object.
- */
-void object_skeleton_set_event_log (ObjectSkeleton *object, EventLog *interface_)
-{
-  g_object_set (G_OBJECT (object), "event-log", interface_, NULL);
-}
-
-
-/* ------------------------------------------------------------------------
- * Code for ObjectManager client
- * ------------------------------------------------------------------------
- */
-
-/**
- * SECTION:ObjectManagerClient
- * @title: ObjectManagerClient
- * @short_description: Generated GDBusObjectManagerClient type
- *
- * This section contains a #GDBusObjectManagerClient that uses object_manager_client_get_proxy_type() as the #GDBusProxyTypeFunc.
- */
-
-/**
- * ObjectManagerClient:
- *
- * The #ObjectManagerClient structure contains only private data and should only be accessed using the provided API.
- */
-
-/**
- * ObjectManagerClientClass:
- * @parent_class: The parent class.
- *
- * Class structure for #ObjectManagerClient.
- */
-
-G_DEFINE_TYPE (ObjectManagerClient, object_manager_client, G_TYPE_DBUS_OBJECT_MANAGER_CLIENT);
-
-static void
-object_manager_client_init (ObjectManagerClient *manager G_GNUC_UNUSED)
-{
-}
-
-static void
-object_manager_client_class_init (ObjectManagerClientClass *klass G_GNUC_UNUSED)
-{
-}
-
-/**
- * object_manager_client_get_proxy_type:
- * @manager: A #GDBusObjectManagerClient.
- * @object_path: The object path of the remote object (unused).
- * @interface_name: (allow-none): Interface name of the remote object or %NULL to get the object proxy #GType.
- * @user_data: User data (unused).
- *
- * A #GDBusProxyTypeFunc that maps @interface_name to the generated #GDBusObjectProxy<!-- -->- and #GDBusProxy<!-- -->-derived types.
- *
- * Returns: A #GDBusProxy<!-- -->-derived #GType if @interface_name is not %NULL, otherwise the #GType for #ObjectProxy.
- */
-GType
-object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_UNUSED, const gchar *object_path G_GNUC_UNUSED, const gchar *interface_name, gpointer user_data G_GNUC_UNUSED)
-{
-  static gsize once_init_value = 0;
-  static GHashTable *lookup_hash;
-  GType ret;
-
-  if (interface_name == NULL)
-    return TYPE_OBJECT_PROXY;
-  if (g_once_init_enter (&once_init_value))
-    {
-      lookup_hash = g_hash_table_new (g_str_hash, g_str_equal);
-      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.EventLog", GSIZE_TO_POINTER (TYPE_EVENT_LOG_PROXY));
-      g_once_init_leave (&once_init_value, 1);
-    }
-  ret = (GType) GPOINTER_TO_SIZE (g_hash_table_lookup (lookup_hash, interface_name));
-  if (ret == (GType) 0)
-    ret = G_TYPE_DBUS_PROXY;
-  return ret;
-}
-
-/**
- * object_manager_client_new:
- * @connection: A #GDBusConnection.
- * @flags: Flags from the #GDBusObjectManagerClientFlags enumeration.
- * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously creates #GDBusObjectManagerClient using object_manager_client_get_proxy_type() as the #GDBusProxyTypeFunc. See g_dbus_object_manager_client_new() for more details.
- *
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call object_manager_client_new_finish() to get the result of the operation.
- *
- * See object_manager_client_new_sync() for the synchronous, blocking version of this constructor.
- */
-void
-object_manager_client_new (
-    GDBusConnection        *connection,
-    GDBusObjectManagerClientFlags  flags,
-    const gchar            *name,
-    const gchar            *object_path,
-    GCancellable           *cancellable,
-    GAsyncReadyCallback     callback,
-    gpointer                user_data)
-{
-  g_async_initable_new_async (TYPE_OBJECT_MANAGER_CLIENT, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "flags", flags, "name", name, "connection", connection, "object-path", object_path, "get-proxy-type-func", object_manager_client_get_proxy_type, NULL);
-}
-
-/**
- * object_manager_client_new_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to object_manager_client_new().
- * @error: Return location for error or %NULL
- *
- * Finishes an operation started with object_manager_client_new().
- *
- * Returns: (transfer full) (type ObjectManagerClient): The constructed object manager client or %NULL if @error is set.
- */
-GDBusObjectManager *
-object_manager_client_new_finish (
-    GAsyncResult        *res,
-    GError             **error)
-{
-  GObject *ret;
-  GObject *source_object;
-  source_object = g_async_result_get_source_object (res);
-  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
-  g_object_unref (source_object);
-  if (ret != NULL)
-    return G_DBUS_OBJECT_MANAGER (ret);
-  else
-    return NULL;
-}
-
-/**
- * object_manager_client_new_sync:
- * @connection: A #GDBusConnection.
- * @flags: Flags from the #GDBusObjectManagerClientFlags enumeration.
- * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL
- *
- * Synchronously creates #GDBusObjectManagerClient using object_manager_client_get_proxy_type() as the #GDBusProxyTypeFunc. See g_dbus_object_manager_client_new_sync() for more details.
- *
- * The calling thread is blocked until a reply is received.
- *
- * See object_manager_client_new() for the asynchronous version of this constructor.
- *
- * Returns: (transfer full) (type ObjectManagerClient): The constructed object manager client or %NULL if @error is set.
- */
-GDBusObjectManager *
-object_manager_client_new_sync (
-    GDBusConnection        *connection,
-    GDBusObjectManagerClientFlags  flags,
-    const gchar            *name,
-    const gchar            *object_path,
-    GCancellable           *cancellable,
-    GError                **error)
-{
-  GInitable *ret;
-  ret = g_initable_new (TYPE_OBJECT_MANAGER_CLIENT, cancellable, error, "flags", flags, "name", name, "connection", connection, "object-path", object_path, "get-proxy-type-func", object_manager_client_get_proxy_type, NULL);
-  if (ret != NULL)
-    return G_DBUS_OBJECT_MANAGER (ret);
-  else
-    return NULL;
-}
-
-
-/**
- * object_manager_client_new_for_bus:
- * @bus_type: A #GBusType.
- * @flags: Flags from the #GDBusObjectManagerClientFlags enumeration.
- * @name: A bus name (well-known or unique).
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
- * @user_data: User data to pass to @callback.
- *
- * Like object_manager_client_new() but takes a #GBusType instead of a #GDBusConnection.
- *
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call object_manager_client_new_for_bus_finish() to get the result of the operation.
- *
- * See object_manager_client_new_for_bus_sync() for the synchronous, blocking version of this constructor.
- */
-void
-object_manager_client_new_for_bus (
-    GBusType                bus_type,
-    GDBusObjectManagerClientFlags  flags,
-    const gchar            *name,
-    const gchar            *object_path,
-    GCancellable           *cancellable,
-    GAsyncReadyCallback     callback,
-    gpointer                user_data)
-{
-  g_async_initable_new_async (TYPE_OBJECT_MANAGER_CLIENT, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "flags", flags, "name", name, "bus-type", bus_type, "object-path", object_path, "get-proxy-type-func", object_manager_client_get_proxy_type, NULL);
-}
-
-/**
- * object_manager_client_new_for_bus_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to object_manager_client_new_for_bus().
- * @error: Return location for error or %NULL
- *
- * Finishes an operation started with object_manager_client_new_for_bus().
- *
- * Returns: (transfer full) (type ObjectManagerClient): The constructed object manager client or %NULL if @error is set.
- */
-GDBusObjectManager *
-object_manager_client_new_for_bus_finish (
-    GAsyncResult        *res,
-    GError             **error)
-{
-  GObject *ret;
-  GObject *source_object;
-  source_object = g_async_result_get_source_object (res);
-  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
-  g_object_unref (source_object);
-  if (ret != NULL)
-    return G_DBUS_OBJECT_MANAGER (ret);
-  else
-    return NULL;
-}
-
-/**
- * object_manager_client_new_for_bus_sync:
- * @bus_type: A #GBusType.
- * @flags: Flags from the #GDBusObjectManagerClientFlags enumeration.
- * @name: A bus name (well-known or unique).
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL
- *
- * Like object_manager_client_new_sync() but takes a #GBusType instead of a #GDBusConnection.
- *
- * The calling thread is blocked until a reply is received.
- *
- * See object_manager_client_new_for_bus() for the asynchronous version of this constructor.
- *
- * Returns: (transfer full) (type ObjectManagerClient): The constructed object manager client or %NULL if @error is set.
- */
-GDBusObjectManager *
-object_manager_client_new_for_bus_sync (
-    GBusType                bus_type,
-    GDBusObjectManagerClientFlags  flags,
-    const gchar            *name,
-    const gchar            *object_path,
-    GCancellable           *cancellable,
-    GError                **error)
-{
-  GInitable *ret;
-  ret = g_initable_new (TYPE_OBJECT_MANAGER_CLIENT, cancellable, error, "flags", flags, "name", name, "bus-type", bus_type, "object-path", object_path, "get-proxy-type-func", object_manager_client_get_proxy_type, NULL);
-  if (ret != NULL)
-    return G_DBUS_OBJECT_MANAGER (ret);
-  else
-    return NULL;
-}
-
 

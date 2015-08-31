@@ -163,6 +163,19 @@ _g_value_equal (const GValue *a, const GValue *b)
 
 /* ---- Introspection data for org.openbmc.SensorInteger ---- */
 
+static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_init =
+{
+  {
+    -1,
+    (gchar *) "init",
+    NULL,
+    NULL,
+    NULL
+  },
+  "handle-init",
+  FALSE
+};
+
 static const _ExtendedGDBusArgInfo _sensor_integer_method_info_get_value_OUT_ARG_value =
 {
   {
@@ -315,6 +328,7 @@ static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_set_config_dat
 
 static const _ExtendedGDBusMethodInfo * const _sensor_integer_method_info_pointers[] =
 {
+  &_sensor_integer_method_info_init,
   &_sensor_integer_method_info_get_value,
   &_sensor_integer_method_info_set_value,
   &_sensor_integer_method_info_get_units,
@@ -522,6 +536,7 @@ sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin
  * @parent_iface: The parent interface.
  * @handle_get_units: Handler for the #SensorInteger::handle-get-units signal.
  * @handle_get_value: Handler for the #SensorInteger::handle-get-value signal.
+ * @handle_init: Handler for the #SensorInteger::handle-init signal.
  * @handle_set_config_data: Handler for the #SensorInteger::handle-set-config-data signal.
  * @handle_set_poll_interval: Handler for the #SensorInteger::handle-set-poll-interval signal.
  * @handle_set_value: Handler for the #SensorInteger::handle-set-value signal.
@@ -543,6 +558,28 @@ static void
 sensor_integer_default_init (SensorIntegerIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
+  /**
+   * SensorInteger::handle-init:
+   * @object: A #SensorInteger.
+   * @invocation: A #GDBusMethodInvocation.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_init() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-init",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SensorIntegerIface, handle_init),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
+
   /**
    * SensorInteger::handle-get-value:
    * @object: A #SensorInteger.
@@ -966,6 +1003,98 @@ sensor_integer_emit_heartbeat (
     const gchar *arg_bus_name)
 {
   g_signal_emit_by_name (object, "heartbeat", arg_bus_name);
+}
+
+/**
+ * sensor_integer_call_init:
+ * @proxy: A #SensorIntegerProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call sensor_integer_call_init_finish() to get the result of the operation.
+ *
+ * See sensor_integer_call_init_sync() for the synchronous, blocking version of this method.
+ */
+void
+sensor_integer_call_init (
+    SensorInteger *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "init",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * sensor_integer_call_init_finish:
+ * @proxy: A #SensorIntegerProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_init().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with sensor_integer_call_init().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+sensor_integer_call_init_finish (
+    SensorInteger *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * sensor_integer_call_init_sync:
+ * @proxy: A #SensorIntegerProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See sensor_integer_call_init() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+sensor_integer_call_init_sync (
+    SensorInteger *proxy,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "init",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
 }
 
 /**
@@ -1456,6 +1585,24 @@ sensor_integer_call_set_config_data_sync (
   g_variant_unref (_ret);
 _out:
   return _ret != NULL;
+}
+
+/**
+ * sensor_integer_complete_init:
+ * @object: A #SensorInteger.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+sensor_integer_complete_init (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
 }
 
 /**
@@ -4324,7 +4471,7 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
     -1,
     (gchar *) "lower_critical",
     (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
   "lower-critical",
@@ -4337,7 +4484,7 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
     -1,
     (gchar *) "lower_warning",
     (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
   "lower-warning",
@@ -4350,7 +4497,7 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
     -1,
     (gchar *) "upper_warning",
     (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
   "upper-warning",
@@ -4363,7 +4510,7 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
     -1,
     (gchar *) "upper_critical",
     (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
   "upper-critical",
@@ -4563,7 +4710,7 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_critical">"lower_critical"</link>.
    *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("lower-critical", "lower_critical", "lower_critical", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -4572,7 +4719,7 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_warning">"lower_warning"</link>.
    *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("lower-warning", "lower_warning", "lower_warning", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -4581,7 +4728,7 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_warning">"upper_warning"</link>.
    *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("upper-warning", "upper_warning", "upper_warning", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -4590,7 +4737,7 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_critical">"upper_critical"</link>.
    *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("upper-critical", "upper_critical", "upper_critical", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -4611,7 +4758,7 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
  *
  * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_critical">"lower_critical"</link> D-Bus property.
  *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
@@ -4628,7 +4775,7 @@ sensor_integer_threshold_get_lower_critical (SensorIntegerThreshold *object)
  *
  * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_critical">"lower_critical"</link> D-Bus property to @value.
  *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
 sensor_integer_threshold_set_lower_critical (SensorIntegerThreshold *object, gint value)
@@ -4642,7 +4789,7 @@ sensor_integer_threshold_set_lower_critical (SensorIntegerThreshold *object, gin
  *
  * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_warning">"lower_warning"</link> D-Bus property.
  *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
@@ -4659,7 +4806,7 @@ sensor_integer_threshold_get_lower_warning (SensorIntegerThreshold *object)
  *
  * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_warning">"lower_warning"</link> D-Bus property to @value.
  *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
 sensor_integer_threshold_set_lower_warning (SensorIntegerThreshold *object, gint value)
@@ -4673,7 +4820,7 @@ sensor_integer_threshold_set_lower_warning (SensorIntegerThreshold *object, gint
  *
  * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_warning">"upper_warning"</link> D-Bus property.
  *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
@@ -4690,7 +4837,7 @@ sensor_integer_threshold_get_upper_warning (SensorIntegerThreshold *object)
  *
  * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_warning">"upper_warning"</link> D-Bus property to @value.
  *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
 sensor_integer_threshold_set_upper_warning (SensorIntegerThreshold *object, gint value)
@@ -4704,7 +4851,7 @@ sensor_integer_threshold_set_upper_warning (SensorIntegerThreshold *object, gint
  *
  * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_critical">"upper_critical"</link> D-Bus property.
  *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
@@ -4721,7 +4868,7 @@ sensor_integer_threshold_get_upper_critical (SensorIntegerThreshold *object)
  *
  * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_critical">"upper_critical"</link> D-Bus property to @value.
  *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
 sensor_integer_threshold_set_upper_critical (SensorIntegerThreshold *object, gint value)

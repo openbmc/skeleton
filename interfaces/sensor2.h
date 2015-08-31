@@ -38,6 +38,10 @@ struct _SensorIntegerIface
     SensorInteger *object,
     GDBusMethodInvocation *invocation);
 
+  gboolean (*handle_init) (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation);
+
   gboolean (*handle_set_config_data) (
     SensorInteger *object,
     GDBusMethodInvocation *invocation,
@@ -80,6 +84,10 @@ guint sensor_integer_override_properties (GObjectClass *klass, guint property_id
 
 
 /* D-Bus method call completion functions: */
+void sensor_integer_complete_init (
+    SensorInteger *object,
+    GDBusMethodInvocation *invocation);
+
 void sensor_integer_complete_get_value (
     SensorInteger *object,
     GDBusMethodInvocation *invocation,
@@ -116,6 +124,22 @@ void sensor_integer_emit_heartbeat (
 
 
 /* D-Bus method calls: */
+void sensor_integer_call_init (
+    SensorInteger *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean sensor_integer_call_init_finish (
+    SensorInteger *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean sensor_integer_call_init_sync (
+    SensorInteger *proxy,
+    GCancellable *cancellable,
+    GError **error);
+
 void sensor_integer_call_get_value (
     SensorInteger *proxy,
     GCancellable *cancellable,

@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
-#include "interfaces/sensor2.h"
 #include "sensor_threshold.h"
 
 
@@ -45,10 +44,9 @@ set_thresholds (SensorIntegerThreshold        *sen,
 void check_thresholds(SensorIntegerThreshold* sensor,guint value)
 {
   	threshold_states current_state = sensor_integer_threshold_get_state(sensor);
- 	if (current_state != NOT_SET) 
-	{
+ 	//if (current_state != NOT_SET) 
+	//{
 		threshold_states state = NORMAL;
-
 		if (value < sensor_integer_threshold_get_lower_critical(sensor)) {
     			state = LOWER_CRITICAL;
   		}
@@ -76,6 +74,6 @@ void check_thresholds(SensorIntegerThreshold* sensor,guint value)
 				g_print("Warning\n");
 			}
 		}
-	}
+	//}
 }
 

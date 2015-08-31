@@ -7,7 +7,7 @@
 #include <argp.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-
+#include "interfaces/eventlog.h"
 #include "gpio.h"
 
 
@@ -40,10 +40,10 @@ void gpio_write(GPIO* gpio, uint8_t value)
 uint8_t gpio_read(GPIO* gpio)
 {
 	char buf[1];
+	
 	if (read(gpio->fd,&buf,1) != 1)
 	{
-		//TODO: error hjandling
-		printf("read error\n");
+		g_print("read error\n");
 	}
 	if (buf[0]=='1') {
 		return 1;
@@ -108,6 +108,13 @@ void gpio_init(GDBusConnection *connection, GPIO* gpio)
 
 
 }
+char* get_gpio_dev(GPIO* gpio)
+{
+	char* buf;
+	sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
+	return buf;
+}
+
 int gpio_open(GPIO* gpio)
 {
 	// open gpio for writing or reading
