@@ -5,17 +5,12 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import System
 
 DBUS_NAME = 'org.openbmc.control.Chassis'
 OBJ_NAME = '/org/openbmc/control/Chassis/'+sys.argv[1]
 
 POWER_OFF = 0
 POWER_ON = 1
-
-process_config = System.BarreleyeProcesses()
-
-
 
 class ChassisControlObject(dbus.service.Object):
 	def __init__(self,bus,name):

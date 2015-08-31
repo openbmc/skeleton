@@ -43,7 +43,8 @@ uint8_t gpio_read(GPIO* gpio)
 	
 	if (read(gpio->fd,&buf,1) != 1)
 	{
-		g_print("read error\n");
+		//g_print("read error\n");
+		//TODO: error handling
 	}
 	if (buf[0]=='1') {
 		return 1;
