@@ -1,28 +1,38 @@
 <node>
-	<!--
-		org.openbmc.Fru:
-		@short_description: 
-		-->	
 	<interface name="org.openbmc.Fru">
-		<method name="setState">
-			<arg name="state" type="i" direction="in"/>
-		</method>
-		<method name="getState">
-			<arg name="state" type="i" direction="out"/>
-		</method>
-		<method name="addEventLog">
-			<arg name="entry" type="s" direction="in"/>
-		</method>
-		<method name="getType">
-			<arg name="type" type="s" direction="out"/>
-		</method>
-		<method name="getLocation">
-			<arg name="location" type="s" direction="out"/>
-		</method>
+		<property name="label"        type="s" access="readwrite"/>
+		<property name="location"     type="s" access="readwrite"/>
+		<property name="state"        type="y" access="readwrite"/>
+		<property name="manufacturer" type="s" access="readwrite"/>
+		<property name="part_num"     type="s" access="readwrite"/>
+		<property name="serial_num"   type="s" access="readwrite"/>
+		<property name="date_code"    type="u" access="readwrite"/>
+		<property name="version"      type="s" access="readwrite"/>
+		<property name="type"         type="y" access="readwrite"/>
+		<property name="subtype"      type="y" access="readwrite"/>
+		<property name="instance_num" type="y" access="readwrite"/>
 		<signal name="StateChanged"/>
 		<signal name="UnrecoverableError"/>
 		<signal name="RecoverableError"/>
-		
+	</interface>
+	<interface name="org.openbmc.Fru.Fan">
+		<method name="setCoolingZone">
+			<arg name="cooling_zone" type="i" direction="in"/>
+		</method>
+		<method name="getSpeed">
+			<arg name="speed" type="i" direction="out"/>
+		</method>			
+		<method name="setSpeed">
+			<arg name="speed" type="i" direction="in"/>
+		</method>
+		<method name="setConfigData">
+			<arg name="pwm_num" type="i" direction="in"/>
+		</method>
+		<property name="speed" type="i" access="read"/>
+		<property name="cooling_zone" type="i" access="read"/>
+		<signal name="SpeedChanged">
+			<arg name="speed" type="i"/>
+		</signal>
+		<signal name="TachError"/>
 	</interface>
 </node>
-

@@ -14,18 +14,21 @@ static GDBusObjectManagerServer *manager = NULL;
 
 static gchar* i2c_bus = "";
 static gchar* i2c_address = "";
+static gboolean inited = FALSE;
 
 static gboolean
 poll_sensor(gpointer user_data)
 {
+	if (!inited)
+	{
+		return TRUE;
+	}
 	SensorInteger *sensor = object_get_sensor_integer((Object*)user_data);
 	SensorIntegerThreshold *threshold = object_get_sensor_integer_threshold((Object*)user_data);
-
  	guint value = sensor_integer_get_value(sensor);
 	//TOOD:  Change to actually read sensor
 	value = value+1;
-
-	if (heartbeat > 30000)
+	if (heartbeat > 10000)
 	{
 		heartbeat = 0;
 		sensor_integer_emit_heartbeat(sensor,dbus_name);
@@ -40,12 +43,22 @@ poll_sensor(gpointer user_data)
     //if changed, set property and emit signal
     if (value != sensor_integer_get_value(sensor))
     {
-       //g_print("Sensor changed\n");
        sensor_integer_set_value(sensor,value);
        sensor_integer_emit_changed(sensor,value);
        check_thresholds(threshold,value);
     }
     return TRUE;
+}
+
+static gboolean
+on_init         (SensorInteger  *sen,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+  inited = TRUE;
+  g_print("Sensor init");
+  sensor_integer_complete_init(sen,invocation);
+  return TRUE;
 }
 
 
@@ -128,6 +141,11 @@ on_bus_acquired (GDBusConnection *connection,
   		g_signal_connect (sensor,
                     "handle-set-config-data",
                     G_CALLBACK (on_set_config),
+                    NULL); /* user_data */
+
+ 		g_signal_connect (sensor,
+                    "handle-init",
+                    G_CALLBACK (on_init),
                     NULL); /* user_data */
  
   		g_signal_connect (threshold,

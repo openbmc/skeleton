@@ -1,5 +1,6 @@
 <node>
 	<interface name="org.openbmc.SensorInteger">
+		<method name="init"/>
 		<method name="getValue">
 			<arg name="value" type="i" direction="out"/>
 		</method>
@@ -55,10 +56,10 @@
 			<arg name="state" type="i" direction="out"/>
 		</method>
 
-		<property name="lower_critical" type="i" access="read"/>
-		<property name="lower_warning"  type="i" access="read"/>
-		<property name="upper_warning"  type="i" access="read"/>
-		<property name="upper_critical" type="i" access="read"/>
+		<property name="lower_critical" type="i" access="readwrite"/>
+		<property name="lower_warning"  type="i" access="readwrite"/>
+		<property name="upper_warning"  type="i" access="readwrite"/>
+		<property name="upper_critical" type="i" access="readwrite"/>
 		<property name="state" type="i" access="read"/>
 
 		<signal name="Warning"/>

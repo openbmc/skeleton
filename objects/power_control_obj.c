@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "interfaces/power_control.h"
+#include "interfaces/control.h"
 #include "openbmc.h"
 #include "gpio.h"
 
@@ -18,6 +18,51 @@ GPIO power_pin    = (GPIO){ "POWER_PIN" };
 GPIO pgood        = (GPIO){ "PGOOD" };
 
 static GDBusObjectManagerServer *manager = NULL;
+
+static gboolean poll_pgood(gpointer user_data)
+{
+	ControlPower *control_power = object_get_control_power((Object*)user_data);
+	Control* control = object_get_control((Object*)user_data);
+	EventLog* event_log = object_get_event_log((Object*)user_data);
+	control_emit_heartbeat(control,dbus_name);
+
+	//if (pgood.fd >= 0)
+	//{
+		uint8_t gpio = gpio_read(&pgood);
+		//if changed, set property and emit signal
+		if (gpio != control_power_get_pgood(control_power))
+		{
+ 			control_power_set_pgood(control_power,gpio);
+ 			if (gpio==0)
+ 			{
+ 				control_power_emit_power_lost(control_power);
+ 			}
+ 			else
+ 			{
+ 				control_power_emit_power_good(control_power);
+ 			}
+		}
+	//}
+	//else
+	//{
+		//TODO: error handling
+	/*	GVariantBuilder *b;
+		GVariant *dict;
+		b = g_variant_builder_new (G_VARIANT_TYPE ("a{ss}"));
+		g_variant_builder_add (b, "{ss}", "object",dbus_object_path);
+		g_variant_builder_add (b, "{ss}", "message", "Unable to read pgood gpio");
+		char buf[254];
+		sprintf(buf,"%s/gpio%d",pgood.dev,pgood.num);
+		g_variant_builder_add (b, "{ss}", "gpio",buf);
+		
+		dict = g_variant_builder_end (b);
+		event_log_emit_event_log(event_log,dict);
+		
+	}*/
+	return TRUE;
+}
+
+
 
 static gboolean
 on_set_power_state (ControlPower          *pwr,
@@ -88,6 +133,14 @@ on_bus_acquired (GDBusConnection *connection,
 		object_skeleton_set_control_power (object, control_power);
 		g_object_unref (control_power);
 
+		Control* control = control_skeleton_new ();
+		object_skeleton_set_control (object, control);
+		g_object_unref (control);
+
+		EventLog* event_log = event_log_skeleton_new ();
+		object_skeleton_set_event_log (object, event_log);
+		g_object_unref (event_log);
+
 		//define method callbacks here
 		g_signal_connect (control_power,
         	            "handle-set-power-state",
@@ -98,6 +151,8 @@ on_bus_acquired (GDBusConnection *connection,
                 	    "handle-get-power-state",
                 	    G_CALLBACK (on_get_power_state),
                 	    NULL); /* user_data */
+
+		g_timeout_add(5000, poll_pgood, object);
 
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
@@ -128,35 +183,6 @@ on_name_lost (GDBusConnection *connection,
   g_print ("Lost the name %s\n", name);
 }
 
-static gboolean poll_pgood(gpointer user_data)
-{
-	ControlPower *control_power = object_get_control_power((Object*)user_data);
-
-	if (pgood.fd >= 0)
-	{
-		uint8_t gpio = gpio_read(&pgood);
-
-		//if changed, set property and emit signal
-		if (gpio != control_power_get_pgood(control_power))
-		{
- 			control_power_set_pgood(control_power,gpio);
- 			if (gpio==0)
- 			{
- 				control_power_emit_power_lost(control_power);
- 			}
- 			else
- 			{
- 				control_power_emit_power_good(control_power);
- 			}
-		}
-	}
-	else
-	{
-		//TODO: error handling
-		printf("Unable to read pgood\n");
-	}
-	return TRUE;
-}
 
 
 
@@ -184,8 +210,7 @@ main (gint argc, gchar *argv[])
                        &cmd,
                        NULL);
 
-  g_timeout_add(5000, poll_pgood, NULL);
-  g_main_loop_run (loop);
+   g_main_loop_run (loop);
   
   g_bus_unown_name (id);
   g_main_loop_unref (loop);

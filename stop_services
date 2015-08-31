@@ -5,3 +5,4 @@ killall -9 button_power.exe
 killall -9 sensor_host_status.exe
 killall -9 control_host.exe
 killall -9 flash_bios.exe
+killall -9 python
