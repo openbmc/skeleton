@@ -1,4 +1,4 @@
-#include "interfaces/sensor2.h"
+#include "interfaces/sensor.h"
 #include "openbmc.h"
 #include "sensor_threshold.h"
 
@@ -12,8 +12,6 @@ static guint heartbeat = 0;
 
 static GDBusObjectManagerServer *manager = NULL;
 
-static gchar* i2c_bus = "";
-static gchar* i2c_address = "";
 static gboolean inited = FALSE;
 
 static gboolean
@@ -25,8 +23,11 @@ poll_sensor(gpointer user_data)
 	}
 	SensorInteger *sensor = object_get_sensor_integer((Object*)user_data);
 	SensorIntegerThreshold *threshold = object_get_sensor_integer_threshold((Object*)user_data);
+	SensorI2c *i2c = object_get_sensor_i2c((Object*)user_data);
+
  	guint value = sensor_integer_get_value(sensor);
 	//TOOD:  Change to actually read sensor
+	g_print("Reading I2C = %s; Address = %s\n",sensor_i2c_get_dev_path(i2c),sensor_i2c_get_address(i2c));
 	value = value+1;
 	if (heartbeat > 10000)
 	{
@@ -44,7 +45,7 @@ poll_sensor(gpointer user_data)
     if (value != sensor_integer_get_value(sensor))
     {
        sensor_integer_set_value(sensor,value);
-       sensor_integer_emit_changed(sensor,value);
+       sensor_integer_emit_changed(sensor,value,sensor_integer_get_units(sensor));
        check_thresholds(threshold,value);
     }
     return TRUE;
@@ -56,7 +57,6 @@ on_init         (SensorInteger  *sen,
                 gpointer                user_data)
 {
   inited = TRUE;
-  g_print("Sensor init");
   sensor_integer_complete_init(sen,invocation);
   return TRUE;
 }
@@ -81,19 +81,6 @@ on_get (SensorInteger                 *sen,
   sensor_integer_complete_get_value(sen,invocation,reading);
   return TRUE;
 }
-
-static gboolean
-on_set_config (SensorInteger                 *sen,
-                GDBusMethodInvocation  *invocation,
-		gchar**                  config,
-                gpointer                user_data)
-{
-  g_print("I2C bus = %s\n",config[0]);
-  g_print("I2C addr = %s\n",config[1]);
-  sensor_integer_complete_set_config_data(sen,invocation);
-  return TRUE;
-}
-
 
 static void 
 on_bus_acquired (GDBusConnection *connection,
@@ -125,6 +112,11 @@ on_bus_acquired (GDBusConnection *connection,
 		object_skeleton_set_sensor_integer_threshold (object,threshold);
 		g_object_unref (threshold);
 
+		SensorI2c *i2c = sensor_i2c_skeleton_new();
+		object_skeleton_set_sensor_i2c (object,i2c);
+		g_object_unref (i2c);
+
+
   		// set units
   		sensor_integer_set_units(sensor,"C");
 		sensor_integer_threshold_set_state(threshold,NOT_SET);
@@ -136,11 +128,6 @@ on_bus_acquired (GDBusConnection *connection,
   		g_signal_connect (sensor,
                     "handle-get-units",
                     G_CALLBACK (on_get_units),
-                    NULL); /* user_data */
-
-  		g_signal_connect (sensor,
-                    "handle-set-config-data",
-                    G_CALLBACK (on_set_config),
                     NULL); /* user_data */
 
  		g_signal_connect (sensor,

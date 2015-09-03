@@ -2,7 +2,36 @@
 import dbus
 import Openbmc
 
+CACHED_INTERFACES = {
+	'org.openbmc.Fru' : True
+}
+
 SYSTEM_CONFIG = {}
+
+SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
+		'exe_name' : 'bin/sensor_manager.py',
+		'heartbeat' : 'no',
+		'rest_name' : 'sensors',
+		'instances' : [	
+			{
+				'name' : 'Barreleye',
+				'user_label': 'Sensor Manager',
+			}
+		]
+	}
+
+#SYSTEM_CONFIG['org.openbmc.managers.Frus'] = {
+#		'exe_name' : 'bin/fru_manager.py',
+#		'heartbeat' : 'no',
+#		'rest_name' : 'frus',
+#		'instances' : [	
+#			{
+#				'name' : 'Barreleye',
+#				'user_label': 'Fru Manager',
+#			}
+#		]
+#	}
+
 
 SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
 		'exe_name' : 'bin/eventlogger.py',
@@ -10,11 +39,23 @@ SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
 		'rest_name' : 'events',
 		'instances' : [	
 			{
-				'name' : 'Chassis',
-				'user_label': 'Chassis Control',
+				'name' : 'Barreleye',
+				'user_label': 'Event Logger',
 			}
 		]
 	}
+
+SYSTEM_CONFIG['org.openbmc.managers.IpmiTranslator'] = {
+		'exe_name' : 'bin/ipmi_translator.py',
+		'heartbeat' : 'no',
+		'instances' : [	
+			{
+				'name' : 'Barreleye',
+				'user_label': 'IPMI Translator',
+			}
+		]
+	}
+
 
 SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 		'exe_name' : 'bin/power_control.exe',
@@ -30,35 +71,41 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 		'exe_name' : 'bin/sensor_ambient.exe',
 		'heartbeat' : 'yes',
+		'init_methods' : ['org.openbmc.SensorInteger'],
+		'poll_interval': 5000,    
 		'instances' : [	
 			{
 				'name' : 'AmbientTemperature1',
 				'user_label': 'Ambient Temperature 1',
-				'parameters': ['/dev/i2c0','0xA0'],
-				'poll_interval': 5000,     
+				'sensor_id' : 41,
 				'properties' : { 
 					'org.openbmc.SensorIntegerThreshold' : {
 						'lower_critical': 5,
 						'lower_warning' : 10,
 						'upper_warning' : 15,
 						'upper_critical': 20
+					},
+					'org.openbmc.SensorI2c' : {
+						'dev_path' : '/dev/i2c/i2c0',
+						'address' : '0xA0'
 					}
 				}
 			},
 			{
 				'name' : 'AmbientTemperature2',
 				'user_label': 'Ambient Temperature 2',
-				'parameters': ['/dev/i2c0','0xA2'],
-				'poll_interval': 5000,    
  				'properties' : { 
 					'org.openbmc.SensorIntegerThreshold' : {
 						'lower_critical': 5,
 						'lower_warning' : 10,
 						'upper_warning' : 15,
 						'upper_critical': 20
+					},
+					'org.openbmc.SensorI2c' : {
+						'dev_path' : '/dev/i2c/i2c0',
+						'address' : '0xA2'
 					}
 				}
-     
 			}
 		]
 	}
@@ -79,6 +126,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 			{
 				'name' : 'HostStatus1',
 				'user_label': 'Host Status',
+				'sensor_id' : 43,
 			}
 		]
 	}
@@ -204,13 +252,50 @@ SYSTEM_CONFIG['org.openbmc.frus.Fan'] = {
 		]
 	}
 
+SYSTEM_CONFIG['org.openbmc.frus.Board'] = {
+		'exe_name' : 'bin/fru_board.exe',
+		'init_methods' : ['org.openbmc.Fru'],
+		'heartbeat' : 'no',
+		'instances' : [
+			{
+				'name' : 'IO_Planer',
+				'user_label': 'IO Planar',
+				'fru_id' : 61,
+				'properties' : { 
+					'org.openbmc.Fru' : {
+						'label' : 'IO Planar',
+						'location' : 'IO_PLANAR',
+						'type' : Openbmc.FRU_TYPES['BACKPLANE']
+					},
+					'org.openbmc.Fru.Eeprom' : {
+						'i2c_address' : '0xA8',
+						'i2c_dev_path' : '/dev/i2c/i2c5'
+					}
+				}
+			}
+		]
+	}
+
 SYSTEM_CONFIG['org.openbmc.frus.Fru'] = {
 		'exe_name' : 'bin/fru_generic.exe',
 		'heartbeat' : 'no',
-		'instances' : [	
+		'instances' : [
+			{
+				'name' : 'Backplane',
+				'user_label': '2S Motherboard',
+				'fru_id' : 60,
+				'properties' : { 
+					'org.openbmc.Fru' : {
+						'label' : 'MAIN_PLANAR',
+						'location' : 'C0',
+						'type' : Openbmc.FRU_TYPES['BACKPLANE'],
+					}
+				}
+			},
 			{
 				'name' : 'DIMM0',
 				'user_label': 'DIMM A0 Slot 0',
+				'fru_id' : 12,
 				'properties' : { 
 					'org.openbmc.Fru' : {
 						'label' : 'DIMM0',

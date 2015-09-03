@@ -163,6 +163,25 @@ _g_value_equal (const GValue *a, const GValue *b)
 
 /* ---- Introspection data for org.openbmc.Fru ---- */
 
+static const _ExtendedGDBusMethodInfo _fru_method_info_init =
+{
+  {
+    -1,
+    (gchar *) "init",
+    NULL,
+    NULL,
+    NULL
+  },
+  "handle-init",
+  FALSE
+};
+
+static const _ExtendedGDBusMethodInfo * const _fru_method_info_pointers[] =
+{
+  &_fru_method_info_init,
+  NULL
+};
+
 static const _ExtendedGDBusSignalInfo _fru_signal_info_state_changed =
 {
   {
@@ -196,11 +215,40 @@ static const _ExtendedGDBusSignalInfo _fru_signal_info_recoverable_error =
   "recoverable-error"
 };
 
+static const _ExtendedGDBusArgInfo _fru_signal_info_cache_me_ARG_busname =
+{
+  {
+    -1,
+    (gchar *) "busname",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _fru_signal_info_cache_me_ARG_pointers[] =
+{
+  &_fru_signal_info_cache_me_ARG_busname,
+  NULL
+};
+
+static const _ExtendedGDBusSignalInfo _fru_signal_info_cache_me =
+{
+  {
+    -1,
+    (gchar *) "CacheMe",
+    (GDBusArgInfo **) &_fru_signal_info_cache_me_ARG_pointers,
+    NULL
+  },
+  "cache-me"
+};
+
 static const _ExtendedGDBusSignalInfo * const _fru_signal_info_pointers[] =
 {
   &_fru_signal_info_state_changed,
   &_fru_signal_info_unrecoverable_error,
   &_fru_signal_info_recoverable_error,
+  &_fru_signal_info_cache_me,
   NULL
 };
 
@@ -368,7 +416,7 @@ static const _ExtendedGDBusInterfaceInfo _fru_interface_info =
   {
     -1,
     (gchar *) "org.openbmc.Fru",
-    NULL,
+    (GDBusMethodInfo **) &_fru_method_info_pointers,
     (GDBusSignalInfo **) &_fru_signal_info_pointers,
     (GDBusPropertyInfo **) &_fru_property_info_pointers,
     NULL
@@ -428,6 +476,7 @@ fru_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * FruIface:
  * @parent_iface: The parent interface.
+ * @handle_init: Handler for the #Fru::handle-init signal.
  * @get_date_code: Getter for the #Fru:date-code property.
  * @get_instance_num: Getter for the #Fru:instance-num property.
  * @get_label: Getter for the #Fru:label property.
@@ -439,6 +488,7 @@ fru_override_properties (GObjectClass *klass, guint property_id_begin)
  * @get_subtype: Getter for the #Fru:subtype property.
  * @get_type_: Getter for the #Fru:type property.
  * @get_version: Getter for the #Fru:version property.
+ * @cache_me: Handler for the #Fru::cache-me signal.
  * @recoverable_error: Handler for the #Fru::recoverable-error signal.
  * @state_changed: Handler for the #Fru::state-changed signal.
  * @unrecoverable_error: Handler for the #Fru::unrecoverable-error signal.
@@ -452,6 +502,29 @@ G_DEFINE_INTERFACE (Fru, fru, G_TYPE_OBJECT);
 static void
 fru_default_init (FruIface *iface)
 {
+  /* GObject signals for incoming D-Bus method calls: */
+  /**
+   * Fru::handle-init:
+   * @object: A #Fru.
+   * @invocation: A #GDBusMethodInvocation.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Fru.init">init()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call fru_complete_init() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-init",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FruIface, handle_init),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
+
   /* GObject signals for received D-Bus signals: */
   /**
    * Fru::state-changed:
@@ -506,6 +579,25 @@ fru_default_init (FruIface *iface)
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
     0);
+
+  /**
+   * Fru::cache-me:
+   * @object: A #Fru.
+   * @arg_busname: Argument.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Fru.CacheMe">"CacheMe"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("cache-me",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FruIface, cache_me),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    1, G_TYPE_STRING);
 
   /* GObject properties for D-Bus properties: */
   /**
@@ -1107,6 +1199,131 @@ fru_emit_recoverable_error (
     Fru *object)
 {
   g_signal_emit_by_name (object, "recoverable-error");
+}
+
+/**
+ * fru_emit_cache_me:
+ * @object: A #Fru.
+ * @arg_busname: Argument to pass with the signal.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Fru.CacheMe">"CacheMe"</link> D-Bus signal.
+ */
+void
+fru_emit_cache_me (
+    Fru *object,
+    const gchar *arg_busname)
+{
+  g_signal_emit_by_name (object, "cache-me", arg_busname);
+}
+
+/**
+ * fru_call_init:
+ * @proxy: A #FruProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Fru.init">init()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call fru_call_init_finish() to get the result of the operation.
+ *
+ * See fru_call_init_sync() for the synchronous, blocking version of this method.
+ */
+void
+fru_call_init (
+    Fru *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "init",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * fru_call_init_finish:
+ * @proxy: A #FruProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to fru_call_init().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with fru_call_init().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+fru_call_init_finish (
+    Fru *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * fru_call_init_sync:
+ * @proxy: A #FruProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Fru.init">init()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See fru_call_init() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+fru_call_init_sync (
+    Fru *proxy,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "init",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * fru_complete_init:
+ * @object: A #Fru.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Fru.init">init()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+fru_complete_init (
+    Fru *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1975,6 +2192,30 @@ _fru_on_signal_recoverable_error (
   g_list_free_full (connections, g_object_unref);
 }
 
+static void
+_fru_on_signal_cache_me (
+    Fru *object,
+    const gchar *arg_busname)
+{
+  FruSkeleton *skeleton = FRU_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("(s)",
+                   arg_busname));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Fru", "CacheMe",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
 static void fru_skeleton_iface_init (FruIface *iface);
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
 G_DEFINE_TYPE_WITH_CODE (FruSkeleton, fru_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
@@ -2318,6 +2559,7 @@ fru_skeleton_iface_init (FruIface *iface)
   iface->state_changed = _fru_on_signal_state_changed;
   iface->unrecoverable_error = _fru_on_signal_unrecoverable_error;
   iface->recoverable_error = _fru_on_signal_recoverable_error;
+  iface->cache_me = _fru_on_signal_cache_me;
   iface->get_label = fru_skeleton_get_label;
   iface->get_location = fru_skeleton_get_location;
   iface->get_state = fru_skeleton_get_state;
@@ -2449,42 +2691,11 @@ static const _ExtendedGDBusMethodInfo _fru_fan_method_info_set_speed =
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo _fru_fan_method_info_set_config_data_IN_ARG_pwm_num =
-{
-  {
-    -1,
-    (gchar *) "pwm_num",
-    (gchar *) "i",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _fru_fan_method_info_set_config_data_IN_ARG_pointers[] =
-{
-  &_fru_fan_method_info_set_config_data_IN_ARG_pwm_num,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _fru_fan_method_info_set_config_data =
-{
-  {
-    -1,
-    (gchar *) "setConfigData",
-    (GDBusArgInfo **) &_fru_fan_method_info_set_config_data_IN_ARG_pointers,
-    NULL,
-    NULL
-  },
-  "handle-set-config-data",
-  FALSE
-};
-
 static const _ExtendedGDBusMethodInfo * const _fru_fan_method_info_pointers[] =
 {
   &_fru_fan_method_info_set_cooling_zone,
   &_fru_fan_method_info_get_speed,
   &_fru_fan_method_info_set_speed,
-  &_fru_fan_method_info_set_config_data,
   NULL
 };
 
@@ -2540,7 +2751,7 @@ static const _ExtendedGDBusPropertyInfo _fru_fan_property_info_speed =
     -1,
     (gchar *) "speed",
     (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
   "speed",
@@ -2553,10 +2764,23 @@ static const _ExtendedGDBusPropertyInfo _fru_fan_property_info_cooling_zone =
     -1,
     (gchar *) "cooling_zone",
     (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
   "cooling-zone",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _fru_fan_property_info_pwm_num =
+{
+  {
+    -1,
+    (gchar *) "pwm_num",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "pwm-num",
   FALSE
 };
 
@@ -2564,6 +2788,7 @@ static const _ExtendedGDBusPropertyInfo * const _fru_fan_property_info_pointers[
 {
   &_fru_fan_property_info_speed,
   &_fru_fan_property_info_cooling_zone,
+  &_fru_fan_property_info_pwm_num,
   NULL
 };
 
@@ -2609,6 +2834,7 @@ fru_fan_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "speed");
   g_object_class_override_property (klass, property_id_begin++, "cooling-zone");
+  g_object_class_override_property (klass, property_id_begin++, "pwm-num");
   return property_id_begin - 1;
 }
 
@@ -2624,10 +2850,10 @@ fru_fan_override_properties (GObjectClass *klass, guint property_id_begin)
  * FruFanIface:
  * @parent_iface: The parent interface.
  * @handle_get_speed: Handler for the #FruFan::handle-get-speed signal.
- * @handle_set_config_data: Handler for the #FruFan::handle-set-config-data signal.
  * @handle_set_cooling_zone: Handler for the #FruFan::handle-set-cooling-zone signal.
  * @handle_set_speed: Handler for the #FruFan::handle-set-speed signal.
  * @get_cooling_zone: Getter for the #FruFan:cooling-zone property.
+ * @get_pwm_num: Getter for the #FruFan:pwm-num property.
  * @get_speed: Getter for the #FruFan:speed property.
  * @speed_changed: Handler for the #FruFan::speed-changed signal.
  * @tach_error: Handler for the #FruFan::tach-error signal.
@@ -2710,29 +2936,6 @@ fru_fan_default_init (FruFanIface *iface)
     2,
     G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT);
 
-  /**
-   * FruFan::handle-set-config-data:
-   * @object: A #FruFan.
-   * @invocation: A #GDBusMethodInvocation.
-   * @arg_pwm_num: Argument passed by remote caller.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Fru-Fan.setConfigData">setConfigData()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call fru_fan_complete_set_config_data() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-set-config-data",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (FruFanIface, handle_set_config_data),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    2,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT);
-
   /* GObject signals for received D-Bus signals: */
   /**
    * FruFan::speed-changed:
@@ -2777,7 +2980,7 @@ fru_fan_default_init (FruFanIface *iface)
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Fru-Fan.speed">"speed"</link>.
    *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("speed", "speed", "speed", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -2786,10 +2989,19 @@ fru_fan_default_init (FruFanIface *iface)
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Fru-Fan.cooling_zone">"cooling_zone"</link>.
    *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("cooling-zone", "cooling_zone", "cooling_zone", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * FruFan:pwm-num:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Fru-Fan.pwm_num">"pwm_num"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("pwm-num", "pwm_num", "pwm_num", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -2798,7 +3010,7 @@ fru_fan_default_init (FruFanIface *iface)
  *
  * Gets the value of the <link linkend="gdbus-property-org-openbmc-Fru-Fan.speed">"speed"</link> D-Bus property.
  *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
@@ -2815,7 +3027,7 @@ fru_fan_get_speed (FruFan *object)
  *
  * Sets the <link linkend="gdbus-property-org-openbmc-Fru-Fan.speed">"speed"</link> D-Bus property to @value.
  *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
 fru_fan_set_speed (FruFan *object, gint value)
@@ -2829,7 +3041,7 @@ fru_fan_set_speed (FruFan *object, gint value)
  *
  * Gets the value of the <link linkend="gdbus-property-org-openbmc-Fru-Fan.cooling_zone">"cooling_zone"</link> D-Bus property.
  *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
@@ -2846,12 +3058,43 @@ fru_fan_get_cooling_zone (FruFan *object)
  *
  * Sets the <link linkend="gdbus-property-org-openbmc-Fru-Fan.cooling_zone">"cooling_zone"</link> D-Bus property to @value.
  *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
 fru_fan_set_cooling_zone (FruFan *object, gint value)
 {
   g_object_set (G_OBJECT (object), "cooling-zone", value, NULL);
+}
+
+/**
+ * fru_fan_get_pwm_num: (skip)
+ * @object: A #FruFan.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Fru-Fan.pwm_num">"pwm_num"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+fru_fan_get_pwm_num (FruFan *object)
+{
+  return FRU_FAN_GET_IFACE (object)->get_pwm_num (object);
+}
+
+/**
+ * fru_fan_set_pwm_num: (skip)
+ * @object: A #FruFan.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Fru-Fan.pwm_num">"pwm_num"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+fru_fan_set_pwm_num (FruFan *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "pwm-num", value, NULL);
 }
 
 /**
@@ -3177,104 +3420,6 @@ _out:
 }
 
 /**
- * fru_fan_call_set_config_data:
- * @proxy: A #FruFanProxy.
- * @arg_pwm_num: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Fru-Fan.setConfigData">setConfigData()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call fru_fan_call_set_config_data_finish() to get the result of the operation.
- *
- * See fru_fan_call_set_config_data_sync() for the synchronous, blocking version of this method.
- */
-void
-fru_fan_call_set_config_data (
-    FruFan *proxy,
-    gint arg_pwm_num,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "setConfigData",
-    g_variant_new ("(i)",
-                   arg_pwm_num),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * fru_fan_call_set_config_data_finish:
- * @proxy: A #FruFanProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to fru_fan_call_set_config_data().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with fru_fan_call_set_config_data().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-fru_fan_call_set_config_data_finish (
-    FruFan *proxy,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * fru_fan_call_set_config_data_sync:
- * @proxy: A #FruFanProxy.
- * @arg_pwm_num: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Fru-Fan.setConfigData">setConfigData()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See fru_fan_call_set_config_data() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-fru_fan_call_set_config_data_sync (
-    FruFan *proxy,
-    gint arg_pwm_num,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "setConfigData",
-    g_variant_new ("(i)",
-                   arg_pwm_num),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
  * fru_fan_complete_set_cooling_zone:
  * @object: A #FruFan.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
@@ -3331,24 +3476,6 @@ fru_fan_complete_set_speed (
     g_variant_new ("()"));
 }
 
-/**
- * fru_fan_complete_set_config_data:
- * @object: A #FruFan.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Fru-Fan.setConfigData">setConfigData()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-fru_fan_complete_set_config_data (
-    FruFan *object,
-    GDBusMethodInvocation *invocation)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
-}
-
 /* ------------------------------------------------------------------------ */
 
 /**
@@ -3397,7 +3524,7 @@ fru_fan_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _fru_fan_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -3444,7 +3571,7 @@ fru_fan_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _fru_fan_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -3556,6 +3683,21 @@ fru_fan_proxy_get_cooling_zone (FruFan *object)
   return value;
 }
 
+static gint 
+fru_fan_proxy_get_pwm_num (FruFan *object)
+{
+  FruFanProxy *proxy = FRU_FAN_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "pwm_num");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static void
 fru_fan_proxy_init (FruFanProxy *proxy)
 {
@@ -3595,6 +3737,7 @@ fru_fan_proxy_iface_init (FruFanIface *iface)
 {
   iface->get_speed = fru_fan_proxy_get_speed;
   iface->get_cooling_zone = fru_fan_proxy_get_cooling_zone;
+  iface->get_pwm_num = fru_fan_proxy_get_pwm_num;
 }
 
 /**
@@ -4067,7 +4210,7 @@ fru_fan_skeleton_finalize (GObject *object)
 {
   FruFanSkeleton *skeleton = FRU_FAN_SKELETON (object);
   guint n;
-  for (n = 0; n < 2; n++)
+  for (n = 0; n < 3; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -4085,7 +4228,7 @@ fru_fan_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   FruFanSkeleton *skeleton = FRU_FAN_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -4202,7 +4345,7 @@ fru_fan_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   FruFanSkeleton *skeleton = FRU_FAN_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -4227,9 +4370,10 @@ fru_fan_skeleton_init (FruFanSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 2);
+  skeleton->priv->properties = g_new0 (GValue, 3);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
 }
 
 static gint 
@@ -4250,6 +4394,17 @@ fru_fan_skeleton_get_cooling_zone (FruFan *object)
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_int (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static gint 
+fru_fan_skeleton_get_pwm_num (FruFan *object)
+{
+  FruFanSkeleton *skeleton = FRU_FAN_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[2]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -4287,6 +4442,7 @@ fru_fan_skeleton_iface_init (FruFanIface *iface)
   iface->tach_error = _fru_fan_on_signal_tach_error;
   iface->get_speed = fru_fan_skeleton_get_speed;
   iface->get_cooling_zone = fru_fan_skeleton_get_cooling_zone;
+  iface->get_pwm_num = fru_fan_skeleton_get_pwm_num;
 }
 
 /**
@@ -4300,6 +4456,1223 @@ FruFan *
 fru_fan_skeleton_new (void)
 {
   return FRU_FAN (g_object_new (TYPE_FRU_FAN_SKELETON, NULL));
+}
+
+/* ------------------------------------------------------------------------
+ * Code for interface org.openbmc.Fru.Eeprom
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * SECTION:FruEeprom
+ * @title: FruEeprom
+ * @short_description: Generated C code for the org.openbmc.Fru.Eeprom D-Bus interface
+ *
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link> D-Bus interface in C.
+ */
+
+/* ---- Introspection data for org.openbmc.Fru.Eeprom ---- */
+
+static const _ExtendedGDBusSignalInfo _fru_eeprom_signal_info_read_done =
+{
+  {
+    -1,
+    (gchar *) "ReadDone",
+    NULL,
+    NULL
+  },
+  "read-done"
+};
+
+static const _ExtendedGDBusSignalInfo * const _fru_eeprom_signal_info_pointers[] =
+{
+  &_fru_eeprom_signal_info_read_done,
+  NULL
+};
+
+static const _ExtendedGDBusPropertyInfo _fru_eeprom_property_info_i2c_dev_path =
+{
+  {
+    -1,
+    (gchar *) "i2c_dev_path",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "i2c-dev-path",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _fru_eeprom_property_info_i2c_address =
+{
+  {
+    -1,
+    (gchar *) "i2c_address",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "i2c-address",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo * const _fru_eeprom_property_info_pointers[] =
+{
+  &_fru_eeprom_property_info_i2c_dev_path,
+  &_fru_eeprom_property_info_i2c_address,
+  NULL
+};
+
+static const _ExtendedGDBusInterfaceInfo _fru_eeprom_interface_info =
+{
+  {
+    -1,
+    (gchar *) "org.openbmc.Fru.Eeprom",
+    NULL,
+    (GDBusSignalInfo **) &_fru_eeprom_signal_info_pointers,
+    (GDBusPropertyInfo **) &_fru_eeprom_property_info_pointers,
+    NULL
+  },
+  "fru-eeprom",
+};
+
+
+/**
+ * fru_eeprom_interface_info:
+ *
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link> D-Bus interface.
+ *
+ * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
+ */
+GDBusInterfaceInfo *
+fru_eeprom_interface_info (void)
+{
+  return (GDBusInterfaceInfo *) &_fru_eeprom_interface_info.parent_struct;
+}
+
+/**
+ * fru_eeprom_override_properties:
+ * @klass: The class structure for a #GObject<!-- -->-derived class.
+ * @property_id_begin: The property id to assign to the first overridden property.
+ *
+ * Overrides all #GObject properties in the #FruEeprom interface for a concrete class.
+ * The properties are overridden in the order they are defined.
+ *
+ * Returns: The last property id.
+ */
+guint
+fru_eeprom_override_properties (GObjectClass *klass, guint property_id_begin)
+{
+  g_object_class_override_property (klass, property_id_begin++, "i2c-dev-path");
+  g_object_class_override_property (klass, property_id_begin++, "i2c-address");
+  return property_id_begin - 1;
+}
+
+
+
+/**
+ * FruEeprom:
+ *
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link>.
+ */
+
+/**
+ * FruEepromIface:
+ * @parent_iface: The parent interface.
+ * @get_i2c_address: Getter for the #FruEeprom:i2c-address property.
+ * @get_i2c_dev_path: Getter for the #FruEeprom:i2c-dev-path property.
+ * @read_done: Handler for the #FruEeprom::read-done signal.
+ *
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link>.
+ */
+
+typedef FruEepromIface FruEepromInterface;
+G_DEFINE_INTERFACE (FruEeprom, fru_eeprom, G_TYPE_OBJECT);
+
+static void
+fru_eeprom_default_init (FruEepromIface *iface)
+{
+  /* GObject signals for received D-Bus signals: */
+  /**
+   * FruEeprom::read-done:
+   * @object: A #FruEeprom.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Fru-Eeprom.ReadDone">"ReadDone"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("read-done",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FruEepromIface, read_done),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    0);
+
+  /* GObject properties for D-Bus properties: */
+  /**
+   * FruEeprom:i2c-dev-path:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_dev_path">"i2c_dev_path"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("i2c-dev-path", "i2c_dev_path", "i2c_dev_path", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * FruEeprom:i2c-address:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_address">"i2c_address"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("i2c-address", "i2c_address", "i2c_address", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+}
+
+/**
+ * fru_eeprom_get_i2c_dev_path: (skip)
+ * @object: A #FruEeprom.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_dev_path">"i2c_dev_path"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use fru_eeprom_dup_i2c_dev_path() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+fru_eeprom_get_i2c_dev_path (FruEeprom *object)
+{
+  return FRU_EEPROM_GET_IFACE (object)->get_i2c_dev_path (object);
+}
+
+/**
+ * fru_eeprom_dup_i2c_dev_path: (skip)
+ * @object: A #FruEeprom.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_dev_path">"i2c_dev_path"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+fru_eeprom_dup_i2c_dev_path (FruEeprom *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "i2c-dev-path", &value, NULL);
+  return value;
+}
+
+/**
+ * fru_eeprom_set_i2c_dev_path: (skip)
+ * @object: A #FruEeprom.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_dev_path">"i2c_dev_path"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+fru_eeprom_set_i2c_dev_path (FruEeprom *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "i2c-dev-path", value, NULL);
+}
+
+/**
+ * fru_eeprom_get_i2c_address: (skip)
+ * @object: A #FruEeprom.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_address">"i2c_address"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use fru_eeprom_dup_i2c_address() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+fru_eeprom_get_i2c_address (FruEeprom *object)
+{
+  return FRU_EEPROM_GET_IFACE (object)->get_i2c_address (object);
+}
+
+/**
+ * fru_eeprom_dup_i2c_address: (skip)
+ * @object: A #FruEeprom.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_address">"i2c_address"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+fru_eeprom_dup_i2c_address (FruEeprom *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "i2c-address", &value, NULL);
+  return value;
+}
+
+/**
+ * fru_eeprom_set_i2c_address: (skip)
+ * @object: A #FruEeprom.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Fru-Eeprom.i2c_address">"i2c_address"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+fru_eeprom_set_i2c_address (FruEeprom *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "i2c-address", value, NULL);
+}
+
+/**
+ * fru_eeprom_emit_read_done:
+ * @object: A #FruEeprom.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Fru-Eeprom.ReadDone">"ReadDone"</link> D-Bus signal.
+ */
+void
+fru_eeprom_emit_read_done (
+    FruEeprom *object)
+{
+  g_signal_emit_by_name (object, "read-done");
+}
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * FruEepromProxy:
+ *
+ * The #FruEepromProxy structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * FruEepromProxyClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #FruEepromProxy.
+ */
+
+struct _FruEepromProxyPrivate
+{
+  GData *qdata;
+};
+
+static void fru_eeprom_proxy_iface_init (FruEepromIface *iface);
+
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (FruEepromProxy, fru_eeprom_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (FruEepromProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_FRU_EEPROM, fru_eeprom_proxy_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (FruEepromProxy, fru_eeprom_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_FRU_EEPROM, fru_eeprom_proxy_iface_init));
+
+#endif
+static void
+fru_eeprom_proxy_finalize (GObject *object)
+{
+  FruEepromProxy *proxy = FRU_EEPROM_PROXY (object);
+  g_datalist_clear (&proxy->priv->qdata);
+  G_OBJECT_CLASS (fru_eeprom_proxy_parent_class)->finalize (object);
+}
+
+static void
+fru_eeprom_proxy_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _fru_eeprom_property_info_pointers[prop_id - 1];
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
+  if (info->use_gvariant)
+    {
+      g_value_set_variant (value, variant);
+    }
+  else
+    {
+      if (variant != NULL)
+        g_dbus_gvariant_to_gvalue (variant, value);
+    }
+  if (variant != NULL)
+    g_variant_unref (variant);
+}
+
+static void
+fru_eeprom_proxy_set_property_cb (GDBusProxy *proxy,
+  GAsyncResult *res,
+  gpointer      user_data)
+{
+  const _ExtendedGDBusPropertyInfo *info = user_data;
+  GError *error;
+  GVariant *_ret;
+  error = NULL;
+  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
+  if (!_ret)
+    {
+      g_warning ("Error setting property '%s' on interface org.openbmc.Fru.Eeprom: %s (%s, %d)",
+                 info->parent_struct.name, 
+                 error->message, g_quark_to_string (error->domain), error->code);
+      g_error_free (error);
+    }
+  else
+    {
+      g_variant_unref (_ret);
+    }
+}
+
+static void
+fru_eeprom_proxy_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _fru_eeprom_property_info_pointers[prop_id - 1];
+  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
+  g_dbus_proxy_call (G_DBUS_PROXY (object),
+    "org.freedesktop.DBus.Properties.Set",
+    g_variant_new ("(ssv)", "org.openbmc.Fru.Eeprom", info->parent_struct.name, variant),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    NULL, (GAsyncReadyCallback) fru_eeprom_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+  g_variant_unref (variant);
+}
+
+static void
+fru_eeprom_proxy_g_signal (GDBusProxy *proxy,
+  const gchar *sender_name G_GNUC_UNUSED,
+  const gchar *signal_name,
+  GVariant *parameters)
+{
+  _ExtendedGDBusSignalInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint n;
+  guint signal_id;
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_fru_eeprom_interface_info.parent_struct, signal_name);
+  if (info == NULL)
+    return;
+  num_params = g_variant_n_children (parameters);
+  paramv = g_new0 (GValue, num_params + 1);
+  g_value_init (&paramv[0], TYPE_FRU_EEPROM);
+  g_value_set_object (&paramv[0], proxy);
+  g_variant_iter_init (&iter, parameters);
+  n = 1;
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.args[n - 1];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_FRU_EEPROM);
+  g_signal_emitv (paramv, signal_id, 0, NULL);
+  for (n = 0; n < num_params + 1; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static void
+fru_eeprom_proxy_g_properties_changed (GDBusProxy *_proxy,
+  GVariant *changed_properties,
+  const gchar *const *invalidated_properties)
+{
+  FruEepromProxy *proxy = FRU_EEPROM_PROXY (_proxy);
+  guint n;
+  const gchar *key;
+  GVariantIter *iter;
+  _ExtendedGDBusPropertyInfo *info;
+  g_variant_get (changed_properties, "a{sv}", &iter);
+  while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_fru_eeprom_interface_info.parent_struct, key);
+      g_datalist_remove_data (&proxy->priv->qdata, key);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+  g_variant_iter_free (iter);
+  for (n = 0; invalidated_properties[n] != NULL; n++)
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_fru_eeprom_interface_info.parent_struct, invalidated_properties[n]);
+      g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+}
+
+static const gchar *
+fru_eeprom_proxy_get_i2c_dev_path (FruEeprom *object)
+{
+  FruEepromProxy *proxy = FRU_EEPROM_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "i2c_dev_path");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static const gchar *
+fru_eeprom_proxy_get_i2c_address (FruEeprom *object)
+{
+  FruEepromProxy *proxy = FRU_EEPROM_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "i2c_address");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static void
+fru_eeprom_proxy_init (FruEepromProxy *proxy)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  proxy->priv = fru_eeprom_proxy_get_instance_private (proxy);
+#else
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_FRU_EEPROM_PROXY, FruEepromProxyPrivate);
+#endif
+
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), fru_eeprom_interface_info ());
+}
+
+static void
+fru_eeprom_proxy_class_init (FruEepromProxyClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusProxyClass *proxy_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize     = fru_eeprom_proxy_finalize;
+  gobject_class->get_property = fru_eeprom_proxy_get_property;
+  gobject_class->set_property = fru_eeprom_proxy_set_property;
+
+  proxy_class = G_DBUS_PROXY_CLASS (klass);
+  proxy_class->g_signal = fru_eeprom_proxy_g_signal;
+  proxy_class->g_properties_changed = fru_eeprom_proxy_g_properties_changed;
+
+  fru_eeprom_override_properties (gobject_class, 1);
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (FruEepromProxyPrivate));
+#endif
+}
+
+static void
+fru_eeprom_proxy_iface_init (FruEepromIface *iface)
+{
+  iface->get_i2c_dev_path = fru_eeprom_proxy_get_i2c_dev_path;
+  iface->get_i2c_address = fru_eeprom_proxy_get_i2c_address;
+}
+
+/**
+ * fru_eeprom_proxy_new:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link>. See g_dbus_proxy_new() for more details.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call fru_eeprom_proxy_new_finish() to get the result of the operation.
+ *
+ * See fru_eeprom_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+fru_eeprom_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_FRU_EEPROM_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.Fru.Eeprom", NULL);
+}
+
+/**
+ * fru_eeprom_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to fru_eeprom_proxy_new().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with fru_eeprom_proxy_new().
+ *
+ * Returns: (transfer full) (type FruEepromProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FruEeprom *
+fru_eeprom_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return FRU_EEPROM (ret);
+  else
+    return NULL;
+}
+
+/**
+ * fru_eeprom_proxy_new_sync:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link>. See g_dbus_proxy_new_sync() for more details.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See fru_eeprom_proxy_new() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type FruEepromProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FruEeprom *
+fru_eeprom_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_FRU_EEPROM_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.Fru.Eeprom", NULL);
+  if (ret != NULL)
+    return FRU_EEPROM (ret);
+  else
+    return NULL;
+}
+
+
+/**
+ * fru_eeprom_proxy_new_for_bus:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Like fru_eeprom_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call fru_eeprom_proxy_new_for_bus_finish() to get the result of the operation.
+ *
+ * See fru_eeprom_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+fru_eeprom_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_FRU_EEPROM_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.Fru.Eeprom", NULL);
+}
+
+/**
+ * fru_eeprom_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to fru_eeprom_proxy_new_for_bus().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with fru_eeprom_proxy_new_for_bus().
+ *
+ * Returns: (transfer full) (type FruEepromProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FruEeprom *
+fru_eeprom_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return FRU_EEPROM (ret);
+  else
+    return NULL;
+}
+
+/**
+ * fru_eeprom_proxy_new_for_bus_sync:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Like fru_eeprom_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See fru_eeprom_proxy_new_for_bus() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type FruEepromProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FruEeprom *
+fru_eeprom_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_FRU_EEPROM_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.Fru.Eeprom", NULL);
+  if (ret != NULL)
+    return FRU_EEPROM (ret);
+  else
+    return NULL;
+}
+
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * FruEepromSkeleton:
+ *
+ * The #FruEepromSkeleton structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * FruEepromSkeletonClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #FruEepromSkeleton.
+ */
+
+struct _FruEepromSkeletonPrivate
+{
+  GValue *properties;
+  GList *changed_properties;
+  GSource *changed_properties_idle_source;
+  GMainContext *context;
+  GMutex lock;
+};
+
+static void
+_fru_eeprom_skeleton_handle_method_call (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name,
+  const gchar *method_name,
+  GVariant *parameters,
+  GDBusMethodInvocation *invocation,
+  gpointer user_data)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (user_data);
+  _ExtendedGDBusMethodInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint num_extra;
+  guint n;
+  guint signal_id;
+  GValue return_value = G_VALUE_INIT;
+  info = (_ExtendedGDBusMethodInfo *) g_dbus_method_invocation_get_method_info (invocation);
+  g_assert (info != NULL);
+  num_params = g_variant_n_children (parameters);
+  num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
+  n = 0;
+  g_value_init (&paramv[n], TYPE_FRU_EEPROM);
+  g_value_set_object (&paramv[n++], skeleton);
+  g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
+  g_value_set_object (&paramv[n++], invocation);
+  if (info->pass_fdlist)
+    {
+#ifdef G_OS_UNIX
+      g_value_init (&paramv[n], G_TYPE_UNIX_FD_LIST);
+      g_value_set_object (&paramv[n++], g_dbus_message_get_unix_fd_list (g_dbus_method_invocation_get_message (invocation)));
+#else
+      g_assert_not_reached ();
+#endif
+    }
+  g_variant_iter_init (&iter, parameters);
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.in_args[n - num_extra];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_FRU_EEPROM);
+  g_value_init (&return_value, G_TYPE_BOOLEAN);
+  g_signal_emitv (paramv, signal_id, 0, &return_value);
+  if (!g_value_get_boolean (&return_value))
+    g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD, "Method %s is not implemented on interface %s", method_name, interface_name);
+  g_value_unset (&return_value);
+  for (n = 0; n < num_params + num_extra; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static GVariant *
+_fru_eeprom_skeleton_handle_get_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GError **error,
+  gpointer user_data)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  GVariant *ret;
+  ret = NULL;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_fru_eeprom_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      g_value_init (&value, pspec->value_type);
+      g_object_get_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      ret = g_dbus_gvalue_to_gvariant (&value, G_VARIANT_TYPE (info->parent_struct.signature));
+      g_value_unset (&value);
+    }
+  return ret;
+}
+
+static gboolean
+_fru_eeprom_skeleton_handle_set_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GVariant *variant,
+  GError **error,
+  gpointer user_data)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  gboolean ret;
+  ret = FALSE;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_fru_eeprom_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      if (info->use_gvariant)
+        g_value_set_variant (&value, variant);
+      else
+        g_dbus_gvariant_to_gvalue (variant, &value);
+      g_object_set_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      g_value_unset (&value);
+      ret = TRUE;
+    }
+  return ret;
+}
+
+static const GDBusInterfaceVTable _fru_eeprom_skeleton_vtable =
+{
+  _fru_eeprom_skeleton_handle_method_call,
+  _fru_eeprom_skeleton_handle_get_property,
+  _fru_eeprom_skeleton_handle_set_property,
+  {NULL}
+};
+
+static GDBusInterfaceInfo *
+fru_eeprom_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return fru_eeprom_interface_info ();
+}
+
+static GDBusInterfaceVTable *
+fru_eeprom_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return (GDBusInterfaceVTable *) &_fru_eeprom_skeleton_vtable;
+}
+
+static GVariant *
+fru_eeprom_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (_skeleton);
+
+  GVariantBuilder builder;
+  guint n;
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  if (_fru_eeprom_interface_info.parent_struct.properties == NULL)
+    goto out;
+  for (n = 0; _fru_eeprom_interface_info.parent_struct.properties[n] != NULL; n++)
+    {
+      GDBusPropertyInfo *info = _fru_eeprom_interface_info.parent_struct.properties[n];
+      if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
+        {
+          GVariant *value;
+          value = _fru_eeprom_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Fru.Eeprom", info->name, NULL, skeleton);
+          if (value != NULL)
+            {
+              g_variant_take_ref (value);
+              g_variant_builder_add (&builder, "{sv}", info->name, value);
+              g_variant_unref (value);
+            }
+        }
+    }
+out:
+  return g_variant_builder_end (&builder);
+}
+
+static gboolean _fru_eeprom_emit_changed (gpointer user_data);
+
+static void
+fru_eeprom_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (_skeleton);
+  gboolean emit_changed = FALSE;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    {
+      g_source_destroy (skeleton->priv->changed_properties_idle_source);
+      skeleton->priv->changed_properties_idle_source = NULL;
+      emit_changed = TRUE;
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+
+  if (emit_changed)
+    _fru_eeprom_emit_changed (skeleton);
+}
+
+static void
+_fru_eeprom_on_signal_read_done (
+    FruEeprom *object)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("()"));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Fru.Eeprom", "ReadDone",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void fru_eeprom_skeleton_iface_init (FruEepromIface *iface);
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (FruEepromSkeleton, fru_eeprom_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (FruEepromSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_FRU_EEPROM, fru_eeprom_skeleton_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (FruEepromSkeleton, fru_eeprom_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_FRU_EEPROM, fru_eeprom_skeleton_iface_init));
+
+#endif
+static void
+fru_eeprom_skeleton_finalize (GObject *object)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (object);
+  guint n;
+  for (n = 0; n < 2; n++)
+    g_value_unset (&skeleton->priv->properties[n]);
+  g_free (skeleton->priv->properties);
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    g_source_destroy (skeleton->priv->changed_properties_idle_source);
+  g_main_context_unref (skeleton->priv->context);
+  g_mutex_clear (&skeleton->priv->lock);
+  G_OBJECT_CLASS (fru_eeprom_skeleton_parent_class)->finalize (object);
+}
+
+static void
+fru_eeprom_skeleton_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static gboolean
+_fru_eeprom_emit_changed (gpointer user_data)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (user_data);
+  GList *l;
+  GVariantBuilder builder;
+  GVariantBuilder invalidated_builder;
+  guint num_changes;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
+  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
+    {
+      ChangedProperty *cp = l->data;
+      GVariant *variant;
+      const GValue *cur_value;
+
+      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
+      if (!_g_value_equal (cur_value, &cp->orig_value))
+        {
+          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
+          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
+          g_variant_unref (variant);
+          num_changes++;
+        }
+    }
+  if (num_changes > 0)
+    {
+      GList *connections, *ll;
+      GVariant *signal_variant;
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.Fru.Eeprom",
+                                           &builder, &invalidated_builder));
+      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+      for (ll = connections; ll != NULL; ll = ll->next)
+        {
+          GDBusConnection *connection = ll->data;
+
+          g_dbus_connection_emit_signal (connection,
+                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
+                                         "org.freedesktop.DBus.Properties",
+                                         "PropertiesChanged",
+                                         signal_variant,
+                                         NULL);
+        }
+      g_variant_unref (signal_variant);
+      g_list_free_full (connections, g_object_unref);
+    }
+  else
+    {
+      g_variant_builder_clear (&builder);
+      g_variant_builder_clear (&invalidated_builder);
+    }
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  skeleton->priv->changed_properties = NULL;
+  skeleton->priv->changed_properties_idle_source = NULL;
+  g_mutex_unlock (&skeleton->priv->lock);
+  return FALSE;
+}
+
+static void
+_fru_eeprom_schedule_emit_changed (FruEepromSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+{
+  ChangedProperty *cp;
+  GList *l;
+  cp = NULL;
+  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
+    {
+      ChangedProperty *i_cp = l->data;
+      if (i_cp->info == info)
+        {
+          cp = i_cp;
+          break;
+        }
+    }
+  if (cp == NULL)
+    {
+      cp = g_new0 (ChangedProperty, 1);
+      cp->prop_id = prop_id;
+      cp->info = info;
+      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
+      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
+      g_value_copy (orig_value, &cp->orig_value);
+    }
+}
+
+static void
+fru_eeprom_skeleton_notify (GObject      *object,
+  GParamSpec *pspec G_GNUC_UNUSED)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (object);
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties != NULL &&
+      skeleton->priv->changed_properties_idle_source == NULL)
+    {
+      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
+      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _fru_eeprom_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
+      g_source_unref (skeleton->priv->changed_properties_idle_source);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static void
+fru_eeprom_skeleton_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_object_freeze_notify (object);
+  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
+    {
+      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
+        _fru_eeprom_schedule_emit_changed (skeleton, _fru_eeprom_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
+      g_object_notify_by_pspec (object, pspec);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+  g_object_thaw_notify (object);
+}
+
+static void
+fru_eeprom_skeleton_init (FruEepromSkeleton *skeleton)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  skeleton->priv = fru_eeprom_skeleton_get_instance_private (skeleton);
+#else
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_FRU_EEPROM_SKELETON, FruEepromSkeletonPrivate);
+#endif
+
+  g_mutex_init (&skeleton->priv->lock);
+  skeleton->priv->context = g_main_context_ref_thread_default ();
+  skeleton->priv->properties = g_new0 (GValue, 2);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
+}
+
+static const gchar *
+fru_eeprom_skeleton_get_i2c_dev_path (FruEeprom *object)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[0]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+fru_eeprom_skeleton_get_i2c_address (FruEeprom *object)
+{
+  FruEepromSkeleton *skeleton = FRU_EEPROM_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static void
+fru_eeprom_skeleton_class_init (FruEepromSkeletonClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusInterfaceSkeletonClass *skeleton_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = fru_eeprom_skeleton_finalize;
+  gobject_class->get_property = fru_eeprom_skeleton_get_property;
+  gobject_class->set_property = fru_eeprom_skeleton_set_property;
+  gobject_class->notify       = fru_eeprom_skeleton_notify;
+
+
+  fru_eeprom_override_properties (gobject_class, 1);
+
+  skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+  skeleton_class->get_info = fru_eeprom_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = fru_eeprom_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = fru_eeprom_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = fru_eeprom_skeleton_dbus_interface_get_vtable;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (FruEepromSkeletonPrivate));
+#endif
+}
+
+static void
+fru_eeprom_skeleton_iface_init (FruEepromIface *iface)
+{
+  iface->read_done = _fru_eeprom_on_signal_read_done;
+  iface->get_i2c_dev_path = fru_eeprom_skeleton_get_i2c_dev_path;
+  iface->get_i2c_address = fru_eeprom_skeleton_get_i2c_address;
+}
+
+/**
+ * fru_eeprom_skeleton_new:
+ *
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link>.
+ *
+ * Returns: (transfer full) (type FruEepromSkeleton): The skeleton object.
+ */
+FruEeprom *
+fru_eeprom_skeleton_new (void)
+{
+  return FRU_EEPROM (g_object_new (TYPE_FRU_EEPROM_SKELETON, NULL));
 }
 
 /* ------------------------------------------------------------------------
@@ -4352,6 +5725,15 @@ object_default_init (ObjectIface *iface)
    */
   g_object_interface_install_property (iface, g_param_spec_object ("fru-fan", "fru-fan", "fru-fan", TYPE_FRU_FAN, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
+  /**
+   * Object:fru-eeprom:
+   *
+   * The #FruEeprom instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link>, if any.
+   *
+   * Connect to the #GObject::notify signal to get informed of property changes.
+   */
+  g_object_interface_install_property (iface, g_param_spec_object ("fru-eeprom", "fru-eeprom", "fru-eeprom", TYPE_FRU_EEPROM, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+
 }
 
 /**
@@ -4386,6 +5768,23 @@ FruFan *object_get_fru_fan (Object *object)
   if (ret == NULL)
     return NULL;
   return FRU_FAN (ret);
+}
+
+/**
+ * object_get_fru_eeprom:
+ * @object: A #Object.
+ *
+ * Gets the #FruEeprom instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link> on @object, if any.
+ *
+ * Returns: (transfer full): A #FruEeprom that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ */
+FruEeprom *object_get_fru_eeprom (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fru.Eeprom");
+  if (ret == NULL)
+    return NULL;
+  return FRU_EEPROM (ret);
 }
 
 
@@ -4427,6 +5826,26 @@ FruFan *object_peek_fru_fan (Object *object)
     return NULL;
   g_object_unref (ret);
   return FRU_FAN (ret);
+}
+
+/**
+ * object_peek_fru_eeprom: (skip)
+ * @object: A #Object.
+ *
+ * Like object_get_fru_eeprom() but doesn't increase the reference count on the returned object.
+ *
+ * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
+ *
+ * Returns: (transfer none): A #FruEeprom or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ */
+FruEeprom *object_peek_fru_eeprom (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fru.Eeprom");
+  if (ret == NULL)
+    return NULL;
+  g_object_unref (ret);
+  return FRU_EEPROM (ret);
 }
 
 
@@ -4506,6 +5925,11 @@ object_proxy_get_property (GObject      *gobject,
       g_value_take_object (value, interface);
       break;
 
+    case 3:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fru.Eeprom");
+      g_value_take_object (value, interface);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -4522,6 +5946,7 @@ object_proxy_class_init (ObjectProxyClass *klass)
 
   g_object_class_override_property (gobject_class, 1, "fru");
   g_object_class_override_property (gobject_class, 2, "fru-fan");
+  g_object_class_override_property (gobject_class, 3, "fru-eeprom");
 }
 
 /**
@@ -4614,6 +6039,19 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
+    case 3:
+      interface = g_value_get_object (value);
+      if (interface != NULL)
+        {
+          g_warn_if_fail (IS_FRU_EEPROM (interface));
+          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
+        }
+      else
+        {
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.Fru.Eeprom");
+        }
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -4641,6 +6079,11 @@ object_skeleton_get_property (GObject      *gobject,
       g_value_take_object (value, interface);
       break;
 
+    case 3:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fru.Eeprom");
+      g_value_take_object (value, interface);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -4657,6 +6100,7 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
 
   g_object_class_override_property (gobject_class, 1, "fru");
   g_object_class_override_property (gobject_class, 2, "fru-fan");
+  g_object_class_override_property (gobject_class, 3, "fru-eeprom");
 }
 
 /**
@@ -4696,6 +6140,18 @@ void object_skeleton_set_fru (ObjectSkeleton *object, Fru *interface_)
 void object_skeleton_set_fru_fan (ObjectSkeleton *object, FruFan *interface_)
 {
   g_object_set (G_OBJECT (object), "fru-fan", interface_, NULL);
+}
+
+/**
+ * object_skeleton_set_fru_eeprom:
+ * @object: A #ObjectSkeleton.
+ * @interface_: (allow-none): A #FruEeprom or %NULL to clear the interface.
+ *
+ * Sets the #FruEeprom instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fru-Eeprom.top_of_page">org.openbmc.Fru.Eeprom</link> on @object.
+ */
+void object_skeleton_set_fru_eeprom (ObjectSkeleton *object, FruEeprom *interface_)
+{
+  g_object_set (G_OBJECT (object), "fru-eeprom", interface_, NULL);
 }
 
 
@@ -4762,6 +6218,7 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
       lookup_hash = g_hash_table_new (g_str_hash, g_str_equal);
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Fru", GSIZE_TO_POINTER (TYPE_FRU_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Fru.Fan", GSIZE_TO_POINTER (TYPE_FRU_FAN_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Fru.Eeprom", GSIZE_TO_POINTER (TYPE_FRU_EEPROM_PROXY));
       g_once_init_leave (&once_init_value, 1);
     }
   ret = (GType) GPOINTER_TO_SIZE (g_hash_table_lookup (lookup_hash, interface_name));

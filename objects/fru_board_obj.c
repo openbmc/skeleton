@@ -1,45 +1,33 @@
-#include "interfaces/sensor.h"
+#include "interfaces/fru.h"
 #include "openbmc.h"
 
 
 /* ---------------------------------------------------------------------------------------------------- */
 
-static const gchar* dbus_object_path = "/org/openbmc/sensors/HostStatus";
-static const gchar* dbus_name        = "org.openbmc.sensors.HostStatus";
-static const guint poll_interval = 3000;
+static const gchar* dbus_object_path = "/org/openbmc/frus/Board";
+static const gchar* dbus_name        = "org.openbmc.frus.Board";
+static const guint poll_interval = 5000;
 static guint heartbeat = 0;
 
 static GDBusObjectManagerServer *manager = NULL;
 
 static gboolean
-on_get_units    (SensorInteger  *sen,
+on_init         (Fru *fru,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-  const gchar* val = sensor_integer_get_units(sen);
-  sensor_integer_complete_get_units(sen,invocation,val);
-  return TRUE;
-}
 
-static gboolean
-on_get (SensorInteger                 *sen,
-                GDBusMethodInvocation  *invocation,
-                gpointer                user_data)
-{
-  guint reading = sensor_integer_get_value(sen);
-  sensor_integer_complete_get_value(sen,invocation,reading);
-  return TRUE;
-}
+	FruEeprom *eeprom = object_get_fru_eeprom((Object*)user_data);
 
-static gboolean
-on_set (SensorInteger                 *sen,		
-                GDBusMethodInvocation  *invocation,
-		guint                   value,
-                gpointer                user_data)
-{
-	sensor_integer_set_value(sen,value);
-	sensor_integer_emit_changed(sen,value,sensor_integer_get_units(sen));
-	sensor_integer_complete_set_value(sen,invocation);
+	const gchar* dev_path = fru_eeprom_get_i2c_dev_path(eeprom);
+	const gchar* addr = fru_eeprom_get_i2c_address(eeprom);
+	g_print("Reading VPD EERPROM at: %s, %s\n",dev_path, addr);
+	fru_complete_init(fru,invocation);
+	fru_set_part_num(fru,"test part num");
+	
+	// add eeprom read code here
+	fru_emit_cache_me(fru,dbus_name);
+
 	return TRUE;
 }
 
@@ -65,25 +53,19 @@ on_bus_acquired (GDBusConnection *connection,
 		ObjectSkeleton *object = object_skeleton_new (s);
 		g_free (s);
 
-		SensorInteger *sensor = sensor_integer_skeleton_new ();
-  		object_skeleton_set_sensor_integer (object, sensor);
-  		g_object_unref (sensor);
-		
-  		// set units
-  		sensor_integer_set_units(sensor,"");
-  		//define method callbacks here
-  		g_signal_connect (sensor,
-                    "handle-get-value",
-                    G_CALLBACK (on_get),
-                    NULL); /* user_data */
-  		g_signal_connect (sensor,
-                    "handle-get-units",
-                    G_CALLBACK (on_get_units),
-                    NULL); /* user_data */
-  		g_signal_connect (sensor,
-                    "handle-set-value",
-                    G_CALLBACK (on_set),
-                    NULL); /* user_data */
+		Fru *fru = fru_skeleton_new ();
+  		object_skeleton_set_fru (object, fru);
+  		g_object_unref (fru);
+
+		FruEeprom *eeprom = fru_eeprom_skeleton_new ();
+  		object_skeleton_set_fru_eeprom (object, eeprom);
+  		g_object_unref (eeprom);
+
+		g_signal_connect (fru,
+                    "handle-init",
+                    G_CALLBACK (on_init),
+                    object); /* user_data */
+ 
 
   		/* Export the object (@manager takes its own reference to @object) */
   		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));

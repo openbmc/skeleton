@@ -24,8 +24,8 @@ power_control: control.o power_control_obj.o gpio.o
 chassis_identify: led.o chassis_identify_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/led.o obj/chassis_identify_obj.o $(CFLAGS)
 
-sensor_ambient: sensor2.o sensor_threshold.o sensor_temperature_ambient_obj.o
-	$(CC) -o bin/$@.exe obj/sensor_threshold.o obj/sensor2.o obj/sensor_temperature_ambient_obj.o $(CFLAGS)
+sensor_ambient: sensor.o sensor_threshold.o sensor_temperature_ambient_obj.o
+	$(CC) -o bin/$@.exe obj/sensor_threshold.o obj/sensor.o obj/sensor_temperature_ambient_obj.o $(CFLAGS)
 
 button_power: button.o button_power_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/button.o obj/button_power_obj.o $(CFLAGS)
@@ -45,5 +45,7 @@ fan: fru.o fan_generic_obj.o gpio.o
 fru_generic: fru.o fru_generic_obj.o
 	$(CC) -o bin/$@.exe obj/fru.o obj/fru_generic_obj.o $(CFLAGS)
 
+fru_board: fru.o fru_board_obj.o
+	$(CC) -o bin/$@.exe obj/fru.o obj/fru_board_obj.o $(CFLAGS)
 
 

@@ -15,10 +15,15 @@ POWER_ON = 1
 class ChassisControlObject(dbus.service.Object):
 	def __init__(self,bus,name):
 		self.dbus_objects = { }
+
+		## load utilized objects
 		self.dbus_busses = {
-				'org.openbmc.control.Power' :        [ { 'name' : 'PowerControl1' ,   'intf' : 'org.openbmc.control.Power' } ],
-				'org.openbmc.leds.ChassisIdentify' : [ { 'name' : 'ChassisIdentify1', 'intf' : 'org.openbmc.control.Chassis' } ],
-				'org.openbmc.control.Host' :         [ { 'name' : 'HostControl1',     'intf' : 'org.openbmc.control.Host' } ]
+			'org.openbmc.control.Power' : 
+				[ { 'name' : 'PowerControl1' ,   'intf' : 'org.openbmc.control.Power' } ],
+			'org.openbmc.leds.ChassisIdentify' :
+				[ { 'name' : 'ChassisIdentify1', 'intf' : 'org.openbmc.control.Chassis' } ],
+			'org.openbmc.control.Host' :
+				[ { 'name' : 'HostControl1',     'intf' : 'org.openbmc.control.Host' } ]
 		}
 		self.power_sequence = 0
 		dbus.service.Object.__init__(self,bus,name)
@@ -26,12 +31,16 @@ class ChassisControlObject(dbus.service.Object):
 		try: 
 			for bus_name in self.dbus_busses.keys():
 				self.request_name(bus_name,"",bus_name)
-			bus.add_signal_receiver(self.request_name,
-					dbus_interface = 'org.freedesktop.DBus', 
-					signal_name = "NameOwnerChanged")
-		except dbus.exceptions.DBusException, e:
-			# TODO: not sure what to do if can't find other services
-			print e
+
+		except:
+			## its ok if this fails.  hotplug will detect too
+			print "Warning: One of processes not started yet."
+			pass
+
+		## add signal handler to detect when new objects show up on dbus
+		bus.add_signal_receiver(self.request_name,
+				dbus_interface = 'org.freedesktop.DBus', 
+				signal_name = "NameOwnerChanged")
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed", 
@@ -45,12 +54,13 @@ class ChassisControlObject(dbus.service.Object):
 	def request_name(self, bus_name, a, b):
 		# bus added
 		if (len(b) > 0 ):
+			## if bus in required list for this object, then save a pointer to interface
+			## for method calls
 			if (self.dbus_busses.has_key(bus_name)):
 				obj_path = "/"+bus_name.replace('.','/')
 				for objs in self.dbus_busses[bus_name]:
 					inst_name = objs['name']
 					obj =  bus.get_object(bus_name,obj_path+"/"+inst_name)
-					print "Interface:  "+inst_name+","+objs['intf']
 					self.dbus_objects[inst_name] = dbus.Interface(obj, objs['intf'])
 	
 

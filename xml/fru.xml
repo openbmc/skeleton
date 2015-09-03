@@ -1,5 +1,6 @@
 <node>
 	<interface name="org.openbmc.Fru">
+		<method name="init"/>
 		<property name="label"        type="s" access="readwrite"/>
 		<property name="location"     type="s" access="readwrite"/>
 		<property name="state"        type="y" access="readwrite"/>
@@ -14,6 +15,9 @@
 		<signal name="StateChanged"/>
 		<signal name="UnrecoverableError"/>
 		<signal name="RecoverableError"/>
+		<signal name="CacheMe">
+			<arg name="busname" type="s"/>
+		</signal>
 	</interface>
 	<interface name="org.openbmc.Fru.Fan">
 		<method name="setCoolingZone">
@@ -25,14 +29,17 @@
 		<method name="setSpeed">
 			<arg name="speed" type="i" direction="in"/>
 		</method>
-		<method name="setConfigData">
-			<arg name="pwm_num" type="i" direction="in"/>
-		</method>
-		<property name="speed" type="i" access="read"/>
-		<property name="cooling_zone" type="i" access="read"/>
+		<property name="speed" type="i" access="readwrite"/>
+		<property name="cooling_zone" type="i" access="readwrite"/>
+		<property name="pwm_num"  type="i" access="readwrite"/>
 		<signal name="SpeedChanged">
 			<arg name="speed" type="i"/>
 		</signal>
 		<signal name="TachError"/>
+	</interface>
+	<interface name="org.openbmc.Fru.Eeprom">
+		<property name="i2c_dev_path" type="s" access="readwrite"/>
+		<property name="i2c_address" type="s" access="readwrite"/>
+		<signal name="ReadDone"/>
 	</interface>
 </node>

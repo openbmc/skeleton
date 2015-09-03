@@ -41,17 +41,6 @@ on_get_speed (FruFan                 *fan,
   return TRUE;
 }
 
-static gboolean
-on_set_config (FruFan                 *fan,
-                GDBusMethodInvocation  *invocation,
-		gchar**                  config,
-                gpointer                user_data)
-{
-  fru_fan_complete_set_config_data(fan,invocation);
-  return TRUE;
-}
-
-
 static void 
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
@@ -90,10 +79,6 @@ on_bus_acquired (GDBusConnection *connection,
   		g_signal_connect (fan,
                     "handle-set-speed",
                     G_CALLBACK (on_set_speed),
-                    NULL); /* user_data */
-  		g_signal_connect (fan,
-                    "handle-set-config-data",
-                    G_CALLBACK (on_set_config),
                     NULL); /* user_data */
 
 		//g_timeout_add(poll_interval, poll_sensor, object);

@@ -36,7 +36,7 @@ set_thresholds (SensorIntegerThreshold        *sen,
   sensor_integer_threshold_set_upper_warning(sen,uw);
   sensor_integer_threshold_set_upper_critical(sen,uc);
   sensor_integer_threshold_complete_set(sen,invocation);
-  sensor_integer_threshold_set_state(sen,NORMAL);
+  //sensor_integer_threshold_set_state(sen,NORMAL);
   return TRUE;
 }
 
@@ -66,12 +66,14 @@ void check_thresholds(SensorIntegerThreshold* sensor,guint value)
 			if (state == LOWER_CRITICAL || state == UPPER_CRITICAL)
 			{
 				sensor_integer_threshold_emit_critical(sensor);
-				g_print("Critical\n");
 			}
  			else if (state == LOWER_WARNING || state == UPPER_WARNING)
 			{
  				sensor_integer_threshold_emit_warning(sensor);
-				g_print("Warning\n");
+			}
+			else if (state == NORMAL)
+			{
+				sensor_integer_threshold_emit_normal(sensor);
 			}
 		}
 	//}

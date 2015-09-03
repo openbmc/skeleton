@@ -29,6 +29,11 @@ struct _FruIface
   GTypeInterface parent_iface;
 
 
+
+  gboolean (*handle_init) (
+    Fru *object,
+    GDBusMethodInvocation *invocation);
+
   guint  (*get_date_code) (Fru *object);
 
   guchar  (*get_instance_num) (Fru *object);
@@ -51,6 +56,10 @@ struct _FruIface
 
   const gchar * (*get_version) (Fru *object);
 
+  void (*cache_me) (
+    Fru *object,
+    const gchar *arg_busname);
+
   void (*recoverable_error) (
     Fru *object);
 
@@ -68,6 +77,13 @@ GDBusInterfaceInfo *fru_interface_info (void);
 guint fru_override_properties (GObjectClass *klass, guint property_id_begin);
 
 
+/* D-Bus method call completion functions: */
+void fru_complete_init (
+    Fru *object,
+    GDBusMethodInvocation *invocation);
+
+
+
 /* D-Bus signal emissions functions: */
 void fru_emit_state_changed (
     Fru *object);
@@ -77,6 +93,29 @@ void fru_emit_unrecoverable_error (
 
 void fru_emit_recoverable_error (
     Fru *object);
+
+void fru_emit_cache_me (
+    Fru *object,
+    const gchar *arg_busname);
+
+
+
+/* D-Bus method calls: */
+void fru_call_init (
+    Fru *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean fru_call_init_finish (
+    Fru *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean fru_call_init_sync (
+    Fru *proxy,
+    GCancellable *cancellable,
+    GError **error);
 
 
 
@@ -239,11 +278,6 @@ struct _FruFanIface
     FruFan *object,
     GDBusMethodInvocation *invocation);
 
-  gboolean (*handle_set_config_data) (
-    FruFan *object,
-    GDBusMethodInvocation *invocation,
-    gint arg_pwm_num);
-
   gboolean (*handle_set_cooling_zone) (
     FruFan *object,
     GDBusMethodInvocation *invocation,
@@ -255,6 +289,8 @@ struct _FruFanIface
     gint arg_speed);
 
   gint  (*get_cooling_zone) (FruFan *object);
+
+  gint  (*get_pwm_num) (FruFan *object);
 
   gint  (*get_speed) (FruFan *object);
 
@@ -284,10 +320,6 @@ void fru_fan_complete_get_speed (
     gint speed);
 
 void fru_fan_complete_set_speed (
-    FruFan *object,
-    GDBusMethodInvocation *invocation);
-
-void fru_fan_complete_set_config_data (
     FruFan *object,
     GDBusMethodInvocation *invocation);
 
@@ -358,24 +390,6 @@ gboolean fru_fan_call_set_speed_sync (
     GCancellable *cancellable,
     GError **error);
 
-void fru_fan_call_set_config_data (
-    FruFan *proxy,
-    gint arg_pwm_num,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean fru_fan_call_set_config_data_finish (
-    FruFan *proxy,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean fru_fan_call_set_config_data_sync (
-    FruFan *proxy,
-    gint arg_pwm_num,
-    GCancellable *cancellable,
-    GError **error);
-
 
 
 /* D-Bus property accessors: */
@@ -384,6 +398,9 @@ void fru_fan_set_speed (FruFan *object, gint value);
 
 gint fru_fan_get_cooling_zone (FruFan *object);
 void fru_fan_set_cooling_zone (FruFan *object, gint value);
+
+gint fru_fan_get_pwm_num (FruFan *object);
+void fru_fan_set_pwm_num (FruFan *object, gint value);
 
 
 /* ---- */
@@ -482,6 +499,150 @@ GType fru_fan_skeleton_get_type (void) G_GNUC_CONST;
 FruFan *fru_fan_skeleton_new (void);
 
 
+/* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.Fru.Eeprom */
+
+#define TYPE_FRU_EEPROM (fru_eeprom_get_type ())
+#define FRU_EEPROM(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_FRU_EEPROM, FruEeprom))
+#define IS_FRU_EEPROM(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_FRU_EEPROM))
+#define FRU_EEPROM_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_FRU_EEPROM, FruEepromIface))
+
+struct _FruEeprom;
+typedef struct _FruEeprom FruEeprom;
+typedef struct _FruEepromIface FruEepromIface;
+
+struct _FruEepromIface
+{
+  GTypeInterface parent_iface;
+
+
+  const gchar * (*get_i2c_address) (FruEeprom *object);
+
+  const gchar * (*get_i2c_dev_path) (FruEeprom *object);
+
+  void (*read_done) (
+    FruEeprom *object);
+
+};
+
+GType fru_eeprom_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *fru_eeprom_interface_info (void);
+guint fru_eeprom_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus signal emissions functions: */
+void fru_eeprom_emit_read_done (
+    FruEeprom *object);
+
+
+
+/* D-Bus property accessors: */
+const gchar *fru_eeprom_get_i2c_dev_path (FruEeprom *object);
+gchar *fru_eeprom_dup_i2c_dev_path (FruEeprom *object);
+void fru_eeprom_set_i2c_dev_path (FruEeprom *object, const gchar *value);
+
+const gchar *fru_eeprom_get_i2c_address (FruEeprom *object);
+gchar *fru_eeprom_dup_i2c_address (FruEeprom *object);
+void fru_eeprom_set_i2c_address (FruEeprom *object, const gchar *value);
+
+
+/* ---- */
+
+#define TYPE_FRU_EEPROM_PROXY (fru_eeprom_proxy_get_type ())
+#define FRU_EEPROM_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_FRU_EEPROM_PROXY, FruEepromProxy))
+#define FRU_EEPROM_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_FRU_EEPROM_PROXY, FruEepromProxyClass))
+#define FRU_EEPROM_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_FRU_EEPROM_PROXY, FruEepromProxyClass))
+#define IS_FRU_EEPROM_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_FRU_EEPROM_PROXY))
+#define IS_FRU_EEPROM_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_FRU_EEPROM_PROXY))
+
+typedef struct _FruEepromProxy FruEepromProxy;
+typedef struct _FruEepromProxyClass FruEepromProxyClass;
+typedef struct _FruEepromProxyPrivate FruEepromProxyPrivate;
+
+struct _FruEepromProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  FruEepromProxyPrivate *priv;
+};
+
+struct _FruEepromProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType fru_eeprom_proxy_get_type (void) G_GNUC_CONST;
+
+void fru_eeprom_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+FruEeprom *fru_eeprom_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+FruEeprom *fru_eeprom_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void fru_eeprom_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+FruEeprom *fru_eeprom_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+FruEeprom *fru_eeprom_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_FRU_EEPROM_SKELETON (fru_eeprom_skeleton_get_type ())
+#define FRU_EEPROM_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_FRU_EEPROM_SKELETON, FruEepromSkeleton))
+#define FRU_EEPROM_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_FRU_EEPROM_SKELETON, FruEepromSkeletonClass))
+#define FRU_EEPROM_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_FRU_EEPROM_SKELETON, FruEepromSkeletonClass))
+#define IS_FRU_EEPROM_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_FRU_EEPROM_SKELETON))
+#define IS_FRU_EEPROM_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_FRU_EEPROM_SKELETON))
+
+typedef struct _FruEepromSkeleton FruEepromSkeleton;
+typedef struct _FruEepromSkeletonClass FruEepromSkeletonClass;
+typedef struct _FruEepromSkeletonPrivate FruEepromSkeletonPrivate;
+
+struct _FruEepromSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  FruEepromSkeletonPrivate *priv;
+};
+
+struct _FruEepromSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType fru_eeprom_skeleton_get_type (void) G_GNUC_CONST;
+
+FruEeprom *fru_eeprom_skeleton_new (void);
+
+
 /* ---- */
 
 #define TYPE_OBJECT (object_get_type ())
@@ -502,8 +663,10 @@ GType object_get_type (void) G_GNUC_CONST;
 
 Fru *object_get_fru (Object *object);
 FruFan *object_get_fru_fan (Object *object);
+FruEeprom *object_get_fru_eeprom (Object *object);
 Fru *object_peek_fru (Object *object);
 FruFan *object_peek_fru_fan (Object *object);
+FruEeprom *object_peek_fru_eeprom (Object *object);
 
 #define TYPE_OBJECT_PROXY (object_proxy_get_type ())
 #define OBJECT_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OBJECT_PROXY, ObjectProxy))
@@ -558,6 +721,7 @@ GType object_skeleton_get_type (void) G_GNUC_CONST;
 ObjectSkeleton *object_skeleton_new (const gchar *object_path);
 void object_skeleton_set_fru (ObjectSkeleton *object, Fru *interface_);
 void object_skeleton_set_fru_fan (ObjectSkeleton *object, FruFan *interface_);
+void object_skeleton_set_fru_eeprom (ObjectSkeleton *object, FruEeprom *interface_);
 
 /* ---- */
 
