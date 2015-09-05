@@ -9,71 +9,53 @@
 #include <sys/mman.h>
 
 #include "sensor_threshold.h"
-
+#include "openbmc.h"
 
 gboolean
-get_threshold_state (SensorIntegerThreshold    *sen,
+get_threshold_state (SensorThreshold    *sen,
                    GDBusMethodInvocation  *invocation,
                    gpointer               user_data)
 {
-  guint state = sensor_integer_threshold_get_state(sen);
-  sensor_integer_threshold_complete_get_state(sen,invocation,state);
+  guint state = sensor_threshold_get_state(sen);
+  sensor_threshold_complete_get_state(sen,invocation,state);
   return TRUE;
 }
 
 
-gboolean
-set_thresholds (SensorIntegerThreshold        *sen,
-                   GDBusMethodInvocation  *invocation,
-		   guint                  lc,
-		   guint                  lw,
-		   guint                  uw,
-		   guint                  uc,
-                   gpointer               user_data)
-{
-  sensor_integer_threshold_set_lower_critical(sen,lc);
-  sensor_integer_threshold_set_lower_warning(sen,lw);
-  sensor_integer_threshold_set_upper_warning(sen,uw);
-  sensor_integer_threshold_set_upper_critical(sen,uc);
-  sensor_integer_threshold_complete_set(sen,invocation);
-  //sensor_integer_threshold_set_state(sen,NORMAL);
-  return TRUE;
-}
 
-
-void check_thresholds(SensorIntegerThreshold* sensor,guint value)
+void check_thresholds(SensorThreshold* sensor,GVariant* value)
 {
-  	threshold_states current_state = sensor_integer_threshold_get_state(sensor);
+  	threshold_states current_state = sensor_threshold_get_state(sensor);
  	//if (current_state != NOT_SET) 
 	//{
 		threshold_states state = NORMAL;
-		if (value < sensor_integer_threshold_get_lower_critical(sensor)) {
+		if (VARIANT_COMPARE(value,sensor_threshold_get_lower_critical(sensor)) < 0) {
     			state = LOWER_CRITICAL;
   		}
-		else if(value < sensor_integer_threshold_get_lower_warning(sensor)) {
+		else if(VARIANT_COMPARE(value,sensor_threshold_get_lower_warning(sensor)) < 0) {
     			state = LOWER_WARNING;
 		}
-		else if(value > sensor_integer_threshold_get_upper_critical(sensor)) {
+		else if(VARIANT_COMPARE(value,sensor_threshold_get_upper_critical(sensor)) > 0) {
  			state = UPPER_CRITICAL;
 		}
-		else if(value > sensor_integer_threshold_get_upper_warning(sensor)) {
+		else if(VARIANT_COMPARE(value,sensor_threshold_get_upper_warning(sensor)) > 0) {
  			state = UPPER_WARNING;
 		}
 		// only emit signal if threshold state changes
-		if (state != sensor_integer_threshold_get_state(sensor))
+		if (state != sensor_threshold_get_state(sensor))
 		{
-			sensor_integer_threshold_set_state(sensor,state);
+			sensor_threshold_set_state(sensor,state);
 			if (state == LOWER_CRITICAL || state == UPPER_CRITICAL)
 			{
-				sensor_integer_threshold_emit_critical(sensor);
+				sensor_threshold_emit_critical(sensor);
 			}
  			else if (state == LOWER_WARNING || state == UPPER_WARNING)
 			{
- 				sensor_integer_threshold_emit_warning(sensor);
+ 				sensor_threshold_emit_warning(sensor);
 			}
 			else if (state == NORMAL)
 			{
-				sensor_integer_threshold_emit_normal(sensor);
+				sensor_threshold_emit_normal(sensor);
 			}
 		}
 	//}

@@ -1,61 +1,36 @@
 <node>
-	<interface name="org.openbmc.SensorInteger">
+	<interface name="org.openbmc.SensorValue">
 		<method name="init"/>
 		<method name="getValue">
-			<arg name="value" type="i" direction="out"/>
+			<arg name="value" type="v" direction="out"/>
 		</method>
 		<method name="setValue">
-			<arg name="value" type="i" direction="in"/>
-		</method>
-		<method name="getUnits">
-			<arg name="units" type="s" direction="out"/>
-		</method>
-		<method name="setPollInterval">
-			<arg name="poll_interval" type="i" direction="in"/>
+			<arg name="value" type="v" direction="in"/>
 		</method>
 
-                <property name="value" type="i" access="readwrite"/>
+                <property name="value" type="v" access="readwrite"/>
 		<property name="units" type="s" access="read"/>
 		<property name="poll_interval" type="i" access="read"/>
 		<property name="heatbeat" type="i" access="read"/>
 
 		<signal name="Changed">
-			<arg name="value" type="i"/>
+			<arg name="value" type="v"/>
 			<arg name="units" type="s"/>
 		</signal>
 		<signal name="Heartbeat">
 			<arg name="bus_name" type="s"/>
 		</signal>
 	</interface>
-        <interface name="org.openbmc.SensorString">
-                <method name="getValue">
-                        <arg name="value" type="s" direction="out"/>
-                </method>
-		<method name="getUnits">
-			<arg name="units" type="s" direction="out"/>
-		</method>
-                <property name="value" type="i" access="read"/>
-		<property name="units" type="s" access="read"/>
-                <signal name="Changed">
-                        <arg name="value" type="s"/>
-                </signal>
-        </interface>	
-	<interface name="org.openbmc.SensorIntegerThreshold">
-		<method name="set">
-			<arg name="lower_critical" type="i" direction="in"/>
-			<arg name="lower_warning"  type="i" direction="in"/>
-			<arg name="upper_warning"  type="i" direction="in"/>
-			<arg name="upper_critical" type="i" direction="in"/>
-		</method>
+	<interface name="org.openbmc.SensorThreshold">
 		<method name="getState">
-			<arg name="state" type="i" direction="out"/>
+			<arg name="state" type="y" direction="out"/>
 		</method>
 
-		<property name="lower_critical" type="i" access="readwrite"/>
-		<property name="lower_warning"  type="i" access="readwrite"/>
-		<property name="upper_warning"  type="i" access="readwrite"/>
-		<property name="upper_critical" type="i" access="readwrite"/>
-		<property name="state" type="i" access="read"/>
+		<property name="lower_critical" type="v" access="readwrite"/>
+		<property name="lower_warning"  type="v" access="readwrite"/>
+		<property name="upper_warning"  type="v" access="readwrite"/>
+		<property name="upper_critical" type="v" access="readwrite"/>
+		<property name="state" type="y" access="read"/>
 
 		<signal name="Warning"/>
 		<signal name="Critical"/>

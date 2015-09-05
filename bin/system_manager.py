@@ -2,11 +2,11 @@
 
 import sys
 import subprocess
-import gobject
+from gi.repository import GObject
+
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-#import xml.etree.ElementTree as ET
 import os
 import PropertyManager
 
@@ -25,20 +25,12 @@ HEARTBEAT_CHECK_INTERVAL = 20000
 class SystemManager(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
-		#self.sensor_manager_running = False
-		#self.fru_manager_running = False
-		#self.inited = False
 		
+		self.property_manager = PropertyManager.PropertyManager(bus,System.CACHE_PATH)
 		## Signal handlers
 		bus.add_signal_receiver(self.NewBusHandler,
 					dbus_interface = 'org.freedesktop.DBus', 
 					signal_name = "NameOwnerChanged")
-		#bus.add_signal_receiver(self.FruRunningHandler,
-		#			dbus_interface = 'org.openbmc.managers.Frus'
-		#			signal_name = "OpenBmcRunning")
-		#bus.add_signal_receiver(self.SensorRunningHandler,
-		#			dbus_interface = 'org.openbmc.managers.Sensors'
-		#			signal_name = "OpenBmcRunning")
 		bus.add_signal_receiver(self.CacheMeHandler,
 					signal_name = 'CacheMe', path_keyword='path',interface_keyword='interface')
 
@@ -52,56 +44,58 @@ class SystemManager(dbus.service.Object):
 			pass
 		
 		bus.add_signal_receiver(self.HeartbeatHandler, signal_name = "Heartbeat")
-    		gobject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
+    		GObject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
 
 	def CacheMeHandler(self,busname,path=None,interface=None):
 		#interface_name = 'org.openbmc.Fru'
 		print "CacheME: "+busname+","+path+","+interface
 		data = {}
 		cache = System.CACHED_INTERFACES.has_key(interface)
-		PropertyManager.saveProperties(bus,busname,path,interface,cache,data)
+		self.property_manager.saveProperties(busname,path,interface,cache,data)
 
 
 	def start_process(self,bus_name):
-		exe_name = System.SYSTEM_CONFIG[bus_name]['exe_name']
-		cmdline = [ ]
-		cmdline.append(exe_name)
-		for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
-			cmdline.append(instance['name'])
-		try:
-			print "Starting process: "+" ".join(cmdline)
-			System.SYSTEM_CONFIG[bus_name]['popen'] = subprocess.Popen(cmdline);
-		except Exception as e:
-			## TODO: error
-			print "Error starting process: "+" ".join(cmdline)
+		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
+			process_name = System.BIN_PATH+System.SYSTEM_CONFIG[bus_name]['process_name']
+			cmdline = [ ]
+			cmdline.append(process_name)
+			for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
+				cmdline.append(instance['name'])
+			try:
+				print "Starting process: "+" ".join(cmdline)
+				System.SYSTEM_CONFIG[bus_name]['popen'] = subprocess.Popen(cmdline);
+			except Exception as e:
+				## TODO: error
+				print "Error starting process: "+" ".join(cmdline)
 
 	def heartbeat_check(self):
 		print "heartbeat check"
 		for bus_name in System.SYSTEM_CONFIG.keys():
-			## even if process doesn't request heartbeat check, 
-			##   make sure process is still alive
-			p = System.SYSTEM_CONFIG[bus_name]['popen']
-			p.poll()
-			if (p.returncode != None):
-				print "Process for "+bus_name+" appears to be dead"
-				self.start_process(bus_name)
-
-			## process is alive, now check if heartbeat received
-			## during previous interval
-			elif (System.SYSTEM_CONFIG[bus_name]['heartbeat'] == 'yes'):
-				if (System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] == 0):
-					print "Heartbeat error: "+bus_name
-					p = System.SYSTEM_CONFIG[bus_name]['popen']
-					## TODO: error checking
-					p.poll()
-					if (p.returncode == None):
-						print "Process must be hung, so killing"
-						p.kill()
+			if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
+				## even if process doesn't request heartbeat check, 
+				##   make sure process is still alive
+				p = System.SYSTEM_CONFIG[bus_name]['popen']
+				p.poll()
+				if (p.returncode != None):
+					print "Process for "+bus_name+" appears to be dead"
+					self.start_process(bus_name)
+	
+				## process is alive, now check if heartbeat received
+				## during previous interval
+				elif (System.SYSTEM_CONFIG[bus_name]['heartbeat'] == 'yes'):
+					if (System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] == 0):
+						print "Heartbeat error: "+bus_name
+						p = System.SYSTEM_CONFIG[bus_name]['popen']
+						## TODO: error checking
+						p.poll()
+						if (p.returncode == None):
+							print "Process must be hung, so killing"
+							p.kill()
 						
-					self.start_process(bus_name)			
-				else:
-					System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
-					print "Heartbeat ok: "+bus_name
+						self.start_process(bus_name)			
+					else:
+						System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
+						print "Heartbeat ok: "+bus_name
 					
 		return True
 
@@ -121,7 +115,7 @@ class SystemManager(dbus.service.Object):
 					obj_path = obj_root+'/'+instance['name']
 					obj_paths.append(obj_path)
 					if (instance.has_key('properties')):
-						PropertyManager.loadProperties(bus,bus_name,obj_path,												instance['properties'])
+						self.property_manager.loadProperties(bus_name,obj_path,												instance['properties'])
 
 				## After object properties are setup, call init method if requested
 				if (System.SYSTEM_CONFIG[bus_name].has_key('init_methods')):
@@ -154,7 +148,7 @@ if __name__ == '__main__':
     bus = dbus.SessionBus()
     name = dbus.service.BusName(DBUS_NAME,bus)
     obj = SystemManager(bus,OBJ_NAME)
-    mainloop = gobject.MainLoop()
+    mainloop = GObject.MainLoop()
 
     print "Running SystemManager"
     mainloop.run()

@@ -21,18 +21,22 @@ poll_sensor(gpointer user_data)
 	{
 		return TRUE;
 	}
-	SensorInteger *sensor = object_get_sensor_integer((Object*)user_data);
-	SensorIntegerThreshold *threshold = object_get_sensor_integer_threshold((Object*)user_data);
+	SensorValue *sensor = object_get_sensor_value((Object*)user_data);
+	SensorThreshold *threshold = object_get_sensor_threshold((Object*)user_data);
 	SensorI2c *i2c = object_get_sensor_i2c((Object*)user_data);
 
- 	guint value = sensor_integer_get_value(sensor);
-	//TOOD:  Change to actually read sensor
-	g_print("Reading I2C = %s; Address = %s\n",sensor_i2c_get_dev_path(i2c),sensor_i2c_get_address(i2c));
+ 	GVariant* v_value = sensor_value_get_value(sensor);
+	//TODO:  Change to actually read sensor
+	double value = GET_VARIANT_D(v_value);
+	g_print("Reading I2C = %s; Address = %s; %f\n",
+		sensor_i2c_get_dev_path(i2c),sensor_i2c_get_address(i2c),value);
+
 	value = value+1;
+
 	if (heartbeat > 10000)
 	{
 		heartbeat = 0;
-		sensor_integer_emit_heartbeat(sensor,dbus_name);
+		sensor_value_emit_heartbeat(sensor,dbus_name);
 	}
 	else
  	{
@@ -42,45 +46,32 @@ poll_sensor(gpointer user_data)
     // End actually reading sensor
 
     //if changed, set property and emit signal
-    if (value != sensor_integer_get_value(sensor))
+  //  if (value != sensor_value_get_value(sensor)
+    if (value != GET_VARIANT_D(v_value))
     {
-       sensor_integer_set_value(sensor,value);
-       sensor_integer_emit_changed(sensor,value,sensor_integer_get_units(sensor));
-       check_thresholds(threshold,value);
+	// they don't appear to provide a function to modify float value in varait
+	// so it seems I have to create a new one
+	GVariant* v_new_value = NEW_VARIANT_D(value);
+	sensor_value_set_value(sensor,v_new_value);
+
+       sensor_value_set_value(sensor,v_new_value);
+       //sensor_value_emit_changed(sensor,v_new_value,sensor_value_get_units(sensor));
+       check_thresholds(threshold,v_new_value);
     }
     return TRUE;
 }
 
 static gboolean
-on_init         (SensorInteger  *sen,
+on_init         (SensorValue  *sen,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
   inited = TRUE;
-  sensor_integer_complete_init(sen,invocation);
+  sensor_value_complete_init(sen,invocation);
   return TRUE;
 }
 
 
-static gboolean
-on_get_units    (SensorInteger  *sen,
-                GDBusMethodInvocation  *invocation,
-                gpointer                user_data)
-{
-  const gchar* val = sensor_integer_get_units(sen);
-  sensor_integer_complete_get_units(sen,invocation,val);
-  return TRUE;
-}
-
-static gboolean
-on_get (SensorInteger                 *sen,
-                GDBusMethodInvocation  *invocation,
-                gpointer                user_data)
-{
-  guint reading = sensor_integer_get_value(sen);
-  sensor_integer_complete_get_value(sen,invocation,reading);
-  return TRUE;
-}
 
 static void 
 on_bus_acquired (GDBusConnection *connection,
@@ -104,12 +95,12 @@ on_bus_acquired (GDBusConnection *connection,
 		ObjectSkeleton *object = object_skeleton_new (s);
 		g_free (s);
 
-		SensorInteger *sensor = sensor_integer_skeleton_new ();
-  		object_skeleton_set_sensor_integer (object, sensor);
+		SensorValue *sensor = sensor_value_skeleton_new ();
+  		object_skeleton_set_sensor_value (object, sensor);
   		g_object_unref (sensor);
 		
-		SensorIntegerThreshold *threshold = sensor_integer_threshold_skeleton_new();
-		object_skeleton_set_sensor_integer_threshold (object,threshold);
+		SensorThreshold *threshold = sensor_threshold_skeleton_new();
+		object_skeleton_set_sensor_threshold (object,threshold);
 		g_object_unref (threshold);
 
 		SensorI2c *i2c = sensor_i2c_skeleton_new();
@@ -117,29 +108,28 @@ on_bus_acquired (GDBusConnection *connection,
 		g_object_unref (i2c);
 
 
-  		// set units
-  		sensor_integer_set_units(sensor,"C");
-		sensor_integer_threshold_set_state(threshold,NOT_SET);
-  		//define method callbacks here
-  		g_signal_connect (sensor,
-                    "handle-get-value",
-                    G_CALLBACK (on_get),
-                    NULL); /* user_data */
-  		g_signal_connect (sensor,
-                    "handle-get-units",
-                    G_CALLBACK (on_get_units),
-                    NULL); /* user_data */
+  		// set properties
+		GVariant* value = g_variant_new_variant(g_variant_new_double(1.0));
+		sensor_value_set_value(sensor,value);
+  		sensor_value_set_units(sensor,"C");
+		sensor_threshold_set_state(threshold,NOT_SET);
+		
+		sensor_threshold_set_upper_critical(threshold,
+			g_variant_new_variant(g_variant_new_double(0.0)));
+		sensor_threshold_set_upper_warning(threshold,
+			g_variant_new_variant(g_variant_new_double(0.0)));
+		sensor_threshold_set_lower_warning(threshold,
+			g_variant_new_variant(g_variant_new_double(0.0)));
+		sensor_threshold_set_lower_critical(threshold,
+			g_variant_new_variant(g_variant_new_double(0.0)));
+
+		//define method callbacks here
 
  		g_signal_connect (sensor,
                     "handle-init",
                     G_CALLBACK (on_init),
                     NULL); /* user_data */
  
-  		g_signal_connect (threshold,
-                    "handle-set",
-                    G_CALLBACK (set_thresholds),
-                    NULL); /* user_data */
-
   		g_signal_connect (threshold,
                     "handle-get-state",
                     G_CALLBACK (get_threshold_state),

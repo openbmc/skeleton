@@ -2,11 +2,11 @@
 
 import sys
 import subprocess
-import gobject
+from gi.repository import GObject
+
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import xml.etree.ElementTree as ET
 import PropertyManager
 
 if (len(sys.argv) < 2):
@@ -28,6 +28,7 @@ ID_LOOKUP = {
 class IpmiTranslator(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
+		self.property_manager = PropertyManager.PropertyManager(bus,System.CACHE_PATH)
 		bus.add_signal_receiver(self.UpdateFruHandler,
 					dbus_interface = 'org.openbmc.control.IpmiBt', 
 					signal_name = "UpdateFru")
@@ -59,7 +60,7 @@ class IpmiTranslator(dbus.service.Object):
 			## save fru object to object and disk
 			interface_name = 'org.openbmc.Fru'
 			cache = System.CACHED_INTERFACES.has_key(interface_name)
-			PropertyManager.saveProperties(bus,bus_name,obj_path,interface_name,cache,data)
+			self.property_manager.saveProperties(bus_name,obj_path,interface_name,cache,data)
 		else:
 			## TODO: error handling
 			pass
@@ -68,21 +69,25 @@ class IpmiTranslator(dbus.service.Object):
 		if (ID_LOOKUP['SENSOR'].has_key(sensor_id)):
 			obj_path = ID_LOOKUP['SENSOR'][sensor_id]
 			bus_name = ID_LOOKUP['BUS_NAME'][sensor_id]
-			data = { 'value' : value }
+
+			## change to variant data type
+			## comes in off dbus from ipmi_bt as a basic data type
+			dvalue = Openbmc.DbusProperty('value',value)
+			dvalue.setVariant(2)
+			data = { 'value' : dvalue.getValue() }
 			## save sensor value
 			## TODO:  need to accomodate any sensor interface
-			interface_name = 'org.openbmc.SensorInteger'
-			#cache = System.CACHED_INTERFACES.has_key(interface_name)
+			interface_name = 'org.openbmc.SensorValue'
+			cache = System.CACHED_INTERFACES.has_key(interface_name)
 			obj = bus.get_object(bus_name,obj_path)
 			intf = dbus.Interface(obj, interface_name)
-			#intf.setValue(value)
-			PropertyManager.saveProperties(bus,bus_name,obj_path,interface_name,cache,data)
+			self.property_manager.saveProperties(bus_name,obj_path,interface_name,cache,data)
 		else:
 			## TODO: error handling
 			pass
 
 	@dbus.service.method(DBUS_NAME,
-		in_signature='i', out_signature='i')
+		in_signature='i', out_signature='v')
 	def getSensor(self,sensor_id):
 		val = 0
 		if (ID_LOOKUP['SENSOR'].has_key(sensor_id)):
@@ -104,7 +109,7 @@ if __name__ == '__main__':
     bus = dbus.SessionBus()
     name = dbus.service.BusName(DBUS_NAME,bus)
     obj = IpmiTranslator(bus,OBJ_NAME)
-    mainloop = gobject.MainLoop()
+    mainloop = GObject.MainLoop()
 
     print "Running IpmiTranslator"
     mainloop.run()

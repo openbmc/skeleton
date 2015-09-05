@@ -2,6 +2,10 @@
 import dbus
 import Openbmc
 
+HOME_PATH = '/media/sf_vbox/openbmc/'
+BIN_PATH = HOME_PATH+'bin/'
+CACHE_PATH = HOME_PATH+'cache/'
+
 CACHED_INTERFACES = {
 	'org.openbmc.Fru' : True
 }
@@ -9,7 +13,8 @@ CACHED_INTERFACES = {
 SYSTEM_CONFIG = {}
 
 SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
-		'exe_name' : 'bin/sensor_manager.py',
+		'start_process' : True,
+		'process_name' : 'sensor_manager.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'sensors',
 		'instances' : [	
@@ -20,21 +25,9 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		]
 	}
 
-#SYSTEM_CONFIG['org.openbmc.managers.Frus'] = {
-#		'exe_name' : 'bin/fru_manager.py',
-#		'heartbeat' : 'no',
-#		'rest_name' : 'frus',
-#		'instances' : [	
-#			{
-#				'name' : 'Barreleye',
-#				'user_label': 'Fru Manager',
-#			}
-#		]
-#	}
-
-
 SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
-		'exe_name' : 'bin/eventlogger.py',
+		'start_process' : True,
+		'process_name' : 'eventlogger.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'events',
 		'instances' : [	
@@ -46,7 +39,8 @@ SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.managers.IpmiTranslator'] = {
-		'exe_name' : 'bin/ipmi_translator.py',
+		'start_process' : True,
+		'process_name' : 'ipmi_translator.py',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
@@ -58,7 +52,8 @@ SYSTEM_CONFIG['org.openbmc.managers.IpmiTranslator'] = {
 
 
 SYSTEM_CONFIG['org.openbmc.control.Power'] = {
-		'exe_name' : 'bin/power_control.exe',
+		'start_process' : True,
+		'process_name' : 'power_control.exe',
 		'heartbeat' : 'yes',
 		'instances' : [	
 			{
@@ -69,9 +64,10 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
-		'exe_name' : 'bin/sensor_ambient.exe',
+		'start_process' : True,
+		'process_name' : 'sensor_ambient.exe',
 		'heartbeat' : 'yes',
-		'init_methods' : ['org.openbmc.SensorInteger'],
+		'init_methods' : ['org.openbmc.SensorValue'],
 		'poll_interval': 5000,    
 		'instances' : [	
 			{
@@ -79,7 +75,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 				'user_label': 'Ambient Temperature 1',
 				'sensor_id' : 41,
 				'properties' : { 
-					'org.openbmc.SensorIntegerThreshold' : {
+					'org.openbmc.SensorThreshold' : {
 						'lower_critical': 5,
 						'lower_warning' : 10,
 						'upper_warning' : 15,
@@ -95,7 +91,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 				'name' : 'AmbientTemperature2',
 				'user_label': 'Ambient Temperature 2',
  				'properties' : { 
-					'org.openbmc.SensorIntegerThreshold' : {
+					'org.openbmc.SensorThreshold' : {
 						'lower_critical': 5,
 						'lower_warning' : 10,
 						'upper_warning' : 15,
@@ -110,7 +106,8 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.buttons.ButtonPower'] = {
-		'exe_name' : 'bin/button_power.exe',
+		'start_process' : True,
+		'process_name' : 'button_power.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
@@ -120,7 +117,8 @@ SYSTEM_CONFIG['org.openbmc.buttons.ButtonPower'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
-		'exe_name' : 'bin/sensor_host_status.exe',
+		'start_process' : True,
+		'process_name' : 'sensor_host_status.exe',
 		'heartbeat' : "no",
 		'instances' : [	
 			{
@@ -131,7 +129,8 @@ SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
-		'exe_name' : 'bin/chassis_identify.exe',
+		'start_process' : True,
+		'process_name' : 'chassis_identify.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
@@ -141,7 +140,8 @@ SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
-		'exe_name' : 'bin/flash_bios.exe',
+		'start_process' : True,
+		'process_name' : 'flash_bios.exe',
 		'heartbeat' : 'no',
 		'rest_name' : 'flash',
 		'instances' : [	
@@ -152,7 +152,8 @@ SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {
-		'exe_name' : 'bin/control_host.exe',
+		'start_process' : True,
+		'process_name' : 'control_host.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
@@ -162,7 +163,8 @@ SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
-		'exe_name' : 'bin/chassis_control.py',
+		'start_process' : True,
+		'process_name' : 'chassis_control.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'chassis',
 		'instances' : [	
@@ -173,7 +175,8 @@ SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.frus.Fan'] = {
-		'exe_name' : 'bin/fan.exe',
+		'start_process' : True,
+		'process_name' : 'fan.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
@@ -253,7 +256,8 @@ SYSTEM_CONFIG['org.openbmc.frus.Fan'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.frus.Board'] = {
-		'exe_name' : 'bin/fru_board.exe',
+		'start_process' : True,
+		'process_name' : 'fru_board.exe',
 		'init_methods' : ['org.openbmc.Fru'],
 		'heartbeat' : 'no',
 		'instances' : [
@@ -277,7 +281,8 @@ SYSTEM_CONFIG['org.openbmc.frus.Board'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.frus.Fru'] = {
-		'exe_name' : 'bin/fru_generic.exe',
+		'start_process' : True,
+		'process_name' : 'fru_generic.exe',
 		'heartbeat' : 'no',
 		'instances' : [
 			{

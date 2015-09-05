@@ -13,241 +13,188 @@ G_BEGIN_DECLS
 
 
 /* ------------------------------------------------------------------------ */
-/* Declarations for org.openbmc.SensorInteger */
+/* Declarations for org.openbmc.SensorValue */
 
-#define TYPE_SENSOR_INTEGER (sensor_integer_get_type ())
-#define SENSOR_INTEGER(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_INTEGER, SensorInteger))
-#define IS_SENSOR_INTEGER(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_INTEGER))
-#define SENSOR_INTEGER_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SENSOR_INTEGER, SensorIntegerIface))
+#define TYPE_SENSOR_VALUE (sensor_value_get_type ())
+#define SENSOR_VALUE(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_VALUE, SensorValue))
+#define IS_SENSOR_VALUE(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_VALUE))
+#define SENSOR_VALUE_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SENSOR_VALUE, SensorValueIface))
 
-struct _SensorInteger;
-typedef struct _SensorInteger SensorInteger;
-typedef struct _SensorIntegerIface SensorIntegerIface;
+struct _SensorValue;
+typedef struct _SensorValue SensorValue;
+typedef struct _SensorValueIface SensorValueIface;
 
-struct _SensorIntegerIface
+struct _SensorValueIface
 {
   GTypeInterface parent_iface;
 
 
 
-  gboolean (*handle_get_units) (
-    SensorInteger *object,
-    GDBusMethodInvocation *invocation);
-
   gboolean (*handle_get_value) (
-    SensorInteger *object,
+    SensorValue *object,
     GDBusMethodInvocation *invocation);
 
   gboolean (*handle_init) (
-    SensorInteger *object,
+    SensorValue *object,
     GDBusMethodInvocation *invocation);
 
-  gboolean (*handle_set_poll_interval) (
-    SensorInteger *object,
-    GDBusMethodInvocation *invocation,
-    gint arg_poll_interval);
-
   gboolean (*handle_set_value) (
-    SensorInteger *object,
+    SensorValue *object,
     GDBusMethodInvocation *invocation,
-    gint arg_value);
+    GVariant *arg_value);
 
-  gint  (*get_heatbeat) (SensorInteger *object);
+  gint  (*get_heatbeat) (SensorValue *object);
 
-  gint  (*get_poll_interval) (SensorInteger *object);
+  gint  (*get_poll_interval) (SensorValue *object);
 
-  const gchar * (*get_units) (SensorInteger *object);
+  const gchar * (*get_units) (SensorValue *object);
 
-  gint  (*get_value) (SensorInteger *object);
+  GVariant * (*get_value) (SensorValue *object);
 
   void (*changed) (
-    SensorInteger *object,
-    gint arg_value,
+    SensorValue *object,
+    GVariant *arg_value,
     const gchar *arg_units);
 
   void (*heartbeat) (
-    SensorInteger *object,
+    SensorValue *object,
     const gchar *arg_bus_name);
 
 };
 
-GType sensor_integer_get_type (void) G_GNUC_CONST;
+GType sensor_value_get_type (void) G_GNUC_CONST;
 
-GDBusInterfaceInfo *sensor_integer_interface_info (void);
-guint sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin);
+GDBusInterfaceInfo *sensor_value_interface_info (void);
+guint sensor_value_override_properties (GObjectClass *klass, guint property_id_begin);
 
 
 /* D-Bus method call completion functions: */
-void sensor_integer_complete_init (
-    SensorInteger *object,
+void sensor_value_complete_init (
+    SensorValue *object,
     GDBusMethodInvocation *invocation);
 
-void sensor_integer_complete_get_value (
-    SensorInteger *object,
+void sensor_value_complete_get_value (
+    SensorValue *object,
     GDBusMethodInvocation *invocation,
-    gint value);
+    GVariant *value);
 
-void sensor_integer_complete_set_value (
-    SensorInteger *object,
-    GDBusMethodInvocation *invocation);
-
-void sensor_integer_complete_get_units (
-    SensorInteger *object,
-    GDBusMethodInvocation *invocation,
-    const gchar *units);
-
-void sensor_integer_complete_set_poll_interval (
-    SensorInteger *object,
+void sensor_value_complete_set_value (
+    SensorValue *object,
     GDBusMethodInvocation *invocation);
 
 
 
 /* D-Bus signal emissions functions: */
-void sensor_integer_emit_changed (
-    SensorInteger *object,
-    gint arg_value,
+void sensor_value_emit_changed (
+    SensorValue *object,
+    GVariant *arg_value,
     const gchar *arg_units);
 
-void sensor_integer_emit_heartbeat (
-    SensorInteger *object,
+void sensor_value_emit_heartbeat (
+    SensorValue *object,
     const gchar *arg_bus_name);
 
 
 
 /* D-Bus method calls: */
-void sensor_integer_call_init (
-    SensorInteger *proxy,
+void sensor_value_call_init (
+    SensorValue *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean sensor_integer_call_init_finish (
-    SensorInteger *proxy,
+gboolean sensor_value_call_init_finish (
+    SensorValue *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean sensor_integer_call_init_sync (
-    SensorInteger *proxy,
+gboolean sensor_value_call_init_sync (
+    SensorValue *proxy,
     GCancellable *cancellable,
     GError **error);
 
-void sensor_integer_call_get_value (
-    SensorInteger *proxy,
+void sensor_value_call_get_value (
+    SensorValue *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean sensor_integer_call_get_value_finish (
-    SensorInteger *proxy,
-    gint *out_value,
+gboolean sensor_value_call_get_value_finish (
+    SensorValue *proxy,
+    GVariant **out_value,
     GAsyncResult *res,
     GError **error);
 
-gboolean sensor_integer_call_get_value_sync (
-    SensorInteger *proxy,
-    gint *out_value,
+gboolean sensor_value_call_get_value_sync (
+    SensorValue *proxy,
+    GVariant **out_value,
     GCancellable *cancellable,
     GError **error);
 
-void sensor_integer_call_set_value (
-    SensorInteger *proxy,
-    gint arg_value,
+void sensor_value_call_set_value (
+    SensorValue *proxy,
+    GVariant *arg_value,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean sensor_integer_call_set_value_finish (
-    SensorInteger *proxy,
+gboolean sensor_value_call_set_value_finish (
+    SensorValue *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean sensor_integer_call_set_value_sync (
-    SensorInteger *proxy,
-    gint arg_value,
-    GCancellable *cancellable,
-    GError **error);
-
-void sensor_integer_call_get_units (
-    SensorInteger *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean sensor_integer_call_get_units_finish (
-    SensorInteger *proxy,
-    gchar **out_units,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean sensor_integer_call_get_units_sync (
-    SensorInteger *proxy,
-    gchar **out_units,
-    GCancellable *cancellable,
-    GError **error);
-
-void sensor_integer_call_set_poll_interval (
-    SensorInteger *proxy,
-    gint arg_poll_interval,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean sensor_integer_call_set_poll_interval_finish (
-    SensorInteger *proxy,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean sensor_integer_call_set_poll_interval_sync (
-    SensorInteger *proxy,
-    gint arg_poll_interval,
+gboolean sensor_value_call_set_value_sync (
+    SensorValue *proxy,
+    GVariant *arg_value,
     GCancellable *cancellable,
     GError **error);
 
 
 
 /* D-Bus property accessors: */
-gint sensor_integer_get_value (SensorInteger *object);
-void sensor_integer_set_value (SensorInteger *object, gint value);
+GVariant *sensor_value_get_value (SensorValue *object);
+GVariant *sensor_value_dup_value (SensorValue *object);
+void sensor_value_set_value (SensorValue *object, GVariant *value);
 
-const gchar *sensor_integer_get_units (SensorInteger *object);
-gchar *sensor_integer_dup_units (SensorInteger *object);
-void sensor_integer_set_units (SensorInteger *object, const gchar *value);
+const gchar *sensor_value_get_units (SensorValue *object);
+gchar *sensor_value_dup_units (SensorValue *object);
+void sensor_value_set_units (SensorValue *object, const gchar *value);
 
-gint sensor_integer_get_poll_interval (SensorInteger *object);
-void sensor_integer_set_poll_interval (SensorInteger *object, gint value);
+gint sensor_value_get_poll_interval (SensorValue *object);
+void sensor_value_set_poll_interval (SensorValue *object, gint value);
 
-gint sensor_integer_get_heatbeat (SensorInteger *object);
-void sensor_integer_set_heatbeat (SensorInteger *object, gint value);
+gint sensor_value_get_heatbeat (SensorValue *object);
+void sensor_value_set_heatbeat (SensorValue *object, gint value);
 
 
 /* ---- */
 
-#define TYPE_SENSOR_INTEGER_PROXY (sensor_integer_proxy_get_type ())
-#define SENSOR_INTEGER_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_INTEGER_PROXY, SensorIntegerProxy))
-#define SENSOR_INTEGER_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_INTEGER_PROXY, SensorIntegerProxyClass))
-#define SENSOR_INTEGER_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_INTEGER_PROXY, SensorIntegerProxyClass))
-#define IS_SENSOR_INTEGER_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_INTEGER_PROXY))
-#define IS_SENSOR_INTEGER_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_INTEGER_PROXY))
+#define TYPE_SENSOR_VALUE_PROXY (sensor_value_proxy_get_type ())
+#define SENSOR_VALUE_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_VALUE_PROXY, SensorValueProxy))
+#define SENSOR_VALUE_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_VALUE_PROXY, SensorValueProxyClass))
+#define SENSOR_VALUE_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_VALUE_PROXY, SensorValueProxyClass))
+#define IS_SENSOR_VALUE_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_VALUE_PROXY))
+#define IS_SENSOR_VALUE_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_VALUE_PROXY))
 
-typedef struct _SensorIntegerProxy SensorIntegerProxy;
-typedef struct _SensorIntegerProxyClass SensorIntegerProxyClass;
-typedef struct _SensorIntegerProxyPrivate SensorIntegerProxyPrivate;
+typedef struct _SensorValueProxy SensorValueProxy;
+typedef struct _SensorValueProxyClass SensorValueProxyClass;
+typedef struct _SensorValueProxyPrivate SensorValueProxyPrivate;
 
-struct _SensorIntegerProxy
+struct _SensorValueProxy
 {
   /*< private >*/
   GDBusProxy parent_instance;
-  SensorIntegerProxyPrivate *priv;
+  SensorValueProxyPrivate *priv;
 };
 
-struct _SensorIntegerProxyClass
+struct _SensorValueProxyClass
 {
   GDBusProxyClass parent_class;
 };
 
-GType sensor_integer_proxy_get_type (void) G_GNUC_CONST;
+GType sensor_value_proxy_get_type (void) G_GNUC_CONST;
 
-void sensor_integer_proxy_new (
+void sensor_value_proxy_new (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -255,10 +202,10 @@ void sensor_integer_proxy_new (
     GCancellable        *cancellable,
     GAsyncReadyCallback  callback,
     gpointer             user_data);
-SensorInteger *sensor_integer_proxy_new_finish (
+SensorValue *sensor_value_proxy_new_finish (
     GAsyncResult        *res,
     GError             **error);
-SensorInteger *sensor_integer_proxy_new_sync (
+SensorValue *sensor_value_proxy_new_sync (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -266,7 +213,7 @@ SensorInteger *sensor_integer_proxy_new_sync (
     GCancellable        *cancellable,
     GError             **error);
 
-void sensor_integer_proxy_new_for_bus (
+void sensor_value_proxy_new_for_bus (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -274,10 +221,10 @@ void sensor_integer_proxy_new_for_bus (
     GCancellable        *cancellable,
     GAsyncReadyCallback  callback,
     gpointer             user_data);
-SensorInteger *sensor_integer_proxy_new_for_bus_finish (
+SensorValue *sensor_value_proxy_new_for_bus_finish (
     GAsyncResult        *res,
     GError             **error);
-SensorInteger *sensor_integer_proxy_new_for_bus_sync (
+SensorValue *sensor_value_proxy_new_for_bus_sync (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -288,411 +235,173 @@ SensorInteger *sensor_integer_proxy_new_for_bus_sync (
 
 /* ---- */
 
-#define TYPE_SENSOR_INTEGER_SKELETON (sensor_integer_skeleton_get_type ())
-#define SENSOR_INTEGER_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_INTEGER_SKELETON, SensorIntegerSkeleton))
-#define SENSOR_INTEGER_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_INTEGER_SKELETON, SensorIntegerSkeletonClass))
-#define SENSOR_INTEGER_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_INTEGER_SKELETON, SensorIntegerSkeletonClass))
-#define IS_SENSOR_INTEGER_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_INTEGER_SKELETON))
-#define IS_SENSOR_INTEGER_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_INTEGER_SKELETON))
+#define TYPE_SENSOR_VALUE_SKELETON (sensor_value_skeleton_get_type ())
+#define SENSOR_VALUE_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_VALUE_SKELETON, SensorValueSkeleton))
+#define SENSOR_VALUE_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_VALUE_SKELETON, SensorValueSkeletonClass))
+#define SENSOR_VALUE_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_VALUE_SKELETON, SensorValueSkeletonClass))
+#define IS_SENSOR_VALUE_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_VALUE_SKELETON))
+#define IS_SENSOR_VALUE_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_VALUE_SKELETON))
 
-typedef struct _SensorIntegerSkeleton SensorIntegerSkeleton;
-typedef struct _SensorIntegerSkeletonClass SensorIntegerSkeletonClass;
-typedef struct _SensorIntegerSkeletonPrivate SensorIntegerSkeletonPrivate;
+typedef struct _SensorValueSkeleton SensorValueSkeleton;
+typedef struct _SensorValueSkeletonClass SensorValueSkeletonClass;
+typedef struct _SensorValueSkeletonPrivate SensorValueSkeletonPrivate;
 
-struct _SensorIntegerSkeleton
+struct _SensorValueSkeleton
 {
   /*< private >*/
   GDBusInterfaceSkeleton parent_instance;
-  SensorIntegerSkeletonPrivate *priv;
+  SensorValueSkeletonPrivate *priv;
 };
 
-struct _SensorIntegerSkeletonClass
+struct _SensorValueSkeletonClass
 {
   GDBusInterfaceSkeletonClass parent_class;
 };
 
-GType sensor_integer_skeleton_get_type (void) G_GNUC_CONST;
+GType sensor_value_skeleton_get_type (void) G_GNUC_CONST;
 
-SensorInteger *sensor_integer_skeleton_new (void);
-
-
-/* ------------------------------------------------------------------------ */
-/* Declarations for org.openbmc.SensorString */
-
-#define TYPE_SENSOR_STRING (sensor_string_get_type ())
-#define SENSOR_STRING(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_STRING, SensorString))
-#define IS_SENSOR_STRING(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_STRING))
-#define SENSOR_STRING_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SENSOR_STRING, SensorStringIface))
-
-struct _SensorString;
-typedef struct _SensorString SensorString;
-typedef struct _SensorStringIface SensorStringIface;
-
-struct _SensorStringIface
-{
-  GTypeInterface parent_iface;
-
-
-
-  gboolean (*handle_get_units) (
-    SensorString *object,
-    GDBusMethodInvocation *invocation);
-
-  gboolean (*handle_get_value) (
-    SensorString *object,
-    GDBusMethodInvocation *invocation);
-
-  const gchar * (*get_units) (SensorString *object);
-
-  gint  (*get_value) (SensorString *object);
-
-  void (*changed) (
-    SensorString *object,
-    const gchar *arg_value);
-
-};
-
-GType sensor_string_get_type (void) G_GNUC_CONST;
-
-GDBusInterfaceInfo *sensor_string_interface_info (void);
-guint sensor_string_override_properties (GObjectClass *klass, guint property_id_begin);
-
-
-/* D-Bus method call completion functions: */
-void sensor_string_complete_get_value (
-    SensorString *object,
-    GDBusMethodInvocation *invocation,
-    const gchar *value);
-
-void sensor_string_complete_get_units (
-    SensorString *object,
-    GDBusMethodInvocation *invocation,
-    const gchar *units);
-
-
-
-/* D-Bus signal emissions functions: */
-void sensor_string_emit_changed (
-    SensorString *object,
-    const gchar *arg_value);
-
-
-
-/* D-Bus method calls: */
-void sensor_string_call_get_value (
-    SensorString *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean sensor_string_call_get_value_finish (
-    SensorString *proxy,
-    gchar **out_value,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean sensor_string_call_get_value_sync (
-    SensorString *proxy,
-    gchar **out_value,
-    GCancellable *cancellable,
-    GError **error);
-
-void sensor_string_call_get_units (
-    SensorString *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean sensor_string_call_get_units_finish (
-    SensorString *proxy,
-    gchar **out_units,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean sensor_string_call_get_units_sync (
-    SensorString *proxy,
-    gchar **out_units,
-    GCancellable *cancellable,
-    GError **error);
-
-
-
-/* D-Bus property accessors: */
-gint sensor_string_get_value (SensorString *object);
-void sensor_string_set_value (SensorString *object, gint value);
-
-const gchar *sensor_string_get_units (SensorString *object);
-gchar *sensor_string_dup_units (SensorString *object);
-void sensor_string_set_units (SensorString *object, const gchar *value);
-
-
-/* ---- */
-
-#define TYPE_SENSOR_STRING_PROXY (sensor_string_proxy_get_type ())
-#define SENSOR_STRING_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_STRING_PROXY, SensorStringProxy))
-#define SENSOR_STRING_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_STRING_PROXY, SensorStringProxyClass))
-#define SENSOR_STRING_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_STRING_PROXY, SensorStringProxyClass))
-#define IS_SENSOR_STRING_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_STRING_PROXY))
-#define IS_SENSOR_STRING_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_STRING_PROXY))
-
-typedef struct _SensorStringProxy SensorStringProxy;
-typedef struct _SensorStringProxyClass SensorStringProxyClass;
-typedef struct _SensorStringProxyPrivate SensorStringProxyPrivate;
-
-struct _SensorStringProxy
-{
-  /*< private >*/
-  GDBusProxy parent_instance;
-  SensorStringProxyPrivate *priv;
-};
-
-struct _SensorStringProxyClass
-{
-  GDBusProxyClass parent_class;
-};
-
-GType sensor_string_proxy_get_type (void) G_GNUC_CONST;
-
-void sensor_string_proxy_new (
-    GDBusConnection     *connection,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GAsyncReadyCallback  callback,
-    gpointer             user_data);
-SensorString *sensor_string_proxy_new_finish (
-    GAsyncResult        *res,
-    GError             **error);
-SensorString *sensor_string_proxy_new_sync (
-    GDBusConnection     *connection,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GError             **error);
-
-void sensor_string_proxy_new_for_bus (
-    GBusType             bus_type,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GAsyncReadyCallback  callback,
-    gpointer             user_data);
-SensorString *sensor_string_proxy_new_for_bus_finish (
-    GAsyncResult        *res,
-    GError             **error);
-SensorString *sensor_string_proxy_new_for_bus_sync (
-    GBusType             bus_type,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GError             **error);
-
-
-/* ---- */
-
-#define TYPE_SENSOR_STRING_SKELETON (sensor_string_skeleton_get_type ())
-#define SENSOR_STRING_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_STRING_SKELETON, SensorStringSkeleton))
-#define SENSOR_STRING_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_STRING_SKELETON, SensorStringSkeletonClass))
-#define SENSOR_STRING_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_STRING_SKELETON, SensorStringSkeletonClass))
-#define IS_SENSOR_STRING_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_STRING_SKELETON))
-#define IS_SENSOR_STRING_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_STRING_SKELETON))
-
-typedef struct _SensorStringSkeleton SensorStringSkeleton;
-typedef struct _SensorStringSkeletonClass SensorStringSkeletonClass;
-typedef struct _SensorStringSkeletonPrivate SensorStringSkeletonPrivate;
-
-struct _SensorStringSkeleton
-{
-  /*< private >*/
-  GDBusInterfaceSkeleton parent_instance;
-  SensorStringSkeletonPrivate *priv;
-};
-
-struct _SensorStringSkeletonClass
-{
-  GDBusInterfaceSkeletonClass parent_class;
-};
-
-GType sensor_string_skeleton_get_type (void) G_GNUC_CONST;
-
-SensorString *sensor_string_skeleton_new (void);
+SensorValue *sensor_value_skeleton_new (void);
 
 
 /* ------------------------------------------------------------------------ */
-/* Declarations for org.openbmc.SensorIntegerThreshold */
+/* Declarations for org.openbmc.SensorThreshold */
 
-#define TYPE_SENSOR_INTEGER_THRESHOLD (sensor_integer_threshold_get_type ())
-#define SENSOR_INTEGER_THRESHOLD(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_INTEGER_THRESHOLD, SensorIntegerThreshold))
-#define IS_SENSOR_INTEGER_THRESHOLD(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_INTEGER_THRESHOLD))
-#define SENSOR_INTEGER_THRESHOLD_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SENSOR_INTEGER_THRESHOLD, SensorIntegerThresholdIface))
+#define TYPE_SENSOR_THRESHOLD (sensor_threshold_get_type ())
+#define SENSOR_THRESHOLD(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_THRESHOLD, SensorThreshold))
+#define IS_SENSOR_THRESHOLD(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_THRESHOLD))
+#define SENSOR_THRESHOLD_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SENSOR_THRESHOLD, SensorThresholdIface))
 
-struct _SensorIntegerThreshold;
-typedef struct _SensorIntegerThreshold SensorIntegerThreshold;
-typedef struct _SensorIntegerThresholdIface SensorIntegerThresholdIface;
+struct _SensorThreshold;
+typedef struct _SensorThreshold SensorThreshold;
+typedef struct _SensorThresholdIface SensorThresholdIface;
 
-struct _SensorIntegerThresholdIface
+struct _SensorThresholdIface
 {
   GTypeInterface parent_iface;
 
 
 
   gboolean (*handle_get_state) (
-    SensorIntegerThreshold *object,
+    SensorThreshold *object,
     GDBusMethodInvocation *invocation);
 
-  gboolean (*handle_set) (
-    SensorIntegerThreshold *object,
-    GDBusMethodInvocation *invocation,
-    gint arg_lower_critical,
-    gint arg_lower_warning,
-    gint arg_upper_warning,
-    gint arg_upper_critical);
+  GVariant * (*get_lower_critical) (SensorThreshold *object);
 
-  gint  (*get_lower_critical) (SensorIntegerThreshold *object);
+  GVariant * (*get_lower_warning) (SensorThreshold *object);
 
-  gint  (*get_lower_warning) (SensorIntegerThreshold *object);
+  guchar  (*get_state) (SensorThreshold *object);
 
-  gint  (*get_state) (SensorIntegerThreshold *object);
+  GVariant * (*get_upper_critical) (SensorThreshold *object);
 
-  gint  (*get_upper_critical) (SensorIntegerThreshold *object);
-
-  gint  (*get_upper_warning) (SensorIntegerThreshold *object);
+  GVariant * (*get_upper_warning) (SensorThreshold *object);
 
   void (*critical) (
-    SensorIntegerThreshold *object);
+    SensorThreshold *object);
 
   void (*normal) (
-    SensorIntegerThreshold *object);
+    SensorThreshold *object);
 
   void (*warning) (
-    SensorIntegerThreshold *object);
+    SensorThreshold *object);
 
 };
 
-GType sensor_integer_threshold_get_type (void) G_GNUC_CONST;
+GType sensor_threshold_get_type (void) G_GNUC_CONST;
 
-GDBusInterfaceInfo *sensor_integer_threshold_interface_info (void);
-guint sensor_integer_threshold_override_properties (GObjectClass *klass, guint property_id_begin);
+GDBusInterfaceInfo *sensor_threshold_interface_info (void);
+guint sensor_threshold_override_properties (GObjectClass *klass, guint property_id_begin);
 
 
 /* D-Bus method call completion functions: */
-void sensor_integer_threshold_complete_set (
-    SensorIntegerThreshold *object,
-    GDBusMethodInvocation *invocation);
-
-void sensor_integer_threshold_complete_get_state (
-    SensorIntegerThreshold *object,
+void sensor_threshold_complete_get_state (
+    SensorThreshold *object,
     GDBusMethodInvocation *invocation,
-    gint state);
+    guchar state);
 
 
 
 /* D-Bus signal emissions functions: */
-void sensor_integer_threshold_emit_warning (
-    SensorIntegerThreshold *object);
+void sensor_threshold_emit_warning (
+    SensorThreshold *object);
 
-void sensor_integer_threshold_emit_critical (
-    SensorIntegerThreshold *object);
+void sensor_threshold_emit_critical (
+    SensorThreshold *object);
 
-void sensor_integer_threshold_emit_normal (
-    SensorIntegerThreshold *object);
+void sensor_threshold_emit_normal (
+    SensorThreshold *object);
 
 
 
 /* D-Bus method calls: */
-void sensor_integer_threshold_call_set (
-    SensorIntegerThreshold *proxy,
-    gint arg_lower_critical,
-    gint arg_lower_warning,
-    gint arg_upper_warning,
-    gint arg_upper_critical,
+void sensor_threshold_call_get_state (
+    SensorThreshold *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean sensor_integer_threshold_call_set_finish (
-    SensorIntegerThreshold *proxy,
+gboolean sensor_threshold_call_get_state_finish (
+    SensorThreshold *proxy,
+    guchar *out_state,
     GAsyncResult *res,
     GError **error);
 
-gboolean sensor_integer_threshold_call_set_sync (
-    SensorIntegerThreshold *proxy,
-    gint arg_lower_critical,
-    gint arg_lower_warning,
-    gint arg_upper_warning,
-    gint arg_upper_critical,
-    GCancellable *cancellable,
-    GError **error);
-
-void sensor_integer_threshold_call_get_state (
-    SensorIntegerThreshold *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean sensor_integer_threshold_call_get_state_finish (
-    SensorIntegerThreshold *proxy,
-    gint *out_state,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean sensor_integer_threshold_call_get_state_sync (
-    SensorIntegerThreshold *proxy,
-    gint *out_state,
+gboolean sensor_threshold_call_get_state_sync (
+    SensorThreshold *proxy,
+    guchar *out_state,
     GCancellable *cancellable,
     GError **error);
 
 
 
 /* D-Bus property accessors: */
-gint sensor_integer_threshold_get_lower_critical (SensorIntegerThreshold *object);
-void sensor_integer_threshold_set_lower_critical (SensorIntegerThreshold *object, gint value);
+GVariant *sensor_threshold_get_lower_critical (SensorThreshold *object);
+GVariant *sensor_threshold_dup_lower_critical (SensorThreshold *object);
+void sensor_threshold_set_lower_critical (SensorThreshold *object, GVariant *value);
 
-gint sensor_integer_threshold_get_lower_warning (SensorIntegerThreshold *object);
-void sensor_integer_threshold_set_lower_warning (SensorIntegerThreshold *object, gint value);
+GVariant *sensor_threshold_get_lower_warning (SensorThreshold *object);
+GVariant *sensor_threshold_dup_lower_warning (SensorThreshold *object);
+void sensor_threshold_set_lower_warning (SensorThreshold *object, GVariant *value);
 
-gint sensor_integer_threshold_get_upper_warning (SensorIntegerThreshold *object);
-void sensor_integer_threshold_set_upper_warning (SensorIntegerThreshold *object, gint value);
+GVariant *sensor_threshold_get_upper_warning (SensorThreshold *object);
+GVariant *sensor_threshold_dup_upper_warning (SensorThreshold *object);
+void sensor_threshold_set_upper_warning (SensorThreshold *object, GVariant *value);
 
-gint sensor_integer_threshold_get_upper_critical (SensorIntegerThreshold *object);
-void sensor_integer_threshold_set_upper_critical (SensorIntegerThreshold *object, gint value);
+GVariant *sensor_threshold_get_upper_critical (SensorThreshold *object);
+GVariant *sensor_threshold_dup_upper_critical (SensorThreshold *object);
+void sensor_threshold_set_upper_critical (SensorThreshold *object, GVariant *value);
 
-gint sensor_integer_threshold_get_state (SensorIntegerThreshold *object);
-void sensor_integer_threshold_set_state (SensorIntegerThreshold *object, gint value);
+guchar sensor_threshold_get_state (SensorThreshold *object);
+void sensor_threshold_set_state (SensorThreshold *object, guchar value);
 
 
 /* ---- */
 
-#define TYPE_SENSOR_INTEGER_THRESHOLD_PROXY (sensor_integer_threshold_proxy_get_type ())
-#define SENSOR_INTEGER_THRESHOLD_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, SensorIntegerThresholdProxy))
-#define SENSOR_INTEGER_THRESHOLD_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, SensorIntegerThresholdProxyClass))
-#define SENSOR_INTEGER_THRESHOLD_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, SensorIntegerThresholdProxyClass))
-#define IS_SENSOR_INTEGER_THRESHOLD_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_INTEGER_THRESHOLD_PROXY))
-#define IS_SENSOR_INTEGER_THRESHOLD_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_INTEGER_THRESHOLD_PROXY))
+#define TYPE_SENSOR_THRESHOLD_PROXY (sensor_threshold_proxy_get_type ())
+#define SENSOR_THRESHOLD_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_THRESHOLD_PROXY, SensorThresholdProxy))
+#define SENSOR_THRESHOLD_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_THRESHOLD_PROXY, SensorThresholdProxyClass))
+#define SENSOR_THRESHOLD_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_THRESHOLD_PROXY, SensorThresholdProxyClass))
+#define IS_SENSOR_THRESHOLD_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_THRESHOLD_PROXY))
+#define IS_SENSOR_THRESHOLD_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_THRESHOLD_PROXY))
 
-typedef struct _SensorIntegerThresholdProxy SensorIntegerThresholdProxy;
-typedef struct _SensorIntegerThresholdProxyClass SensorIntegerThresholdProxyClass;
-typedef struct _SensorIntegerThresholdProxyPrivate SensorIntegerThresholdProxyPrivate;
+typedef struct _SensorThresholdProxy SensorThresholdProxy;
+typedef struct _SensorThresholdProxyClass SensorThresholdProxyClass;
+typedef struct _SensorThresholdProxyPrivate SensorThresholdProxyPrivate;
 
-struct _SensorIntegerThresholdProxy
+struct _SensorThresholdProxy
 {
   /*< private >*/
   GDBusProxy parent_instance;
-  SensorIntegerThresholdProxyPrivate *priv;
+  SensorThresholdProxyPrivate *priv;
 };
 
-struct _SensorIntegerThresholdProxyClass
+struct _SensorThresholdProxyClass
 {
   GDBusProxyClass parent_class;
 };
 
-GType sensor_integer_threshold_proxy_get_type (void) G_GNUC_CONST;
+GType sensor_threshold_proxy_get_type (void) G_GNUC_CONST;
 
-void sensor_integer_threshold_proxy_new (
+void sensor_threshold_proxy_new (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -700,10 +409,10 @@ void sensor_integer_threshold_proxy_new (
     GCancellable        *cancellable,
     GAsyncReadyCallback  callback,
     gpointer             user_data);
-SensorIntegerThreshold *sensor_integer_threshold_proxy_new_finish (
+SensorThreshold *sensor_threshold_proxy_new_finish (
     GAsyncResult        *res,
     GError             **error);
-SensorIntegerThreshold *sensor_integer_threshold_proxy_new_sync (
+SensorThreshold *sensor_threshold_proxy_new_sync (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -711,7 +420,7 @@ SensorIntegerThreshold *sensor_integer_threshold_proxy_new_sync (
     GCancellable        *cancellable,
     GError             **error);
 
-void sensor_integer_threshold_proxy_new_for_bus (
+void sensor_threshold_proxy_new_for_bus (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -719,10 +428,10 @@ void sensor_integer_threshold_proxy_new_for_bus (
     GCancellable        *cancellable,
     GAsyncReadyCallback  callback,
     gpointer             user_data);
-SensorIntegerThreshold *sensor_integer_threshold_proxy_new_for_bus_finish (
+SensorThreshold *sensor_threshold_proxy_new_for_bus_finish (
     GAsyncResult        *res,
     GError             **error);
-SensorIntegerThreshold *sensor_integer_threshold_proxy_new_for_bus_sync (
+SensorThreshold *sensor_threshold_proxy_new_for_bus_sync (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -733,32 +442,32 @@ SensorIntegerThreshold *sensor_integer_threshold_proxy_new_for_bus_sync (
 
 /* ---- */
 
-#define TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON (sensor_integer_threshold_skeleton_get_type ())
-#define SENSOR_INTEGER_THRESHOLD_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON, SensorIntegerThresholdSkeleton))
-#define SENSOR_INTEGER_THRESHOLD_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON, SensorIntegerThresholdSkeletonClass))
-#define SENSOR_INTEGER_THRESHOLD_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON, SensorIntegerThresholdSkeletonClass))
-#define IS_SENSOR_INTEGER_THRESHOLD_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON))
-#define IS_SENSOR_INTEGER_THRESHOLD_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON))
+#define TYPE_SENSOR_THRESHOLD_SKELETON (sensor_threshold_skeleton_get_type ())
+#define SENSOR_THRESHOLD_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_THRESHOLD_SKELETON, SensorThresholdSkeleton))
+#define SENSOR_THRESHOLD_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_THRESHOLD_SKELETON, SensorThresholdSkeletonClass))
+#define SENSOR_THRESHOLD_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_THRESHOLD_SKELETON, SensorThresholdSkeletonClass))
+#define IS_SENSOR_THRESHOLD_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_THRESHOLD_SKELETON))
+#define IS_SENSOR_THRESHOLD_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_THRESHOLD_SKELETON))
 
-typedef struct _SensorIntegerThresholdSkeleton SensorIntegerThresholdSkeleton;
-typedef struct _SensorIntegerThresholdSkeletonClass SensorIntegerThresholdSkeletonClass;
-typedef struct _SensorIntegerThresholdSkeletonPrivate SensorIntegerThresholdSkeletonPrivate;
+typedef struct _SensorThresholdSkeleton SensorThresholdSkeleton;
+typedef struct _SensorThresholdSkeletonClass SensorThresholdSkeletonClass;
+typedef struct _SensorThresholdSkeletonPrivate SensorThresholdSkeletonPrivate;
 
-struct _SensorIntegerThresholdSkeleton
+struct _SensorThresholdSkeleton
 {
   /*< private >*/
   GDBusInterfaceSkeleton parent_instance;
-  SensorIntegerThresholdSkeletonPrivate *priv;
+  SensorThresholdSkeletonPrivate *priv;
 };
 
-struct _SensorIntegerThresholdSkeletonClass
+struct _SensorThresholdSkeletonClass
 {
   GDBusInterfaceSkeletonClass parent_class;
 };
 
-GType sensor_integer_threshold_skeleton_get_type (void) G_GNUC_CONST;
+GType sensor_threshold_skeleton_get_type (void) G_GNUC_CONST;
 
-SensorIntegerThreshold *sensor_integer_threshold_skeleton_new (void);
+SensorThreshold *sensor_threshold_skeleton_new (void);
 
 
 /* ------------------------------------------------------------------------ */
@@ -913,13 +622,11 @@ struct _ObjectIface
 
 GType object_get_type (void) G_GNUC_CONST;
 
-SensorInteger *object_get_sensor_integer (Object *object);
-SensorString *object_get_sensor_string (Object *object);
-SensorIntegerThreshold *object_get_sensor_integer_threshold (Object *object);
+SensorValue *object_get_sensor_value (Object *object);
+SensorThreshold *object_get_sensor_threshold (Object *object);
 SensorI2c *object_get_sensor_i2c (Object *object);
-SensorInteger *object_peek_sensor_integer (Object *object);
-SensorString *object_peek_sensor_string (Object *object);
-SensorIntegerThreshold *object_peek_sensor_integer_threshold (Object *object);
+SensorValue *object_peek_sensor_value (Object *object);
+SensorThreshold *object_peek_sensor_threshold (Object *object);
 SensorI2c *object_peek_sensor_i2c (Object *object);
 
 #define TYPE_OBJECT_PROXY (object_proxy_get_type ())
@@ -973,9 +680,8 @@ struct _ObjectSkeletonClass
 
 GType object_skeleton_get_type (void) G_GNUC_CONST;
 ObjectSkeleton *object_skeleton_new (const gchar *object_path);
-void object_skeleton_set_sensor_integer (ObjectSkeleton *object, SensorInteger *interface_);
-void object_skeleton_set_sensor_string (ObjectSkeleton *object, SensorString *interface_);
-void object_skeleton_set_sensor_integer_threshold (ObjectSkeleton *object, SensorIntegerThreshold *interface_);
+void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_);
+void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThreshold *interface_);
 void object_skeleton_set_sensor_i2c (ObjectSkeleton *object, SensorI2c *interface_);
 
 /* ---- */

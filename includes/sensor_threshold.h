@@ -6,12 +6,10 @@
 
 typedef enum { NOT_SET,NORMAL,LOWER_CRITICAL,LOWER_WARNING,UPPER_WARNING,UPPER_CRITICAL } threshold_states;
 
-gboolean get_threshold_state(SensorIntegerThreshold*,
+gboolean get_threshold_state(SensorThreshold*,
                    GDBusMethodInvocation*,gpointer);
 
-gboolean set_thresholds(SensorIntegerThreshold*,
-                   GDBusMethodInvocation*,guint,guint,guint,guint,gpointer);
-void check_thresholds(SensorIntegerThreshold*,guint);
+void check_thresholds(SensorThreshold*,GVariant*);
 
 
 #endif

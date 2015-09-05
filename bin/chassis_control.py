@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-import gobject
+from gi.repository import GObject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     bus = dbus.SessionBus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = ChassisControlObject(bus, OBJ_NAME)
-    mainloop = gobject.MainLoop()
+    mainloop = GObject.MainLoop()
     
     print "Running ChassisControlService"
     mainloop.run()

@@ -2,11 +2,10 @@
 
 import sys
 import subprocess
-import gobject
 import dbus
+from gi.repository import GObject
 import dbus.service
 import dbus.mainloop.glib
-import xml.etree.ElementTree as ET
 
 if (len(sys.argv) < 2):
 	print "Usage:  ipmi_bt.py [system name]"
@@ -62,7 +61,7 @@ if __name__ == '__main__':
 	bus = dbus.SessionBus()
 	name = dbus.service.BusName(DBUS_NAME,bus)
 	obj = IpmiBt(bus,OBJ_NAME)
-	mainloop = gobject.MainLoop()
+	mainloop = GObject.MainLoop()
 
 	if (cmd == 'updatefru'):
 		obj.emitUpdateFru(ipmi_id,data)

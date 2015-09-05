@@ -18,11 +18,22 @@ ENUMS = {
 		['NONE','CPU','DIMM','BACKPLANE','RISER_CARD','FAN']
 }
 
+
+def object_to_bus_name(obj):
+	parts = obj.split('/')
+	parts.pop(0)
+	parts.pop()
+	return ".".join(parts)	
+
+def bus_to_object_name(bus_name):
+	return "/"+bus_name.replace('.','/')
+
+
 class DbusProperty:
 	def __init__(self,name,value):
 		self.dbusBaseType = {
 			'dbus.Byte' : 'int',
-			'dbus.Float' : 'float',
+			'dbus.Double' : 'float',
 			'dbus.Int32' : 'int',
 			'dbus.UInt32' : 'long',
 			'dbus.String' : 'str',
@@ -30,23 +41,28 @@ class DbusProperty:
 		}
 		self.name = str(name)	
 		self.dbusType = str(type(value)).split("'")[1]
+		self.variant_level = value.variant_level
 		self.value = None
+
 		try: 
 			self.value = eval(self.dbusBaseType[self.dbusType]+"(value)")
 		except:
 			raise Exception("Unknown dbus type: "+self.dbusType)
 
-	def changeValue(self,value):
+	def setValue(self,value):
 		try: 
 			self.value = eval(self.dbusBaseType[self.dbusType]+"(value)")
 		except:
 			raise Exception("Unknown dbus type: "+self.dbusType)
 
+	def setVariant(self,variant_level):
+		self.variant_level = variant_level
 
 	def getName(self):
 		return self.name
+
 	def getValue(self):
-		e = self.dbusType+"(self.value)"
+		e = self.dbusType+"(self.value, variant_level="+str(self.variant_level)+")"
 		return eval(e)
 
 	#def __getstate__(self):

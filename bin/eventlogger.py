@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import sys
-import gobject
+import syslog
+import json
+from gi.repository import GObject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import syslog
-import json
+
 
 DBUS_NAME = 'org.openbmc.loggers.EventLogger'
 OBJ_NAME = '/org/openbmc/loggers/EventLogger/'+sys.argv[1]
@@ -30,7 +31,7 @@ if __name__ == '__main__':
     bus = dbus.SessionBus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = EventLogger(bus, OBJ_NAME)
-    mainloop = gobject.MainLoop()
+    mainloop = GObject.MainLoop()
     
     print "Running EventLogger"
     mainloop.run()

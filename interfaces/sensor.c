@@ -149,21 +149,21 @@ _g_value_equal (const GValue *a, const GValue *b)
 }
 
 /* ------------------------------------------------------------------------
- * Code for interface org.openbmc.SensorInteger
+ * Code for interface org.openbmc.SensorValue
  * ------------------------------------------------------------------------
  */
 
 /**
- * SECTION:SensorInteger
- * @title: SensorInteger
- * @short_description: Generated C code for the org.openbmc.SensorInteger D-Bus interface
+ * SECTION:SensorValue
+ * @title: SensorValue
+ * @short_description: Generated C code for the org.openbmc.SensorValue D-Bus interface
  *
- * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link> D-Bus interface in C.
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link> D-Bus interface in C.
  */
 
-/* ---- Introspection data for org.openbmc.SensorInteger ---- */
+/* ---- Introspection data for org.openbmc.SensorValue ---- */
 
-static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_init =
+static const _ExtendedGDBusMethodInfo _sensor_value_method_info_init =
 {
   {
     -1,
@@ -176,59 +176,59 @@ static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_init =
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo _sensor_integer_method_info_get_value_OUT_ARG_value =
+static const _ExtendedGDBusArgInfo _sensor_value_method_info_get_value_OUT_ARG_value =
 {
   {
     -1,
     (gchar *) "value",
-    (gchar *) "i",
+    (gchar *) "v",
     NULL
   },
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _sensor_integer_method_info_get_value_OUT_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _sensor_value_method_info_get_value_OUT_ARG_pointers[] =
 {
-  &_sensor_integer_method_info_get_value_OUT_ARG_value,
+  &_sensor_value_method_info_get_value_OUT_ARG_value,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_get_value =
+static const _ExtendedGDBusMethodInfo _sensor_value_method_info_get_value =
 {
   {
     -1,
     (gchar *) "getValue",
     NULL,
-    (GDBusArgInfo **) &_sensor_integer_method_info_get_value_OUT_ARG_pointers,
+    (GDBusArgInfo **) &_sensor_value_method_info_get_value_OUT_ARG_pointers,
     NULL
   },
   "handle-get-value",
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo _sensor_integer_method_info_set_value_IN_ARG_value =
+static const _ExtendedGDBusArgInfo _sensor_value_method_info_set_value_IN_ARG_value =
 {
   {
     -1,
     (gchar *) "value",
-    (gchar *) "i",
+    (gchar *) "v",
     NULL
   },
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _sensor_integer_method_info_set_value_IN_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _sensor_value_method_info_set_value_IN_ARG_pointers[] =
 {
-  &_sensor_integer_method_info_set_value_IN_ARG_value,
+  &_sensor_value_method_info_set_value_IN_ARG_value,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_set_value =
+static const _ExtendedGDBusMethodInfo _sensor_value_method_info_set_value =
 {
   {
     -1,
     (gchar *) "setValue",
-    (GDBusArgInfo **) &_sensor_integer_method_info_set_value_IN_ARG_pointers,
+    (GDBusArgInfo **) &_sensor_value_method_info_set_value_IN_ARG_pointers,
     NULL,
     NULL
   },
@@ -236,88 +236,26 @@ static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_set_value =
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo _sensor_integer_method_info_get_units_OUT_ARG_units =
+static const _ExtendedGDBusMethodInfo * const _sensor_value_method_info_pointers[] =
 {
-  {
-    -1,
-    (gchar *) "units",
-    (gchar *) "s",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _sensor_integer_method_info_get_units_OUT_ARG_pointers[] =
-{
-  &_sensor_integer_method_info_get_units_OUT_ARG_units,
+  &_sensor_value_method_info_init,
+  &_sensor_value_method_info_get_value,
+  &_sensor_value_method_info_set_value,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_get_units =
-{
-  {
-    -1,
-    (gchar *) "getUnits",
-    NULL,
-    (GDBusArgInfo **) &_sensor_integer_method_info_get_units_OUT_ARG_pointers,
-    NULL
-  },
-  "handle-get-units",
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo _sensor_integer_method_info_set_poll_interval_IN_ARG_poll_interval =
-{
-  {
-    -1,
-    (gchar *) "poll_interval",
-    (gchar *) "i",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _sensor_integer_method_info_set_poll_interval_IN_ARG_pointers[] =
-{
-  &_sensor_integer_method_info_set_poll_interval_IN_ARG_poll_interval,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _sensor_integer_method_info_set_poll_interval =
-{
-  {
-    -1,
-    (gchar *) "setPollInterval",
-    (GDBusArgInfo **) &_sensor_integer_method_info_set_poll_interval_IN_ARG_pointers,
-    NULL,
-    NULL
-  },
-  "handle-set-poll-interval",
-  FALSE
-};
-
-static const _ExtendedGDBusMethodInfo * const _sensor_integer_method_info_pointers[] =
-{
-  &_sensor_integer_method_info_init,
-  &_sensor_integer_method_info_get_value,
-  &_sensor_integer_method_info_set_value,
-  &_sensor_integer_method_info_get_units,
-  &_sensor_integer_method_info_set_poll_interval,
-  NULL
-};
-
-static const _ExtendedGDBusArgInfo _sensor_integer_signal_info_changed_ARG_value =
+static const _ExtendedGDBusArgInfo _sensor_value_signal_info_changed_ARG_value =
 {
   {
     -1,
     (gchar *) "value",
-    (gchar *) "i",
+    (gchar *) "v",
     NULL
   },
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo _sensor_integer_signal_info_changed_ARG_units =
+static const _ExtendedGDBusArgInfo _sensor_value_signal_info_changed_ARG_units =
 {
   {
     -1,
@@ -328,25 +266,25 @@ static const _ExtendedGDBusArgInfo _sensor_integer_signal_info_changed_ARG_units
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _sensor_integer_signal_info_changed_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _sensor_value_signal_info_changed_ARG_pointers[] =
 {
-  &_sensor_integer_signal_info_changed_ARG_value,
-  &_sensor_integer_signal_info_changed_ARG_units,
+  &_sensor_value_signal_info_changed_ARG_value,
+  &_sensor_value_signal_info_changed_ARG_units,
   NULL
 };
 
-static const _ExtendedGDBusSignalInfo _sensor_integer_signal_info_changed =
+static const _ExtendedGDBusSignalInfo _sensor_value_signal_info_changed =
 {
   {
     -1,
     (gchar *) "Changed",
-    (GDBusArgInfo **) &_sensor_integer_signal_info_changed_ARG_pointers,
+    (GDBusArgInfo **) &_sensor_value_signal_info_changed_ARG_pointers,
     NULL
   },
   "changed"
 };
 
-static const _ExtendedGDBusArgInfo _sensor_integer_signal_info_heartbeat_ARG_bus_name =
+static const _ExtendedGDBusArgInfo _sensor_value_signal_info_heartbeat_ARG_bus_name =
 {
   {
     -1,
@@ -357,36 +295,36 @@ static const _ExtendedGDBusArgInfo _sensor_integer_signal_info_heartbeat_ARG_bus
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _sensor_integer_signal_info_heartbeat_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _sensor_value_signal_info_heartbeat_ARG_pointers[] =
 {
-  &_sensor_integer_signal_info_heartbeat_ARG_bus_name,
+  &_sensor_value_signal_info_heartbeat_ARG_bus_name,
   NULL
 };
 
-static const _ExtendedGDBusSignalInfo _sensor_integer_signal_info_heartbeat =
+static const _ExtendedGDBusSignalInfo _sensor_value_signal_info_heartbeat =
 {
   {
     -1,
     (gchar *) "Heartbeat",
-    (GDBusArgInfo **) &_sensor_integer_signal_info_heartbeat_ARG_pointers,
+    (GDBusArgInfo **) &_sensor_value_signal_info_heartbeat_ARG_pointers,
     NULL
   },
   "heartbeat"
 };
 
-static const _ExtendedGDBusSignalInfo * const _sensor_integer_signal_info_pointers[] =
+static const _ExtendedGDBusSignalInfo * const _sensor_value_signal_info_pointers[] =
 {
-  &_sensor_integer_signal_info_changed,
-  &_sensor_integer_signal_info_heartbeat,
+  &_sensor_value_signal_info_changed,
+  &_sensor_value_signal_info_heartbeat,
   NULL
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_value =
+static const _ExtendedGDBusPropertyInfo _sensor_value_property_info_value =
 {
   {
     -1,
     (gchar *) "value",
-    (gchar *) "i",
+    (gchar *) "v",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
@@ -394,7 +332,7 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_value =
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_units =
+static const _ExtendedGDBusPropertyInfo _sensor_value_property_info_units =
 {
   {
     -1,
@@ -407,7 +345,7 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_units =
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_poll_interval =
+static const _ExtendedGDBusPropertyInfo _sensor_value_property_info_poll_interval =
 {
   {
     -1,
@@ -420,7 +358,7 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_poll_inter
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_heatbeat =
+static const _ExtendedGDBusPropertyInfo _sensor_value_property_info_heatbeat =
 {
   {
     -1,
@@ -433,54 +371,54 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_property_info_heatbeat =
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo * const _sensor_integer_property_info_pointers[] =
+static const _ExtendedGDBusPropertyInfo * const _sensor_value_property_info_pointers[] =
 {
-  &_sensor_integer_property_info_value,
-  &_sensor_integer_property_info_units,
-  &_sensor_integer_property_info_poll_interval,
-  &_sensor_integer_property_info_heatbeat,
+  &_sensor_value_property_info_value,
+  &_sensor_value_property_info_units,
+  &_sensor_value_property_info_poll_interval,
+  &_sensor_value_property_info_heatbeat,
   NULL
 };
 
-static const _ExtendedGDBusInterfaceInfo _sensor_integer_interface_info =
+static const _ExtendedGDBusInterfaceInfo _sensor_value_interface_info =
 {
   {
     -1,
-    (gchar *) "org.openbmc.SensorInteger",
-    (GDBusMethodInfo **) &_sensor_integer_method_info_pointers,
-    (GDBusSignalInfo **) &_sensor_integer_signal_info_pointers,
-    (GDBusPropertyInfo **) &_sensor_integer_property_info_pointers,
+    (gchar *) "org.openbmc.SensorValue",
+    (GDBusMethodInfo **) &_sensor_value_method_info_pointers,
+    (GDBusSignalInfo **) &_sensor_value_signal_info_pointers,
+    (GDBusPropertyInfo **) &_sensor_value_property_info_pointers,
     NULL
   },
-  "sensor-integer",
+  "sensor-value",
 };
 
 
 /**
- * sensor_integer_interface_info:
+ * sensor_value_interface_info:
  *
- * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link> D-Bus interface.
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link> D-Bus interface.
  *
  * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
  */
 GDBusInterfaceInfo *
-sensor_integer_interface_info (void)
+sensor_value_interface_info (void)
 {
-  return (GDBusInterfaceInfo *) &_sensor_integer_interface_info.parent_struct;
+  return (GDBusInterfaceInfo *) &_sensor_value_interface_info.parent_struct;
 }
 
 /**
- * sensor_integer_override_properties:
+ * sensor_value_override_properties:
  * @klass: The class structure for a #GObject<!-- -->-derived class.
  * @property_id_begin: The property id to assign to the first overridden property.
  *
- * Overrides all #GObject properties in the #SensorInteger interface for a concrete class.
+ * Overrides all #GObject properties in the #SensorValue interface for a concrete class.
  * The properties are overridden in the order they are defined.
  *
  * Returns: The last property id.
  */
 guint
-sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin)
+sensor_value_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "value");
   g_object_class_override_property (klass, property_id_begin++, "units");
@@ -492,51 +430,49 @@ sensor_integer_override_properties (GObjectClass *klass, guint property_id_begin
 
 
 /**
- * SensorInteger:
+ * SensorValue:
  *
- * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link>.
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link>.
  */
 
 /**
- * SensorIntegerIface:
+ * SensorValueIface:
  * @parent_iface: The parent interface.
- * @handle_get_units: Handler for the #SensorInteger::handle-get-units signal.
- * @handle_get_value: Handler for the #SensorInteger::handle-get-value signal.
- * @handle_init: Handler for the #SensorInteger::handle-init signal.
- * @handle_set_poll_interval: Handler for the #SensorInteger::handle-set-poll-interval signal.
- * @handle_set_value: Handler for the #SensorInteger::handle-set-value signal.
- * @get_heatbeat: Getter for the #SensorInteger:heatbeat property.
- * @get_poll_interval: Getter for the #SensorInteger:poll-interval property.
- * @get_units: Getter for the #SensorInteger:units property.
- * @get_value: Getter for the #SensorInteger:value property.
- * @changed: Handler for the #SensorInteger::changed signal.
- * @heartbeat: Handler for the #SensorInteger::heartbeat signal.
+ * @handle_get_value: Handler for the #SensorValue::handle-get-value signal.
+ * @handle_init: Handler for the #SensorValue::handle-init signal.
+ * @handle_set_value: Handler for the #SensorValue::handle-set-value signal.
+ * @get_heatbeat: Getter for the #SensorValue:heatbeat property.
+ * @get_poll_interval: Getter for the #SensorValue:poll-interval property.
+ * @get_units: Getter for the #SensorValue:units property.
+ * @get_value: Getter for the #SensorValue:value property.
+ * @changed: Handler for the #SensorValue::changed signal.
+ * @heartbeat: Handler for the #SensorValue::heartbeat signal.
  *
- * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link>.
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link>.
  */
 
-typedef SensorIntegerIface SensorIntegerInterface;
-G_DEFINE_INTERFACE (SensorInteger, sensor_integer, G_TYPE_OBJECT);
+typedef SensorValueIface SensorValueInterface;
+G_DEFINE_INTERFACE (SensorValue, sensor_value, G_TYPE_OBJECT);
 
 static void
-sensor_integer_default_init (SensorIntegerIface *iface)
+sensor_value_default_init (SensorValueIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
   /**
-   * SensorInteger::handle-init:
-   * @object: A #SensorInteger.
+   * SensorValue::handle-init:
+   * @object: A #SensorValue.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorValue.init">init()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_init() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_value_complete_init() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
   g_signal_new ("handle-init",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, handle_init),
+    G_STRUCT_OFFSET (SensorValueIface, handle_init),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -545,20 +481,20 @@ sensor_integer_default_init (SensorIntegerIface *iface)
     G_TYPE_DBUS_METHOD_INVOCATION);
 
   /**
-   * SensorInteger::handle-get-value:
-   * @object: A #SensorInteger.
+   * SensorValue::handle-get-value:
+   * @object: A #SensorValue.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.getValue">getValue()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorValue.getValue">getValue()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_get_value() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_value_complete_get_value() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
   g_signal_new ("handle-get-value",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, handle_get_value),
+    G_STRUCT_OFFSET (SensorValueIface, handle_get_value),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -567,107 +503,62 @@ sensor_integer_default_init (SensorIntegerIface *iface)
     G_TYPE_DBUS_METHOD_INVOCATION);
 
   /**
-   * SensorInteger::handle-set-value:
-   * @object: A #SensorInteger.
+   * SensorValue::handle-set-value:
+   * @object: A #SensorValue.
    * @invocation: A #GDBusMethodInvocation.
    * @arg_value: Argument passed by remote caller.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.setValue">setValue()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_set_value() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_value_complete_set_value() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
   g_signal_new ("handle-set-value",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, handle_set_value),
+    G_STRUCT_OFFSET (SensorValueIface, handle_set_value),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_BOOLEAN,
     2,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT);
-
-  /**
-   * SensorInteger::handle-get-units:
-   * @object: A #SensorInteger.
-   * @invocation: A #GDBusMethodInvocation.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.getUnits">getUnits()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_get_units() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-get-units",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, handle_get_units),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    1,
-    G_TYPE_DBUS_METHOD_INVOCATION);
-
-  /**
-   * SensorInteger::handle-set-poll-interval:
-   * @object: A #SensorInteger.
-   * @invocation: A #GDBusMethodInvocation.
-   * @arg_poll_interval: Argument passed by remote caller.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorInteger.setPollInterval">setPollInterval()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_complete_set_poll_interval() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-set-poll-interval",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, handle_set_poll_interval),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    2,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT);
+    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_VARIANT);
 
   /* GObject signals for received D-Bus signals: */
   /**
-   * SensorInteger::changed:
-   * @object: A #SensorInteger.
+   * SensorValue::changed:
+   * @object: A #SensorValue.
    * @arg_value: Argument.
    * @arg_units: Argument.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorInteger.Changed">"Changed"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorValue.Changed">"Changed"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
   g_signal_new ("changed",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, changed),
+    G_STRUCT_OFFSET (SensorValueIface, changed),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
-    2, G_TYPE_INT, G_TYPE_STRING);
+    2, G_TYPE_VARIANT, G_TYPE_STRING);
 
   /**
-   * SensorInteger::heartbeat:
-   * @object: A #SensorInteger.
+   * SensorValue::heartbeat:
+   * @object: A #SensorValue.
    * @arg_bus_name: Argument.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorInteger.Heartbeat">"Heartbeat"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorValue.Heartbeat">"Heartbeat"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
   g_signal_new ("heartbeat",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerIface, heartbeat),
+    G_STRUCT_OFFSET (SensorValueIface, heartbeat),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -676,36 +567,36 @@ sensor_integer_default_init (SensorIntegerIface *iface)
 
   /* GObject properties for D-Bus properties: */
   /**
-   * SensorInteger:value:
+   * SensorValue:value:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.value">"value"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorValue.value">"value"</link>.
    *
    * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_int ("value", "value", "value", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_variant ("value", "value", "value", G_VARIANT_TYPE ("v"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * SensorInteger:units:
+   * SensorValue:units:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.units">"units"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorValue.units">"units"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_string ("units", "units", "units", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * SensorInteger:poll-interval:
+   * SensorValue:poll-interval:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.poll_interval">"poll_interval"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorValue.poll_interval">"poll_interval"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("poll-interval", "poll_interval", "poll_interval", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * SensorInteger:heatbeat:
+   * SensorValue:heatbeat:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorInteger.heatbeat">"heatbeat"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorValue.heatbeat">"heatbeat"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
@@ -714,66 +605,86 @@ sensor_integer_default_init (SensorIntegerIface *iface)
 }
 
 /**
- * sensor_integer_get_value: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_get_value: (skip)
+ * @object: A #SensorValue.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.value">"value"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorValue.value">"value"</link> D-Bus property.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
- * Returns: The property value.
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_value_dup_value() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
  */
-gint 
-sensor_integer_get_value (SensorInteger *object)
+GVariant *
+sensor_value_get_value (SensorValue *object)
 {
-  return SENSOR_INTEGER_GET_IFACE (object)->get_value (object);
+  return SENSOR_VALUE_GET_IFACE (object)->get_value (object);
 }
 
 /**
- * sensor_integer_set_value: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_dup_value: (skip)
+ * @object: A #SensorValue.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorValue.value">"value"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
+ */
+GVariant *
+sensor_value_dup_value (SensorValue *object)
+{
+  GVariant *value;
+  g_object_get (G_OBJECT (object), "value", &value, NULL);
+  return value;
+}
+
+/**
+ * sensor_value_set_value: (skip)
+ * @object: A #SensorValue.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.value">"value"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorValue.value">"value"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
-sensor_integer_set_value (SensorInteger *object, gint value)
+sensor_value_set_value (SensorValue *object, GVariant *value)
 {
   g_object_set (G_OBJECT (object), "value", value, NULL);
 }
 
 /**
- * sensor_integer_get_units: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_get_units: (skip)
+ * @object: A #SensorValue.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.units">"units"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorValue.units">"units"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
- * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_integer_dup_units() if on another thread.</warning>
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_value_dup_units() if on another thread.</warning>
  *
  * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
  */
 const gchar *
-sensor_integer_get_units (SensorInteger *object)
+sensor_value_get_units (SensorValue *object)
 {
-  return SENSOR_INTEGER_GET_IFACE (object)->get_units (object);
+  return SENSOR_VALUE_GET_IFACE (object)->get_units (object);
 }
 
 /**
- * sensor_integer_dup_units: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_dup_units: (skip)
+ * @object: A #SensorValue.
  *
- * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorInteger.units">"units"</link> D-Bus property.
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorValue.units">"units"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
  */
 gchar *
-sensor_integer_dup_units (SensorInteger *object)
+sensor_value_dup_units (SensorValue *object)
 {
   gchar *value;
   g_object_get (G_OBJECT (object), "units", &value, NULL);
@@ -781,130 +692,130 @@ sensor_integer_dup_units (SensorInteger *object)
 }
 
 /**
- * sensor_integer_set_units: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_set_units: (skip)
+ * @object: A #SensorValue.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.units">"units"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorValue.units">"units"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-sensor_integer_set_units (SensorInteger *object, const gchar *value)
+sensor_value_set_units (SensorValue *object, const gchar *value)
 {
   g_object_set (G_OBJECT (object), "units", value, NULL);
 }
 
 /**
- * sensor_integer_get_poll_interval: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_get_poll_interval: (skip)
+ * @object: A #SensorValue.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.poll_interval">"poll_interval"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorValue.poll_interval">"poll_interval"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
 gint 
-sensor_integer_get_poll_interval (SensorInteger *object)
+sensor_value_get_poll_interval (SensorValue *object)
 {
-  return SENSOR_INTEGER_GET_IFACE (object)->get_poll_interval (object);
+  return SENSOR_VALUE_GET_IFACE (object)->get_poll_interval (object);
 }
 
 /**
- * sensor_integer_set_poll_interval: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_set_poll_interval: (skip)
+ * @object: A #SensorValue.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.poll_interval">"poll_interval"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorValue.poll_interval">"poll_interval"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-sensor_integer_set_poll_interval (SensorInteger *object, gint value)
+sensor_value_set_poll_interval (SensorValue *object, gint value)
 {
   g_object_set (G_OBJECT (object), "poll-interval", value, NULL);
 }
 
 /**
- * sensor_integer_get_heatbeat: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_get_heatbeat: (skip)
+ * @object: A #SensorValue.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorInteger.heatbeat">"heatbeat"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorValue.heatbeat">"heatbeat"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
 gint 
-sensor_integer_get_heatbeat (SensorInteger *object)
+sensor_value_get_heatbeat (SensorValue *object)
 {
-  return SENSOR_INTEGER_GET_IFACE (object)->get_heatbeat (object);
+  return SENSOR_VALUE_GET_IFACE (object)->get_heatbeat (object);
 }
 
 /**
- * sensor_integer_set_heatbeat: (skip)
- * @object: A #SensorInteger.
+ * sensor_value_set_heatbeat: (skip)
+ * @object: A #SensorValue.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorInteger.heatbeat">"heatbeat"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorValue.heatbeat">"heatbeat"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-sensor_integer_set_heatbeat (SensorInteger *object, gint value)
+sensor_value_set_heatbeat (SensorValue *object, gint value)
 {
   g_object_set (G_OBJECT (object), "heatbeat", value, NULL);
 }
 
 /**
- * sensor_integer_emit_changed:
- * @object: A #SensorInteger.
+ * sensor_value_emit_changed:
+ * @object: A #SensorValue.
  * @arg_value: Argument to pass with the signal.
  * @arg_units: Argument to pass with the signal.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-SensorInteger.Changed">"Changed"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorValue.Changed">"Changed"</link> D-Bus signal.
  */
 void
-sensor_integer_emit_changed (
-    SensorInteger *object,
-    gint arg_value,
+sensor_value_emit_changed (
+    SensorValue *object,
+    GVariant *arg_value,
     const gchar *arg_units)
 {
   g_signal_emit_by_name (object, "changed", arg_value, arg_units);
 }
 
 /**
- * sensor_integer_emit_heartbeat:
- * @object: A #SensorInteger.
+ * sensor_value_emit_heartbeat:
+ * @object: A #SensorValue.
  * @arg_bus_name: Argument to pass with the signal.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-SensorInteger.Heartbeat">"Heartbeat"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorValue.Heartbeat">"Heartbeat"</link> D-Bus signal.
  */
 void
-sensor_integer_emit_heartbeat (
-    SensorInteger *object,
+sensor_value_emit_heartbeat (
+    SensorValue *object,
     const gchar *arg_bus_name)
 {
   g_signal_emit_by_name (object, "heartbeat", arg_bus_name);
 }
 
 /**
- * sensor_integer_call_init:
- * @proxy: A #SensorIntegerProxy.
+ * sensor_value_call_init:
+ * @proxy: A #SensorValueProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.init">init()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_call_init_finish() to get the result of the operation.
+ * You can then call sensor_value_call_init_finish() to get the result of the operation.
  *
- * See sensor_integer_call_init_sync() for the synchronous, blocking version of this method.
+ * See sensor_value_call_init_sync() for the synchronous, blocking version of this method.
  */
 void
-sensor_integer_call_init (
-    SensorInteger *proxy,
+sensor_value_call_init (
+    SensorValue *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
@@ -920,18 +831,18 @@ sensor_integer_call_init (
 }
 
 /**
- * sensor_integer_call_init_finish:
- * @proxy: A #SensorIntegerProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_init().
+ * sensor_value_call_init_finish:
+ * @proxy: A #SensorValueProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_value_call_init().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with sensor_integer_call_init().
+ * Finishes an operation started with sensor_value_call_init().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_init_finish (
-    SensorInteger *proxy,
+sensor_value_call_init_finish (
+    SensorValue *proxy,
     GAsyncResult *res,
     GError **error)
 {
@@ -947,20 +858,20 @@ _out:
 }
 
 /**
- * sensor_integer_call_init_sync:
- * @proxy: A #SensorIntegerProxy.
+ * sensor_value_call_init_sync:
+ * @proxy: A #SensorValueProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.init">init()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_call_init() for the asynchronous version of this method.
+ * See sensor_value_call_init() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_init_sync (
-    SensorInteger *proxy,
+sensor_value_call_init_sync (
+    SensorValue *proxy,
     GCancellable *cancellable,
     GError **error)
 {
@@ -982,21 +893,21 @@ _out:
 }
 
 /**
- * sensor_integer_call_get_value:
- * @proxy: A #SensorIntegerProxy.
+ * sensor_value_call_get_value:
+ * @proxy: A #SensorValueProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getValue">getValue()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.getValue">getValue()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_call_get_value_finish() to get the result of the operation.
+ * You can then call sensor_value_call_get_value_finish() to get the result of the operation.
  *
- * See sensor_integer_call_get_value_sync() for the synchronous, blocking version of this method.
+ * See sensor_value_call_get_value_sync() for the synchronous, blocking version of this method.
  */
 void
-sensor_integer_call_get_value (
-    SensorInteger *proxy,
+sensor_value_call_get_value (
+    SensorValue *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
@@ -1012,20 +923,20 @@ sensor_integer_call_get_value (
 }
 
 /**
- * sensor_integer_call_get_value_finish:
- * @proxy: A #SensorIntegerProxy.
+ * sensor_value_call_get_value_finish:
+ * @proxy: A #SensorValueProxy.
  * @out_value: (out): Return location for return parameter or %NULL to ignore.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_get_value().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_value_call_get_value().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with sensor_integer_call_get_value().
+ * Finishes an operation started with sensor_value_call_get_value().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_get_value_finish (
-    SensorInteger *proxy,
-    gint *out_value,
+sensor_value_call_get_value_finish (
+    SensorValue *proxy,
+    GVariant **out_value,
     GAsyncResult *res,
     GError **error)
 {
@@ -1034,7 +945,7 @@ sensor_integer_call_get_value_finish (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "(i)",
+                 "(@v)",
                  out_value);
   g_variant_unref (_ret);
 _out:
@@ -1042,22 +953,22 @@ _out:
 }
 
 /**
- * sensor_integer_call_get_value_sync:
- * @proxy: A #SensorIntegerProxy.
+ * sensor_value_call_get_value_sync:
+ * @proxy: A #SensorValueProxy.
  * @out_value: (out): Return location for return parameter or %NULL to ignore.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getValue">getValue()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.getValue">getValue()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_call_get_value() for the asynchronous version of this method.
+ * See sensor_value_call_get_value() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_get_value_sync (
-    SensorInteger *proxy,
-    gint *out_value,
+sensor_value_call_get_value_sync (
+    SensorValue *proxy,
+    GVariant **out_value,
     GCancellable *cancellable,
     GError **error)
 {
@@ -1072,7 +983,7 @@ sensor_integer_call_get_value_sync (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "(i)",
+                 "(@v)",
                  out_value);
   g_variant_unref (_ret);
 _out:
@@ -1080,30 +991,30 @@ _out:
 }
 
 /**
- * sensor_integer_call_set_value:
- * @proxy: A #SensorIntegerProxy.
+ * sensor_value_call_set_value:
+ * @proxy: A #SensorValueProxy.
  * @arg_value: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.setValue">setValue()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_call_set_value_finish() to get the result of the operation.
+ * You can then call sensor_value_call_set_value_finish() to get the result of the operation.
  *
- * See sensor_integer_call_set_value_sync() for the synchronous, blocking version of this method.
+ * See sensor_value_call_set_value_sync() for the synchronous, blocking version of this method.
  */
 void
-sensor_integer_call_set_value (
-    SensorInteger *proxy,
-    gint arg_value,
+sensor_value_call_set_value (
+    SensorValue *proxy,
+    GVariant *arg_value,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
     "setValue",
-    g_variant_new ("(i)",
+    g_variant_new ("(@v)",
                    arg_value),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -1113,18 +1024,18 @@ sensor_integer_call_set_value (
 }
 
 /**
- * sensor_integer_call_set_value_finish:
- * @proxy: A #SensorIntegerProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_set_value().
+ * sensor_value_call_set_value_finish:
+ * @proxy: A #SensorValueProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_value_call_set_value().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with sensor_integer_call_set_value().
+ * Finishes an operation started with sensor_value_call_set_value().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_set_value_finish (
-    SensorInteger *proxy,
+sensor_value_call_set_value_finish (
+    SensorValue *proxy,
     GAsyncResult *res,
     GError **error)
 {
@@ -1140,29 +1051,29 @@ _out:
 }
 
 /**
- * sensor_integer_call_set_value_sync:
- * @proxy: A #SensorIntegerProxy.
+ * sensor_value_call_set_value_sync:
+ * @proxy: A #SensorValueProxy.
  * @arg_value: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.setValue">setValue()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_call_set_value() for the asynchronous version of this method.
+ * See sensor_value_call_set_value() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_call_set_value_sync (
-    SensorInteger *proxy,
-    gint arg_value,
+sensor_value_call_set_value_sync (
+    SensorValue *proxy,
+    GVariant *arg_value,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
     "setValue",
-    g_variant_new ("(i)",
+    g_variant_new ("(@v)",
                    arg_value),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -1178,213 +1089,17 @@ _out:
 }
 
 /**
- * sensor_integer_call_get_units:
- * @proxy: A #SensorIntegerProxy.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getUnits">getUnits()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_call_get_units_finish() to get the result of the operation.
- *
- * See sensor_integer_call_get_units_sync() for the synchronous, blocking version of this method.
- */
-void
-sensor_integer_call_get_units (
-    SensorInteger *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "getUnits",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * sensor_integer_call_get_units_finish:
- * @proxy: A #SensorIntegerProxy.
- * @out_units: (out): Return location for return parameter or %NULL to ignore.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_get_units().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with sensor_integer_call_get_units().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_integer_call_get_units_finish (
-    SensorInteger *proxy,
-    gchar **out_units,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(s)",
-                 out_units);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_integer_call_get_units_sync:
- * @proxy: A #SensorIntegerProxy.
- * @out_units: (out): Return location for return parameter or %NULL to ignore.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.getUnits">getUnits()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See sensor_integer_call_get_units() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_integer_call_get_units_sync (
-    SensorInteger *proxy,
-    gchar **out_units,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "getUnits",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(s)",
-                 out_units);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_integer_call_set_poll_interval:
- * @proxy: A #SensorIntegerProxy.
- * @arg_poll_interval: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.setPollInterval">setPollInterval()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_call_set_poll_interval_finish() to get the result of the operation.
- *
- * See sensor_integer_call_set_poll_interval_sync() for the synchronous, blocking version of this method.
- */
-void
-sensor_integer_call_set_poll_interval (
-    SensorInteger *proxy,
-    gint arg_poll_interval,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "setPollInterval",
-    g_variant_new ("(i)",
-                   arg_poll_interval),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * sensor_integer_call_set_poll_interval_finish:
- * @proxy: A #SensorIntegerProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_call_set_poll_interval().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with sensor_integer_call_set_poll_interval().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_integer_call_set_poll_interval_finish (
-    SensorInteger *proxy,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_integer_call_set_poll_interval_sync:
- * @proxy: A #SensorIntegerProxy.
- * @arg_poll_interval: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorInteger.setPollInterval">setPollInterval()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See sensor_integer_call_set_poll_interval() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_integer_call_set_poll_interval_sync (
-    SensorInteger *proxy,
-    gint arg_poll_interval,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "setPollInterval",
-    g_variant_new ("(i)",
-                   arg_poll_interval),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_integer_complete_init:
- * @object: A #SensorInteger.
+ * sensor_value_complete_init:
+ * @object: A #SensorValue.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.init">init()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorValue.init">init()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-sensor_integer_complete_init (
-    SensorInteger *object,
+sensor_value_complete_init (
+    SensorValue *object,
     GDBusMethodInvocation *invocation)
 {
   g_dbus_method_invocation_return_value (invocation,
@@ -1392,77 +1107,38 @@ sensor_integer_complete_init (
 }
 
 /**
- * sensor_integer_complete_get_value:
- * @object: A #SensorInteger.
+ * sensor_value_complete_get_value:
+ * @object: A #SensorValue.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  * @value: Parameter to return.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.getValue">getValue()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorValue.getValue">getValue()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-sensor_integer_complete_get_value (
-    SensorInteger *object,
+sensor_value_complete_get_value (
+    SensorValue *object,
     GDBusMethodInvocation *invocation,
-    gint value)
+    GVariant *value)
 {
   g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("(i)",
+    g_variant_new ("(@v)",
                    value));
 }
 
 /**
- * sensor_integer_complete_set_value:
- * @object: A #SensorInteger.
+ * sensor_value_complete_set_value:
+ * @object: A #SensorValue.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.setValue">setValue()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-sensor_integer_complete_set_value (
-    SensorInteger *object,
-    GDBusMethodInvocation *invocation)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
-}
-
-/**
- * sensor_integer_complete_get_units:
- * @object: A #SensorInteger.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- * @units: Parameter to return.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.getUnits">getUnits()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-sensor_integer_complete_get_units (
-    SensorInteger *object,
-    GDBusMethodInvocation *invocation,
-    const gchar *units)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("(s)",
-                   units));
-}
-
-/**
- * sensor_integer_complete_set_poll_interval:
- * @object: A #SensorInteger.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorInteger.setPollInterval">setPollInterval()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-sensor_integer_complete_set_poll_interval (
-    SensorInteger *object,
+sensor_value_complete_set_value (
+    SensorValue *object,
     GDBusMethodInvocation *invocation)
 {
   g_dbus_method_invocation_return_value (invocation,
@@ -1472,45 +1148,45 @@ sensor_integer_complete_set_poll_interval (
 /* ------------------------------------------------------------------------ */
 
 /**
- * SensorIntegerProxy:
+ * SensorValueProxy:
  *
- * The #SensorIntegerProxy structure contains only private data and should only be accessed using the provided API.
+ * The #SensorValueProxy structure contains only private data and should only be accessed using the provided API.
  */
 
 /**
- * SensorIntegerProxyClass:
+ * SensorValueProxyClass:
  * @parent_class: The parent class.
  *
- * Class structure for #SensorIntegerProxy.
+ * Class structure for #SensorValueProxy.
  */
 
-struct _SensorIntegerProxyPrivate
+struct _SensorValueProxyPrivate
 {
   GData *qdata;
 };
 
-static void sensor_integer_proxy_iface_init (SensorIntegerIface *iface);
+static void sensor_value_proxy_iface_init (SensorValueIface *iface);
 
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerProxy, sensor_integer_proxy, G_TYPE_DBUS_PROXY,
-                         G_ADD_PRIVATE (SensorIntegerProxy)
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER, sensor_integer_proxy_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorValueProxy, sensor_value_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (SensorValueProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_VALUE, sensor_value_proxy_iface_init));
 
 #else
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerProxy, sensor_integer_proxy, G_TYPE_DBUS_PROXY,
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER, sensor_integer_proxy_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorValueProxy, sensor_value_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_VALUE, sensor_value_proxy_iface_init));
 
 #endif
 static void
-sensor_integer_proxy_finalize (GObject *object)
+sensor_value_proxy_finalize (GObject *object)
 {
-  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (object);
   g_datalist_clear (&proxy->priv->qdata);
-  G_OBJECT_CLASS (sensor_integer_proxy_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sensor_value_proxy_parent_class)->finalize (object);
 }
 
 static void
-sensor_integer_proxy_get_property (GObject      *object,
+sensor_value_proxy_get_property (GObject      *object,
   guint         prop_id,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
@@ -1518,7 +1194,7 @@ sensor_integer_proxy_get_property (GObject      *object,
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
   g_assert (prop_id != 0 && prop_id - 1 < 4);
-  info = _sensor_integer_property_info_pointers[prop_id - 1];
+  info = _sensor_value_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
     {
@@ -1534,7 +1210,7 @@ sensor_integer_proxy_get_property (GObject      *object,
 }
 
 static void
-sensor_integer_proxy_set_property_cb (GDBusProxy *proxy,
+sensor_value_proxy_set_property_cb (GDBusProxy *proxy,
   GAsyncResult *res,
   gpointer      user_data)
 {
@@ -1545,7 +1221,7 @@ sensor_integer_proxy_set_property_cb (GDBusProxy *proxy,
   _ret = g_dbus_proxy_call_finish (proxy, res, &error);
   if (!_ret)
     {
-      g_warning ("Error setting property '%s' on interface org.openbmc.SensorInteger: %s (%s, %d)",
+      g_warning ("Error setting property '%s' on interface org.openbmc.SensorValue: %s (%s, %d)",
                  info->parent_struct.name, 
                  error->message, g_quark_to_string (error->domain), error->code);
       g_error_free (error);
@@ -1557,7 +1233,7 @@ sensor_integer_proxy_set_property_cb (GDBusProxy *proxy,
 }
 
 static void
-sensor_integer_proxy_set_property (GObject      *object,
+sensor_value_proxy_set_property (GObject      *object,
   guint         prop_id,
   const GValue *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
@@ -1565,19 +1241,19 @@ sensor_integer_proxy_set_property (GObject      *object,
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
   g_assert (prop_id != 0 && prop_id - 1 < 4);
-  info = _sensor_integer_property_info_pointers[prop_id - 1];
+  info = _sensor_value_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
     "org.freedesktop.DBus.Properties.Set",
-    g_variant_new ("(ssv)", "org.openbmc.SensorInteger", info->parent_struct.name, variant),
+    g_variant_new ("(ssv)", "org.openbmc.SensorValue", info->parent_struct.name, variant),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
-    NULL, (GAsyncReadyCallback) sensor_integer_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+    NULL, (GAsyncReadyCallback) sensor_value_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
   g_variant_unref (variant);
 }
 
 static void
-sensor_integer_proxy_g_signal (GDBusProxy *proxy,
+sensor_value_proxy_g_signal (GDBusProxy *proxy,
   const gchar *sender_name G_GNUC_UNUSED,
   const gchar *signal_name,
   GVariant *parameters)
@@ -1589,12 +1265,12 @@ sensor_integer_proxy_g_signal (GDBusProxy *proxy,
   guint num_params;
   guint n;
   guint signal_id;
-  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_sensor_integer_interface_info.parent_struct, signal_name);
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_sensor_value_interface_info.parent_struct, signal_name);
   if (info == NULL)
     return;
   num_params = g_variant_n_children (parameters);
   paramv = g_new0 (GValue, num_params + 1);
-  g_value_init (&paramv[0], TYPE_SENSOR_INTEGER);
+  g_value_init (&paramv[0], TYPE_SENSOR_VALUE);
   g_value_set_object (&paramv[0], proxy);
   g_variant_iter_init (&iter, parameters);
   n = 1;
@@ -1611,7 +1287,7 @@ sensor_integer_proxy_g_signal (GDBusProxy *proxy,
         g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
       g_variant_unref (child);
     }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_INTEGER);
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_VALUE);
   g_signal_emitv (paramv, signal_id, 0, NULL);
   for (n = 0; n < num_params + 1; n++)
     g_value_unset (&paramv[n]);
@@ -1619,11 +1295,11 @@ sensor_integer_proxy_g_signal (GDBusProxy *proxy,
 }
 
 static void
-sensor_integer_proxy_g_properties_changed (GDBusProxy *_proxy,
+sensor_value_proxy_g_properties_changed (GDBusProxy *_proxy,
   GVariant *changed_properties,
   const gchar *const *invalidated_properties)
 {
-  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (_proxy);
+  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (_proxy);
   guint n;
   const gchar *key;
   GVariantIter *iter;
@@ -1631,7 +1307,7 @@ sensor_integer_proxy_g_properties_changed (GDBusProxy *_proxy,
   g_variant_get (changed_properties, "a{sv}", &iter);
   while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
     {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_interface_info.parent_struct, key);
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_value_interface_info.parent_struct, key);
       g_datalist_remove_data (&proxy->priv->qdata, key);
       if (info != NULL)
         g_object_notify (G_OBJECT (proxy), info->hyphen_name);
@@ -1639,32 +1315,30 @@ sensor_integer_proxy_g_properties_changed (GDBusProxy *_proxy,
   g_variant_iter_free (iter);
   for (n = 0; invalidated_properties[n] != NULL; n++)
     {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_interface_info.parent_struct, invalidated_properties[n]);
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_value_interface_info.parent_struct, invalidated_properties[n]);
       g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
       if (info != NULL)
         g_object_notify (G_OBJECT (proxy), info->hyphen_name);
     }
 }
 
-static gint 
-sensor_integer_proxy_get_value (SensorInteger *object)
+static GVariant *
+sensor_value_proxy_get_value (SensorValue *object)
 {
-  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (object);
   GVariant *variant;
-  gint value = 0;
+  GVariant *value = NULL;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "value");
+  value = variant;
   if (variant != NULL)
-    {
-      value = g_variant_get_int32 (variant);
-      g_variant_unref (variant);
-    }
+    g_variant_unref (variant);
   return value;
 }
 
 static const gchar *
-sensor_integer_proxy_get_units (SensorInteger *object)
+sensor_value_proxy_get_units (SensorValue *object)
 {
-  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (object);
   GVariant *variant;
   const gchar *value = NULL;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "units");
@@ -1677,9 +1351,9 @@ sensor_integer_proxy_get_units (SensorInteger *object)
 }
 
 static gint 
-sensor_integer_proxy_get_poll_interval (SensorInteger *object)
+sensor_value_proxy_get_poll_interval (SensorValue *object)
 {
-  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (object);
   GVariant *variant;
   gint value = 0;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "poll_interval");
@@ -1692,9 +1366,9 @@ sensor_integer_proxy_get_poll_interval (SensorInteger *object)
 }
 
 static gint 
-sensor_integer_proxy_get_heatbeat (SensorInteger *object)
+sensor_value_proxy_get_heatbeat (SensorValue *object)
 {
-  SensorIntegerProxy *proxy = SENSOR_INTEGER_PROXY (object);
+  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (object);
   GVariant *variant;
   gint value = 0;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "heatbeat");
@@ -1707,50 +1381,50 @@ sensor_integer_proxy_get_heatbeat (SensorInteger *object)
 }
 
 static void
-sensor_integer_proxy_init (SensorIntegerProxy *proxy)
+sensor_value_proxy_init (SensorValueProxy *proxy)
 {
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  proxy->priv = sensor_integer_proxy_get_instance_private (proxy);
+  proxy->priv = sensor_value_proxy_get_instance_private (proxy);
 #else
-  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_SENSOR_INTEGER_PROXY, SensorIntegerProxyPrivate);
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_SENSOR_VALUE_PROXY, SensorValueProxyPrivate);
 #endif
 
-  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), sensor_integer_interface_info ());
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), sensor_value_interface_info ());
 }
 
 static void
-sensor_integer_proxy_class_init (SensorIntegerProxyClass *klass)
+sensor_value_proxy_class_init (SensorValueProxyClass *klass)
 {
   GObjectClass *gobject_class;
   GDBusProxyClass *proxy_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize     = sensor_integer_proxy_finalize;
-  gobject_class->get_property = sensor_integer_proxy_get_property;
-  gobject_class->set_property = sensor_integer_proxy_set_property;
+  gobject_class->finalize     = sensor_value_proxy_finalize;
+  gobject_class->get_property = sensor_value_proxy_get_property;
+  gobject_class->set_property = sensor_value_proxy_set_property;
 
   proxy_class = G_DBUS_PROXY_CLASS (klass);
-  proxy_class->g_signal = sensor_integer_proxy_g_signal;
-  proxy_class->g_properties_changed = sensor_integer_proxy_g_properties_changed;
+  proxy_class->g_signal = sensor_value_proxy_g_signal;
+  proxy_class->g_properties_changed = sensor_value_proxy_g_properties_changed;
 
-  sensor_integer_override_properties (gobject_class, 1);
+  sensor_value_override_properties (gobject_class, 1);
 
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (SensorIntegerProxyPrivate));
+  g_type_class_add_private (klass, sizeof (SensorValueProxyPrivate));
 #endif
 }
 
 static void
-sensor_integer_proxy_iface_init (SensorIntegerIface *iface)
+sensor_value_proxy_iface_init (SensorValueIface *iface)
 {
-  iface->get_value = sensor_integer_proxy_get_value;
-  iface->get_units = sensor_integer_proxy_get_units;
-  iface->get_poll_interval = sensor_integer_proxy_get_poll_interval;
-  iface->get_heatbeat = sensor_integer_proxy_get_heatbeat;
+  iface->get_value = sensor_value_proxy_get_value;
+  iface->get_units = sensor_value_proxy_get_units;
+  iface->get_poll_interval = sensor_value_proxy_get_poll_interval;
+  iface->get_heatbeat = sensor_value_proxy_get_heatbeat;
 }
 
 /**
- * sensor_integer_proxy_new:
+ * sensor_value_proxy_new:
  * @connection: A #GDBusConnection.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
@@ -1759,15 +1433,15 @@ sensor_integer_proxy_iface_init (SensorIntegerIface *iface)
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link>. See g_dbus_proxy_new() for more details.
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link>. See g_dbus_proxy_new() for more details.
  *
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_proxy_new_finish() to get the result of the operation.
+ * You can then call sensor_value_proxy_new_finish() to get the result of the operation.
  *
- * See sensor_integer_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ * See sensor_value_proxy_new_sync() for the synchronous, blocking version of this constructor.
  */
 void
-sensor_integer_proxy_new (
+sensor_value_proxy_new (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1776,20 +1450,20 @@ sensor_integer_proxy_new (
     GAsyncReadyCallback  callback,
     gpointer             user_data)
 {
-  g_async_initable_new_async (TYPE_SENSOR_INTEGER_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorInteger", NULL);
+  g_async_initable_new_async (TYPE_SENSOR_VALUE_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorValue", NULL);
 }
 
 /**
- * sensor_integer_proxy_new_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_proxy_new().
+ * sensor_value_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_value_proxy_new().
  * @error: Return location for error or %NULL
  *
- * Finishes an operation started with sensor_integer_proxy_new().
+ * Finishes an operation started with sensor_value_proxy_new().
  *
- * Returns: (transfer full) (type SensorIntegerProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorValueProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorInteger *
-sensor_integer_proxy_new_finish (
+SensorValue *
+sensor_value_proxy_new_finish (
     GAsyncResult        *res,
     GError             **error)
 {
@@ -1799,13 +1473,13 @@ sensor_integer_proxy_new_finish (
   ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
   g_object_unref (source_object);
   if (ret != NULL)
-    return SENSOR_INTEGER (ret);
+    return SENSOR_VALUE (ret);
   else
     return NULL;
 }
 
 /**
- * sensor_integer_proxy_new_sync:
+ * sensor_value_proxy_new_sync:
  * @connection: A #GDBusConnection.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
@@ -1813,16 +1487,16 @@ sensor_integer_proxy_new_finish (
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL
  *
- * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link>. See g_dbus_proxy_new_sync() for more details.
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link>. See g_dbus_proxy_new_sync() for more details.
  *
  * The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_proxy_new() for the asynchronous version of this constructor.
+ * See sensor_value_proxy_new() for the asynchronous version of this constructor.
  *
- * Returns: (transfer full) (type SensorIntegerProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorValueProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorInteger *
-sensor_integer_proxy_new_sync (
+SensorValue *
+sensor_value_proxy_new_sync (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1831,16 +1505,16 @@ sensor_integer_proxy_new_sync (
     GError             **error)
 {
   GInitable *ret;
-  ret = g_initable_new (TYPE_SENSOR_INTEGER_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorInteger", NULL);
+  ret = g_initable_new (TYPE_SENSOR_VALUE_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorValue", NULL);
   if (ret != NULL)
-    return SENSOR_INTEGER (ret);
+    return SENSOR_VALUE (ret);
   else
     return NULL;
 }
 
 
 /**
- * sensor_integer_proxy_new_for_bus:
+ * sensor_value_proxy_new_for_bus:
  * @bus_type: A #GBusType.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: A bus name (well-known or unique).
@@ -1849,15 +1523,15 @@ sensor_integer_proxy_new_sync (
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
  * @user_data: User data to pass to @callback.
  *
- * Like sensor_integer_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ * Like sensor_value_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
  *
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_proxy_new_for_bus_finish() to get the result of the operation.
+ * You can then call sensor_value_proxy_new_for_bus_finish() to get the result of the operation.
  *
- * See sensor_integer_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ * See sensor_value_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
  */
 void
-sensor_integer_proxy_new_for_bus (
+sensor_value_proxy_new_for_bus (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1866,20 +1540,20 @@ sensor_integer_proxy_new_for_bus (
     GAsyncReadyCallback  callback,
     gpointer             user_data)
 {
-  g_async_initable_new_async (TYPE_SENSOR_INTEGER_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorInteger", NULL);
+  g_async_initable_new_async (TYPE_SENSOR_VALUE_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorValue", NULL);
 }
 
 /**
- * sensor_integer_proxy_new_for_bus_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_proxy_new_for_bus().
+ * sensor_value_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_value_proxy_new_for_bus().
  * @error: Return location for error or %NULL
  *
- * Finishes an operation started with sensor_integer_proxy_new_for_bus().
+ * Finishes an operation started with sensor_value_proxy_new_for_bus().
  *
- * Returns: (transfer full) (type SensorIntegerProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorValueProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorInteger *
-sensor_integer_proxy_new_for_bus_finish (
+SensorValue *
+sensor_value_proxy_new_for_bus_finish (
     GAsyncResult        *res,
     GError             **error)
 {
@@ -1889,13 +1563,13 @@ sensor_integer_proxy_new_for_bus_finish (
   ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
   g_object_unref (source_object);
   if (ret != NULL)
-    return SENSOR_INTEGER (ret);
+    return SENSOR_VALUE (ret);
   else
     return NULL;
 }
 
 /**
- * sensor_integer_proxy_new_for_bus_sync:
+ * sensor_value_proxy_new_for_bus_sync:
  * @bus_type: A #GBusType.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: A bus name (well-known or unique).
@@ -1903,16 +1577,16 @@ sensor_integer_proxy_new_for_bus_finish (
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL
  *
- * Like sensor_integer_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ * Like sensor_value_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
  *
  * The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_proxy_new_for_bus() for the asynchronous version of this constructor.
+ * See sensor_value_proxy_new_for_bus() for the asynchronous version of this constructor.
  *
- * Returns: (transfer full) (type SensorIntegerProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorValueProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorInteger *
-sensor_integer_proxy_new_for_bus_sync (
+SensorValue *
+sensor_value_proxy_new_for_bus_sync (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -1921,9 +1595,9 @@ sensor_integer_proxy_new_for_bus_sync (
     GError             **error)
 {
   GInitable *ret;
-  ret = g_initable_new (TYPE_SENSOR_INTEGER_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorInteger", NULL);
+  ret = g_initable_new (TYPE_SENSOR_VALUE_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorValue", NULL);
   if (ret != NULL)
-    return SENSOR_INTEGER (ret);
+    return SENSOR_VALUE (ret);
   else
     return NULL;
 }
@@ -1932,19 +1606,19 @@ sensor_integer_proxy_new_for_bus_sync (
 /* ------------------------------------------------------------------------ */
 
 /**
- * SensorIntegerSkeleton:
+ * SensorValueSkeleton:
  *
- * The #SensorIntegerSkeleton structure contains only private data and should only be accessed using the provided API.
+ * The #SensorValueSkeleton structure contains only private data and should only be accessed using the provided API.
  */
 
 /**
- * SensorIntegerSkeletonClass:
+ * SensorValueSkeletonClass:
  * @parent_class: The parent class.
  *
- * Class structure for #SensorIntegerSkeleton.
+ * Class structure for #SensorValueSkeleton.
  */
 
-struct _SensorIntegerSkeletonPrivate
+struct _SensorValueSkeletonPrivate
 {
   GValue *properties;
   GList *changed_properties;
@@ -1954,7 +1628,7 @@ struct _SensorIntegerSkeletonPrivate
 };
 
 static void
-_sensor_integer_skeleton_handle_method_call (
+_sensor_value_skeleton_handle_method_call (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -1964,7 +1638,7 @@ _sensor_integer_skeleton_handle_method_call (
   GDBusMethodInvocation *invocation,
   gpointer user_data)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (user_data);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (user_data);
   _ExtendedGDBusMethodInfo *info;
   GVariantIter iter;
   GVariant *child;
@@ -1979,7 +1653,7 @@ _sensor_integer_skeleton_handle_method_call (
   num_params = g_variant_n_children (parameters);
   num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
   n = 0;
-  g_value_init (&paramv[n], TYPE_SENSOR_INTEGER);
+  g_value_init (&paramv[n], TYPE_SENSOR_VALUE);
   g_value_set_object (&paramv[n++], skeleton);
   g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
   g_value_set_object (&paramv[n++], invocation);
@@ -2006,7 +1680,7 @@ _sensor_integer_skeleton_handle_method_call (
         g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
       g_variant_unref (child);
     }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_INTEGER);
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_VALUE);
   g_value_init (&return_value, G_TYPE_BOOLEAN);
   g_signal_emitv (paramv, signal_id, 0, &return_value);
   if (!g_value_get_boolean (&return_value))
@@ -2018,7 +1692,7 @@ _sensor_integer_skeleton_handle_method_call (
 }
 
 static GVariant *
-_sensor_integer_skeleton_handle_get_property (
+_sensor_value_skeleton_handle_get_property (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -2027,13 +1701,13 @@ _sensor_integer_skeleton_handle_get_property (
   GError **error,
   gpointer user_data)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (user_data);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (user_data);
   GValue value = G_VALUE_INIT;
   GParamSpec *pspec;
   _ExtendedGDBusPropertyInfo *info;
   GVariant *ret;
   ret = NULL;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_interface_info.parent_struct, property_name);
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_value_interface_info.parent_struct, property_name);
   g_assert (info != NULL);
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
   if (pspec == NULL)
@@ -2051,7 +1725,7 @@ _sensor_integer_skeleton_handle_get_property (
 }
 
 static gboolean
-_sensor_integer_skeleton_handle_set_property (
+_sensor_value_skeleton_handle_set_property (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -2061,13 +1735,13 @@ _sensor_integer_skeleton_handle_set_property (
   GError **error,
   gpointer user_data)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (user_data);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (user_data);
   GValue value = G_VALUE_INIT;
   GParamSpec *pspec;
   _ExtendedGDBusPropertyInfo *info;
   gboolean ret;
   ret = FALSE;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_interface_info.parent_struct, property_name);
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_value_interface_info.parent_struct, property_name);
   g_assert (info != NULL);
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
   if (pspec == NULL)
@@ -2087,43 +1761,43 @@ _sensor_integer_skeleton_handle_set_property (
   return ret;
 }
 
-static const GDBusInterfaceVTable _sensor_integer_skeleton_vtable =
+static const GDBusInterfaceVTable _sensor_value_skeleton_vtable =
 {
-  _sensor_integer_skeleton_handle_method_call,
-  _sensor_integer_skeleton_handle_get_property,
-  _sensor_integer_skeleton_handle_set_property,
+  _sensor_value_skeleton_handle_method_call,
+  _sensor_value_skeleton_handle_get_property,
+  _sensor_value_skeleton_handle_set_property,
   {NULL}
 };
 
 static GDBusInterfaceInfo *
-sensor_integer_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+sensor_value_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
 {
-  return sensor_integer_interface_info ();
+  return sensor_value_interface_info ();
 }
 
 static GDBusInterfaceVTable *
-sensor_integer_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+sensor_value_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
 {
-  return (GDBusInterfaceVTable *) &_sensor_integer_skeleton_vtable;
+  return (GDBusInterfaceVTable *) &_sensor_value_skeleton_vtable;
 }
 
 static GVariant *
-sensor_integer_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+sensor_value_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (_skeleton);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (_skeleton);
 
   GVariantBuilder builder;
   guint n;
   g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
-  if (_sensor_integer_interface_info.parent_struct.properties == NULL)
+  if (_sensor_value_interface_info.parent_struct.properties == NULL)
     goto out;
-  for (n = 0; _sensor_integer_interface_info.parent_struct.properties[n] != NULL; n++)
+  for (n = 0; _sensor_value_interface_info.parent_struct.properties[n] != NULL; n++)
     {
-      GDBusPropertyInfo *info = _sensor_integer_interface_info.parent_struct.properties[n];
+      GDBusPropertyInfo *info = _sensor_value_interface_info.parent_struct.properties[n];
       if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
         {
           GVariant *value;
-          value = _sensor_integer_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorInteger", info->name, NULL, skeleton);
+          value = _sensor_value_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorValue", info->name, NULL, skeleton);
           if (value != NULL)
             {
               g_variant_take_ref (value);
@@ -2136,12 +1810,12 @@ out:
   return g_variant_builder_end (&builder);
 }
 
-static gboolean _sensor_integer_emit_changed (gpointer user_data);
+static gboolean _sensor_value_emit_changed (gpointer user_data);
 
 static void
-sensor_integer_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+sensor_value_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (_skeleton);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (_skeleton);
   gboolean emit_changed = FALSE;
 
   g_mutex_lock (&skeleton->priv->lock);
@@ -2154,29 +1828,29 @@ sensor_integer_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
   g_mutex_unlock (&skeleton->priv->lock);
 
   if (emit_changed)
-    _sensor_integer_emit_changed (skeleton);
+    _sensor_value_emit_changed (skeleton);
 }
 
 static void
-_sensor_integer_on_signal_changed (
-    SensorInteger *object,
-    gint arg_value,
+_sensor_value_on_signal_changed (
+    SensorValue *object,
+    GVariant *arg_value,
     const gchar *arg_units)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
 
   GList      *connections, *l;
   GVariant   *signal_variant;
   connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
 
-  signal_variant = g_variant_ref_sink (g_variant_new ("(is)",
+  signal_variant = g_variant_ref_sink (g_variant_new ("(@vs)",
                    arg_value,
                    arg_units));
   for (l = connections; l != NULL; l = l->next)
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorInteger", "Changed",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorValue", "Changed",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -2184,11 +1858,11 @@ _sensor_integer_on_signal_changed (
 }
 
 static void
-_sensor_integer_on_signal_heartbeat (
-    SensorInteger *object,
+_sensor_value_on_signal_heartbeat (
+    SensorValue *object,
     const gchar *arg_bus_name)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
 
   GList      *connections, *l;
   GVariant   *signal_variant;
@@ -2200,28 +1874,28 @@ _sensor_integer_on_signal_heartbeat (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorInteger", "Heartbeat",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorValue", "Heartbeat",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
   g_list_free_full (connections, g_object_unref);
 }
 
-static void sensor_integer_skeleton_iface_init (SensorIntegerIface *iface);
+static void sensor_value_skeleton_iface_init (SensorValueIface *iface);
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerSkeleton, sensor_integer_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_ADD_PRIVATE (SensorIntegerSkeleton)
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER, sensor_integer_skeleton_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorValueSkeleton, sensor_value_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (SensorValueSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_VALUE, sensor_value_skeleton_iface_init));
 
 #else
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerSkeleton, sensor_integer_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER, sensor_integer_skeleton_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorValueSkeleton, sensor_value_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_VALUE, sensor_value_skeleton_iface_init));
 
 #endif
 static void
-sensor_integer_skeleton_finalize (GObject *object)
+sensor_value_skeleton_finalize (GObject *object)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   guint n;
   for (n = 0; n < 4; n++)
     g_value_unset (&skeleton->priv->properties[n]);
@@ -2231,16 +1905,16 @@ sensor_integer_skeleton_finalize (GObject *object)
     g_source_destroy (skeleton->priv->changed_properties_idle_source);
   g_main_context_unref (skeleton->priv->context);
   g_mutex_clear (&skeleton->priv->lock);
-  G_OBJECT_CLASS (sensor_integer_skeleton_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sensor_value_skeleton_parent_class)->finalize (object);
 }
 
 static void
-sensor_integer_skeleton_get_property (GObject      *object,
+sensor_value_skeleton_get_property (GObject      *object,
   guint         prop_id,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   g_assert (prop_id != 0 && prop_id - 1 < 4);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
@@ -2248,9 +1922,9 @@ sensor_integer_skeleton_get_property (GObject      *object,
 }
 
 static gboolean
-_sensor_integer_emit_changed (gpointer user_data)
+_sensor_value_emit_changed (gpointer user_data)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (user_data);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (user_data);
   GList *l;
   GVariantBuilder builder;
   GVariantBuilder invalidated_builder;
@@ -2278,7 +1952,7 @@ _sensor_integer_emit_changed (gpointer user_data)
     {
       GList *connections, *ll;
       GVariant *signal_variant;
-      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.SensorInteger",
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.SensorValue",
                                            &builder, &invalidated_builder));
       connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
       for (ll = connections; ll != NULL; ll = ll->next)
@@ -2308,7 +1982,7 @@ _sensor_integer_emit_changed (gpointer user_data)
 }
 
 static void
-_sensor_integer_schedule_emit_changed (SensorIntegerSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+_sensor_value_schedule_emit_changed (SensorValueSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
 {
   ChangedProperty *cp;
   GList *l;
@@ -2334,17 +2008,17 @@ _sensor_integer_schedule_emit_changed (SensorIntegerSkeleton *skeleton, const _E
 }
 
 static void
-sensor_integer_skeleton_notify (GObject      *object,
+sensor_value_skeleton_notify (GObject      *object,
   GParamSpec *pspec G_GNUC_UNUSED)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   g_mutex_lock (&skeleton->priv->lock);
   if (skeleton->priv->changed_properties != NULL &&
       skeleton->priv->changed_properties_idle_source == NULL)
     {
       skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
       g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
-      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _sensor_integer_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _sensor_value_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
       g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
       g_source_unref (skeleton->priv->changed_properties_idle_source);
     }
@@ -2352,19 +2026,19 @@ sensor_integer_skeleton_notify (GObject      *object,
 }
 
 static void
-sensor_integer_skeleton_set_property (GObject      *object,
+sensor_value_skeleton_set_property (GObject      *object,
   guint         prop_id,
   const GValue *value,
   GParamSpec   *pspec)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   g_assert (prop_id != 0 && prop_id - 1 < 4);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
     {
       if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
-        _sensor_integer_schedule_emit_changed (skeleton, _sensor_integer_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+        _sensor_value_schedule_emit_changed (skeleton, _sensor_value_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
       g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
       g_object_notify_by_pspec (object, pspec);
     }
@@ -2373,38 +2047,38 @@ sensor_integer_skeleton_set_property (GObject      *object,
 }
 
 static void
-sensor_integer_skeleton_init (SensorIntegerSkeleton *skeleton)
+sensor_value_skeleton_init (SensorValueSkeleton *skeleton)
 {
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  skeleton->priv = sensor_integer_skeleton_get_instance_private (skeleton);
+  skeleton->priv = sensor_value_skeleton_get_instance_private (skeleton);
 #else
-  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_SENSOR_INTEGER_SKELETON, SensorIntegerSkeletonPrivate);
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_SENSOR_VALUE_SKELETON, SensorValueSkeletonPrivate);
 #endif
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
   skeleton->priv->properties = g_new0 (GValue, 4);
-  g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_VARIANT);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
   g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[3], G_TYPE_INT);
 }
 
-static gint 
-sensor_integer_skeleton_get_value (SensorInteger *object)
+static GVariant *
+sensor_value_skeleton_get_value (SensorValue *object)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
-  gint value;
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
+  GVariant *value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[0]));
+  value = g_value_get_variant (&(skeleton->priv->properties[0]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
 
 static const gchar *
-sensor_integer_skeleton_get_units (SensorInteger *object)
+sensor_value_skeleton_get_units (SensorValue *object)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   const gchar *value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_string (&(skeleton->priv->properties[1]));
@@ -2413,9 +2087,9 @@ sensor_integer_skeleton_get_units (SensorInteger *object)
 }
 
 static gint 
-sensor_integer_skeleton_get_poll_interval (SensorInteger *object)
+sensor_value_skeleton_get_poll_interval (SensorValue *object)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_int (&(skeleton->priv->properties[2]));
@@ -2424,9 +2098,9 @@ sensor_integer_skeleton_get_poll_interval (SensorInteger *object)
 }
 
 static gint 
-sensor_integer_skeleton_get_heatbeat (SensorInteger *object)
+sensor_value_skeleton_get_heatbeat (SensorValue *object)
 {
-  SensorIntegerSkeleton *skeleton = SENSOR_INTEGER_SKELETON (object);
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_int (&(skeleton->priv->properties[3]));
@@ -2435,1745 +2109,107 @@ sensor_integer_skeleton_get_heatbeat (SensorInteger *object)
 }
 
 static void
-sensor_integer_skeleton_class_init (SensorIntegerSkeletonClass *klass)
+sensor_value_skeleton_class_init (SensorValueSkeletonClass *klass)
 {
   GObjectClass *gobject_class;
   GDBusInterfaceSkeletonClass *skeleton_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = sensor_integer_skeleton_finalize;
-  gobject_class->get_property = sensor_integer_skeleton_get_property;
-  gobject_class->set_property = sensor_integer_skeleton_set_property;
-  gobject_class->notify       = sensor_integer_skeleton_notify;
+  gobject_class->finalize = sensor_value_skeleton_finalize;
+  gobject_class->get_property = sensor_value_skeleton_get_property;
+  gobject_class->set_property = sensor_value_skeleton_set_property;
+  gobject_class->notify       = sensor_value_skeleton_notify;
 
 
-  sensor_integer_override_properties (gobject_class, 1);
+  sensor_value_override_properties (gobject_class, 1);
 
   skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
-  skeleton_class->get_info = sensor_integer_skeleton_dbus_interface_get_info;
-  skeleton_class->get_properties = sensor_integer_skeleton_dbus_interface_get_properties;
-  skeleton_class->flush = sensor_integer_skeleton_dbus_interface_flush;
-  skeleton_class->get_vtable = sensor_integer_skeleton_dbus_interface_get_vtable;
+  skeleton_class->get_info = sensor_value_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = sensor_value_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = sensor_value_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = sensor_value_skeleton_dbus_interface_get_vtable;
 
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (SensorIntegerSkeletonPrivate));
+  g_type_class_add_private (klass, sizeof (SensorValueSkeletonPrivate));
 #endif
 }
 
 static void
-sensor_integer_skeleton_iface_init (SensorIntegerIface *iface)
+sensor_value_skeleton_iface_init (SensorValueIface *iface)
 {
-  iface->changed = _sensor_integer_on_signal_changed;
-  iface->heartbeat = _sensor_integer_on_signal_heartbeat;
-  iface->get_value = sensor_integer_skeleton_get_value;
-  iface->get_units = sensor_integer_skeleton_get_units;
-  iface->get_poll_interval = sensor_integer_skeleton_get_poll_interval;
-  iface->get_heatbeat = sensor_integer_skeleton_get_heatbeat;
+  iface->changed = _sensor_value_on_signal_changed;
+  iface->heartbeat = _sensor_value_on_signal_heartbeat;
+  iface->get_value = sensor_value_skeleton_get_value;
+  iface->get_units = sensor_value_skeleton_get_units;
+  iface->get_poll_interval = sensor_value_skeleton_get_poll_interval;
+  iface->get_heatbeat = sensor_value_skeleton_get_heatbeat;
 }
 
 /**
- * sensor_integer_skeleton_new:
+ * sensor_value_skeleton_new:
  *
- * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link>.
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link>.
  *
- * Returns: (transfer full) (type SensorIntegerSkeleton): The skeleton object.
+ * Returns: (transfer full) (type SensorValueSkeleton): The skeleton object.
  */
-SensorInteger *
-sensor_integer_skeleton_new (void)
+SensorValue *
+sensor_value_skeleton_new (void)
 {
-  return SENSOR_INTEGER (g_object_new (TYPE_SENSOR_INTEGER_SKELETON, NULL));
+  return SENSOR_VALUE (g_object_new (TYPE_SENSOR_VALUE_SKELETON, NULL));
 }
 
 /* ------------------------------------------------------------------------
- * Code for interface org.openbmc.SensorString
+ * Code for interface org.openbmc.SensorThreshold
  * ------------------------------------------------------------------------
  */
 
 /**
- * SECTION:SensorString
- * @title: SensorString
- * @short_description: Generated C code for the org.openbmc.SensorString D-Bus interface
+ * SECTION:SensorThreshold
+ * @title: SensorThreshold
+ * @short_description: Generated C code for the org.openbmc.SensorThreshold D-Bus interface
  *
- * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link> D-Bus interface in C.
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link> D-Bus interface in C.
  */
 
-/* ---- Introspection data for org.openbmc.SensorString ---- */
+/* ---- Introspection data for org.openbmc.SensorThreshold ---- */
 
-static const _ExtendedGDBusArgInfo _sensor_string_method_info_get_value_OUT_ARG_value =
-{
-  {
-    -1,
-    (gchar *) "value",
-    (gchar *) "s",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _sensor_string_method_info_get_value_OUT_ARG_pointers[] =
-{
-  &_sensor_string_method_info_get_value_OUT_ARG_value,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _sensor_string_method_info_get_value =
-{
-  {
-    -1,
-    (gchar *) "getValue",
-    NULL,
-    (GDBusArgInfo **) &_sensor_string_method_info_get_value_OUT_ARG_pointers,
-    NULL
-  },
-  "handle-get-value",
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo _sensor_string_method_info_get_units_OUT_ARG_units =
-{
-  {
-    -1,
-    (gchar *) "units",
-    (gchar *) "s",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _sensor_string_method_info_get_units_OUT_ARG_pointers[] =
-{
-  &_sensor_string_method_info_get_units_OUT_ARG_units,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _sensor_string_method_info_get_units =
-{
-  {
-    -1,
-    (gchar *) "getUnits",
-    NULL,
-    (GDBusArgInfo **) &_sensor_string_method_info_get_units_OUT_ARG_pointers,
-    NULL
-  },
-  "handle-get-units",
-  FALSE
-};
-
-static const _ExtendedGDBusMethodInfo * const _sensor_string_method_info_pointers[] =
-{
-  &_sensor_string_method_info_get_value,
-  &_sensor_string_method_info_get_units,
-  NULL
-};
-
-static const _ExtendedGDBusArgInfo _sensor_string_signal_info_changed_ARG_value =
-{
-  {
-    -1,
-    (gchar *) "value",
-    (gchar *) "s",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _sensor_string_signal_info_changed_ARG_pointers[] =
-{
-  &_sensor_string_signal_info_changed_ARG_value,
-  NULL
-};
-
-static const _ExtendedGDBusSignalInfo _sensor_string_signal_info_changed =
-{
-  {
-    -1,
-    (gchar *) "Changed",
-    (GDBusArgInfo **) &_sensor_string_signal_info_changed_ARG_pointers,
-    NULL
-  },
-  "changed"
-};
-
-static const _ExtendedGDBusSignalInfo * const _sensor_string_signal_info_pointers[] =
-{
-  &_sensor_string_signal_info_changed,
-  NULL
-};
-
-static const _ExtendedGDBusPropertyInfo _sensor_string_property_info_value =
-{
-  {
-    -1,
-    (gchar *) "value",
-    (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
-    NULL
-  },
-  "value",
-  FALSE
-};
-
-static const _ExtendedGDBusPropertyInfo _sensor_string_property_info_units =
-{
-  {
-    -1,
-    (gchar *) "units",
-    (gchar *) "s",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
-    NULL
-  },
-  "units",
-  FALSE
-};
-
-static const _ExtendedGDBusPropertyInfo * const _sensor_string_property_info_pointers[] =
-{
-  &_sensor_string_property_info_value,
-  &_sensor_string_property_info_units,
-  NULL
-};
-
-static const _ExtendedGDBusInterfaceInfo _sensor_string_interface_info =
-{
-  {
-    -1,
-    (gchar *) "org.openbmc.SensorString",
-    (GDBusMethodInfo **) &_sensor_string_method_info_pointers,
-    (GDBusSignalInfo **) &_sensor_string_signal_info_pointers,
-    (GDBusPropertyInfo **) &_sensor_string_property_info_pointers,
-    NULL
-  },
-  "sensor-string",
-};
-
-
-/**
- * sensor_string_interface_info:
- *
- * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link> D-Bus interface.
- *
- * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
- */
-GDBusInterfaceInfo *
-sensor_string_interface_info (void)
-{
-  return (GDBusInterfaceInfo *) &_sensor_string_interface_info.parent_struct;
-}
-
-/**
- * sensor_string_override_properties:
- * @klass: The class structure for a #GObject<!-- -->-derived class.
- * @property_id_begin: The property id to assign to the first overridden property.
- *
- * Overrides all #GObject properties in the #SensorString interface for a concrete class.
- * The properties are overridden in the order they are defined.
- *
- * Returns: The last property id.
- */
-guint
-sensor_string_override_properties (GObjectClass *klass, guint property_id_begin)
-{
-  g_object_class_override_property (klass, property_id_begin++, "value");
-  g_object_class_override_property (klass, property_id_begin++, "units");
-  return property_id_begin - 1;
-}
-
-
-
-/**
- * SensorString:
- *
- * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link>.
- */
-
-/**
- * SensorStringIface:
- * @parent_iface: The parent interface.
- * @handle_get_units: Handler for the #SensorString::handle-get-units signal.
- * @handle_get_value: Handler for the #SensorString::handle-get-value signal.
- * @get_units: Getter for the #SensorString:units property.
- * @get_value: Getter for the #SensorString:value property.
- * @changed: Handler for the #SensorString::changed signal.
- *
- * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link>.
- */
-
-typedef SensorStringIface SensorStringInterface;
-G_DEFINE_INTERFACE (SensorString, sensor_string, G_TYPE_OBJECT);
-
-static void
-sensor_string_default_init (SensorStringIface *iface)
-{
-  /* GObject signals for incoming D-Bus method calls: */
-  /**
-   * SensorString::handle-get-value:
-   * @object: A #SensorString.
-   * @invocation: A #GDBusMethodInvocation.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorString.getValue">getValue()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_string_complete_get_value() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-get-value",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorStringIface, handle_get_value),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    1,
-    G_TYPE_DBUS_METHOD_INVOCATION);
-
-  /**
-   * SensorString::handle-get-units:
-   * @object: A #SensorString.
-   * @invocation: A #GDBusMethodInvocation.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorString.getUnits">getUnits()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_string_complete_get_units() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-get-units",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorStringIface, handle_get_units),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    1,
-    G_TYPE_DBUS_METHOD_INVOCATION);
-
-  /* GObject signals for received D-Bus signals: */
-  /**
-   * SensorString::changed:
-   * @object: A #SensorString.
-   * @arg_value: Argument.
-   *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorString.Changed">"Changed"</link> is received.
-   *
-   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
-   */
-  g_signal_new ("changed",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorStringIface, changed),
-    NULL,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_NONE,
-    1, G_TYPE_STRING);
-
-  /* GObject properties for D-Bus properties: */
-  /**
-   * SensorString:value:
-   *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorString.value">"value"</link>.
-   *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
-   */
-  g_object_interface_install_property (iface,
-    g_param_spec_int ("value", "value", "value", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  /**
-   * SensorString:units:
-   *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorString.units">"units"</link>.
-   *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
-   */
-  g_object_interface_install_property (iface,
-    g_param_spec_string ("units", "units", "units", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-}
-
-/**
- * sensor_string_get_value: (skip)
- * @object: A #SensorString.
- *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorString.value">"value"</link> D-Bus property.
- *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
- *
- * Returns: The property value.
- */
-gint 
-sensor_string_get_value (SensorString *object)
-{
-  return SENSOR_STRING_GET_IFACE (object)->get_value (object);
-}
-
-/**
- * sensor_string_set_value: (skip)
- * @object: A #SensorString.
- * @value: The value to set.
- *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorString.value">"value"</link> D-Bus property to @value.
- *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
- */
-void
-sensor_string_set_value (SensorString *object, gint value)
-{
-  g_object_set (G_OBJECT (object), "value", value, NULL);
-}
-
-/**
- * sensor_string_get_units: (skip)
- * @object: A #SensorString.
- *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorString.units">"units"</link> D-Bus property.
- *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
- *
- * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_string_dup_units() if on another thread.</warning>
- *
- * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
- */
-const gchar *
-sensor_string_get_units (SensorString *object)
-{
-  return SENSOR_STRING_GET_IFACE (object)->get_units (object);
-}
-
-/**
- * sensor_string_dup_units: (skip)
- * @object: A #SensorString.
- *
- * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorString.units">"units"</link> D-Bus property.
- *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
- *
- * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
- */
-gchar *
-sensor_string_dup_units (SensorString *object)
-{
-  gchar *value;
-  g_object_get (G_OBJECT (object), "units", &value, NULL);
-  return value;
-}
-
-/**
- * sensor_string_set_units: (skip)
- * @object: A #SensorString.
- * @value: The value to set.
- *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorString.units">"units"</link> D-Bus property to @value.
- *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
- */
-void
-sensor_string_set_units (SensorString *object, const gchar *value)
-{
-  g_object_set (G_OBJECT (object), "units", value, NULL);
-}
-
-/**
- * sensor_string_emit_changed:
- * @object: A #SensorString.
- * @arg_value: Argument to pass with the signal.
- *
- * Emits the <link linkend="gdbus-signal-org-openbmc-SensorString.Changed">"Changed"</link> D-Bus signal.
- */
-void
-sensor_string_emit_changed (
-    SensorString *object,
-    const gchar *arg_value)
-{
-  g_signal_emit_by_name (object, "changed", arg_value);
-}
-
-/**
- * sensor_string_call_get_value:
- * @proxy: A #SensorStringProxy.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorString.getValue">getValue()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_string_call_get_value_finish() to get the result of the operation.
- *
- * See sensor_string_call_get_value_sync() for the synchronous, blocking version of this method.
- */
-void
-sensor_string_call_get_value (
-    SensorString *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "getValue",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * sensor_string_call_get_value_finish:
- * @proxy: A #SensorStringProxy.
- * @out_value: (out): Return location for return parameter or %NULL to ignore.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_string_call_get_value().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with sensor_string_call_get_value().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_string_call_get_value_finish (
-    SensorString *proxy,
-    gchar **out_value,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(s)",
-                 out_value);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_string_call_get_value_sync:
- * @proxy: A #SensorStringProxy.
- * @out_value: (out): Return location for return parameter or %NULL to ignore.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorString.getValue">getValue()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See sensor_string_call_get_value() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_string_call_get_value_sync (
-    SensorString *proxy,
-    gchar **out_value,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "getValue",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(s)",
-                 out_value);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_string_call_get_units:
- * @proxy: A #SensorStringProxy.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorString.getUnits">getUnits()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_string_call_get_units_finish() to get the result of the operation.
- *
- * See sensor_string_call_get_units_sync() for the synchronous, blocking version of this method.
- */
-void
-sensor_string_call_get_units (
-    SensorString *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "getUnits",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * sensor_string_call_get_units_finish:
- * @proxy: A #SensorStringProxy.
- * @out_units: (out): Return location for return parameter or %NULL to ignore.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_string_call_get_units().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with sensor_string_call_get_units().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_string_call_get_units_finish (
-    SensorString *proxy,
-    gchar **out_units,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(s)",
-                 out_units);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_string_call_get_units_sync:
- * @proxy: A #SensorStringProxy.
- * @out_units: (out): Return location for return parameter or %NULL to ignore.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorString.getUnits">getUnits()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See sensor_string_call_get_units() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_string_call_get_units_sync (
-    SensorString *proxy,
-    gchar **out_units,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "getUnits",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(s)",
-                 out_units);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_string_complete_get_value:
- * @object: A #SensorString.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- * @value: Parameter to return.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorString.getValue">getValue()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-sensor_string_complete_get_value (
-    SensorString *object,
-    GDBusMethodInvocation *invocation,
-    const gchar *value)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("(s)",
-                   value));
-}
-
-/**
- * sensor_string_complete_get_units:
- * @object: A #SensorString.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- * @units: Parameter to return.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorString.getUnits">getUnits()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-sensor_string_complete_get_units (
-    SensorString *object,
-    GDBusMethodInvocation *invocation,
-    const gchar *units)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("(s)",
-                   units));
-}
-
-/* ------------------------------------------------------------------------ */
-
-/**
- * SensorStringProxy:
- *
- * The #SensorStringProxy structure contains only private data and should only be accessed using the provided API.
- */
-
-/**
- * SensorStringProxyClass:
- * @parent_class: The parent class.
- *
- * Class structure for #SensorStringProxy.
- */
-
-struct _SensorStringProxyPrivate
-{
-  GData *qdata;
-};
-
-static void sensor_string_proxy_iface_init (SensorStringIface *iface);
-
-#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (SensorStringProxy, sensor_string_proxy, G_TYPE_DBUS_PROXY,
-                         G_ADD_PRIVATE (SensorStringProxy)
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_STRING, sensor_string_proxy_iface_init));
-
-#else
-G_DEFINE_TYPE_WITH_CODE (SensorStringProxy, sensor_string_proxy, G_TYPE_DBUS_PROXY,
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_STRING, sensor_string_proxy_iface_init));
-
-#endif
-static void
-sensor_string_proxy_finalize (GObject *object)
-{
-  SensorStringProxy *proxy = SENSOR_STRING_PROXY (object);
-  g_datalist_clear (&proxy->priv->qdata);
-  G_OBJECT_CLASS (sensor_string_proxy_parent_class)->finalize (object);
-}
-
-static void
-sensor_string_proxy_get_property (GObject      *object,
-  guint         prop_id,
-  GValue       *value,
-  GParamSpec   *pspec G_GNUC_UNUSED)
-{
-  const _ExtendedGDBusPropertyInfo *info;
-  GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
-  info = _sensor_string_property_info_pointers[prop_id - 1];
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
-  if (info->use_gvariant)
-    {
-      g_value_set_variant (value, variant);
-    }
-  else
-    {
-      if (variant != NULL)
-        g_dbus_gvariant_to_gvalue (variant, value);
-    }
-  if (variant != NULL)
-    g_variant_unref (variant);
-}
-
-static void
-sensor_string_proxy_set_property_cb (GDBusProxy *proxy,
-  GAsyncResult *res,
-  gpointer      user_data)
-{
-  const _ExtendedGDBusPropertyInfo *info = user_data;
-  GError *error;
-  GVariant *_ret;
-  error = NULL;
-  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
-  if (!_ret)
-    {
-      g_warning ("Error setting property '%s' on interface org.openbmc.SensorString: %s (%s, %d)",
-                 info->parent_struct.name, 
-                 error->message, g_quark_to_string (error->domain), error->code);
-      g_error_free (error);
-    }
-  else
-    {
-      g_variant_unref (_ret);
-    }
-}
-
-static void
-sensor_string_proxy_set_property (GObject      *object,
-  guint         prop_id,
-  const GValue *value,
-  GParamSpec   *pspec G_GNUC_UNUSED)
-{
-  const _ExtendedGDBusPropertyInfo *info;
-  GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
-  info = _sensor_string_property_info_pointers[prop_id - 1];
-  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
-  g_dbus_proxy_call (G_DBUS_PROXY (object),
-    "org.freedesktop.DBus.Properties.Set",
-    g_variant_new ("(ssv)", "org.openbmc.SensorString", info->parent_struct.name, variant),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    NULL, (GAsyncReadyCallback) sensor_string_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
-  g_variant_unref (variant);
-}
-
-static void
-sensor_string_proxy_g_signal (GDBusProxy *proxy,
-  const gchar *sender_name G_GNUC_UNUSED,
-  const gchar *signal_name,
-  GVariant *parameters)
-{
-  _ExtendedGDBusSignalInfo *info;
-  GVariantIter iter;
-  GVariant *child;
-  GValue *paramv;
-  guint num_params;
-  guint n;
-  guint signal_id;
-  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_sensor_string_interface_info.parent_struct, signal_name);
-  if (info == NULL)
-    return;
-  num_params = g_variant_n_children (parameters);
-  paramv = g_new0 (GValue, num_params + 1);
-  g_value_init (&paramv[0], TYPE_SENSOR_STRING);
-  g_value_set_object (&paramv[0], proxy);
-  g_variant_iter_init (&iter, parameters);
-  n = 1;
-  while ((child = g_variant_iter_next_value (&iter)) != NULL)
-    {
-      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.args[n - 1];
-      if (arg_info->use_gvariant)
-        {
-          g_value_init (&paramv[n], G_TYPE_VARIANT);
-          g_value_set_variant (&paramv[n], child);
-          n++;
-        }
-      else
-        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
-      g_variant_unref (child);
-    }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_STRING);
-  g_signal_emitv (paramv, signal_id, 0, NULL);
-  for (n = 0; n < num_params + 1; n++)
-    g_value_unset (&paramv[n]);
-  g_free (paramv);
-}
-
-static void
-sensor_string_proxy_g_properties_changed (GDBusProxy *_proxy,
-  GVariant *changed_properties,
-  const gchar *const *invalidated_properties)
-{
-  SensorStringProxy *proxy = SENSOR_STRING_PROXY (_proxy);
-  guint n;
-  const gchar *key;
-  GVariantIter *iter;
-  _ExtendedGDBusPropertyInfo *info;
-  g_variant_get (changed_properties, "a{sv}", &iter);
-  while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
-    {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_string_interface_info.parent_struct, key);
-      g_datalist_remove_data (&proxy->priv->qdata, key);
-      if (info != NULL)
-        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
-    }
-  g_variant_iter_free (iter);
-  for (n = 0; invalidated_properties[n] != NULL; n++)
-    {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_string_interface_info.parent_struct, invalidated_properties[n]);
-      g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
-      if (info != NULL)
-        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
-    }
-}
-
-static gint 
-sensor_string_proxy_get_value (SensorString *object)
-{
-  SensorStringProxy *proxy = SENSOR_STRING_PROXY (object);
-  GVariant *variant;
-  gint value = 0;
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "value");
-  if (variant != NULL)
-    {
-      value = g_variant_get_int32 (variant);
-      g_variant_unref (variant);
-    }
-  return value;
-}
-
-static const gchar *
-sensor_string_proxy_get_units (SensorString *object)
-{
-  SensorStringProxy *proxy = SENSOR_STRING_PROXY (object);
-  GVariant *variant;
-  const gchar *value = NULL;
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "units");
-  if (variant != NULL)
-    {
-      value = g_variant_get_string (variant, NULL);
-      g_variant_unref (variant);
-    }
-  return value;
-}
-
-static void
-sensor_string_proxy_init (SensorStringProxy *proxy)
-{
-#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  proxy->priv = sensor_string_proxy_get_instance_private (proxy);
-#else
-  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_SENSOR_STRING_PROXY, SensorStringProxyPrivate);
-#endif
-
-  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), sensor_string_interface_info ());
-}
-
-static void
-sensor_string_proxy_class_init (SensorStringProxyClass *klass)
-{
-  GObjectClass *gobject_class;
-  GDBusProxyClass *proxy_class;
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize     = sensor_string_proxy_finalize;
-  gobject_class->get_property = sensor_string_proxy_get_property;
-  gobject_class->set_property = sensor_string_proxy_set_property;
-
-  proxy_class = G_DBUS_PROXY_CLASS (klass);
-  proxy_class->g_signal = sensor_string_proxy_g_signal;
-  proxy_class->g_properties_changed = sensor_string_proxy_g_properties_changed;
-
-  sensor_string_override_properties (gobject_class, 1);
-
-#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (SensorStringProxyPrivate));
-#endif
-}
-
-static void
-sensor_string_proxy_iface_init (SensorStringIface *iface)
-{
-  iface->get_value = sensor_string_proxy_get_value;
-  iface->get_units = sensor_string_proxy_get_units;
-}
-
-/**
- * sensor_string_proxy_new:
- * @connection: A #GDBusConnection.
- * @flags: Flags from the #GDBusProxyFlags enumeration.
- * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link>. See g_dbus_proxy_new() for more details.
- *
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_string_proxy_new_finish() to get the result of the operation.
- *
- * See sensor_string_proxy_new_sync() for the synchronous, blocking version of this constructor.
- */
-void
-sensor_string_proxy_new (
-    GDBusConnection     *connection,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GAsyncReadyCallback  callback,
-    gpointer             user_data)
-{
-  g_async_initable_new_async (TYPE_SENSOR_STRING_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorString", NULL);
-}
-
-/**
- * sensor_string_proxy_new_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_string_proxy_new().
- * @error: Return location for error or %NULL
- *
- * Finishes an operation started with sensor_string_proxy_new().
- *
- * Returns: (transfer full) (type SensorStringProxy): The constructed proxy object or %NULL if @error is set.
- */
-SensorString *
-sensor_string_proxy_new_finish (
-    GAsyncResult        *res,
-    GError             **error)
-{
-  GObject *ret;
-  GObject *source_object;
-  source_object = g_async_result_get_source_object (res);
-  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
-  g_object_unref (source_object);
-  if (ret != NULL)
-    return SENSOR_STRING (ret);
-  else
-    return NULL;
-}
-
-/**
- * sensor_string_proxy_new_sync:
- * @connection: A #GDBusConnection.
- * @flags: Flags from the #GDBusProxyFlags enumeration.
- * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL
- *
- * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link>. See g_dbus_proxy_new_sync() for more details.
- *
- * The calling thread is blocked until a reply is received.
- *
- * See sensor_string_proxy_new() for the asynchronous version of this constructor.
- *
- * Returns: (transfer full) (type SensorStringProxy): The constructed proxy object or %NULL if @error is set.
- */
-SensorString *
-sensor_string_proxy_new_sync (
-    GDBusConnection     *connection,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GError             **error)
-{
-  GInitable *ret;
-  ret = g_initable_new (TYPE_SENSOR_STRING_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorString", NULL);
-  if (ret != NULL)
-    return SENSOR_STRING (ret);
-  else
-    return NULL;
-}
-
-
-/**
- * sensor_string_proxy_new_for_bus:
- * @bus_type: A #GBusType.
- * @flags: Flags from the #GDBusProxyFlags enumeration.
- * @name: A bus name (well-known or unique).
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
- * @user_data: User data to pass to @callback.
- *
- * Like sensor_string_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
- *
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_string_proxy_new_for_bus_finish() to get the result of the operation.
- *
- * See sensor_string_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
- */
-void
-sensor_string_proxy_new_for_bus (
-    GBusType             bus_type,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GAsyncReadyCallback  callback,
-    gpointer             user_data)
-{
-  g_async_initable_new_async (TYPE_SENSOR_STRING_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorString", NULL);
-}
-
-/**
- * sensor_string_proxy_new_for_bus_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_string_proxy_new_for_bus().
- * @error: Return location for error or %NULL
- *
- * Finishes an operation started with sensor_string_proxy_new_for_bus().
- *
- * Returns: (transfer full) (type SensorStringProxy): The constructed proxy object or %NULL if @error is set.
- */
-SensorString *
-sensor_string_proxy_new_for_bus_finish (
-    GAsyncResult        *res,
-    GError             **error)
-{
-  GObject *ret;
-  GObject *source_object;
-  source_object = g_async_result_get_source_object (res);
-  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
-  g_object_unref (source_object);
-  if (ret != NULL)
-    return SENSOR_STRING (ret);
-  else
-    return NULL;
-}
-
-/**
- * sensor_string_proxy_new_for_bus_sync:
- * @bus_type: A #GBusType.
- * @flags: Flags from the #GDBusProxyFlags enumeration.
- * @name: A bus name (well-known or unique).
- * @object_path: An object path.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL
- *
- * Like sensor_string_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
- *
- * The calling thread is blocked until a reply is received.
- *
- * See sensor_string_proxy_new_for_bus() for the asynchronous version of this constructor.
- *
- * Returns: (transfer full) (type SensorStringProxy): The constructed proxy object or %NULL if @error is set.
- */
-SensorString *
-sensor_string_proxy_new_for_bus_sync (
-    GBusType             bus_type,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GError             **error)
-{
-  GInitable *ret;
-  ret = g_initable_new (TYPE_SENSOR_STRING_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorString", NULL);
-  if (ret != NULL)
-    return SENSOR_STRING (ret);
-  else
-    return NULL;
-}
-
-
-/* ------------------------------------------------------------------------ */
-
-/**
- * SensorStringSkeleton:
- *
- * The #SensorStringSkeleton structure contains only private data and should only be accessed using the provided API.
- */
-
-/**
- * SensorStringSkeletonClass:
- * @parent_class: The parent class.
- *
- * Class structure for #SensorStringSkeleton.
- */
-
-struct _SensorStringSkeletonPrivate
-{
-  GValue *properties;
-  GList *changed_properties;
-  GSource *changed_properties_idle_source;
-  GMainContext *context;
-  GMutex lock;
-};
-
-static void
-_sensor_string_skeleton_handle_method_call (
-  GDBusConnection *connection G_GNUC_UNUSED,
-  const gchar *sender G_GNUC_UNUSED,
-  const gchar *object_path G_GNUC_UNUSED,
-  const gchar *interface_name,
-  const gchar *method_name,
-  GVariant *parameters,
-  GDBusMethodInvocation *invocation,
-  gpointer user_data)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (user_data);
-  _ExtendedGDBusMethodInfo *info;
-  GVariantIter iter;
-  GVariant *child;
-  GValue *paramv;
-  guint num_params;
-  guint num_extra;
-  guint n;
-  guint signal_id;
-  GValue return_value = G_VALUE_INIT;
-  info = (_ExtendedGDBusMethodInfo *) g_dbus_method_invocation_get_method_info (invocation);
-  g_assert (info != NULL);
-  num_params = g_variant_n_children (parameters);
-  num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
-  n = 0;
-  g_value_init (&paramv[n], TYPE_SENSOR_STRING);
-  g_value_set_object (&paramv[n++], skeleton);
-  g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
-  g_value_set_object (&paramv[n++], invocation);
-  if (info->pass_fdlist)
-    {
-#ifdef G_OS_UNIX
-      g_value_init (&paramv[n], G_TYPE_UNIX_FD_LIST);
-      g_value_set_object (&paramv[n++], g_dbus_message_get_unix_fd_list (g_dbus_method_invocation_get_message (invocation)));
-#else
-      g_assert_not_reached ();
-#endif
-    }
-  g_variant_iter_init (&iter, parameters);
-  while ((child = g_variant_iter_next_value (&iter)) != NULL)
-    {
-      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.in_args[n - num_extra];
-      if (arg_info->use_gvariant)
-        {
-          g_value_init (&paramv[n], G_TYPE_VARIANT);
-          g_value_set_variant (&paramv[n], child);
-          n++;
-        }
-      else
-        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
-      g_variant_unref (child);
-    }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_STRING);
-  g_value_init (&return_value, G_TYPE_BOOLEAN);
-  g_signal_emitv (paramv, signal_id, 0, &return_value);
-  if (!g_value_get_boolean (&return_value))
-    g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD, "Method %s is not implemented on interface %s", method_name, interface_name);
-  g_value_unset (&return_value);
-  for (n = 0; n < num_params + num_extra; n++)
-    g_value_unset (&paramv[n]);
-  g_free (paramv);
-}
-
-static GVariant *
-_sensor_string_skeleton_handle_get_property (
-  GDBusConnection *connection G_GNUC_UNUSED,
-  const gchar *sender G_GNUC_UNUSED,
-  const gchar *object_path G_GNUC_UNUSED,
-  const gchar *interface_name G_GNUC_UNUSED,
-  const gchar *property_name,
-  GError **error,
-  gpointer user_data)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (user_data);
-  GValue value = G_VALUE_INIT;
-  GParamSpec *pspec;
-  _ExtendedGDBusPropertyInfo *info;
-  GVariant *ret;
-  ret = NULL;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_string_interface_info.parent_struct, property_name);
-  g_assert (info != NULL);
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
-  if (pspec == NULL)
-    {
-      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
-    }
-  else
-    {
-      g_value_init (&value, pspec->value_type);
-      g_object_get_property (G_OBJECT (skeleton), info->hyphen_name, &value);
-      ret = g_dbus_gvalue_to_gvariant (&value, G_VARIANT_TYPE (info->parent_struct.signature));
-      g_value_unset (&value);
-    }
-  return ret;
-}
-
-static gboolean
-_sensor_string_skeleton_handle_set_property (
-  GDBusConnection *connection G_GNUC_UNUSED,
-  const gchar *sender G_GNUC_UNUSED,
-  const gchar *object_path G_GNUC_UNUSED,
-  const gchar *interface_name G_GNUC_UNUSED,
-  const gchar *property_name,
-  GVariant *variant,
-  GError **error,
-  gpointer user_data)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (user_data);
-  GValue value = G_VALUE_INIT;
-  GParamSpec *pspec;
-  _ExtendedGDBusPropertyInfo *info;
-  gboolean ret;
-  ret = FALSE;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_string_interface_info.parent_struct, property_name);
-  g_assert (info != NULL);
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
-  if (pspec == NULL)
-    {
-      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
-    }
-  else
-    {
-      if (info->use_gvariant)
-        g_value_set_variant (&value, variant);
-      else
-        g_dbus_gvariant_to_gvalue (variant, &value);
-      g_object_set_property (G_OBJECT (skeleton), info->hyphen_name, &value);
-      g_value_unset (&value);
-      ret = TRUE;
-    }
-  return ret;
-}
-
-static const GDBusInterfaceVTable _sensor_string_skeleton_vtable =
-{
-  _sensor_string_skeleton_handle_method_call,
-  _sensor_string_skeleton_handle_get_property,
-  _sensor_string_skeleton_handle_set_property,
-  {NULL}
-};
-
-static GDBusInterfaceInfo *
-sensor_string_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
-{
-  return sensor_string_interface_info ();
-}
-
-static GDBusInterfaceVTable *
-sensor_string_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
-{
-  return (GDBusInterfaceVTable *) &_sensor_string_skeleton_vtable;
-}
-
-static GVariant *
-sensor_string_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (_skeleton);
-
-  GVariantBuilder builder;
-  guint n;
-  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
-  if (_sensor_string_interface_info.parent_struct.properties == NULL)
-    goto out;
-  for (n = 0; _sensor_string_interface_info.parent_struct.properties[n] != NULL; n++)
-    {
-      GDBusPropertyInfo *info = _sensor_string_interface_info.parent_struct.properties[n];
-      if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
-        {
-          GVariant *value;
-          value = _sensor_string_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorString", info->name, NULL, skeleton);
-          if (value != NULL)
-            {
-              g_variant_take_ref (value);
-              g_variant_builder_add (&builder, "{sv}", info->name, value);
-              g_variant_unref (value);
-            }
-        }
-    }
-out:
-  return g_variant_builder_end (&builder);
-}
-
-static gboolean _sensor_string_emit_changed (gpointer user_data);
-
-static void
-sensor_string_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (_skeleton);
-  gboolean emit_changed = FALSE;
-
-  g_mutex_lock (&skeleton->priv->lock);
-  if (skeleton->priv->changed_properties_idle_source != NULL)
-    {
-      g_source_destroy (skeleton->priv->changed_properties_idle_source);
-      skeleton->priv->changed_properties_idle_source = NULL;
-      emit_changed = TRUE;
-    }
-  g_mutex_unlock (&skeleton->priv->lock);
-
-  if (emit_changed)
-    _sensor_string_emit_changed (skeleton);
-}
-
-static void
-_sensor_string_on_signal_changed (
-    SensorString *object,
-    const gchar *arg_value)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (object);
-
-  GList      *connections, *l;
-  GVariant   *signal_variant;
-  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
-
-  signal_variant = g_variant_ref_sink (g_variant_new ("(s)",
-                   arg_value));
-  for (l = connections; l != NULL; l = l->next)
-    {
-      GDBusConnection *connection = l->data;
-      g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorString", "Changed",
-        signal_variant, NULL);
-    }
-  g_variant_unref (signal_variant);
-  g_list_free_full (connections, g_object_unref);
-}
-
-static void sensor_string_skeleton_iface_init (SensorStringIface *iface);
-#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (SensorStringSkeleton, sensor_string_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_ADD_PRIVATE (SensorStringSkeleton)
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_STRING, sensor_string_skeleton_iface_init));
-
-#else
-G_DEFINE_TYPE_WITH_CODE (SensorStringSkeleton, sensor_string_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_STRING, sensor_string_skeleton_iface_init));
-
-#endif
-static void
-sensor_string_skeleton_finalize (GObject *object)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (object);
-  guint n;
-  for (n = 0; n < 2; n++)
-    g_value_unset (&skeleton->priv->properties[n]);
-  g_free (skeleton->priv->properties);
-  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
-  if (skeleton->priv->changed_properties_idle_source != NULL)
-    g_source_destroy (skeleton->priv->changed_properties_idle_source);
-  g_main_context_unref (skeleton->priv->context);
-  g_mutex_clear (&skeleton->priv->lock);
-  G_OBJECT_CLASS (sensor_string_skeleton_parent_class)->finalize (object);
-}
-
-static void
-sensor_string_skeleton_get_property (GObject      *object,
-  guint         prop_id,
-  GValue       *value,
-  GParamSpec   *pspec G_GNUC_UNUSED)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
-  g_mutex_lock (&skeleton->priv->lock);
-  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
-  g_mutex_unlock (&skeleton->priv->lock);
-}
-
-static gboolean
-_sensor_string_emit_changed (gpointer user_data)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (user_data);
-  GList *l;
-  GVariantBuilder builder;
-  GVariantBuilder invalidated_builder;
-  guint num_changes;
-
-  g_mutex_lock (&skeleton->priv->lock);
-  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
-  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
-  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
-    {
-      ChangedProperty *cp = l->data;
-      GVariant *variant;
-      const GValue *cur_value;
-
-      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
-      if (!_g_value_equal (cur_value, &cp->orig_value))
-        {
-          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
-          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
-          g_variant_unref (variant);
-          num_changes++;
-        }
-    }
-  if (num_changes > 0)
-    {
-      GList *connections, *ll;
-      GVariant *signal_variant;
-      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.SensorString",
-                                           &builder, &invalidated_builder));
-      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
-      for (ll = connections; ll != NULL; ll = ll->next)
-        {
-          GDBusConnection *connection = ll->data;
-
-          g_dbus_connection_emit_signal (connection,
-                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
-                                         "org.freedesktop.DBus.Properties",
-                                         "PropertiesChanged",
-                                         signal_variant,
-                                         NULL);
-        }
-      g_variant_unref (signal_variant);
-      g_list_free_full (connections, g_object_unref);
-    }
-  else
-    {
-      g_variant_builder_clear (&builder);
-      g_variant_builder_clear (&invalidated_builder);
-    }
-  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
-  skeleton->priv->changed_properties = NULL;
-  skeleton->priv->changed_properties_idle_source = NULL;
-  g_mutex_unlock (&skeleton->priv->lock);
-  return FALSE;
-}
-
-static void
-_sensor_string_schedule_emit_changed (SensorStringSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
-{
-  ChangedProperty *cp;
-  GList *l;
-  cp = NULL;
-  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
-    {
-      ChangedProperty *i_cp = l->data;
-      if (i_cp->info == info)
-        {
-          cp = i_cp;
-          break;
-        }
-    }
-  if (cp == NULL)
-    {
-      cp = g_new0 (ChangedProperty, 1);
-      cp->prop_id = prop_id;
-      cp->info = info;
-      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
-      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
-      g_value_copy (orig_value, &cp->orig_value);
-    }
-}
-
-static void
-sensor_string_skeleton_notify (GObject      *object,
-  GParamSpec *pspec G_GNUC_UNUSED)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (object);
-  g_mutex_lock (&skeleton->priv->lock);
-  if (skeleton->priv->changed_properties != NULL &&
-      skeleton->priv->changed_properties_idle_source == NULL)
-    {
-      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
-      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
-      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _sensor_string_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
-      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
-      g_source_unref (skeleton->priv->changed_properties_idle_source);
-    }
-  g_mutex_unlock (&skeleton->priv->lock);
-}
-
-static void
-sensor_string_skeleton_set_property (GObject      *object,
-  guint         prop_id,
-  const GValue *value,
-  GParamSpec   *pspec)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
-  g_mutex_lock (&skeleton->priv->lock);
-  g_object_freeze_notify (object);
-  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
-    {
-      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
-        _sensor_string_schedule_emit_changed (skeleton, _sensor_string_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
-      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
-      g_object_notify_by_pspec (object, pspec);
-    }
-  g_mutex_unlock (&skeleton->priv->lock);
-  g_object_thaw_notify (object);
-}
-
-static void
-sensor_string_skeleton_init (SensorStringSkeleton *skeleton)
-{
-#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  skeleton->priv = sensor_string_skeleton_get_instance_private (skeleton);
-#else
-  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_SENSOR_STRING_SKELETON, SensorStringSkeletonPrivate);
-#endif
-
-  g_mutex_init (&skeleton->priv->lock);
-  skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 2);
-  g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
-  g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
-}
-
-static gint 
-sensor_string_skeleton_get_value (SensorString *object)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (object);
-  gint value;
-  g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[0]));
-  g_mutex_unlock (&skeleton->priv->lock);
-  return value;
-}
-
-static const gchar *
-sensor_string_skeleton_get_units (SensorString *object)
-{
-  SensorStringSkeleton *skeleton = SENSOR_STRING_SKELETON (object);
-  const gchar *value;
-  g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_string (&(skeleton->priv->properties[1]));
-  g_mutex_unlock (&skeleton->priv->lock);
-  return value;
-}
-
-static void
-sensor_string_skeleton_class_init (SensorStringSkeletonClass *klass)
-{
-  GObjectClass *gobject_class;
-  GDBusInterfaceSkeletonClass *skeleton_class;
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = sensor_string_skeleton_finalize;
-  gobject_class->get_property = sensor_string_skeleton_get_property;
-  gobject_class->set_property = sensor_string_skeleton_set_property;
-  gobject_class->notify       = sensor_string_skeleton_notify;
-
-
-  sensor_string_override_properties (gobject_class, 1);
-
-  skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
-  skeleton_class->get_info = sensor_string_skeleton_dbus_interface_get_info;
-  skeleton_class->get_properties = sensor_string_skeleton_dbus_interface_get_properties;
-  skeleton_class->flush = sensor_string_skeleton_dbus_interface_flush;
-  skeleton_class->get_vtable = sensor_string_skeleton_dbus_interface_get_vtable;
-
-#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (SensorStringSkeletonPrivate));
-#endif
-}
-
-static void
-sensor_string_skeleton_iface_init (SensorStringIface *iface)
-{
-  iface->changed = _sensor_string_on_signal_changed;
-  iface->get_value = sensor_string_skeleton_get_value;
-  iface->get_units = sensor_string_skeleton_get_units;
-}
-
-/**
- * sensor_string_skeleton_new:
- *
- * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link>.
- *
- * Returns: (transfer full) (type SensorStringSkeleton): The skeleton object.
- */
-SensorString *
-sensor_string_skeleton_new (void)
-{
-  return SENSOR_STRING (g_object_new (TYPE_SENSOR_STRING_SKELETON, NULL));
-}
-
-/* ------------------------------------------------------------------------
- * Code for interface org.openbmc.SensorIntegerThreshold
- * ------------------------------------------------------------------------
- */
-
-/**
- * SECTION:SensorIntegerThreshold
- * @title: SensorIntegerThreshold
- * @short_description: Generated C code for the org.openbmc.SensorIntegerThreshold D-Bus interface
- *
- * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link> D-Bus interface in C.
- */
-
-/* ---- Introspection data for org.openbmc.SensorIntegerThreshold ---- */
-
-static const _ExtendedGDBusArgInfo _sensor_integer_threshold_method_info_set_IN_ARG_lower_critical =
-{
-  {
-    -1,
-    (gchar *) "lower_critical",
-    (gchar *) "i",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo _sensor_integer_threshold_method_info_set_IN_ARG_lower_warning =
-{
-  {
-    -1,
-    (gchar *) "lower_warning",
-    (gchar *) "i",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo _sensor_integer_threshold_method_info_set_IN_ARG_upper_warning =
-{
-  {
-    -1,
-    (gchar *) "upper_warning",
-    (gchar *) "i",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo _sensor_integer_threshold_method_info_set_IN_ARG_upper_critical =
-{
-  {
-    -1,
-    (gchar *) "upper_critical",
-    (gchar *) "i",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _sensor_integer_threshold_method_info_set_IN_ARG_pointers[] =
-{
-  &_sensor_integer_threshold_method_info_set_IN_ARG_lower_critical,
-  &_sensor_integer_threshold_method_info_set_IN_ARG_lower_warning,
-  &_sensor_integer_threshold_method_info_set_IN_ARG_upper_warning,
-  &_sensor_integer_threshold_method_info_set_IN_ARG_upper_critical,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _sensor_integer_threshold_method_info_set =
-{
-  {
-    -1,
-    (gchar *) "set",
-    (GDBusArgInfo **) &_sensor_integer_threshold_method_info_set_IN_ARG_pointers,
-    NULL,
-    NULL
-  },
-  "handle-set",
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo _sensor_integer_threshold_method_info_get_state_OUT_ARG_state =
+static const _ExtendedGDBusArgInfo _sensor_threshold_method_info_get_state_OUT_ARG_state =
 {
   {
     -1,
     (gchar *) "state",
-    (gchar *) "i",
+    (gchar *) "y",
     NULL
   },
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _sensor_integer_threshold_method_info_get_state_OUT_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _sensor_threshold_method_info_get_state_OUT_ARG_pointers[] =
 {
-  &_sensor_integer_threshold_method_info_get_state_OUT_ARG_state,
+  &_sensor_threshold_method_info_get_state_OUT_ARG_state,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _sensor_integer_threshold_method_info_get_state =
+static const _ExtendedGDBusMethodInfo _sensor_threshold_method_info_get_state =
 {
   {
     -1,
     (gchar *) "getState",
     NULL,
-    (GDBusArgInfo **) &_sensor_integer_threshold_method_info_get_state_OUT_ARG_pointers,
+    (GDBusArgInfo **) &_sensor_threshold_method_info_get_state_OUT_ARG_pointers,
     NULL
   },
   "handle-get-state",
   FALSE
 };
 
-static const _ExtendedGDBusMethodInfo * const _sensor_integer_threshold_method_info_pointers[] =
+static const _ExtendedGDBusMethodInfo * const _sensor_threshold_method_info_pointers[] =
 {
-  &_sensor_integer_threshold_method_info_set,
-  &_sensor_integer_threshold_method_info_get_state,
+  &_sensor_threshold_method_info_get_state,
   NULL
 };
 
-static const _ExtendedGDBusSignalInfo _sensor_integer_threshold_signal_info_warning =
+static const _ExtendedGDBusSignalInfo _sensor_threshold_signal_info_warning =
 {
   {
     -1,
@@ -4184,7 +2220,7 @@ static const _ExtendedGDBusSignalInfo _sensor_integer_threshold_signal_info_warn
   "warning"
 };
 
-static const _ExtendedGDBusSignalInfo _sensor_integer_threshold_signal_info_critical =
+static const _ExtendedGDBusSignalInfo _sensor_threshold_signal_info_critical =
 {
   {
     -1,
@@ -4195,7 +2231,7 @@ static const _ExtendedGDBusSignalInfo _sensor_integer_threshold_signal_info_crit
   "critical"
 };
 
-static const _ExtendedGDBusSignalInfo _sensor_integer_threshold_signal_info_normal =
+static const _ExtendedGDBusSignalInfo _sensor_threshold_signal_info_normal =
 {
   {
     -1,
@@ -4206,20 +2242,20 @@ static const _ExtendedGDBusSignalInfo _sensor_integer_threshold_signal_info_norm
   "normal"
 };
 
-static const _ExtendedGDBusSignalInfo * const _sensor_integer_threshold_signal_info_pointers[] =
+static const _ExtendedGDBusSignalInfo * const _sensor_threshold_signal_info_pointers[] =
 {
-  &_sensor_integer_threshold_signal_info_warning,
-  &_sensor_integer_threshold_signal_info_critical,
-  &_sensor_integer_threshold_signal_info_normal,
+  &_sensor_threshold_signal_info_warning,
+  &_sensor_threshold_signal_info_critical,
+  &_sensor_threshold_signal_info_normal,
   NULL
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_lower_critical =
+static const _ExtendedGDBusPropertyInfo _sensor_threshold_property_info_lower_critical =
 {
   {
     -1,
     (gchar *) "lower_critical",
-    (gchar *) "i",
+    (gchar *) "v",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
@@ -4227,12 +2263,12 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_lower_warning =
+static const _ExtendedGDBusPropertyInfo _sensor_threshold_property_info_lower_warning =
 {
   {
     -1,
     (gchar *) "lower_warning",
-    (gchar *) "i",
+    (gchar *) "v",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
@@ -4240,12 +2276,12 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_upper_warning =
+static const _ExtendedGDBusPropertyInfo _sensor_threshold_property_info_upper_warning =
 {
   {
     -1,
     (gchar *) "upper_warning",
-    (gchar *) "i",
+    (gchar *) "v",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
@@ -4253,12 +2289,12 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_upper_critical =
+static const _ExtendedGDBusPropertyInfo _sensor_threshold_property_info_upper_critical =
 {
   {
     -1,
     (gchar *) "upper_critical",
-    (gchar *) "i",
+    (gchar *) "v",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
@@ -4266,12 +2302,12 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_state =
+static const _ExtendedGDBusPropertyInfo _sensor_threshold_property_info_state =
 {
   {
     -1,
     (gchar *) "state",
-    (gchar *) "i",
+    (gchar *) "y",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
     NULL
   },
@@ -4279,55 +2315,55 @@ static const _ExtendedGDBusPropertyInfo _sensor_integer_threshold_property_info_
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo * const _sensor_integer_threshold_property_info_pointers[] =
+static const _ExtendedGDBusPropertyInfo * const _sensor_threshold_property_info_pointers[] =
 {
-  &_sensor_integer_threshold_property_info_lower_critical,
-  &_sensor_integer_threshold_property_info_lower_warning,
-  &_sensor_integer_threshold_property_info_upper_warning,
-  &_sensor_integer_threshold_property_info_upper_critical,
-  &_sensor_integer_threshold_property_info_state,
+  &_sensor_threshold_property_info_lower_critical,
+  &_sensor_threshold_property_info_lower_warning,
+  &_sensor_threshold_property_info_upper_warning,
+  &_sensor_threshold_property_info_upper_critical,
+  &_sensor_threshold_property_info_state,
   NULL
 };
 
-static const _ExtendedGDBusInterfaceInfo _sensor_integer_threshold_interface_info =
+static const _ExtendedGDBusInterfaceInfo _sensor_threshold_interface_info =
 {
   {
     -1,
-    (gchar *) "org.openbmc.SensorIntegerThreshold",
-    (GDBusMethodInfo **) &_sensor_integer_threshold_method_info_pointers,
-    (GDBusSignalInfo **) &_sensor_integer_threshold_signal_info_pointers,
-    (GDBusPropertyInfo **) &_sensor_integer_threshold_property_info_pointers,
+    (gchar *) "org.openbmc.SensorThreshold",
+    (GDBusMethodInfo **) &_sensor_threshold_method_info_pointers,
+    (GDBusSignalInfo **) &_sensor_threshold_signal_info_pointers,
+    (GDBusPropertyInfo **) &_sensor_threshold_property_info_pointers,
     NULL
   },
-  "sensor-integer-threshold",
+  "sensor-threshold",
 };
 
 
 /**
- * sensor_integer_threshold_interface_info:
+ * sensor_threshold_interface_info:
  *
- * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link> D-Bus interface.
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link> D-Bus interface.
  *
  * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
  */
 GDBusInterfaceInfo *
-sensor_integer_threshold_interface_info (void)
+sensor_threshold_interface_info (void)
 {
-  return (GDBusInterfaceInfo *) &_sensor_integer_threshold_interface_info.parent_struct;
+  return (GDBusInterfaceInfo *) &_sensor_threshold_interface_info.parent_struct;
 }
 
 /**
- * sensor_integer_threshold_override_properties:
+ * sensor_threshold_override_properties:
  * @klass: The class structure for a #GObject<!-- -->-derived class.
  * @property_id_begin: The property id to assign to the first overridden property.
  *
- * Overrides all #GObject properties in the #SensorIntegerThreshold interface for a concrete class.
+ * Overrides all #GObject properties in the #SensorThreshold interface for a concrete class.
  * The properties are overridden in the order they are defined.
  *
  * Returns: The last property id.
  */
 guint
-sensor_integer_threshold_override_properties (GObjectClass *klass, guint property_id_begin)
+sensor_threshold_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "lower-critical");
   g_object_class_override_property (klass, property_id_begin++, "lower-warning");
@@ -4340,76 +2376,49 @@ sensor_integer_threshold_override_properties (GObjectClass *klass, guint propert
 
 
 /**
- * SensorIntegerThreshold:
+ * SensorThreshold:
  *
- * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link>.
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link>.
  */
 
 /**
- * SensorIntegerThresholdIface:
+ * SensorThresholdIface:
  * @parent_iface: The parent interface.
- * @handle_get_state: Handler for the #SensorIntegerThreshold::handle-get-state signal.
- * @handle_set: Handler for the #SensorIntegerThreshold::handle-set signal.
- * @get_lower_critical: Getter for the #SensorIntegerThreshold:lower-critical property.
- * @get_lower_warning: Getter for the #SensorIntegerThreshold:lower-warning property.
- * @get_state: Getter for the #SensorIntegerThreshold:state property.
- * @get_upper_critical: Getter for the #SensorIntegerThreshold:upper-critical property.
- * @get_upper_warning: Getter for the #SensorIntegerThreshold:upper-warning property.
- * @critical: Handler for the #SensorIntegerThreshold::critical signal.
- * @normal: Handler for the #SensorIntegerThreshold::normal signal.
- * @warning: Handler for the #SensorIntegerThreshold::warning signal.
+ * @handle_get_state: Handler for the #SensorThreshold::handle-get-state signal.
+ * @get_lower_critical: Getter for the #SensorThreshold:lower-critical property.
+ * @get_lower_warning: Getter for the #SensorThreshold:lower-warning property.
+ * @get_state: Getter for the #SensorThreshold:state property.
+ * @get_upper_critical: Getter for the #SensorThreshold:upper-critical property.
+ * @get_upper_warning: Getter for the #SensorThreshold:upper-warning property.
+ * @critical: Handler for the #SensorThreshold::critical signal.
+ * @normal: Handler for the #SensorThreshold::normal signal.
+ * @warning: Handler for the #SensorThreshold::warning signal.
  *
- * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link>.
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link>.
  */
 
-typedef SensorIntegerThresholdIface SensorIntegerThresholdInterface;
-G_DEFINE_INTERFACE (SensorIntegerThreshold, sensor_integer_threshold, G_TYPE_OBJECT);
+typedef SensorThresholdIface SensorThresholdInterface;
+G_DEFINE_INTERFACE (SensorThreshold, sensor_threshold, G_TYPE_OBJECT);
 
 static void
-sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
+sensor_threshold_default_init (SensorThresholdIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
   /**
-   * SensorIntegerThreshold::handle-set:
-   * @object: A #SensorIntegerThreshold.
-   * @invocation: A #GDBusMethodInvocation.
-   * @arg_lower_critical: Argument passed by remote caller.
-   * @arg_lower_warning: Argument passed by remote caller.
-   * @arg_upper_warning: Argument passed by remote caller.
-   * @arg_upper_critical: Argument passed by remote caller.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.set">set()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_threshold_complete_set() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-set",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerThresholdIface, handle_set),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    5,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
-
-  /**
-   * SensorIntegerThreshold::handle-get-state:
-   * @object: A #SensorIntegerThreshold.
+   * SensorThreshold::handle-get-state:
+   * @object: A #SensorThreshold.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.getState">getState()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorThreshold.getState">getState()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_integer_threshold_complete_get_state() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_threshold_complete_get_state() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
   g_signal_new ("handle-get-state",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerThresholdIface, handle_get_state),
+    G_STRUCT_OFFSET (SensorThresholdIface, handle_get_state),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -4419,17 +2428,17 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
 
   /* GObject signals for received D-Bus signals: */
   /**
-   * SensorIntegerThreshold::warning:
-   * @object: A #SensorIntegerThreshold.
+   * SensorThreshold::warning:
+   * @object: A #SensorThreshold.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorIntegerThreshold.Warning">"Warning"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorThreshold.Warning">"Warning"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
   g_signal_new ("warning",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerThresholdIface, warning),
+    G_STRUCT_OFFSET (SensorThresholdIface, warning),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -4437,17 +2446,17 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
     0);
 
   /**
-   * SensorIntegerThreshold::critical:
-   * @object: A #SensorIntegerThreshold.
+   * SensorThreshold::critical:
+   * @object: A #SensorThreshold.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorIntegerThreshold.Critical">"Critical"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorThreshold.Critical">"Critical"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
   g_signal_new ("critical",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerThresholdIface, critical),
+    G_STRUCT_OFFSET (SensorThresholdIface, critical),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -4455,17 +2464,17 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
     0);
 
   /**
-   * SensorIntegerThreshold::normal:
-   * @object: A #SensorIntegerThreshold.
+   * SensorThreshold::normal:
+   * @object: A #SensorThreshold.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorIntegerThreshold.Normal">"Normal"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorThreshold.Normal">"Normal"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
   g_signal_new ("normal",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorIntegerThresholdIface, normal),
+    G_STRUCT_OFFSET (SensorThresholdIface, normal),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -4474,378 +2483,342 @@ sensor_integer_threshold_default_init (SensorIntegerThresholdIface *iface)
 
   /* GObject properties for D-Bus properties: */
   /**
-   * SensorIntegerThreshold:lower-critical:
+   * SensorThreshold:lower-critical:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_critical">"lower_critical"</link>.
-   *
-   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
-   */
-  g_object_interface_install_property (iface,
-    g_param_spec_int ("lower-critical", "lower_critical", "lower_critical", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  /**
-   * SensorIntegerThreshold:lower-warning:
-   *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_warning">"lower_warning"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_critical">"lower_critical"</link>.
    *
    * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_int ("lower-warning", "lower_warning", "lower_warning", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_variant ("lower-critical", "lower_critical", "lower_critical", G_VARIANT_TYPE ("v"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * SensorIntegerThreshold:upper-warning:
+   * SensorThreshold:lower-warning:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_warning">"upper_warning"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_warning">"lower_warning"</link>.
    *
    * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_int ("upper-warning", "upper_warning", "upper_warning", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_variant ("lower-warning", "lower_warning", "lower_warning", G_VARIANT_TYPE ("v"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * SensorIntegerThreshold:upper-critical:
+   * SensorThreshold:upper-warning:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_critical">"upper_critical"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_warning">"upper_warning"</link>.
    *
    * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_int ("upper-critical", "upper_critical", "upper_critical", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_variant ("upper-warning", "upper_warning", "upper_warning", G_VARIANT_TYPE ("v"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * SensorIntegerThreshold:state:
+   * SensorThreshold:upper-critical:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.state">"state"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_critical">"upper_critical"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_variant ("upper-critical", "upper_critical", "upper_critical", G_VARIANT_TYPE ("v"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SensorThreshold:state:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorThreshold.state">"state"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_int ("state", "state", "state", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_uchar ("state", "state", "state", 0, 255, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
- * sensor_integer_threshold_get_lower_critical: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_get_lower_critical: (skip)
+ * @object: A #SensorThreshold.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_critical">"lower_critical"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_critical">"lower_critical"</link> D-Bus property.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
- * Returns: The property value.
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_threshold_dup_lower_critical() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
  */
-gint 
-sensor_integer_threshold_get_lower_critical (SensorIntegerThreshold *object)
+GVariant *
+sensor_threshold_get_lower_critical (SensorThreshold *object)
 {
-  return SENSOR_INTEGER_THRESHOLD_GET_IFACE (object)->get_lower_critical (object);
+  return SENSOR_THRESHOLD_GET_IFACE (object)->get_lower_critical (object);
 }
 
 /**
- * sensor_integer_threshold_set_lower_critical: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_dup_lower_critical: (skip)
+ * @object: A #SensorThreshold.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_critical">"lower_critical"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
+ */
+GVariant *
+sensor_threshold_dup_lower_critical (SensorThreshold *object)
+{
+  GVariant *value;
+  g_object_get (G_OBJECT (object), "lower-critical", &value, NULL);
+  return value;
+}
+
+/**
+ * sensor_threshold_set_lower_critical: (skip)
+ * @object: A #SensorThreshold.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_critical">"lower_critical"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_critical">"lower_critical"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
-sensor_integer_threshold_set_lower_critical (SensorIntegerThreshold *object, gint value)
+sensor_threshold_set_lower_critical (SensorThreshold *object, GVariant *value)
 {
   g_object_set (G_OBJECT (object), "lower-critical", value, NULL);
 }
 
 /**
- * sensor_integer_threshold_get_lower_warning: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_get_lower_warning: (skip)
+ * @object: A #SensorThreshold.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_warning">"lower_warning"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_warning">"lower_warning"</link> D-Bus property.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
- * Returns: The property value.
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_threshold_dup_lower_warning() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
  */
-gint 
-sensor_integer_threshold_get_lower_warning (SensorIntegerThreshold *object)
+GVariant *
+sensor_threshold_get_lower_warning (SensorThreshold *object)
 {
-  return SENSOR_INTEGER_THRESHOLD_GET_IFACE (object)->get_lower_warning (object);
+  return SENSOR_THRESHOLD_GET_IFACE (object)->get_lower_warning (object);
 }
 
 /**
- * sensor_integer_threshold_set_lower_warning: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_dup_lower_warning: (skip)
+ * @object: A #SensorThreshold.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_warning">"lower_warning"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
+ */
+GVariant *
+sensor_threshold_dup_lower_warning (SensorThreshold *object)
+{
+  GVariant *value;
+  g_object_get (G_OBJECT (object), "lower-warning", &value, NULL);
+  return value;
+}
+
+/**
+ * sensor_threshold_set_lower_warning: (skip)
+ * @object: A #SensorThreshold.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.lower_warning">"lower_warning"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorThreshold.lower_warning">"lower_warning"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
-sensor_integer_threshold_set_lower_warning (SensorIntegerThreshold *object, gint value)
+sensor_threshold_set_lower_warning (SensorThreshold *object, GVariant *value)
 {
   g_object_set (G_OBJECT (object), "lower-warning", value, NULL);
 }
 
 /**
- * sensor_integer_threshold_get_upper_warning: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_get_upper_warning: (skip)
+ * @object: A #SensorThreshold.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_warning">"upper_warning"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_warning">"upper_warning"</link> D-Bus property.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
- * Returns: The property value.
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_threshold_dup_upper_warning() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
  */
-gint 
-sensor_integer_threshold_get_upper_warning (SensorIntegerThreshold *object)
+GVariant *
+sensor_threshold_get_upper_warning (SensorThreshold *object)
 {
-  return SENSOR_INTEGER_THRESHOLD_GET_IFACE (object)->get_upper_warning (object);
+  return SENSOR_THRESHOLD_GET_IFACE (object)->get_upper_warning (object);
 }
 
 /**
- * sensor_integer_threshold_set_upper_warning: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_dup_upper_warning: (skip)
+ * @object: A #SensorThreshold.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_warning">"upper_warning"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
+ */
+GVariant *
+sensor_threshold_dup_upper_warning (SensorThreshold *object)
+{
+  GVariant *value;
+  g_object_get (G_OBJECT (object), "upper-warning", &value, NULL);
+  return value;
+}
+
+/**
+ * sensor_threshold_set_upper_warning: (skip)
+ * @object: A #SensorThreshold.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_warning">"upper_warning"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_warning">"upper_warning"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
-sensor_integer_threshold_set_upper_warning (SensorIntegerThreshold *object, gint value)
+sensor_threshold_set_upper_warning (SensorThreshold *object, GVariant *value)
 {
   g_object_set (G_OBJECT (object), "upper-warning", value, NULL);
 }
 
 /**
- * sensor_integer_threshold_get_upper_critical: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_get_upper_critical: (skip)
+ * @object: A #SensorThreshold.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_critical">"upper_critical"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_critical">"upper_critical"</link> D-Bus property.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
- * Returns: The property value.
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use sensor_threshold_dup_upper_critical() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
  */
-gint 
-sensor_integer_threshold_get_upper_critical (SensorIntegerThreshold *object)
+GVariant *
+sensor_threshold_get_upper_critical (SensorThreshold *object)
 {
-  return SENSOR_INTEGER_THRESHOLD_GET_IFACE (object)->get_upper_critical (object);
+  return SENSOR_THRESHOLD_GET_IFACE (object)->get_upper_critical (object);
 }
 
 /**
- * sensor_integer_threshold_set_upper_critical: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_dup_upper_critical: (skip)
+ * @object: A #SensorThreshold.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_critical">"upper_critical"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
+ */
+GVariant *
+sensor_threshold_dup_upper_critical (SensorThreshold *object)
+{
+  GVariant *value;
+  g_object_get (G_OBJECT (object), "upper-critical", &value, NULL);
+  return value;
+}
+
+/**
+ * sensor_threshold_set_upper_critical: (skip)
+ * @object: A #SensorThreshold.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.upper_critical">"upper_critical"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorThreshold.upper_critical">"upper_critical"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
-sensor_integer_threshold_set_upper_critical (SensorIntegerThreshold *object, gint value)
+sensor_threshold_set_upper_critical (SensorThreshold *object, GVariant *value)
 {
   g_object_set (G_OBJECT (object), "upper-critical", value, NULL);
 }
 
 /**
- * sensor_integer_threshold_get_state: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_get_state: (skip)
+ * @object: A #SensorThreshold.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.state">"state"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorThreshold.state">"state"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
-gint 
-sensor_integer_threshold_get_state (SensorIntegerThreshold *object)
+guchar 
+sensor_threshold_get_state (SensorThreshold *object)
 {
-  return SENSOR_INTEGER_THRESHOLD_GET_IFACE (object)->get_state (object);
+  return SENSOR_THRESHOLD_GET_IFACE (object)->get_state (object);
 }
 
 /**
- * sensor_integer_threshold_set_state: (skip)
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_set_state: (skip)
+ * @object: A #SensorThreshold.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorIntegerThreshold.state">"state"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorThreshold.state">"state"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-sensor_integer_threshold_set_state (SensorIntegerThreshold *object, gint value)
+sensor_threshold_set_state (SensorThreshold *object, guchar value)
 {
   g_object_set (G_OBJECT (object), "state", value, NULL);
 }
 
 /**
- * sensor_integer_threshold_emit_warning:
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_emit_warning:
+ * @object: A #SensorThreshold.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-SensorIntegerThreshold.Warning">"Warning"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorThreshold.Warning">"Warning"</link> D-Bus signal.
  */
 void
-sensor_integer_threshold_emit_warning (
-    SensorIntegerThreshold *object)
+sensor_threshold_emit_warning (
+    SensorThreshold *object)
 {
   g_signal_emit_by_name (object, "warning");
 }
 
 /**
- * sensor_integer_threshold_emit_critical:
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_emit_critical:
+ * @object: A #SensorThreshold.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-SensorIntegerThreshold.Critical">"Critical"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorThreshold.Critical">"Critical"</link> D-Bus signal.
  */
 void
-sensor_integer_threshold_emit_critical (
-    SensorIntegerThreshold *object)
+sensor_threshold_emit_critical (
+    SensorThreshold *object)
 {
   g_signal_emit_by_name (object, "critical");
 }
 
 /**
- * sensor_integer_threshold_emit_normal:
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_emit_normal:
+ * @object: A #SensorThreshold.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-SensorIntegerThreshold.Normal">"Normal"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorThreshold.Normal">"Normal"</link> D-Bus signal.
  */
 void
-sensor_integer_threshold_emit_normal (
-    SensorIntegerThreshold *object)
+sensor_threshold_emit_normal (
+    SensorThreshold *object)
 {
   g_signal_emit_by_name (object, "normal");
 }
 
 /**
- * sensor_integer_threshold_call_set:
- * @proxy: A #SensorIntegerThresholdProxy.
- * @arg_lower_critical: Argument to pass with the method invocation.
- * @arg_lower_warning: Argument to pass with the method invocation.
- * @arg_upper_warning: Argument to pass with the method invocation.
- * @arg_upper_critical: Argument to pass with the method invocation.
+ * sensor_threshold_call_get_state:
+ * @proxy: A #SensorThresholdProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.set">set()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorThreshold.getState">getState()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_threshold_call_set_finish() to get the result of the operation.
+ * You can then call sensor_threshold_call_get_state_finish() to get the result of the operation.
  *
- * See sensor_integer_threshold_call_set_sync() for the synchronous, blocking version of this method.
+ * See sensor_threshold_call_get_state_sync() for the synchronous, blocking version of this method.
  */
 void
-sensor_integer_threshold_call_set (
-    SensorIntegerThreshold *proxy,
-    gint arg_lower_critical,
-    gint arg_lower_warning,
-    gint arg_upper_warning,
-    gint arg_upper_critical,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "set",
-    g_variant_new ("(iiii)",
-                   arg_lower_critical,
-                   arg_lower_warning,
-                   arg_upper_warning,
-                   arg_upper_critical),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * sensor_integer_threshold_call_set_finish:
- * @proxy: A #SensorIntegerThresholdProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_threshold_call_set().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with sensor_integer_threshold_call_set().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_integer_threshold_call_set_finish (
-    SensorIntegerThreshold *proxy,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_integer_threshold_call_set_sync:
- * @proxy: A #SensorIntegerThresholdProxy.
- * @arg_lower_critical: Argument to pass with the method invocation.
- * @arg_lower_warning: Argument to pass with the method invocation.
- * @arg_upper_warning: Argument to pass with the method invocation.
- * @arg_upper_critical: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.set">set()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See sensor_integer_threshold_call_set() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_integer_threshold_call_set_sync (
-    SensorIntegerThreshold *proxy,
-    gint arg_lower_critical,
-    gint arg_lower_warning,
-    gint arg_upper_warning,
-    gint arg_upper_critical,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "set",
-    g_variant_new ("(iiii)",
-                   arg_lower_critical,
-                   arg_lower_warning,
-                   arg_upper_warning,
-                   arg_upper_critical),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_integer_threshold_call_get_state:
- * @proxy: A #SensorIntegerThresholdProxy.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.getState">getState()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_threshold_call_get_state_finish() to get the result of the operation.
- *
- * See sensor_integer_threshold_call_get_state_sync() for the synchronous, blocking version of this method.
- */
-void
-sensor_integer_threshold_call_get_state (
-    SensorIntegerThreshold *proxy,
+sensor_threshold_call_get_state (
+    SensorThreshold *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
@@ -4861,20 +2834,20 @@ sensor_integer_threshold_call_get_state (
 }
 
 /**
- * sensor_integer_threshold_call_get_state_finish:
- * @proxy: A #SensorIntegerThresholdProxy.
+ * sensor_threshold_call_get_state_finish:
+ * @proxy: A #SensorThresholdProxy.
  * @out_state: (out): Return location for return parameter or %NULL to ignore.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_threshold_call_get_state().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_threshold_call_get_state().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with sensor_integer_threshold_call_get_state().
+ * Finishes an operation started with sensor_threshold_call_get_state().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_threshold_call_get_state_finish (
-    SensorIntegerThreshold *proxy,
-    gint *out_state,
+sensor_threshold_call_get_state_finish (
+    SensorThreshold *proxy,
+    guchar *out_state,
     GAsyncResult *res,
     GError **error)
 {
@@ -4883,7 +2856,7 @@ sensor_integer_threshold_call_get_state_finish (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "(i)",
+                 "(y)",
                  out_state);
   g_variant_unref (_ret);
 _out:
@@ -4891,22 +2864,22 @@ _out:
 }
 
 /**
- * sensor_integer_threshold_call_get_state_sync:
- * @proxy: A #SensorIntegerThresholdProxy.
+ * sensor_threshold_call_get_state_sync:
+ * @proxy: A #SensorThresholdProxy.
  * @out_state: (out): Return location for return parameter or %NULL to ignore.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.getState">getState()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorThreshold.getState">getState()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_threshold_call_get_state() for the asynchronous version of this method.
+ * See sensor_threshold_call_get_state() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-sensor_integer_threshold_call_get_state_sync (
-    SensorIntegerThreshold *proxy,
-    gint *out_state,
+sensor_threshold_call_get_state_sync (
+    SensorThreshold *proxy,
+    guchar *out_state,
     GCancellable *cancellable,
     GError **error)
 {
@@ -4921,7 +2894,7 @@ sensor_integer_threshold_call_get_state_sync (
   if (_ret == NULL)
     goto _out;
   g_variant_get (_ret,
-                 "(i)",
+                 "(y)",
                  out_state);
   g_variant_unref (_ret);
 _out:
@@ -4929,86 +2902,68 @@ _out:
 }
 
 /**
- * sensor_integer_threshold_complete_set:
- * @object: A #SensorIntegerThreshold.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.set">set()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-sensor_integer_threshold_complete_set (
-    SensorIntegerThreshold *object,
-    GDBusMethodInvocation *invocation)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
-}
-
-/**
- * sensor_integer_threshold_complete_get_state:
- * @object: A #SensorIntegerThreshold.
+ * sensor_threshold_complete_get_state:
+ * @object: A #SensorThreshold.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  * @state: Parameter to return.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorIntegerThreshold.getState">getState()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorThreshold.getState">getState()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-sensor_integer_threshold_complete_get_state (
-    SensorIntegerThreshold *object,
+sensor_threshold_complete_get_state (
+    SensorThreshold *object,
     GDBusMethodInvocation *invocation,
-    gint state)
+    guchar state)
 {
   g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("(i)",
+    g_variant_new ("(y)",
                    state));
 }
 
 /* ------------------------------------------------------------------------ */
 
 /**
- * SensorIntegerThresholdProxy:
+ * SensorThresholdProxy:
  *
- * The #SensorIntegerThresholdProxy structure contains only private data and should only be accessed using the provided API.
+ * The #SensorThresholdProxy structure contains only private data and should only be accessed using the provided API.
  */
 
 /**
- * SensorIntegerThresholdProxyClass:
+ * SensorThresholdProxyClass:
  * @parent_class: The parent class.
  *
- * Class structure for #SensorIntegerThresholdProxy.
+ * Class structure for #SensorThresholdProxy.
  */
 
-struct _SensorIntegerThresholdProxyPrivate
+struct _SensorThresholdProxyPrivate
 {
   GData *qdata;
 };
 
-static void sensor_integer_threshold_proxy_iface_init (SensorIntegerThresholdIface *iface);
+static void sensor_threshold_proxy_iface_init (SensorThresholdIface *iface);
 
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerThresholdProxy, sensor_integer_threshold_proxy, G_TYPE_DBUS_PROXY,
-                         G_ADD_PRIVATE (SensorIntegerThresholdProxy)
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER_THRESHOLD, sensor_integer_threshold_proxy_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorThresholdProxy, sensor_threshold_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (SensorThresholdProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_THRESHOLD, sensor_threshold_proxy_iface_init));
 
 #else
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerThresholdProxy, sensor_integer_threshold_proxy, G_TYPE_DBUS_PROXY,
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER_THRESHOLD, sensor_integer_threshold_proxy_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorThresholdProxy, sensor_threshold_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_THRESHOLD, sensor_threshold_proxy_iface_init));
 
 #endif
 static void
-sensor_integer_threshold_proxy_finalize (GObject *object)
+sensor_threshold_proxy_finalize (GObject *object)
 {
-  SensorIntegerThresholdProxy *proxy = SENSOR_INTEGER_THRESHOLD_PROXY (object);
+  SensorThresholdProxy *proxy = SENSOR_THRESHOLD_PROXY (object);
   g_datalist_clear (&proxy->priv->qdata);
-  G_OBJECT_CLASS (sensor_integer_threshold_proxy_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sensor_threshold_proxy_parent_class)->finalize (object);
 }
 
 static void
-sensor_integer_threshold_proxy_get_property (GObject      *object,
+sensor_threshold_proxy_get_property (GObject      *object,
   guint         prop_id,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
@@ -5016,7 +2971,7 @@ sensor_integer_threshold_proxy_get_property (GObject      *object,
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
   g_assert (prop_id != 0 && prop_id - 1 < 5);
-  info = _sensor_integer_threshold_property_info_pointers[prop_id - 1];
+  info = _sensor_threshold_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
     {
@@ -5032,7 +2987,7 @@ sensor_integer_threshold_proxy_get_property (GObject      *object,
 }
 
 static void
-sensor_integer_threshold_proxy_set_property_cb (GDBusProxy *proxy,
+sensor_threshold_proxy_set_property_cb (GDBusProxy *proxy,
   GAsyncResult *res,
   gpointer      user_data)
 {
@@ -5043,7 +2998,7 @@ sensor_integer_threshold_proxy_set_property_cb (GDBusProxy *proxy,
   _ret = g_dbus_proxy_call_finish (proxy, res, &error);
   if (!_ret)
     {
-      g_warning ("Error setting property '%s' on interface org.openbmc.SensorIntegerThreshold: %s (%s, %d)",
+      g_warning ("Error setting property '%s' on interface org.openbmc.SensorThreshold: %s (%s, %d)",
                  info->parent_struct.name, 
                  error->message, g_quark_to_string (error->domain), error->code);
       g_error_free (error);
@@ -5055,7 +3010,7 @@ sensor_integer_threshold_proxy_set_property_cb (GDBusProxy *proxy,
 }
 
 static void
-sensor_integer_threshold_proxy_set_property (GObject      *object,
+sensor_threshold_proxy_set_property (GObject      *object,
   guint         prop_id,
   const GValue *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
@@ -5063,19 +3018,19 @@ sensor_integer_threshold_proxy_set_property (GObject      *object,
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
   g_assert (prop_id != 0 && prop_id - 1 < 5);
-  info = _sensor_integer_threshold_property_info_pointers[prop_id - 1];
+  info = _sensor_threshold_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
     "org.freedesktop.DBus.Properties.Set",
-    g_variant_new ("(ssv)", "org.openbmc.SensorIntegerThreshold", info->parent_struct.name, variant),
+    g_variant_new ("(ssv)", "org.openbmc.SensorThreshold", info->parent_struct.name, variant),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
-    NULL, (GAsyncReadyCallback) sensor_integer_threshold_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+    NULL, (GAsyncReadyCallback) sensor_threshold_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
   g_variant_unref (variant);
 }
 
 static void
-sensor_integer_threshold_proxy_g_signal (GDBusProxy *proxy,
+sensor_threshold_proxy_g_signal (GDBusProxy *proxy,
   const gchar *sender_name G_GNUC_UNUSED,
   const gchar *signal_name,
   GVariant *parameters)
@@ -5087,12 +3042,12 @@ sensor_integer_threshold_proxy_g_signal (GDBusProxy *proxy,
   guint num_params;
   guint n;
   guint signal_id;
-  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_sensor_integer_threshold_interface_info.parent_struct, signal_name);
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_sensor_threshold_interface_info.parent_struct, signal_name);
   if (info == NULL)
     return;
   num_params = g_variant_n_children (parameters);
   paramv = g_new0 (GValue, num_params + 1);
-  g_value_init (&paramv[0], TYPE_SENSOR_INTEGER_THRESHOLD);
+  g_value_init (&paramv[0], TYPE_SENSOR_THRESHOLD);
   g_value_set_object (&paramv[0], proxy);
   g_variant_iter_init (&iter, parameters);
   n = 1;
@@ -5109,7 +3064,7 @@ sensor_integer_threshold_proxy_g_signal (GDBusProxy *proxy,
         g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
       g_variant_unref (child);
     }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_INTEGER_THRESHOLD);
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_THRESHOLD);
   g_signal_emitv (paramv, signal_id, 0, NULL);
   for (n = 0; n < num_params + 1; n++)
     g_value_unset (&paramv[n]);
@@ -5117,11 +3072,11 @@ sensor_integer_threshold_proxy_g_signal (GDBusProxy *proxy,
 }
 
 static void
-sensor_integer_threshold_proxy_g_properties_changed (GDBusProxy *_proxy,
+sensor_threshold_proxy_g_properties_changed (GDBusProxy *_proxy,
   GVariant *changed_properties,
   const gchar *const *invalidated_properties)
 {
-  SensorIntegerThresholdProxy *proxy = SENSOR_INTEGER_THRESHOLD_PROXY (_proxy);
+  SensorThresholdProxy *proxy = SENSOR_THRESHOLD_PROXY (_proxy);
   guint n;
   const gchar *key;
   GVariantIter *iter;
@@ -5129,7 +3084,7 @@ sensor_integer_threshold_proxy_g_properties_changed (GDBusProxy *_proxy,
   g_variant_get (changed_properties, "a{sv}", &iter);
   while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
     {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_threshold_interface_info.parent_struct, key);
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_threshold_interface_info.parent_struct, key);
       g_datalist_remove_data (&proxy->priv->qdata, key);
       if (info != NULL)
         g_object_notify (G_OBJECT (proxy), info->hyphen_name);
@@ -5137,134 +3092,126 @@ sensor_integer_threshold_proxy_g_properties_changed (GDBusProxy *_proxy,
   g_variant_iter_free (iter);
   for (n = 0; invalidated_properties[n] != NULL; n++)
     {
-      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_threshold_interface_info.parent_struct, invalidated_properties[n]);
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_threshold_interface_info.parent_struct, invalidated_properties[n]);
       g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
       if (info != NULL)
         g_object_notify (G_OBJECT (proxy), info->hyphen_name);
     }
 }
 
-static gint 
-sensor_integer_threshold_proxy_get_lower_critical (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_proxy_get_lower_critical (SensorThreshold *object)
 {
-  SensorIntegerThresholdProxy *proxy = SENSOR_INTEGER_THRESHOLD_PROXY (object);
+  SensorThresholdProxy *proxy = SENSOR_THRESHOLD_PROXY (object);
   GVariant *variant;
-  gint value = 0;
+  GVariant *value = NULL;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "lower_critical");
+  value = variant;
   if (variant != NULL)
-    {
-      value = g_variant_get_int32 (variant);
-      g_variant_unref (variant);
-    }
+    g_variant_unref (variant);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_proxy_get_lower_warning (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_proxy_get_lower_warning (SensorThreshold *object)
 {
-  SensorIntegerThresholdProxy *proxy = SENSOR_INTEGER_THRESHOLD_PROXY (object);
+  SensorThresholdProxy *proxy = SENSOR_THRESHOLD_PROXY (object);
   GVariant *variant;
-  gint value = 0;
+  GVariant *value = NULL;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "lower_warning");
+  value = variant;
   if (variant != NULL)
-    {
-      value = g_variant_get_int32 (variant);
-      g_variant_unref (variant);
-    }
+    g_variant_unref (variant);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_proxy_get_upper_warning (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_proxy_get_upper_warning (SensorThreshold *object)
 {
-  SensorIntegerThresholdProxy *proxy = SENSOR_INTEGER_THRESHOLD_PROXY (object);
+  SensorThresholdProxy *proxy = SENSOR_THRESHOLD_PROXY (object);
   GVariant *variant;
-  gint value = 0;
+  GVariant *value = NULL;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "upper_warning");
+  value = variant;
   if (variant != NULL)
-    {
-      value = g_variant_get_int32 (variant);
-      g_variant_unref (variant);
-    }
+    g_variant_unref (variant);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_proxy_get_upper_critical (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_proxy_get_upper_critical (SensorThreshold *object)
 {
-  SensorIntegerThresholdProxy *proxy = SENSOR_INTEGER_THRESHOLD_PROXY (object);
+  SensorThresholdProxy *proxy = SENSOR_THRESHOLD_PROXY (object);
   GVariant *variant;
-  gint value = 0;
+  GVariant *value = NULL;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "upper_critical");
+  value = variant;
   if (variant != NULL)
-    {
-      value = g_variant_get_int32 (variant);
-      g_variant_unref (variant);
-    }
+    g_variant_unref (variant);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_proxy_get_state (SensorIntegerThreshold *object)
+static guchar 
+sensor_threshold_proxy_get_state (SensorThreshold *object)
 {
-  SensorIntegerThresholdProxy *proxy = SENSOR_INTEGER_THRESHOLD_PROXY (object);
+  SensorThresholdProxy *proxy = SENSOR_THRESHOLD_PROXY (object);
   GVariant *variant;
-  gint value = 0;
+  guchar value = 0;
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "state");
   if (variant != NULL)
     {
-      value = g_variant_get_int32 (variant);
+      value = g_variant_get_byte (variant);
       g_variant_unref (variant);
     }
   return value;
 }
 
 static void
-sensor_integer_threshold_proxy_init (SensorIntegerThresholdProxy *proxy)
+sensor_threshold_proxy_init (SensorThresholdProxy *proxy)
 {
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  proxy->priv = sensor_integer_threshold_proxy_get_instance_private (proxy);
+  proxy->priv = sensor_threshold_proxy_get_instance_private (proxy);
 #else
-  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, SensorIntegerThresholdProxyPrivate);
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_SENSOR_THRESHOLD_PROXY, SensorThresholdProxyPrivate);
 #endif
 
-  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), sensor_integer_threshold_interface_info ());
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), sensor_threshold_interface_info ());
 }
 
 static void
-sensor_integer_threshold_proxy_class_init (SensorIntegerThresholdProxyClass *klass)
+sensor_threshold_proxy_class_init (SensorThresholdProxyClass *klass)
 {
   GObjectClass *gobject_class;
   GDBusProxyClass *proxy_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize     = sensor_integer_threshold_proxy_finalize;
-  gobject_class->get_property = sensor_integer_threshold_proxy_get_property;
-  gobject_class->set_property = sensor_integer_threshold_proxy_set_property;
+  gobject_class->finalize     = sensor_threshold_proxy_finalize;
+  gobject_class->get_property = sensor_threshold_proxy_get_property;
+  gobject_class->set_property = sensor_threshold_proxy_set_property;
 
   proxy_class = G_DBUS_PROXY_CLASS (klass);
-  proxy_class->g_signal = sensor_integer_threshold_proxy_g_signal;
-  proxy_class->g_properties_changed = sensor_integer_threshold_proxy_g_properties_changed;
+  proxy_class->g_signal = sensor_threshold_proxy_g_signal;
+  proxy_class->g_properties_changed = sensor_threshold_proxy_g_properties_changed;
 
-  sensor_integer_threshold_override_properties (gobject_class, 1);
+  sensor_threshold_override_properties (gobject_class, 1);
 
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (SensorIntegerThresholdProxyPrivate));
+  g_type_class_add_private (klass, sizeof (SensorThresholdProxyPrivate));
 #endif
 }
 
 static void
-sensor_integer_threshold_proxy_iface_init (SensorIntegerThresholdIface *iface)
+sensor_threshold_proxy_iface_init (SensorThresholdIface *iface)
 {
-  iface->get_lower_critical = sensor_integer_threshold_proxy_get_lower_critical;
-  iface->get_lower_warning = sensor_integer_threshold_proxy_get_lower_warning;
-  iface->get_upper_warning = sensor_integer_threshold_proxy_get_upper_warning;
-  iface->get_upper_critical = sensor_integer_threshold_proxy_get_upper_critical;
-  iface->get_state = sensor_integer_threshold_proxy_get_state;
+  iface->get_lower_critical = sensor_threshold_proxy_get_lower_critical;
+  iface->get_lower_warning = sensor_threshold_proxy_get_lower_warning;
+  iface->get_upper_warning = sensor_threshold_proxy_get_upper_warning;
+  iface->get_upper_critical = sensor_threshold_proxy_get_upper_critical;
+  iface->get_state = sensor_threshold_proxy_get_state;
 }
 
 /**
- * sensor_integer_threshold_proxy_new:
+ * sensor_threshold_proxy_new:
  * @connection: A #GDBusConnection.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
@@ -5273,15 +3220,15 @@ sensor_integer_threshold_proxy_iface_init (SensorIntegerThresholdIface *iface)
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link>. See g_dbus_proxy_new() for more details.
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link>. See g_dbus_proxy_new() for more details.
  *
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_threshold_proxy_new_finish() to get the result of the operation.
+ * You can then call sensor_threshold_proxy_new_finish() to get the result of the operation.
  *
- * See sensor_integer_threshold_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ * See sensor_threshold_proxy_new_sync() for the synchronous, blocking version of this constructor.
  */
 void
-sensor_integer_threshold_proxy_new (
+sensor_threshold_proxy_new (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -5290,20 +3237,20 @@ sensor_integer_threshold_proxy_new (
     GAsyncReadyCallback  callback,
     gpointer             user_data)
 {
-  g_async_initable_new_async (TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIntegerThreshold", NULL);
+  g_async_initable_new_async (TYPE_SENSOR_THRESHOLD_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorThreshold", NULL);
 }
 
 /**
- * sensor_integer_threshold_proxy_new_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_threshold_proxy_new().
+ * sensor_threshold_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_threshold_proxy_new().
  * @error: Return location for error or %NULL
  *
- * Finishes an operation started with sensor_integer_threshold_proxy_new().
+ * Finishes an operation started with sensor_threshold_proxy_new().
  *
- * Returns: (transfer full) (type SensorIntegerThresholdProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorThresholdProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorIntegerThreshold *
-sensor_integer_threshold_proxy_new_finish (
+SensorThreshold *
+sensor_threshold_proxy_new_finish (
     GAsyncResult        *res,
     GError             **error)
 {
@@ -5313,13 +3260,13 @@ sensor_integer_threshold_proxy_new_finish (
   ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
   g_object_unref (source_object);
   if (ret != NULL)
-    return SENSOR_INTEGER_THRESHOLD (ret);
+    return SENSOR_THRESHOLD (ret);
   else
     return NULL;
 }
 
 /**
- * sensor_integer_threshold_proxy_new_sync:
+ * sensor_threshold_proxy_new_sync:
  * @connection: A #GDBusConnection.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
@@ -5327,16 +3274,16 @@ sensor_integer_threshold_proxy_new_finish (
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL
  *
- * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link>. See g_dbus_proxy_new_sync() for more details.
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link>. See g_dbus_proxy_new_sync() for more details.
  *
  * The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_threshold_proxy_new() for the asynchronous version of this constructor.
+ * See sensor_threshold_proxy_new() for the asynchronous version of this constructor.
  *
- * Returns: (transfer full) (type SensorIntegerThresholdProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorThresholdProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorIntegerThreshold *
-sensor_integer_threshold_proxy_new_sync (
+SensorThreshold *
+sensor_threshold_proxy_new_sync (
     GDBusConnection     *connection,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -5345,16 +3292,16 @@ sensor_integer_threshold_proxy_new_sync (
     GError             **error)
 {
   GInitable *ret;
-  ret = g_initable_new (TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIntegerThreshold", NULL);
+  ret = g_initable_new (TYPE_SENSOR_THRESHOLD_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorThreshold", NULL);
   if (ret != NULL)
-    return SENSOR_INTEGER_THRESHOLD (ret);
+    return SENSOR_THRESHOLD (ret);
   else
     return NULL;
 }
 
 
 /**
- * sensor_integer_threshold_proxy_new_for_bus:
+ * sensor_threshold_proxy_new_for_bus:
  * @bus_type: A #GBusType.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: A bus name (well-known or unique).
@@ -5363,15 +3310,15 @@ sensor_integer_threshold_proxy_new_sync (
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
  * @user_data: User data to pass to @callback.
  *
- * Like sensor_integer_threshold_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ * Like sensor_threshold_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
  *
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_integer_threshold_proxy_new_for_bus_finish() to get the result of the operation.
+ * You can then call sensor_threshold_proxy_new_for_bus_finish() to get the result of the operation.
  *
- * See sensor_integer_threshold_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ * See sensor_threshold_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
  */
 void
-sensor_integer_threshold_proxy_new_for_bus (
+sensor_threshold_proxy_new_for_bus (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -5380,20 +3327,20 @@ sensor_integer_threshold_proxy_new_for_bus (
     GAsyncReadyCallback  callback,
     gpointer             user_data)
 {
-  g_async_initable_new_async (TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIntegerThreshold", NULL);
+  g_async_initable_new_async (TYPE_SENSOR_THRESHOLD_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorThreshold", NULL);
 }
 
 /**
- * sensor_integer_threshold_proxy_new_for_bus_finish:
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_integer_threshold_proxy_new_for_bus().
+ * sensor_threshold_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_threshold_proxy_new_for_bus().
  * @error: Return location for error or %NULL
  *
- * Finishes an operation started with sensor_integer_threshold_proxy_new_for_bus().
+ * Finishes an operation started with sensor_threshold_proxy_new_for_bus().
  *
- * Returns: (transfer full) (type SensorIntegerThresholdProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorThresholdProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorIntegerThreshold *
-sensor_integer_threshold_proxy_new_for_bus_finish (
+SensorThreshold *
+sensor_threshold_proxy_new_for_bus_finish (
     GAsyncResult        *res,
     GError             **error)
 {
@@ -5403,13 +3350,13 @@ sensor_integer_threshold_proxy_new_for_bus_finish (
   ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
   g_object_unref (source_object);
   if (ret != NULL)
-    return SENSOR_INTEGER_THRESHOLD (ret);
+    return SENSOR_THRESHOLD (ret);
   else
     return NULL;
 }
 
 /**
- * sensor_integer_threshold_proxy_new_for_bus_sync:
+ * sensor_threshold_proxy_new_for_bus_sync:
  * @bus_type: A #GBusType.
  * @flags: Flags from the #GDBusProxyFlags enumeration.
  * @name: A bus name (well-known or unique).
@@ -5417,16 +3364,16 @@ sensor_integer_threshold_proxy_new_for_bus_finish (
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL
  *
- * Like sensor_integer_threshold_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ * Like sensor_threshold_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
  *
  * The calling thread is blocked until a reply is received.
  *
- * See sensor_integer_threshold_proxy_new_for_bus() for the asynchronous version of this constructor.
+ * See sensor_threshold_proxy_new_for_bus() for the asynchronous version of this constructor.
  *
- * Returns: (transfer full) (type SensorIntegerThresholdProxy): The constructed proxy object or %NULL if @error is set.
+ * Returns: (transfer full) (type SensorThresholdProxy): The constructed proxy object or %NULL if @error is set.
  */
-SensorIntegerThreshold *
-sensor_integer_threshold_proxy_new_for_bus_sync (
+SensorThreshold *
+sensor_threshold_proxy_new_for_bus_sync (
     GBusType             bus_type,
     GDBusProxyFlags      flags,
     const gchar         *name,
@@ -5435,9 +3382,9 @@ sensor_integer_threshold_proxy_new_for_bus_sync (
     GError             **error)
 {
   GInitable *ret;
-  ret = g_initable_new (TYPE_SENSOR_INTEGER_THRESHOLD_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIntegerThreshold", NULL);
+  ret = g_initable_new (TYPE_SENSOR_THRESHOLD_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorThreshold", NULL);
   if (ret != NULL)
-    return SENSOR_INTEGER_THRESHOLD (ret);
+    return SENSOR_THRESHOLD (ret);
   else
     return NULL;
 }
@@ -5446,19 +3393,19 @@ sensor_integer_threshold_proxy_new_for_bus_sync (
 /* ------------------------------------------------------------------------ */
 
 /**
- * SensorIntegerThresholdSkeleton:
+ * SensorThresholdSkeleton:
  *
- * The #SensorIntegerThresholdSkeleton structure contains only private data and should only be accessed using the provided API.
+ * The #SensorThresholdSkeleton structure contains only private data and should only be accessed using the provided API.
  */
 
 /**
- * SensorIntegerThresholdSkeletonClass:
+ * SensorThresholdSkeletonClass:
  * @parent_class: The parent class.
  *
- * Class structure for #SensorIntegerThresholdSkeleton.
+ * Class structure for #SensorThresholdSkeleton.
  */
 
-struct _SensorIntegerThresholdSkeletonPrivate
+struct _SensorThresholdSkeletonPrivate
 {
   GValue *properties;
   GList *changed_properties;
@@ -5468,7 +3415,7 @@ struct _SensorIntegerThresholdSkeletonPrivate
 };
 
 static void
-_sensor_integer_threshold_skeleton_handle_method_call (
+_sensor_threshold_skeleton_handle_method_call (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -5478,7 +3425,7 @@ _sensor_integer_threshold_skeleton_handle_method_call (
   GDBusMethodInvocation *invocation,
   gpointer user_data)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (user_data);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (user_data);
   _ExtendedGDBusMethodInfo *info;
   GVariantIter iter;
   GVariant *child;
@@ -5493,7 +3440,7 @@ _sensor_integer_threshold_skeleton_handle_method_call (
   num_params = g_variant_n_children (parameters);
   num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
   n = 0;
-  g_value_init (&paramv[n], TYPE_SENSOR_INTEGER_THRESHOLD);
+  g_value_init (&paramv[n], TYPE_SENSOR_THRESHOLD);
   g_value_set_object (&paramv[n++], skeleton);
   g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
   g_value_set_object (&paramv[n++], invocation);
@@ -5520,7 +3467,7 @@ _sensor_integer_threshold_skeleton_handle_method_call (
         g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
       g_variant_unref (child);
     }
-  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_INTEGER_THRESHOLD);
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_THRESHOLD);
   g_value_init (&return_value, G_TYPE_BOOLEAN);
   g_signal_emitv (paramv, signal_id, 0, &return_value);
   if (!g_value_get_boolean (&return_value))
@@ -5532,7 +3479,7 @@ _sensor_integer_threshold_skeleton_handle_method_call (
 }
 
 static GVariant *
-_sensor_integer_threshold_skeleton_handle_get_property (
+_sensor_threshold_skeleton_handle_get_property (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -5541,13 +3488,13 @@ _sensor_integer_threshold_skeleton_handle_get_property (
   GError **error,
   gpointer user_data)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (user_data);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (user_data);
   GValue value = G_VALUE_INIT;
   GParamSpec *pspec;
   _ExtendedGDBusPropertyInfo *info;
   GVariant *ret;
   ret = NULL;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_threshold_interface_info.parent_struct, property_name);
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_threshold_interface_info.parent_struct, property_name);
   g_assert (info != NULL);
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
   if (pspec == NULL)
@@ -5565,7 +3512,7 @@ _sensor_integer_threshold_skeleton_handle_get_property (
 }
 
 static gboolean
-_sensor_integer_threshold_skeleton_handle_set_property (
+_sensor_threshold_skeleton_handle_set_property (
   GDBusConnection *connection G_GNUC_UNUSED,
   const gchar *sender G_GNUC_UNUSED,
   const gchar *object_path G_GNUC_UNUSED,
@@ -5575,13 +3522,13 @@ _sensor_integer_threshold_skeleton_handle_set_property (
   GError **error,
   gpointer user_data)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (user_data);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (user_data);
   GValue value = G_VALUE_INIT;
   GParamSpec *pspec;
   _ExtendedGDBusPropertyInfo *info;
   gboolean ret;
   ret = FALSE;
-  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_integer_threshold_interface_info.parent_struct, property_name);
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_threshold_interface_info.parent_struct, property_name);
   g_assert (info != NULL);
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
   if (pspec == NULL)
@@ -5601,43 +3548,43 @@ _sensor_integer_threshold_skeleton_handle_set_property (
   return ret;
 }
 
-static const GDBusInterfaceVTable _sensor_integer_threshold_skeleton_vtable =
+static const GDBusInterfaceVTable _sensor_threshold_skeleton_vtable =
 {
-  _sensor_integer_threshold_skeleton_handle_method_call,
-  _sensor_integer_threshold_skeleton_handle_get_property,
-  _sensor_integer_threshold_skeleton_handle_set_property,
+  _sensor_threshold_skeleton_handle_method_call,
+  _sensor_threshold_skeleton_handle_get_property,
+  _sensor_threshold_skeleton_handle_set_property,
   {NULL}
 };
 
 static GDBusInterfaceInfo *
-sensor_integer_threshold_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+sensor_threshold_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
 {
-  return sensor_integer_threshold_interface_info ();
+  return sensor_threshold_interface_info ();
 }
 
 static GDBusInterfaceVTable *
-sensor_integer_threshold_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+sensor_threshold_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
 {
-  return (GDBusInterfaceVTable *) &_sensor_integer_threshold_skeleton_vtable;
+  return (GDBusInterfaceVTable *) &_sensor_threshold_skeleton_vtable;
 }
 
 static GVariant *
-sensor_integer_threshold_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+sensor_threshold_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (_skeleton);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (_skeleton);
 
   GVariantBuilder builder;
   guint n;
   g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
-  if (_sensor_integer_threshold_interface_info.parent_struct.properties == NULL)
+  if (_sensor_threshold_interface_info.parent_struct.properties == NULL)
     goto out;
-  for (n = 0; _sensor_integer_threshold_interface_info.parent_struct.properties[n] != NULL; n++)
+  for (n = 0; _sensor_threshold_interface_info.parent_struct.properties[n] != NULL; n++)
     {
-      GDBusPropertyInfo *info = _sensor_integer_threshold_interface_info.parent_struct.properties[n];
+      GDBusPropertyInfo *info = _sensor_threshold_interface_info.parent_struct.properties[n];
       if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
         {
           GVariant *value;
-          value = _sensor_integer_threshold_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorIntegerThreshold", info->name, NULL, skeleton);
+          value = _sensor_threshold_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorThreshold", info->name, NULL, skeleton);
           if (value != NULL)
             {
               g_variant_take_ref (value);
@@ -5650,12 +3597,12 @@ out:
   return g_variant_builder_end (&builder);
 }
 
-static gboolean _sensor_integer_threshold_emit_changed (gpointer user_data);
+static gboolean _sensor_threshold_emit_changed (gpointer user_data);
 
 static void
-sensor_integer_threshold_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+sensor_threshold_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (_skeleton);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (_skeleton);
   gboolean emit_changed = FALSE;
 
   g_mutex_lock (&skeleton->priv->lock);
@@ -5668,14 +3615,14 @@ sensor_integer_threshold_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *
   g_mutex_unlock (&skeleton->priv->lock);
 
   if (emit_changed)
-    _sensor_integer_threshold_emit_changed (skeleton);
+    _sensor_threshold_emit_changed (skeleton);
 }
 
 static void
-_sensor_integer_threshold_on_signal_warning (
-    SensorIntegerThreshold *object)
+_sensor_threshold_on_signal_warning (
+    SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
 
   GList      *connections, *l;
   GVariant   *signal_variant;
@@ -5686,7 +3633,7 @@ _sensor_integer_threshold_on_signal_warning (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorIntegerThreshold", "Warning",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorThreshold", "Warning",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -5694,10 +3641,10 @@ _sensor_integer_threshold_on_signal_warning (
 }
 
 static void
-_sensor_integer_threshold_on_signal_critical (
-    SensorIntegerThreshold *object)
+_sensor_threshold_on_signal_critical (
+    SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
 
   GList      *connections, *l;
   GVariant   *signal_variant;
@@ -5708,7 +3655,7 @@ _sensor_integer_threshold_on_signal_critical (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorIntegerThreshold", "Critical",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorThreshold", "Critical",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -5716,10 +3663,10 @@ _sensor_integer_threshold_on_signal_critical (
 }
 
 static void
-_sensor_integer_threshold_on_signal_normal (
-    SensorIntegerThreshold *object)
+_sensor_threshold_on_signal_normal (
+    SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
 
   GList      *connections, *l;
   GVariant   *signal_variant;
@@ -5730,28 +3677,28 @@ _sensor_integer_threshold_on_signal_normal (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorIntegerThreshold", "Normal",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorThreshold", "Normal",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
   g_list_free_full (connections, g_object_unref);
 }
 
-static void sensor_integer_threshold_skeleton_iface_init (SensorIntegerThresholdIface *iface);
+static void sensor_threshold_skeleton_iface_init (SensorThresholdIface *iface);
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerThresholdSkeleton, sensor_integer_threshold_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_ADD_PRIVATE (SensorIntegerThresholdSkeleton)
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER_THRESHOLD, sensor_integer_threshold_skeleton_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorThresholdSkeleton, sensor_threshold_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (SensorThresholdSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_THRESHOLD, sensor_threshold_skeleton_iface_init));
 
 #else
-G_DEFINE_TYPE_WITH_CODE (SensorIntegerThresholdSkeleton, sensor_integer_threshold_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
-                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_INTEGER_THRESHOLD, sensor_integer_threshold_skeleton_iface_init));
+G_DEFINE_TYPE_WITH_CODE (SensorThresholdSkeleton, sensor_threshold_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_THRESHOLD, sensor_threshold_skeleton_iface_init));
 
 #endif
 static void
-sensor_integer_threshold_skeleton_finalize (GObject *object)
+sensor_threshold_skeleton_finalize (GObject *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
   guint n;
   for (n = 0; n < 5; n++)
     g_value_unset (&skeleton->priv->properties[n]);
@@ -5761,16 +3708,16 @@ sensor_integer_threshold_skeleton_finalize (GObject *object)
     g_source_destroy (skeleton->priv->changed_properties_idle_source);
   g_main_context_unref (skeleton->priv->context);
   g_mutex_clear (&skeleton->priv->lock);
-  G_OBJECT_CLASS (sensor_integer_threshold_skeleton_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sensor_threshold_skeleton_parent_class)->finalize (object);
 }
 
 static void
-sensor_integer_threshold_skeleton_get_property (GObject      *object,
+sensor_threshold_skeleton_get_property (GObject      *object,
   guint         prop_id,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
   g_assert (prop_id != 0 && prop_id - 1 < 5);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
@@ -5778,9 +3725,9 @@ sensor_integer_threshold_skeleton_get_property (GObject      *object,
 }
 
 static gboolean
-_sensor_integer_threshold_emit_changed (gpointer user_data)
+_sensor_threshold_emit_changed (gpointer user_data)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (user_data);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (user_data);
   GList *l;
   GVariantBuilder builder;
   GVariantBuilder invalidated_builder;
@@ -5808,7 +3755,7 @@ _sensor_integer_threshold_emit_changed (gpointer user_data)
     {
       GList *connections, *ll;
       GVariant *signal_variant;
-      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.SensorIntegerThreshold",
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.SensorThreshold",
                                            &builder, &invalidated_builder));
       connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
       for (ll = connections; ll != NULL; ll = ll->next)
@@ -5838,7 +3785,7 @@ _sensor_integer_threshold_emit_changed (gpointer user_data)
 }
 
 static void
-_sensor_integer_threshold_schedule_emit_changed (SensorIntegerThresholdSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+_sensor_threshold_schedule_emit_changed (SensorThresholdSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
 {
   ChangedProperty *cp;
   GList *l;
@@ -5864,17 +3811,17 @@ _sensor_integer_threshold_schedule_emit_changed (SensorIntegerThresholdSkeleton 
 }
 
 static void
-sensor_integer_threshold_skeleton_notify (GObject      *object,
+sensor_threshold_skeleton_notify (GObject      *object,
   GParamSpec *pspec G_GNUC_UNUSED)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
   g_mutex_lock (&skeleton->priv->lock);
   if (skeleton->priv->changed_properties != NULL &&
       skeleton->priv->changed_properties_idle_source == NULL)
     {
       skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
       g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
-      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _sensor_integer_threshold_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _sensor_threshold_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
       g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
       g_source_unref (skeleton->priv->changed_properties_idle_source);
     }
@@ -5882,19 +3829,19 @@ sensor_integer_threshold_skeleton_notify (GObject      *object,
 }
 
 static void
-sensor_integer_threshold_skeleton_set_property (GObject      *object,
+sensor_threshold_skeleton_set_property (GObject      *object,
   guint         prop_id,
   const GValue *value,
   GParamSpec   *pspec)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
   g_assert (prop_id != 0 && prop_id - 1 < 5);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
     {
       if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
-        _sensor_integer_threshold_schedule_emit_changed (skeleton, _sensor_integer_threshold_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+        _sensor_threshold_schedule_emit_changed (skeleton, _sensor_threshold_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
       g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
       g_object_notify_by_pspec (object, pspec);
     }
@@ -5903,129 +3850,129 @@ sensor_integer_threshold_skeleton_set_property (GObject      *object,
 }
 
 static void
-sensor_integer_threshold_skeleton_init (SensorIntegerThresholdSkeleton *skeleton)
+sensor_threshold_skeleton_init (SensorThresholdSkeleton *skeleton)
 {
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
-  skeleton->priv = sensor_integer_threshold_skeleton_get_instance_private (skeleton);
+  skeleton->priv = sensor_threshold_skeleton_get_instance_private (skeleton);
 #else
-  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON, SensorIntegerThresholdSkeletonPrivate);
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_SENSOR_THRESHOLD_SKELETON, SensorThresholdSkeletonPrivate);
 #endif
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
   skeleton->priv->properties = g_new0 (GValue, 5);
-  g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
-  g_value_init (&skeleton->priv->properties[1], G_TYPE_INT);
-  g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
-  g_value_init (&skeleton->priv->properties[3], G_TYPE_INT);
-  g_value_init (&skeleton->priv->properties[4], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_VARIANT);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_VARIANT);
+  g_value_init (&skeleton->priv->properties[2], G_TYPE_VARIANT);
+  g_value_init (&skeleton->priv->properties[3], G_TYPE_VARIANT);
+  g_value_init (&skeleton->priv->properties[4], G_TYPE_UCHAR);
 }
 
-static gint 
-sensor_integer_threshold_skeleton_get_lower_critical (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_skeleton_get_lower_critical (SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
-  gint value;
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
+  GVariant *value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[0]));
+  value = g_value_get_variant (&(skeleton->priv->properties[0]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_skeleton_get_lower_warning (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_skeleton_get_lower_warning (SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
-  gint value;
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
+  GVariant *value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[1]));
+  value = g_value_get_variant (&(skeleton->priv->properties[1]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_skeleton_get_upper_warning (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_skeleton_get_upper_warning (SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
-  gint value;
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
+  GVariant *value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[2]));
+  value = g_value_get_variant (&(skeleton->priv->properties[2]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_skeleton_get_upper_critical (SensorIntegerThreshold *object)
+static GVariant *
+sensor_threshold_skeleton_get_upper_critical (SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
-  gint value;
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
+  GVariant *value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[3]));
+  value = g_value_get_variant (&(skeleton->priv->properties[3]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
 
-static gint 
-sensor_integer_threshold_skeleton_get_state (SensorIntegerThreshold *object)
+static guchar 
+sensor_threshold_skeleton_get_state (SensorThreshold *object)
 {
-  SensorIntegerThresholdSkeleton *skeleton = SENSOR_INTEGER_THRESHOLD_SKELETON (object);
-  gint value;
+  SensorThresholdSkeleton *skeleton = SENSOR_THRESHOLD_SKELETON (object);
+  guchar value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[4]));
+  value = g_value_get_uchar (&(skeleton->priv->properties[4]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
 
 static void
-sensor_integer_threshold_skeleton_class_init (SensorIntegerThresholdSkeletonClass *klass)
+sensor_threshold_skeleton_class_init (SensorThresholdSkeletonClass *klass)
 {
   GObjectClass *gobject_class;
   GDBusInterfaceSkeletonClass *skeleton_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = sensor_integer_threshold_skeleton_finalize;
-  gobject_class->get_property = sensor_integer_threshold_skeleton_get_property;
-  gobject_class->set_property = sensor_integer_threshold_skeleton_set_property;
-  gobject_class->notify       = sensor_integer_threshold_skeleton_notify;
+  gobject_class->finalize = sensor_threshold_skeleton_finalize;
+  gobject_class->get_property = sensor_threshold_skeleton_get_property;
+  gobject_class->set_property = sensor_threshold_skeleton_set_property;
+  gobject_class->notify       = sensor_threshold_skeleton_notify;
 
 
-  sensor_integer_threshold_override_properties (gobject_class, 1);
+  sensor_threshold_override_properties (gobject_class, 1);
 
   skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
-  skeleton_class->get_info = sensor_integer_threshold_skeleton_dbus_interface_get_info;
-  skeleton_class->get_properties = sensor_integer_threshold_skeleton_dbus_interface_get_properties;
-  skeleton_class->flush = sensor_integer_threshold_skeleton_dbus_interface_flush;
-  skeleton_class->get_vtable = sensor_integer_threshold_skeleton_dbus_interface_get_vtable;
+  skeleton_class->get_info = sensor_threshold_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = sensor_threshold_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = sensor_threshold_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = sensor_threshold_skeleton_dbus_interface_get_vtable;
 
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
-  g_type_class_add_private (klass, sizeof (SensorIntegerThresholdSkeletonPrivate));
+  g_type_class_add_private (klass, sizeof (SensorThresholdSkeletonPrivate));
 #endif
 }
 
 static void
-sensor_integer_threshold_skeleton_iface_init (SensorIntegerThresholdIface *iface)
+sensor_threshold_skeleton_iface_init (SensorThresholdIface *iface)
 {
-  iface->warning = _sensor_integer_threshold_on_signal_warning;
-  iface->critical = _sensor_integer_threshold_on_signal_critical;
-  iface->normal = _sensor_integer_threshold_on_signal_normal;
-  iface->get_lower_critical = sensor_integer_threshold_skeleton_get_lower_critical;
-  iface->get_lower_warning = sensor_integer_threshold_skeleton_get_lower_warning;
-  iface->get_upper_warning = sensor_integer_threshold_skeleton_get_upper_warning;
-  iface->get_upper_critical = sensor_integer_threshold_skeleton_get_upper_critical;
-  iface->get_state = sensor_integer_threshold_skeleton_get_state;
+  iface->warning = _sensor_threshold_on_signal_warning;
+  iface->critical = _sensor_threshold_on_signal_critical;
+  iface->normal = _sensor_threshold_on_signal_normal;
+  iface->get_lower_critical = sensor_threshold_skeleton_get_lower_critical;
+  iface->get_lower_warning = sensor_threshold_skeleton_get_lower_warning;
+  iface->get_upper_warning = sensor_threshold_skeleton_get_upper_warning;
+  iface->get_upper_critical = sensor_threshold_skeleton_get_upper_critical;
+  iface->get_state = sensor_threshold_skeleton_get_state;
 }
 
 /**
- * sensor_integer_threshold_skeleton_new:
+ * sensor_threshold_skeleton_new:
  *
- * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link>.
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link>.
  *
- * Returns: (transfer full) (type SensorIntegerThresholdSkeleton): The skeleton object.
+ * Returns: (transfer full) (type SensorThresholdSkeleton): The skeleton object.
  */
-SensorIntegerThreshold *
-sensor_integer_threshold_skeleton_new (void)
+SensorThreshold *
+sensor_threshold_skeleton_new (void)
 {
-  return SENSOR_INTEGER_THRESHOLD (g_object_new (TYPE_SENSOR_INTEGER_THRESHOLD_SKELETON, NULL));
+  return SENSOR_THRESHOLD (g_object_new (TYPE_SENSOR_THRESHOLD_SKELETON, NULL));
 }
 
 /* ------------------------------------------------------------------------
@@ -7205,31 +5152,22 @@ static void
 object_default_init (ObjectIface *iface)
 {
   /**
-   * Object:sensor-integer:
+   * Object:sensor-value:
    *
-   * The #SensorInteger instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link>, if any.
+   * The #SensorValue instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link>, if any.
    *
    * Connect to the #GObject::notify signal to get informed of property changes.
    */
-  g_object_interface_install_property (iface, g_param_spec_object ("sensor-integer", "sensor-integer", "sensor-integer", TYPE_SENSOR_INTEGER, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+  g_object_interface_install_property (iface, g_param_spec_object ("sensor-value", "sensor-value", "sensor-value", TYPE_SENSOR_VALUE, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
   /**
-   * Object:sensor-string:
+   * Object:sensor-threshold:
    *
-   * The #SensorString instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link>, if any.
-   *
-   * Connect to the #GObject::notify signal to get informed of property changes.
-   */
-  g_object_interface_install_property (iface, g_param_spec_object ("sensor-string", "sensor-string", "sensor-string", TYPE_SENSOR_STRING, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
-
-  /**
-   * Object:sensor-integer-threshold:
-   *
-   * The #SensorIntegerThreshold instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link>, if any.
+   * The #SensorThreshold instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link>, if any.
    *
    * Connect to the #GObject::notify signal to get informed of property changes.
    */
-  g_object_interface_install_property (iface, g_param_spec_object ("sensor-integer-threshold", "sensor-integer-threshold", "sensor-integer-threshold", TYPE_SENSOR_INTEGER_THRESHOLD, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+  g_object_interface_install_property (iface, g_param_spec_object ("sensor-threshold", "sensor-threshold", "sensor-threshold", TYPE_SENSOR_THRESHOLD, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
   /**
    * Object:sensor-i2c:
@@ -7243,54 +5181,37 @@ object_default_init (ObjectIface *iface)
 }
 
 /**
- * object_get_sensor_integer:
+ * object_get_sensor_value:
  * @object: A #Object.
  *
- * Gets the #SensorInteger instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link> on @object, if any.
+ * Gets the #SensorValue instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link> on @object, if any.
  *
- * Returns: (transfer full): A #SensorInteger that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ * Returns: (transfer full): A #SensorValue that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
  */
-SensorInteger *object_get_sensor_integer (Object *object)
+SensorValue *object_get_sensor_value (Object *object)
 {
   GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorInteger");
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
   if (ret == NULL)
     return NULL;
-  return SENSOR_INTEGER (ret);
+  return SENSOR_VALUE (ret);
 }
 
 /**
- * object_get_sensor_string:
+ * object_get_sensor_threshold:
  * @object: A #Object.
  *
- * Gets the #SensorString instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link> on @object, if any.
+ * Gets the #SensorThreshold instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link> on @object, if any.
  *
- * Returns: (transfer full): A #SensorString that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ * Returns: (transfer full): A #SensorThreshold that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
  */
-SensorString *object_get_sensor_string (Object *object)
+SensorThreshold *object_get_sensor_threshold (Object *object)
 {
   GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorString");
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
   if (ret == NULL)
     return NULL;
-  return SENSOR_STRING (ret);
-}
-
-/**
- * object_get_sensor_integer_threshold:
- * @object: A #Object.
- *
- * Gets the #SensorIntegerThreshold instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link> on @object, if any.
- *
- * Returns: (transfer full): A #SensorIntegerThreshold that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
- */
-SensorIntegerThreshold *object_get_sensor_integer_threshold (Object *object)
-{
-  GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIntegerThreshold");
-  if (ret == NULL)
-    return NULL;
-  return SENSOR_INTEGER_THRESHOLD (ret);
+  return SENSOR_THRESHOLD (ret);
 }
 
 /**
@@ -7312,63 +5233,43 @@ SensorI2c *object_get_sensor_i2c (Object *object)
 
 
 /**
- * object_peek_sensor_integer: (skip)
+ * object_peek_sensor_value: (skip)
  * @object: A #Object.
  *
- * Like object_get_sensor_integer() but doesn't increase the reference count on the returned object.
+ * Like object_get_sensor_value() but doesn't increase the reference count on the returned object.
  *
  * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
  *
- * Returns: (transfer none): A #SensorInteger or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ * Returns: (transfer none): A #SensorValue or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
  */
-SensorInteger *object_peek_sensor_integer (Object *object)
+SensorValue *object_peek_sensor_value (Object *object)
 {
   GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorInteger");
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
   if (ret == NULL)
     return NULL;
   g_object_unref (ret);
-  return SENSOR_INTEGER (ret);
+  return SENSOR_VALUE (ret);
 }
 
 /**
- * object_peek_sensor_string: (skip)
+ * object_peek_sensor_threshold: (skip)
  * @object: A #Object.
  *
- * Like object_get_sensor_string() but doesn't increase the reference count on the returned object.
+ * Like object_get_sensor_threshold() but doesn't increase the reference count on the returned object.
  *
  * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
  *
- * Returns: (transfer none): A #SensorString or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ * Returns: (transfer none): A #SensorThreshold or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
  */
-SensorString *object_peek_sensor_string (Object *object)
+SensorThreshold *object_peek_sensor_threshold (Object *object)
 {
   GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorString");
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
   if (ret == NULL)
     return NULL;
   g_object_unref (ret);
-  return SENSOR_STRING (ret);
-}
-
-/**
- * object_peek_sensor_integer_threshold: (skip)
- * @object: A #Object.
- *
- * Like object_get_sensor_integer_threshold() but doesn't increase the reference count on the returned object.
- *
- * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
- *
- * Returns: (transfer none): A #SensorIntegerThreshold or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
- */
-SensorIntegerThreshold *object_peek_sensor_integer_threshold (Object *object)
-{
-  GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIntegerThreshold");
-  if (ret == NULL)
-    return NULL;
-  g_object_unref (ret);
-  return SENSOR_INTEGER_THRESHOLD (ret);
+  return SENSOR_THRESHOLD (ret);
 }
 
 /**
@@ -7459,21 +5360,16 @@ object_proxy_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorInteger");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
       g_value_take_object (value, interface);
       break;
 
     case 2:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorString");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
     case 3:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIntegerThreshold");
-      g_value_take_object (value, interface);
-      break;
-
-    case 4:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
@@ -7492,10 +5388,9 @@ object_proxy_class_init (ObjectProxyClass *klass)
   gobject_class->set_property = object_proxy_set_property;
   gobject_class->get_property = object_proxy_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "sensor-integer");
-  g_object_class_override_property (gobject_class, 2, "sensor-string");
-  g_object_class_override_property (gobject_class, 3, "sensor-integer-threshold");
-  g_object_class_override_property (gobject_class, 4, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 1, "sensor-value");
+  g_object_class_override_property (gobject_class, 2, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 3, "sensor-i2c");
 }
 
 /**
@@ -7566,12 +5461,12 @@ object_skeleton_set_property (GObject      *gobject,
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
-          g_warn_if_fail (IS_SENSOR_INTEGER (interface));
+          g_warn_if_fail (IS_SENSOR_VALUE (interface));
           g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
         }
       else
         {
-          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.SensorInteger");
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.SensorValue");
         }
       break;
 
@@ -7579,29 +5474,16 @@ object_skeleton_set_property (GObject      *gobject,
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
-          g_warn_if_fail (IS_SENSOR_STRING (interface));
+          g_warn_if_fail (IS_SENSOR_THRESHOLD (interface));
           g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
         }
       else
         {
-          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.SensorString");
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.SensorThreshold");
         }
       break;
 
     case 3:
-      interface = g_value_get_object (value);
-      if (interface != NULL)
-        {
-          g_warn_if_fail (IS_SENSOR_INTEGER_THRESHOLD (interface));
-          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
-        }
-      else
-        {
-          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.SensorIntegerThreshold");
-        }
-      break;
-
-    case 4:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -7632,21 +5514,16 @@ object_skeleton_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorInteger");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
       g_value_take_object (value, interface);
       break;
 
     case 2:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorString");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
     case 3:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIntegerThreshold");
-      g_value_take_object (value, interface);
-      break;
-
-    case 4:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
@@ -7665,10 +5542,9 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
   gobject_class->set_property = object_skeleton_set_property;
   gobject_class->get_property = object_skeleton_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "sensor-integer");
-  g_object_class_override_property (gobject_class, 2, "sensor-string");
-  g_object_class_override_property (gobject_class, 3, "sensor-integer-threshold");
-  g_object_class_override_property (gobject_class, 4, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 1, "sensor-value");
+  g_object_class_override_property (gobject_class, 2, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 3, "sensor-i2c");
 }
 
 /**
@@ -7687,39 +5563,27 @@ object_skeleton_new (const gchar *object_path)
 }
 
 /**
- * object_skeleton_set_sensor_integer:
+ * object_skeleton_set_sensor_value:
  * @object: A #ObjectSkeleton.
- * @interface_: (allow-none): A #SensorInteger or %NULL to clear the interface.
+ * @interface_: (allow-none): A #SensorValue or %NULL to clear the interface.
  *
- * Sets the #SensorInteger instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorInteger.top_of_page">org.openbmc.SensorInteger</link> on @object.
+ * Sets the #SensorValue instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link> on @object.
  */
-void object_skeleton_set_sensor_integer (ObjectSkeleton *object, SensorInteger *interface_)
+void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_)
 {
-  g_object_set (G_OBJECT (object), "sensor-integer", interface_, NULL);
+  g_object_set (G_OBJECT (object), "sensor-value", interface_, NULL);
 }
 
 /**
- * object_skeleton_set_sensor_string:
+ * object_skeleton_set_sensor_threshold:
  * @object: A #ObjectSkeleton.
- * @interface_: (allow-none): A #SensorString or %NULL to clear the interface.
+ * @interface_: (allow-none): A #SensorThreshold or %NULL to clear the interface.
  *
- * Sets the #SensorString instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorString.top_of_page">org.openbmc.SensorString</link> on @object.
+ * Sets the #SensorThreshold instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link> on @object.
  */
-void object_skeleton_set_sensor_string (ObjectSkeleton *object, SensorString *interface_)
+void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThreshold *interface_)
 {
-  g_object_set (G_OBJECT (object), "sensor-string", interface_, NULL);
-}
-
-/**
- * object_skeleton_set_sensor_integer_threshold:
- * @object: A #ObjectSkeleton.
- * @interface_: (allow-none): A #SensorIntegerThreshold or %NULL to clear the interface.
- *
- * Sets the #SensorIntegerThreshold instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIntegerThreshold.top_of_page">org.openbmc.SensorIntegerThreshold</link> on @object.
- */
-void object_skeleton_set_sensor_integer_threshold (ObjectSkeleton *object, SensorIntegerThreshold *interface_)
-{
-  g_object_set (G_OBJECT (object), "sensor-integer-threshold", interface_, NULL);
+  g_object_set (G_OBJECT (object), "sensor-threshold", interface_, NULL);
 }
 
 /**
@@ -7796,9 +5660,8 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
   if (g_once_init_enter (&once_init_value))
     {
       lookup_hash = g_hash_table_new (g_str_hash, g_str_equal);
-      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorInteger", GSIZE_TO_POINTER (TYPE_SENSOR_INTEGER_PROXY));
-      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorString", GSIZE_TO_POINTER (TYPE_SENSOR_STRING_PROXY));
-      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorIntegerThreshold", GSIZE_TO_POINTER (TYPE_SENSOR_INTEGER_THRESHOLD_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorValue", GSIZE_TO_POINTER (TYPE_SENSOR_VALUE_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorThreshold", GSIZE_TO_POINTER (TYPE_SENSOR_THRESHOLD_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorI2c", GSIZE_TO_POINTER (TYPE_SENSOR_I2C_PROXY));
       g_once_init_leave (&once_init_value, 1);
     }
