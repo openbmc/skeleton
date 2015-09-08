@@ -4,9 +4,12 @@
 		@short_description: 
 	-->	
 	<interface name="org.openbmc.Watchdog">
-		<method name="update"/>
 		<method name="start"/>
+		<method name="poke"/>
 		<method name="stop"/>
+		<property name="watchdog" type="i" access="readwrite"/>
+		<property name="poll_interval" type="i" access="readwrite"/>
+		<signal name="WatchdogError"/>
 	</interface>
 </node>
 

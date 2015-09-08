@@ -1,4 +1,5 @@
 import dbus
+import xml.etree.ElementTree as ET
 
 BUS_PREFIX = 'org.openbmc'
 GPIO_DEV = '/sys/class/gpio'
@@ -28,6 +29,19 @@ def object_to_bus_name(obj):
 def bus_to_object_name(bus_name):
 	return "/"+bus_name.replace('.','/')
 
+def get_methods(obj):
+	methods = {}
+	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
+ 	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
+ 	root = tree.getroot()
+	for intf in root.iter('interface'):
+ 		intf_name = intf.attrib['name']
+		if (intf_name.find(BUS_PREFIX)==0):
+			methods[intf_name] = {}
+			for method in intf.iter('method'):
+				methods[intf_name][method.attrib['name']] = True
+		
+	return methods
 
 class DbusProperty:
 	def __init__(self,name,value):

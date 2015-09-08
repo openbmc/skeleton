@@ -30,10 +30,9 @@ struct _ControlIface
 
 
 
-  gboolean (*handle_set_poll_interval) (
+  gboolean (*handle_init) (
     Control *object,
-    GDBusMethodInvocation *invocation,
-    gint arg_poll_interval);
+    GDBusMethodInvocation *invocation);
 
   gint  (*get_heatbeat) (Control *object);
 
@@ -52,7 +51,7 @@ guint control_override_properties (GObjectClass *klass, guint property_id_begin)
 
 
 /* D-Bus method call completion functions: */
-void control_complete_set_poll_interval (
+void control_complete_init (
     Control *object,
     GDBusMethodInvocation *invocation);
 
@@ -66,21 +65,19 @@ void control_emit_heartbeat (
 
 
 /* D-Bus method calls: */
-void control_call_set_poll_interval (
+void control_call_init (
     Control *proxy,
-    gint arg_poll_interval,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean control_call_set_poll_interval_finish (
+gboolean control_call_init_finish (
     Control *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean control_call_set_poll_interval_sync (
+gboolean control_call_init_sync (
     Control *proxy,
-    gint arg_poll_interval,
     GCancellable *cancellable,
     GError **error);
 

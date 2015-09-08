@@ -3,12 +3,13 @@
 import sys
 import subprocess
 from gi.repository import GObject
-
 import dbus
 import dbus.service
 import dbus.mainloop.glib
 import os
 import PropertyManager
+
+import Openbmc
 
 if (len(sys.argv) < 2):
 	print "Usage:  system_manager.py [system name]"
@@ -25,15 +26,15 @@ HEARTBEAT_CHECK_INTERVAL = 20000
 class SystemManager(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
-		
 		self.property_manager = PropertyManager.PropertyManager(bus,System.CACHE_PATH)
+
 		## Signal handlers
 		bus.add_signal_receiver(self.NewBusHandler,
 					dbus_interface = 'org.freedesktop.DBus', 
 					signal_name = "NameOwnerChanged")
 		bus.add_signal_receiver(self.CacheMeHandler,
 					signal_name = 'CacheMe', path_keyword='path',interface_keyword='interface')
-
+		bus.add_signal_receiver(self.HeartbeatHandler, signal_name = "Heartbeat")
 
 		try:
 			# launch dbus object processes
@@ -43,8 +44,9 @@ class SystemManager(dbus.service.Object):
 			## TODO: error handling
 			pass
 		
-		bus.add_signal_receiver(self.HeartbeatHandler, signal_name = "Heartbeat")
+		## Add poll for heartbeat
     		GObject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
+		
 
 	def CacheMeHandler(self,busname,path=None,interface=None):
 		#interface_name = 'org.openbmc.Fru'
@@ -115,15 +117,21 @@ class SystemManager(dbus.service.Object):
 					obj_path = obj_root+'/'+instance['name']
 					obj_paths.append(obj_path)
 					if (instance.has_key('properties')):
+						print "load props: "+obj_path
 						self.property_manager.loadProperties(bus_name,obj_path,												instance['properties'])
 
+				## scan all used interfaces and get interfaces with init method
+				
+
 				## After object properties are setup, call init method if requested
-				if (System.SYSTEM_CONFIG[bus_name].has_key('init_methods')):
-					for obj_path in obj_paths:
-						for init_interface in System.SYSTEM_CONFIG[bus_name]['init_methods']:
-							obj = bus.get_object(bus_name,obj_path)
-							intf = dbus.Interface(obj,init_interface)
-							print "calling init:" +init_interface
+				#if (System.SYSTEM_CONFIG[bus_name].has_key('init_methods')):
+				for obj_path in obj_paths:
+					obj = bus.get_object(bus_name,obj_path)
+					methods = Openbmc.get_methods(obj)
+					for intf_name in methods.keys():
+						if (methods[intf_name].has_key('init')):
+							intf = dbus.Interface(obj,intf_name)
+							print "Calling init: " +intf_name
 							intf.init()
 
 

@@ -42,23 +42,6 @@ static gboolean poll_pgood(gpointer user_data)
  				control_power_emit_power_good(control_power);
  			}
 		}
-	//}
-	//else
-	//{
-		//TODO: error handling
-	/*	GVariantBuilder *b;
-		GVariant *dict;
-		b = g_variant_builder_new (G_VARIANT_TYPE ("a{ss}"));
-		g_variant_builder_add (b, "{ss}", "object",dbus_object_path);
-		g_variant_builder_add (b, "{ss}", "message", "Unable to read pgood gpio");
-		char buf[254];
-		sprintf(buf,"%s/gpio%d",pgood.dev,pgood.num);
-		g_variant_builder_add (b, "{ss}", "gpio",buf);
-		
-		dict = g_variant_builder_end (b);
-		event_log_emit_event_log(event_log,dict);
-		
-	}*/
 	return TRUE;
 }
 
@@ -77,23 +60,31 @@ on_set_power_state (ControlPower          *pwr,
                                                 "Invalid power state");
 		return TRUE;
 	}
+	// return from method call
+	control_power_complete_set_power_state(pwr,invocation);
 	if (state == control_power_get_state(pwr))
 	{
-		g_dbus_method_invocation_return_dbus_error (invocation,
-                                                "org.openbmc.ControlPower.Error.Failed",
-                                                "Power Control is already at requested state");
-		return TRUE;     
+		g_print("Power already at requested state: %d\n",state);
 	}
+	else
+	{
+		g_print("Set power state: %d\n",state);
+		gpio_open(&power_pin);
+		gpio_write(&power_pin,!state); 
+		gpio_close(&power_pin);
+		control_power_set_state(pwr,state);
+	}
+	return TRUE;
+}
 
-	//go ahead and return from method call
-	control_power_complete_set_power_state(pwr,invocation);
-
-	g_print("Set power state: %d\n",state);
-	gpio_open(&power_pin);
-	gpio_write(&power_pin,!state); 
-	gpio_close(&power_pin);
-
-	control_power_set_state(pwr,state);
+static gboolean
+on_init (Control         *control,
+         GDBusMethodInvocation  *invocation,
+         gpointer                user_data)
+{
+	guint poll_interval = control_get_poll_interval(control);
+	g_timeout_add(poll_interval, poll_pgood, user_data);
+	control_complete_init(control,invocation);
 	return TRUE;
 }
 
@@ -152,7 +143,12 @@ on_bus_acquired (GDBusConnection *connection,
                 	    G_CALLBACK (on_get_power_state),
                 	    NULL); /* user_data */
 
-		g_timeout_add(5000, poll_pgood, object);
+		g_signal_connect (control,
+                	    "handle-init",
+                	    G_CALLBACK (on_init),
+                	    object); /* user_data */
+
+
 
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));

@@ -39,7 +39,7 @@ class IpmiBt(dbus.service.Object):
 
 	@dbus.service.method(DBUS_NAME)
 	def emitUpdateSensor(self,ipmi_id,data):
-        	self.UpdateSensor(ipmi_id,int(data))
+        	self.UpdateSensor(ipmi_id,dbus.Byte(int(data)))
 		print "update sensor emitted"
         	return 'Signal emitted'
 
@@ -49,11 +49,31 @@ class IpmiBt(dbus.service.Object):
 		intf = dbus.Interface(obj, 'org.openbmc.managers.IpmiTranslator' )
 		return intf.getSensor(ipmi_id)
 
+	def pokeHostWatchdog(self):
+		obj =  bus.get_object('org.openbmc.managers.IpmiTranslator',
+				'/org/openbmc/managers/IpmiTranslator/Barreleye')
+		intf = dbus.Interface(obj, 'org.openbmc.managers.IpmiTranslator' )
+		intf.pokeHostWatchdog()
+
+	def startHostWatchdog(self):
+		obj =  bus.get_object('org.openbmc.managers.IpmiTranslator',
+				'/org/openbmc/managers/IpmiTranslator/Barreleye')
+		intf = dbus.Interface(obj, 'org.openbmc.managers.IpmiTranslator' )
+		intf.startHostWatchdog()
+
+
+
+
 
 if __name__ == '__main__':
-
-	cmd = sys.argv[2]
-	ipmi_id = int(sys.argv[3])
+	
+	cmd = ""
+	data = None
+	ipmi_id = 0
+	if (len(sys.argv) > 2):
+		cmd = sys.argv[2]
+	if (len(sys.argv) > 3):
+		ipmi_id = int(sys.argv[3])
 	if (len(sys.argv)>4):
 		data = sys.argv[4]
 
@@ -69,7 +89,13 @@ if __name__ == '__main__':
 		obj.emitUpdateSensor(ipmi_id,data)
 	elif (cmd == 'getsensor'):
 		print obj.getSensor(ipmi_id)
-		
+	elif (cmd == 'pokewatchdog'):
+		print obj.pokeHostWatchdog()
+	elif (cmd == 'startwatchdog'):
+		print obj.startHostWatchdog()
+	else:
+		print "ERROR: Invalid command"
+		print "Valid commands: updatefru, setsensor, getsensor, startwatchdog, pokewatchdog"		
 
     #mainloop.run()
 

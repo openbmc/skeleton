@@ -1,9 +1,7 @@
 <node>
 	<interface name="org.openbmc.Control">
-                <method name="setPollInterval">
-                        <arg name="poll_interval" type="i" direction="in"/>
-                </method>
-		<property name="poll_interval" type="i" access="read"/>
+		<method name="init"/>
+		<property name="poll_interval" type="i" access="readwrite"/>
 		<property name="heatbeat" type="i" access="read"/>
 		<signal name="Heartbeat">
                         <arg name="bus_name" type="s"/>

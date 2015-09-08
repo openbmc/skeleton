@@ -163,39 +163,22 @@ _g_value_equal (const GValue *a, const GValue *b)
 
 /* ---- Introspection data for org.openbmc.Control ---- */
 
-static const _ExtendedGDBusArgInfo _control_method_info_set_poll_interval_IN_ARG_poll_interval =
+static const _ExtendedGDBusMethodInfo _control_method_info_init =
 {
   {
     -1,
-    (gchar *) "poll_interval",
-    (gchar *) "i",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _control_method_info_set_poll_interval_IN_ARG_pointers[] =
-{
-  &_control_method_info_set_poll_interval_IN_ARG_poll_interval,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _control_method_info_set_poll_interval =
-{
-  {
-    -1,
-    (gchar *) "setPollInterval",
-    (GDBusArgInfo **) &_control_method_info_set_poll_interval_IN_ARG_pointers,
+    (gchar *) "init",
+    NULL,
     NULL,
     NULL
   },
-  "handle-set-poll-interval",
+  "handle-init",
   FALSE
 };
 
 static const _ExtendedGDBusMethodInfo * const _control_method_info_pointers[] =
 {
-  &_control_method_info_set_poll_interval,
+  &_control_method_info_init,
   NULL
 };
 
@@ -239,7 +222,7 @@ static const _ExtendedGDBusPropertyInfo _control_property_info_poll_interval =
     -1,
     (gchar *) "poll_interval",
     (gchar *) "i",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
     NULL
   },
   "poll-interval",
@@ -322,7 +305,7 @@ control_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * ControlIface:
  * @parent_iface: The parent interface.
- * @handle_set_poll_interval: Handler for the #Control::handle-set-poll-interval signal.
+ * @handle_init: Handler for the #Control::handle-init signal.
  * @get_heatbeat: Getter for the #Control:heatbeat property.
  * @get_poll_interval: Getter for the #Control:poll-interval property.
  * @heartbeat: Handler for the #Control::heartbeat signal.
@@ -338,27 +321,26 @@ control_default_init (ControlIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
   /**
-   * Control::handle-set-poll-interval:
+   * Control::handle-init:
    * @object: A #Control.
    * @invocation: A #GDBusMethodInvocation.
-   * @arg_poll_interval: Argument passed by remote caller.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Control.setPollInterval">setPollInterval()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Control.init">init()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call control_complete_set_poll_interval() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call control_complete_init() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
-  g_signal_new ("handle-set-poll-interval",
+  g_signal_new ("handle-init",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (ControlIface, handle_set_poll_interval),
+    G_STRUCT_OFFSET (ControlIface, handle_init),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_BOOLEAN,
-    2,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_INT);
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
 
   /* GObject signals for received D-Bus signals: */
   /**
@@ -386,7 +368,7 @@ control_default_init (ControlIface *iface)
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Control.poll_interval">"poll_interval"</link>.
    *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("poll-interval", "poll_interval", "poll_interval", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
@@ -407,7 +389,7 @@ control_default_init (ControlIface *iface)
  *
  * Gets the value of the <link linkend="gdbus-property-org-openbmc-Control.poll_interval">"poll_interval"</link> D-Bus property.
  *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  *
  * Returns: The property value.
  */
@@ -424,7 +406,7 @@ control_get_poll_interval (Control *object)
  *
  * Sets the <link linkend="gdbus-property-org-openbmc-Control.poll_interval">"poll_interval"</link> D-Bus property to @value.
  *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
  */
 void
 control_set_poll_interval (Control *object, gint value)
@@ -479,31 +461,28 @@ control_emit_heartbeat (
 }
 
 /**
- * control_call_set_poll_interval:
+ * control_call_init:
  * @proxy: A #ControlProxy.
- * @arg_poll_interval: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Control.setPollInterval">setPollInterval()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Control.init">init()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call control_call_set_poll_interval_finish() to get the result of the operation.
+ * You can then call control_call_init_finish() to get the result of the operation.
  *
- * See control_call_set_poll_interval_sync() for the synchronous, blocking version of this method.
+ * See control_call_init_sync() for the synchronous, blocking version of this method.
  */
 void
-control_call_set_poll_interval (
+control_call_init (
     Control *proxy,
-    gint arg_poll_interval,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "setPollInterval",
-    g_variant_new ("(i)",
-                   arg_poll_interval),
+    "init",
+    g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
     cancellable,
@@ -512,17 +491,17 @@ control_call_set_poll_interval (
 }
 
 /**
- * control_call_set_poll_interval_finish:
+ * control_call_init_finish:
  * @proxy: A #ControlProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_call_set_poll_interval().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_call_init().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with control_call_set_poll_interval().
+ * Finishes an operation started with control_call_init().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-control_call_set_poll_interval_finish (
+control_call_init_finish (
     Control *proxy,
     GAsyncResult *res,
     GError **error)
@@ -539,30 +518,27 @@ _out:
 }
 
 /**
- * control_call_set_poll_interval_sync:
+ * control_call_init_sync:
  * @proxy: A #ControlProxy.
- * @arg_poll_interval: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Control.setPollInterval">setPollInterval()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Control.init">init()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See control_call_set_poll_interval() for the asynchronous version of this method.
+ * See control_call_init() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-control_call_set_poll_interval_sync (
+control_call_init_sync (
     Control *proxy,
-    gint arg_poll_interval,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "setPollInterval",
-    g_variant_new ("(i)",
-                   arg_poll_interval),
+    "init",
+    g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
     cancellable,
@@ -577,16 +553,16 @@ _out:
 }
 
 /**
- * control_complete_set_poll_interval:
+ * control_complete_init:
  * @object: A #Control.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Control.setPollInterval">setPollInterval()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Control.init">init()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-control_complete_set_poll_interval (
+control_complete_init (
     Control *object,
     GDBusMethodInvocation *invocation)
 {

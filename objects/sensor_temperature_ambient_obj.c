@@ -7,25 +7,20 @@
 
 static const gchar* dbus_object_path = "/org/openbmc/sensors/Temperature/Ambient";
 static const gchar* dbus_name        = "org.openbmc.sensors.Temperature.Ambient";
-static const guint poll_interval = 3000;
 static guint heartbeat = 0;
 
 static GDBusObjectManagerServer *manager = NULL;
 
-static gboolean inited = FALSE;
-
 static gboolean
 poll_sensor(gpointer user_data)
 {
-	if (!inited)
-	{
-		return TRUE;
-	}
 	SensorValue *sensor = object_get_sensor_value((Object*)user_data);
 	SensorThreshold *threshold = object_get_sensor_threshold((Object*)user_data);
 	SensorI2c *i2c = object_get_sensor_i2c((Object*)user_data);
 
  	GVariant* v_value = sensor_value_get_value(sensor);
+	guint poll_interval = sensor_value_get_poll_interval(sensor);
+
 	//TODO:  Change to actually read sensor
 	double value = GET_VARIANT_D(v_value);
 	g_print("Reading I2C = %s; Address = %s; %f\n",
@@ -46,17 +41,13 @@ poll_sensor(gpointer user_data)
     // End actually reading sensor
 
     //if changed, set property and emit signal
-  //  if (value != sensor_value_get_value(sensor)
     if (value != GET_VARIANT_D(v_value))
     {
-	// they don't appear to provide a function to modify float value in varait
-	// so it seems I have to create a new one
 	GVariant* v_new_value = NEW_VARIANT_D(value);
 	sensor_value_set_value(sensor,v_new_value);
-
-       sensor_value_set_value(sensor,v_new_value);
-       //sensor_value_emit_changed(sensor,v_new_value,sensor_value_get_units(sensor));
-       check_thresholds(threshold,v_new_value);
+	const gchar* units = sensor_value_get_units(sensor);
+	sensor_value_emit_changed(sensor,v_new_value,units);
+	check_thresholds(threshold,v_new_value);
     }
     return TRUE;
 }
@@ -66,9 +57,11 @@ on_init         (SensorValue  *sen,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-  inited = TRUE;
-  sensor_value_complete_init(sen,invocation);
-  return TRUE;
+
+	guint poll_interval = sensor_value_get_poll_interval(sen);
+	g_timeout_add(poll_interval, poll_sensor, user_data);
+	sensor_value_complete_init(sen,invocation);
+	return TRUE;
 }
 
 
@@ -112,6 +105,7 @@ on_bus_acquired (GDBusConnection *connection,
 		GVariant* value = g_variant_new_variant(g_variant_new_double(1.0));
 		sensor_value_set_value(sensor,value);
   		sensor_value_set_units(sensor,"C");
+  		sensor_value_set_settable(sensor,FALSE);
 		sensor_threshold_set_state(threshold,NOT_SET);
 		
 		sensor_threshold_set_upper_critical(threshold,
@@ -128,14 +122,14 @@ on_bus_acquired (GDBusConnection *connection,
  		g_signal_connect (sensor,
                     "handle-init",
                     G_CALLBACK (on_init),
-                    NULL); /* user_data */
+                    object); /* user_data */
  
   		g_signal_connect (threshold,
                     "handle-get-state",
                     G_CALLBACK (get_threshold_state),
                     NULL); /* user_data */
 
-  		g_timeout_add(poll_interval, poll_sensor, object);
+
 
   		/* Export the object (@manager takes its own reference to @object) */
   		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));

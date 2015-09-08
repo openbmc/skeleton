@@ -1,4 +1,6 @@
 #! /usr/bin/python
+
+## todos: event logger, 
 import dbus
 import Openbmc
 
@@ -11,6 +13,24 @@ CACHED_INTERFACES = {
 }
 
 SYSTEM_CONFIG = {}
+
+SYSTEM_CONFIG['org.openbmc.watchdog.HostWatchdog'] = {
+		'start_process' : True,
+		'process_name' : 'host_watchdog.exe',
+		'heartbeat' : 'no',
+		'rest_name' : 'watchdog',
+		'instances' : [	
+			{
+				'name' : 'Watchdog1',
+				'user_label': 'Host Watchdog',
+				'properties' : { 
+					'org.openbmc.Watchdog' : {
+						'poll_interval': 300000,
+					}
+				}
+			}
+		]
+	}
 
 SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		'start_process' : True,
@@ -59,6 +79,11 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 			{
 				'name' : 'PowerControl1',
 				'user_label': 'Power control',
+				'properties' : { 
+					'org.openbmc.Control': {
+						'poll_interval' : 3000
+					}
+				}
 			}
 		]
 	}
@@ -68,13 +93,15 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 		'process_name' : 'sensor_ambient.exe',
 		'heartbeat' : 'yes',
 		'init_methods' : ['org.openbmc.SensorValue'],
-		'poll_interval': 5000,    
 		'instances' : [	
 			{
 				'name' : 'AmbientTemperature1',
 				'user_label': 'Ambient Temperature 1',
 				'sensor_id' : 41,
 				'properties' : { 
+					'org.openbmc.SensorValue': {
+						'poll_interval' : 5000
+					},
 					'org.openbmc.SensorThreshold' : {
 						'lower_critical': 5,
 						'lower_warning' : 10,
@@ -91,6 +118,9 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 				'name' : 'AmbientTemperature2',
 				'user_label': 'Ambient Temperature 2',
  				'properties' : { 
+					'org.openbmc.SensorValue': {
+						'poll_interval' : 5000
+					},
 					'org.openbmc.SensorThreshold' : {
 						'lower_critical': 5,
 						'lower_warning' : 10,

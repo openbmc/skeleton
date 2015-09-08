@@ -47,6 +47,8 @@ struct _SensorValueIface
 
   gint  (*get_poll_interval) (SensorValue *object);
 
+  gboolean  (*get_settable) (SensorValue *object);
+
   const gchar * (*get_units) (SensorValue *object);
 
   GVariant * (*get_value) (SensorValue *object);
@@ -165,6 +167,9 @@ void sensor_value_set_poll_interval (SensorValue *object, gint value);
 
 gint sensor_value_get_heatbeat (SensorValue *object);
 void sensor_value_set_heatbeat (SensorValue *object, gint value);
+
+gboolean sensor_value_get_settable (SensorValue *object);
+void sensor_value_set_settable (SensorValue *object, gboolean value);
 
 
 /* ---- */
@@ -604,6 +609,151 @@ GType sensor_i2c_skeleton_get_type (void) G_GNUC_CONST;
 SensorI2c *sensor_i2c_skeleton_new (void);
 
 
+/* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.SensorMatch */
+
+#define TYPE_SENSOR_MATCH (sensor_match_get_type ())
+#define SENSOR_MATCH(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_MATCH, SensorMatch))
+#define IS_SENSOR_MATCH(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_MATCH))
+#define SENSOR_MATCH_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SENSOR_MATCH, SensorMatchIface))
+
+struct _SensorMatch;
+typedef struct _SensorMatch SensorMatch;
+typedef struct _SensorMatchIface SensorMatchIface;
+
+struct _SensorMatchIface
+{
+  GTypeInterface parent_iface;
+
+
+  GVariant * (*get_match_value) (SensorMatch *object);
+
+  guchar  (*get_state) (SensorMatch *object);
+
+  void (*sensor_match) (
+    SensorMatch *object,
+    guchar arg_state);
+
+};
+
+GType sensor_match_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *sensor_match_interface_info (void);
+guint sensor_match_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus signal emissions functions: */
+void sensor_match_emit_sensor_match (
+    SensorMatch *object,
+    guchar arg_state);
+
+
+
+/* D-Bus property accessors: */
+GVariant *sensor_match_get_match_value (SensorMatch *object);
+GVariant *sensor_match_dup_match_value (SensorMatch *object);
+void sensor_match_set_match_value (SensorMatch *object, GVariant *value);
+
+guchar sensor_match_get_state (SensorMatch *object);
+void sensor_match_set_state (SensorMatch *object, guchar value);
+
+
+/* ---- */
+
+#define TYPE_SENSOR_MATCH_PROXY (sensor_match_proxy_get_type ())
+#define SENSOR_MATCH_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_MATCH_PROXY, SensorMatchProxy))
+#define SENSOR_MATCH_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_MATCH_PROXY, SensorMatchProxyClass))
+#define SENSOR_MATCH_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_MATCH_PROXY, SensorMatchProxyClass))
+#define IS_SENSOR_MATCH_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_MATCH_PROXY))
+#define IS_SENSOR_MATCH_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_MATCH_PROXY))
+
+typedef struct _SensorMatchProxy SensorMatchProxy;
+typedef struct _SensorMatchProxyClass SensorMatchProxyClass;
+typedef struct _SensorMatchProxyPrivate SensorMatchProxyPrivate;
+
+struct _SensorMatchProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  SensorMatchProxyPrivate *priv;
+};
+
+struct _SensorMatchProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType sensor_match_proxy_get_type (void) G_GNUC_CONST;
+
+void sensor_match_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+SensorMatch *sensor_match_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+SensorMatch *sensor_match_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void sensor_match_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+SensorMatch *sensor_match_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+SensorMatch *sensor_match_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_SENSOR_MATCH_SKELETON (sensor_match_skeleton_get_type ())
+#define SENSOR_MATCH_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_MATCH_SKELETON, SensorMatchSkeleton))
+#define SENSOR_MATCH_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_MATCH_SKELETON, SensorMatchSkeletonClass))
+#define SENSOR_MATCH_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_MATCH_SKELETON, SensorMatchSkeletonClass))
+#define IS_SENSOR_MATCH_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_MATCH_SKELETON))
+#define IS_SENSOR_MATCH_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_MATCH_SKELETON))
+
+typedef struct _SensorMatchSkeleton SensorMatchSkeleton;
+typedef struct _SensorMatchSkeletonClass SensorMatchSkeletonClass;
+typedef struct _SensorMatchSkeletonPrivate SensorMatchSkeletonPrivate;
+
+struct _SensorMatchSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  SensorMatchSkeletonPrivate *priv;
+};
+
+struct _SensorMatchSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType sensor_match_skeleton_get_type (void) G_GNUC_CONST;
+
+SensorMatch *sensor_match_skeleton_new (void);
+
+
 /* ---- */
 
 #define TYPE_OBJECT (object_get_type ())
@@ -625,9 +775,11 @@ GType object_get_type (void) G_GNUC_CONST;
 SensorValue *object_get_sensor_value (Object *object);
 SensorThreshold *object_get_sensor_threshold (Object *object);
 SensorI2c *object_get_sensor_i2c (Object *object);
+SensorMatch *object_get_sensor_match (Object *object);
 SensorValue *object_peek_sensor_value (Object *object);
 SensorThreshold *object_peek_sensor_threshold (Object *object);
 SensorI2c *object_peek_sensor_i2c (Object *object);
+SensorMatch *object_peek_sensor_match (Object *object);
 
 #define TYPE_OBJECT_PROXY (object_proxy_get_type ())
 #define OBJECT_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OBJECT_PROXY, ObjectProxy))
@@ -683,6 +835,7 @@ ObjectSkeleton *object_skeleton_new (const gchar *object_path);
 void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_);
 void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThreshold *interface_);
 void object_skeleton_set_sensor_i2c (ObjectSkeleton *object, SensorI2c *interface_);
+void object_skeleton_set_sensor_match (ObjectSkeleton *object, SensorMatch *interface_);
 
 /* ---- */
 

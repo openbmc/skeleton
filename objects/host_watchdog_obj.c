@@ -1,44 +1,55 @@
-#include "interfaces/sensor.h"
+#include "interfaces/watchdog.h"
 #include "openbmc.h"
 
-#define BOOTED 100
+
 /* ---------------------------------------------------------------------------------------------------- */
 
-static const gchar* dbus_object_path = "/org/openbmc/sensors/HostStatus";
-static const gchar* dbus_name        = "org.openbmc.sensors.HostStatus";
-static guint heartbeat = 0;
+static const gchar* dbus_object_path = "/org/openbmc/watchdog/HostWatchdog";
+static const gchar* dbus_name        = "org.openbmc.watchdog.HostWatchdog";
 
 static GDBusObjectManagerServer *manager = NULL;
 
-static gboolean
-on_set_value    (SensorValue  *sen,
-                GDBusMethodInvocation  *invocation,
-		GVariant*    value,
-                gpointer                user_data)
-{
-	SensorMatch *match = object_get_sensor_match((Object*)user_data);
-	sensor_value_set_value(sen,value);
-	sensor_value_emit_changed(sen,value,"");
-	// Important host status values
-	guchar host_status = g_variant_get_byte(g_variant_get_variant(value));
 
-	if (host_status == BOOTED)
+static gboolean
+poll_watchdog(gpointer user_data)
+{
+	Watchdog *watchdog = object_get_watchdog((Object*)user_data);
+
+ 	guint count = watchdog_get_watchdog(watchdog);
+	g_print("Polling watchdog: %d\n",count);
+	
+	if (count == 0)
 	{
-		sensor_match_set_state(match,host_status);
-		sensor_match_emit_sensor_match(match,host_status);
+		watchdog_emit_watchdog_error(watchdog);
 	}
-	sensor_value_complete_set_value(sen,invocation);
+
+	//reset watchdog
+	watchdog_set_watchdog(watchdog,0);	
 	return TRUE;
 }
 
 static gboolean
-on_init         (SensorValue  *sen,
+on_start        (Watchdog  *wd,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-	sensor_value_complete_init(sen,invocation);
+	guint poll_interval = watchdog_get_poll_interval(wd);
+  	g_timeout_add(poll_interval, poll_watchdog, user_data);
+	watchdog_complete_start(wd,invocation);
 	return TRUE;
 }
+
+static gboolean
+on_poke         (Watchdog  *wd,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+	watchdog_set_watchdog(wd,1);
+	watchdog_complete_poke(wd,invocation);
+	return TRUE;
+}
+
+
 
 static void 
 on_bus_acquired (GDBusConnection *connection,
@@ -62,31 +73,24 @@ on_bus_acquired (GDBusConnection *connection,
 		ObjectSkeleton *object = object_skeleton_new (s);
 		g_free (s);
 
-		SensorValue *sensor = sensor_value_skeleton_new ();
-  		object_skeleton_set_sensor_value (object, sensor);
-  		g_object_unref (sensor);
-
-		SensorMatch *match = sensor_match_skeleton_new ();
-  		object_skeleton_set_sensor_match (object, match);
-  		g_object_unref (match);
-	
-		//must init variant
-		GVariant* v = NEW_VARIANT_B(0);
-		sensor_value_set_value(sensor,v);
-	
-		// set units
-  		sensor_value_set_units(sensor,"");
-  		sensor_value_set_settable(sensor,TRUE);
-
-  		//define method callbacks here
-  		g_signal_connect (sensor,
-                    "handle-init",
-                    G_CALLBACK (on_init),
-                    NULL); /* user_data */
-  		g_signal_connect (sensor,
-                    "handle-set-value",
-                    G_CALLBACK (on_set_value),
+		Watchdog *wd = watchdog_skeleton_new ();
+  		object_skeleton_set_watchdog (object, wd);
+  		g_object_unref (wd);
+		
+  		// set properties
+  		watchdog_set_watchdog(wd,1);
+		
+		//define method callbacks here
+ 		g_signal_connect (wd,
+                    "handle-start",
+                    G_CALLBACK (on_start),
                     object); /* user_data */
+ 
+ 		g_signal_connect (wd,
+                    "handle-poke",
+                    G_CALLBACK (on_poke),
+                    object); /* user_data */
+
 
   		/* Export the object (@manager takes its own reference to @object) */
   		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));

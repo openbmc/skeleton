@@ -33,6 +33,9 @@ button_power: button.o button_power_obj.o gpio.o
 sensor_host_status: sensor.o sensor_host_status_obj.o
 	$(CC) -o bin/$@.exe obj/sensor.o obj/sensor_host_status_obj.o $(CFLAGS)
 
+sensor_occ: sensor.o sensor_occ_obj.o
+	$(CC) -o bin/$@.exe obj/sensor.o obj/sensor_occ_obj.o $(CFLAGS)
+
 control_host: control.o control_host_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/control.o obj/control_host_obj.o $(CFLAGS)
 
@@ -49,3 +52,5 @@ fru_board: fru.o fru_board_obj.o
 	$(CC) -o bin/$@.exe obj/fru.o obj/fru_board_obj.o $(CFLAGS)
 
 
+host_watchdog: watchdog.o host_watchdog_obj.o
+	$(CC) -o bin/$@.exe obj/watchdog.o obj/host_watchdog_obj.o $(CFLAGS)

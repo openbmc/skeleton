@@ -8,10 +8,11 @@
 			<arg name="value" type="v" direction="in"/>
 		</method>
 
-                <property name="value" type="v" access="readwrite"/>
+                <property name="value" type="v" access="read"/>
 		<property name="units" type="s" access="read"/>
-		<property name="poll_interval" type="i" access="read"/>
+		<property name="poll_interval" type="i" access="readwrite"/>
 		<property name="heatbeat" type="i" access="read"/>
+		<property name="settable" type="b" access="read"/>
 
 		<signal name="Changed">
 			<arg name="value" type="v"/>
@@ -39,6 +40,13 @@
 	<interface name="org.openbmc.SensorI2c">
 		<property name="dev_path" type="s" access="readwrite"/>
 		<property name="address"  type="s" access="readwrite"/>
+	</interface>
+	<interface name="org.openbmc.SensorMatch">
+		<property name="match_value" type="v" access="read"/>
+		<property name="state" type="y" access="read"/>
+		<signal name="SensorMatch">
+			<arg name="state" type="y"/>
+		</signal>
 	</interface>
 
 </node>

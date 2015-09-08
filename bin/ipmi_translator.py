@@ -73,15 +73,13 @@ class IpmiTranslator(dbus.service.Object):
 			## change to variant data type
 			## comes in off dbus from ipmi_bt as a basic data type
 			dvalue = Openbmc.DbusProperty('value',value)
-			dvalue.setVariant(2)
-			data = { 'value' : dvalue.getValue() }
+			dvalue.setVariant(1)
 			## save sensor value
-			## TODO:  need to accomodate any sensor interface
 			interface_name = 'org.openbmc.SensorValue'
 			cache = System.CACHED_INTERFACES.has_key(interface_name)
 			obj = bus.get_object(bus_name,obj_path)
 			intf = dbus.Interface(obj, interface_name)
-			self.property_manager.saveProperties(bus_name,obj_path,interface_name,cache,data)
+			intf.setValue(dvalue.getValue())
 		else:
 			## TODO: error handling
 			pass
@@ -99,9 +97,33 @@ class IpmiTranslator(dbus.service.Object):
 					'/org/openbmc/managers/Sensors/Barreleye')
 			intf = dbus.Interface(obj, 'org.openbmc.managers.Sensors' )
 			val = intf.getSensor(obj_path)
-			print "value = "+str(val)
 
 		return val
+
+	@dbus.service.method(DBUS_NAME,
+		in_signature='', out_signature='')
+	def pokeHostWatchdog(self):
+		## TODO don't do hardcoding
+		obj =  bus.get_object('org.openbmc.watchdog.HostWatchdog',
+				'/org/openbmc/watchdog/HostWatchdog/Watchdog1')
+		intf = dbus.Interface(obj, 'org.openbmc.Watchdog' )
+		intf.poke()
+
+		return None
+
+	@dbus.service.method(DBUS_NAME,
+		in_signature='', out_signature='')
+	def startHostWatchdog(self):
+		## TODO don't do hardcoding
+		obj =  bus.get_object('org.openbmc.watchdog.HostWatchdog',
+				'/org/openbmc/watchdog/HostWatchdog/Watchdog1')
+		intf = dbus.Interface(obj, 'org.openbmc.Watchdog' )
+		intf.start()
+
+		return None
+
+
+
 
 
 if __name__ == '__main__':

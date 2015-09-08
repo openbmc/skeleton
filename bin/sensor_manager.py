@@ -19,8 +19,8 @@ class SensorManager(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
 		bus.add_signal_receiver(self.UpdateSensor,
-					dbus_interface = 'org.freedesktop.DBus.Properties', 
-					signal_name = 'PropertiesChanged', path_keyword='path')
+					dbus_interface = 'org.openbmc.SensorValue', 
+					signal_name = 'Changed', path_keyword='path')
 		bus.add_signal_receiver(self.NormalThreshold,
 					dbus_interface = 'org.openbmc.SensorThreshold', 
 					signal_name = 'Normal', path_keyword='path')
@@ -41,11 +41,10 @@ class SensorManager(dbus.service.Object):
 			val = self.sensor_cache[path]['value']
 		return val
 		
-	def UpdateSensor(self,interface,prop_dict,props, path = None):
-		if (interface == "org.openbmc.SensorValue"):
-			self.initSensorEntry(path)
-			for p in prop_dict.keys():	
-				self.sensor_cache[path][p] = prop_dict[p]
+	def UpdateSensor(self,value,units,path = None):
+		self.initSensorEntry(path)
+		self.sensor_cache[path]['value'] = value
+		self.sensor_cache[path]['units'] = units
 
 	@dbus.service.signal(DBUS_NAME)
 	def CriticalThreshold(self, path = None):
@@ -68,10 +67,6 @@ class SensorManager(dbus.service.Object):
 	def initSensorEntry(self,path):
 		if (self.sensor_cache.has_key(path) == False):
 			self.sensor_cache[path] = {}
-			obj = bus.get_object(Openbmc.object_to_bus_name(path),path)
-			intf = dbus.Interface(obj,'org.freedesktop.DBus.Properties')
-			self.sensor_cache[path]['units'] = intf.Get('org.openbmc.SensorValue','units')
-			
 
 				
 if __name__ == '__main__':

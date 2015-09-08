@@ -57,7 +57,6 @@ class PropertyManager():
 		for prop in properties.keys():
 			print "Saving properties: "+prop
 			## convert property to correct dbus type
-			print type(properties[prop])
 			prop_intf.Set(interface_name,prop,properties[prop])
 
 		dbus_props = []
