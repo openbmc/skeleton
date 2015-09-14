@@ -1,7 +1,0 @@
-./bin/power_control.exe &
-./bin/chassis_identify.exe &
-./bin/sensor_ambient.exe &
-./bin/button_power.exe &
-./bin/sensor_host_status.exe &
-./bin/control_host.exe &
-./bin/flash_bios.exe &
