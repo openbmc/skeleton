@@ -7,7 +7,8 @@ import Openbmc
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-from gi.repository import Gio, GLib, GObject
+#from gi.repository import Gio, GLib, GObject
+import gobject
 
 
 class PropertyManager():

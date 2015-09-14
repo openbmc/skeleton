@@ -24,8 +24,36 @@ on_init (Control          *control,
 {
 	g_print("BMC init\n");
 	// BMC init done here
-	// must be blocking
-	
+	/*
+	devmem(0x1e789080,0x00000500); //Enable LPC FWH cycles, Enable LPC to AHB bridge
+	devmem(0x1e789088,0x30000E00); //32M PNOR
+	devmem(0x1e78908C,0xFE0001FF);
+
+	//flash controller
+	devmem(0x1e630000,0x00000003);
+	devmem(0x1e630004,0x00002404);
+
+	//UART
+	devmem(0x1e6e2084,0x00fff0c0);  //Enable UART1
+	devmem(0x1e783000,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
+	devmem(0x1e783004,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
+	devmem(0x1e783008,0x000000c1);  //Disable Parity, 1 stop bit, 8 bits
+	devmem(0x1E78909C,0x00000000);  //Set routing UART1 -> COM 1
+
+
+	//GPIO
+	devmem(0x1e6e2070,0x120CE406);
+	devmem(0x1e6e2080,0xCB000000);
+	devmem(0x1e6e2088,0x01C000FF);
+	devmem(0x1e6e208c,0xC1C000FF);
+	devmem(0x1e6e2090,0x003FA009);
+
+	devmem(0x1E780000,0x13008CE7);
+	devmem(0x1E780004,0x0370E677);
+	devmem(0x1E780020,0xDF48F7FF);
+	devmem(0x1E780024,0xC738F202);
+*/
+
 	control_complete_init(control,invocation);
 	control_emit_goto_system_state(control,"STANDBY");
 	

@@ -29,6 +29,10 @@ main (gint argc, gchar *argv[])
                              NULL,                      /* GCancellable */
                              &error);
 	g_assert_no_error (error);
+
+	//TODO:  Read actual vpd
+	g_print("Reading VPD\n");
+
 	parm = g_variant_new("(isv)",21,"manufacturer",g_variant_new_string("ibmibm"));
 	result = g_dbus_proxy_call_sync (p,
                                    "updateFruField",
@@ -38,6 +42,7 @@ main (gint argc, gchar *argv[])
                                    NULL,
                                    &error);
 	g_assert_no_error (error);
+	
 	//g_main_loop_run (loop);
 	//g_bus_unown_name (id);
  	g_main_loop_unref (loop);

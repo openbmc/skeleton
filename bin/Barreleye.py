@@ -34,6 +34,7 @@ SYSTEM_CONFIG = {}
 SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 		'system_state' : 'INIT',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'control_bmc.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
@@ -47,6 +48,7 @@ SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 SYSTEM_CONFIG['org.openbmc.managers.Frus'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'fru_manager.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'frus',
@@ -61,6 +63,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Frus'] = {
 SYSTEM_CONFIG['org.openbmc.managers.Ipmi'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'ipmi_manager.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'frus',
@@ -76,6 +79,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Ipmi'] = {
 SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'sensor_manager.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'sensors',
@@ -90,6 +94,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'eventlogger.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'events',
@@ -104,6 +109,7 @@ SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
 SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'host_watchdog.exe',
 		'heartbeat' : 'no',
 		'rest_name' : 'watchdog',
@@ -123,6 +129,7 @@ SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
 SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'power_control.exe',
 		'heartbeat' : 'yes',
 		'instances' : [	
@@ -141,6 +148,7 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'sensor_ambient.exe',
 		'heartbeat' : 'yes',
 		'instances' : [	
@@ -168,6 +176,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'button_power.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
@@ -180,6 +189,7 @@ SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
 SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'sensor_host_status.exe',
 		'heartbeat' : "no",
 		'instances' : [	
@@ -198,6 +208,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'chassis_identify.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
@@ -210,6 +221,7 @@ SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
 SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'flash_bios.exe',
 		'heartbeat' : 'no',
 		'rest_name' : 'flash',
@@ -223,6 +235,7 @@ SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'control_host.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
@@ -235,6 +248,7 @@ SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'chassis_control.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'chassis',
@@ -246,9 +260,25 @@ SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 		]
 	}
 
-SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
+SYSTEM_CONFIG['org.openbmc.vpd'] = {
 		'system_state' : 'POWERED_ON',
 		'start_process' : True,
+		'monitor_process' : False,
+		'process_name' : 'board_vpd.exe',
+		'heartbeat' : 'no',
+		'instances' : [
+			{
+				'name' : 'MBVPD_0',
+				'user_label': 'VPD',
+			},
+
+		]
+	}
+
+SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
+		'system_state' : 'HOST_UP',
+		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'sensor_occ.exe',
 		'heartbeat' : 'no',
 		'instances' : [
@@ -268,6 +298,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
 SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'fan.exe',
 		'heartbeat' : 'no',
 		'instances' : [

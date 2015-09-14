@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-from gi.repository import GObject
+#from gi.repository import GObject
+import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
@@ -104,7 +105,7 @@ if __name__ == '__main__':
     bus = dbus.SessionBus()
     name = dbus.service.BusName(DBUS_NAME,bus)
     obj = SensorManager(bus,OBJ_NAME)
-    mainloop = GObject.MainLoop()
+    mainloop = gobject.MainLoop()
 
     print "Running Sensor Manager"
     mainloop.run()

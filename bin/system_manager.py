@@ -2,7 +2,8 @@
 
 import sys
 import subprocess
-from gi.repository import GObject
+#from gi.repository import GObject
+import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
@@ -55,7 +56,7 @@ class SystemManager(dbus.service.Object):
 		
 		if (state_name == "INIT"):
 			## Add poll for heartbeat
-	    		GObject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
+	    		gobject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
 		
 		if (System.ENTER_STATE_CALLBACK.has_key(state_name)):
 			cb = System.ENTER_STATE_CALLBACK[state_name]
@@ -83,7 +84,8 @@ class SystemManager(dbus.service.Object):
 		#print "heartbeat check"
 		for bus_name in System.SYSTEM_CONFIG.keys():
 			if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True and
-				System.SYSTEM_CONFIG[bus_name].has_key('popen')):
+				System.SYSTEM_CONFIG[bus_name].has_key('popen') and
+				System.SYSTEM_CONFIG[bus_name]['monitor_process'] == True):
 				## even if process doesn't request heartbeat check, 
 				##   make sure process is still alive
 				p = System.SYSTEM_CONFIG[bus_name]['popen']
@@ -172,7 +174,7 @@ if __name__ == '__main__':
     bus = dbus.SessionBus()
     name = dbus.service.BusName(DBUS_NAME,bus)
     obj = SystemManager(bus,OBJ_NAME)
-    mainloop = GObject.MainLoop()
+    mainloop = gobject.MainLoop()
 
     print "Running SystemManager"
     mainloop.run()
