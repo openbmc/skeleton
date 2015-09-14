@@ -1,9 +1,9 @@
-#include "interfaces/led.h"
+#include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "gpio.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
-static const gchar* dbus_object_path = "/org/openbmc/leds/ChassisIdentify";
+static const gchar* dbus_object_path = "/org/openbmc/leds";
 static const gchar* dbus_name        = "org.openbmc.leds.ChassisIdentify";
 
 static GDBusObjectManagerServer *manager = NULL;
@@ -46,7 +46,7 @@ on_bus_acquired (GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
 
-	g_print ("Acquired a message bus connection: %s\n",name);
+	//g_print ("Acquired a message bus connection: %s\n",name);
 	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
 	{
@@ -95,7 +95,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  g_print ("Acquired the name %s\n", name);
+  //g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -103,7 +103,7 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  g_print ("Lost the name %s\n", name);
+ // g_print ("Lost the name %s\n", name);
 }
 
 

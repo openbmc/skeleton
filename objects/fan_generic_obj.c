@@ -1,12 +1,11 @@
-#include "interfaces/fru.h"
+#include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 
 
 /* ---------------------------------------------------------------------------------------------------- */
 
-static const gchar* dbus_object_path = "/org/openbmc/frus/Fan";
-static const gchar* dbus_name        = "org.openbmc.frus.Fan";
-static const guint poll_interval = 5000;
+static const gchar* dbus_object_path = "/org/openbmc/control";
+static const gchar* dbus_name        = "org.openbmc.control.Fan";
 static guint heartbeat = 0;
 
 static GDBusObjectManagerServer *manager = NULL;
@@ -21,23 +20,23 @@ poll_sensor(gpointer user_data)
 
 
 static gboolean
-on_set_speed    (FruFan  *fan,
+on_set_speed    (Fan  *fan,
                 GDBusMethodInvocation  *invocation,
 		guint                  speed,
                 gpointer                user_data)
 {
-  fru_fan_set_speed(fan,speed);
-  fru_fan_complete_set_speed(fan,invocation);
+  fan_set_speed(fan,speed);
+  fan_complete_set_speed(fan,invocation);
   return TRUE;
 }
 
 static gboolean
-on_get_speed (FruFan                 *fan,
+on_get_speed (Fan                 *fan,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-  guint reading = fru_fan_get_speed(fan);
-  fru_fan_complete_get_speed(fan,invocation,reading);
+  guint reading = fan_get_speed(fan);
+  fan_complete_get_speed(fan,invocation,reading);
   return TRUE;
 }
 
@@ -46,7 +45,7 @@ on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  	g_print ("Acquired a message bus connection: %s\n",name);
+  	//g_print ("Acquired a message bus connection: %s\n",name);
 
   	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
@@ -63,13 +62,9 @@ on_bus_acquired (GDBusConnection *connection,
 		ObjectSkeleton *object = object_skeleton_new (s);
 		g_free (s);
 
-		FruFan *fan = fru_fan_skeleton_new ();
-  		object_skeleton_set_fru_fan (object, fan);
+		Fan *fan = fan_skeleton_new ();
+  		object_skeleton_set_fan (object, fan);
   		g_object_unref (fan);
-
-		Fru *fru = fru_skeleton_new ();
-  		object_skeleton_set_fru (object, fru);
-  		g_object_unref (fru);
 		
   		//define method callbacks here
   		g_signal_connect (fan,
@@ -97,7 +92,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  g_print ("Acquired the name %s\n", name);
+  //g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -105,7 +100,7 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  g_print ("Lost the name %s\n", name);
+  //g_print ("Lost the name %s\n", name);
 }
 
 

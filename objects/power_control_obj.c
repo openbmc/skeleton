@@ -6,18 +6,21 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "interfaces/control.h"
+#include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "gpio.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
-static const gchar* dbus_object_path = "/org/openbmc/control/Power";
+static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* dbus_name        = "org.openbmc.control.Power";
 
 GPIO power_pin    = (GPIO){ "POWER_PIN" };
 GPIO pgood        = (GPIO){ "PGOOD" };
 
 static GDBusObjectManagerServer *manager = NULL;
+
+guint tmp_pgood = 0;
+guint last_pgood = 0;
 
 static gboolean poll_pgood(gpointer user_data)
 {
@@ -26,22 +29,32 @@ static gboolean poll_pgood(gpointer user_data)
 	EventLog* event_log = object_get_event_log((Object*)user_data);
 	control_emit_heartbeat(control,dbus_name);
 
-	//if (pgood.fd >= 0)
-	//{
-		uint8_t gpio = gpio_read(&pgood);
-		//if changed, set property and emit signal
-		if (gpio != control_power_get_pgood(control_power))
-		{
- 			control_power_set_pgood(control_power,gpio);
- 			if (gpio==0)
- 			{
- 				control_power_emit_power_lost(control_power);
- 			}
- 			else
- 			{
- 				control_power_emit_power_good(control_power);
- 			}
+	//For simulation, remove
+	if (tmp_pgood!=last_pgood) {
+		if (tmp_pgood == 1) {
+			control_emit_goto_system_state(control,"POWERED_ON");
+		} else {
+			control_emit_goto_system_state(control,"POWERED_OFF");
 		}
+	}
+
+	last_pgood = tmp_pgood;
+	uint8_t gpio = gpio_read(&pgood);
+	//if changed, set property and emit signal
+	if (gpio != control_power_get_pgood(control_power))
+	{
+ 		control_power_set_pgood(control_power,gpio);
+ 		if (gpio==0)
+ 		{
+ 			control_power_emit_power_lost(control_power);
+			control_emit_goto_system_state(control,"POWERED_OFF");
+ 		}
+ 		else
+ 		{
+ 			control_power_emit_power_good(control_power);
+			control_emit_goto_system_state(control,"POWERED_ON");
+ 		}
+	}
 	return TRUE;
 }
 
@@ -53,6 +66,7 @@ on_set_power_state (ControlPower          *pwr,
                 guint                   state,
                 gpointer                user_data)
 {
+	Control* control = object_get_control((Object*)user_data);
 	if (state > 1)
 	{
 		g_dbus_method_invocation_return_dbus_error (invocation,
@@ -69,10 +83,20 @@ on_set_power_state (ControlPower          *pwr,
 	else
 	{
 		g_print("Set power state: %d\n",state);
+		//temporary until real hardware works
+		tmp_pgood = state;
 		gpio_open(&power_pin);
 		gpio_write(&power_pin,!state); 
 		gpio_close(&power_pin);
 		control_power_set_state(pwr,state);
+		if (state == 1)
+		{
+			control_emit_goto_system_state(control,"POWERING_ON");
+		}
+		else
+		{
+			control_emit_goto_system_state(control,"POWERING_OFF");
+		}
 	}
 	return TRUE;
 }
@@ -104,7 +128,7 @@ on_bus_acquired (GDBusConnection *connection,
                  gpointer         user_data)
 {
 	ObjectSkeleton *object;
-	g_print ("Acquired a message bus connection: %s\n",name);
+	//g_print ("Acquired a message bus connection: %s\n",name);
  	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
 	{
@@ -117,6 +141,7 @@ on_bus_acquired (GDBusConnection *connection,
   	{
 		gchar *s;
   		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+		g_print("%s\n",s);
   		object = object_skeleton_new (s);
   		g_free (s);
 
@@ -136,7 +161,7 @@ on_bus_acquired (GDBusConnection *connection,
 		g_signal_connect (control_power,
         	            "handle-set-power-state",
                 	    G_CALLBACK (on_set_power_state),
-                	    NULL); /* user_data */
+                	    object); /* user_data */
 
 		g_signal_connect (control_power,
                 	    "handle-get-power-state",
@@ -168,7 +193,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  g_print ("Acquired the name %s\n", name);
+  //g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -176,7 +201,7 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  g_print ("Lost the name %s\n", name);
+  //g_print ("Lost the name %s\n", name);
 }
 
 

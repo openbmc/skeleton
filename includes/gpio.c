@@ -7,7 +7,7 @@
 #include <argp.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "interfaces/eventlog.h"
+#include "interfaces/openbmc_intf.h"
 #include "gpio.h"
 
 
@@ -18,7 +18,7 @@ void gpio_writec(GPIO* gpio, char value)
 	if (write(gpio->fd, buf, 1) != 1)
 	{
 		//TODO: error handling
-		printf("Write error\n");
+		//printf("Write error\n");
 	} 
 }
 
@@ -33,7 +33,7 @@ void gpio_write(GPIO* gpio, uint8_t value)
 	if (write(gpio->fd, buf, 1) != 1)
 	{
 		//TODO: error handling
-		printf("write error\n");
+		//printf("write error\n");
 	} 
 }
 

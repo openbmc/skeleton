@@ -1,10 +1,10 @@
-#include "interfaces/sensor.h"
+#include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 
 #define BOOTED 100
 /* ---------------------------------------------------------------------------------------------------- */
 
-static const gchar* dbus_object_path = "/org/openbmc/sensors/HostStatus";
+static const gchar* dbus_object_path = "/org/openbmc/sensors";
 static const gchar* dbus_name        = "org.openbmc.sensors.HostStatus";
 static guint heartbeat = 0;
 
@@ -17,6 +17,8 @@ on_set_value    (SensorValue  *sen,
                 gpointer                user_data)
 {
 	SensorMatch *match = object_get_sensor_match((Object*)user_data);
+	Control* control = object_get_control((Object*)user_data);
+
 	sensor_value_set_value(sen,value);
 	sensor_value_emit_changed(sen,value,"");
 	// Important host status values
@@ -26,6 +28,7 @@ on_set_value    (SensorValue  *sen,
 	{
 		sensor_match_set_state(match,host_status);
 		sensor_match_emit_sensor_match(match,host_status);
+		control_emit_goto_system_state(control,"BOOTED");
 	}
 	sensor_value_complete_set_value(sen,invocation);
 	return TRUE;
@@ -40,12 +43,21 @@ on_init         (SensorValue  *sen,
 	return TRUE;
 }
 
+static gboolean
+on_init_control         (Control  *control,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+	control_complete_init(control,invocation);
+	return TRUE;
+}
+
 static void 
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  	g_print ("Acquired a message bus connection: %s\n",name);
+//  	g_print ("Acquired a message bus connection: %s\n",name);
 
   	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
@@ -69,6 +81,10 @@ on_bus_acquired (GDBusConnection *connection,
 		SensorMatch *match = sensor_match_skeleton_new ();
   		object_skeleton_set_sensor_match (object, match);
   		g_object_unref (match);
+
+		Control* control = control_skeleton_new ();
+		object_skeleton_set_control (object, control);
+		g_object_unref (control);
 	
 		//must init variant
 		GVariant* v = NEW_VARIANT_B(0);
@@ -77,13 +93,21 @@ on_bus_acquired (GDBusConnection *connection,
 		// set units
   		sensor_value_set_units(sensor,"");
   		sensor_value_set_settable(sensor,TRUE);
+		//must emit change so sensor manager sees initial value
+		sensor_value_emit_changed(sensor,v,"");
 
   		//define method callbacks here
   		g_signal_connect (sensor,
                     "handle-init",
                     G_CALLBACK (on_init),
                     NULL); /* user_data */
-  		g_signal_connect (sensor,
+  
+ 		g_signal_connect (control,
+                    "handle-init",
+                    G_CALLBACK (on_init_control),
+                    NULL); /* user_data */
+
+		g_signal_connect (sensor,
                     "handle-set-value",
                     G_CALLBACK (on_set_value),
                     object); /* user_data */
@@ -102,7 +126,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  g_print ("Acquired the name %s\n", name);
+  //g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -110,7 +134,7 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  g_print ("Lost the name %s\n", name);
+  //g_print ("Lost the name %s\n", name);
 }
 
 

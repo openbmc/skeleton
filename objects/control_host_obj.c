@@ -5,13 +5,13 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "interfaces/control.h"
+#include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "gpio.h"
 
 
 /* ---------------------------------------------------------------------------------------------------- */
-static const gchar* dbus_object_path = "/org/openbmc/control/Host";
+static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* dbus_name        = "org.openbmc.control.Host";
 
 static GDBusObjectManagerServer *manager = NULL;
@@ -21,15 +21,22 @@ GPIO fsi_clk      = (GPIO){ "FSI_CLK" };
 GPIO fsi_enable   = (GPIO){ "FSI_ENABLE" };
 GPIO cronus_sel   = (GPIO){ "CRONUS_SEL" };
 
-
+static gboolean
+on_init         (Control       *control,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+	control_complete_init(control,invocation);
+	return TRUE;
+}
 static gboolean
 on_boot         (ControlHost        *host,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-	// TODO: Implement gpio toggling
+	// TODO: Add error checking
 	g_print("Boot\n");
-
+	Control* control = object_get_control((Object*)user_data);
 	control_host_complete_boot(host,invocation);
 	
 	gpio_open(&fsi_clk);
@@ -76,6 +83,8 @@ on_boot         (ControlHost        *host,
 	gpio_close(&fsi_enable);
 	gpio_close(&cronus_sel);
 
+	control_emit_goto_system_state(control,"BOOTING");
+	
 	control_host_emit_booted(host);
 	return TRUE;
 }
@@ -86,7 +95,7 @@ on_bus_acquired (GDBusConnection *connection,
                  gpointer         user_data)
 {
 	ObjectSkeleton *object;
-	g_print ("Acquired a message bus connection: %s\n",name);
+	//g_print ("Acquired a message bus connection: %s\n",name);
  	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
 	{
@@ -105,10 +114,19 @@ on_bus_acquired (GDBusConnection *connection,
 		object_skeleton_set_control_host (object, control_host);
 		g_object_unref (control_host);
 
+		Control* control = control_skeleton_new ();
+		object_skeleton_set_control (object, control);
+		g_object_unref (control);
+
 		//define method callbacks here
 		g_signal_connect (control_host,
                   "handle-boot",
                   G_CALLBACK (on_boot),
+                  object); /* user_data */
+
+		g_signal_connect (control,
+                  "handle-init",
+                  G_CALLBACK (on_init),
                   NULL); /* user_data */
 
 		/* Export the object (@manager takes its own reference to @object) */
@@ -130,7 +148,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  g_print ("Acquired the name %s\n", name);
+//  g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -138,7 +156,7 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  g_print ("Lost the name %s\n", name);
+//  g_print ("Lost the name %s\n", name);
 }
 
 gint

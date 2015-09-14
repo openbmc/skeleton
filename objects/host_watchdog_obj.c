@@ -1,11 +1,11 @@
-#include "interfaces/watchdog.h"
+#include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 
 
 /* ---------------------------------------------------------------------------------------------------- */
 
-static const gchar* dbus_object_path = "/org/openbmc/watchdog/HostWatchdog";
-static const gchar* dbus_name        = "org.openbmc.watchdog.HostWatchdog";
+static const gchar* dbus_object_path = "/org/openbmc/watchdog";
+static const gchar* dbus_name        = "org.openbmc.watchdog.Host";
 
 static GDBusObjectManagerServer *manager = NULL;
 
@@ -20,7 +20,9 @@ poll_watchdog(gpointer user_data)
 	
 	if (count == 0)
 	{
+		//watchdog error, emit error and stop watchdog
 		watchdog_emit_watchdog_error(watchdog);
+		return FALSE;
 	}
 
 	//reset watchdog
@@ -33,6 +35,7 @@ on_start        (Watchdog  *wd,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
+  	watchdog_set_watchdog(wd,1);
 	guint poll_interval = watchdog_get_poll_interval(wd);
   	g_timeout_add(poll_interval, poll_watchdog, user_data);
 	watchdog_complete_start(wd,invocation);
@@ -56,7 +59,7 @@ on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  	g_print ("Acquired a message bus connection: %s\n",name);
+  //	g_print ("Acquired a message bus connection: %s\n",name);
 
   	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
@@ -106,7 +109,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  g_print ("Acquired the name %s\n", name);
+  //g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -114,7 +117,7 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  g_print ("Lost the name %s\n", name);
+  //g_print ("Lost the name %s\n", name);
 }
 
 

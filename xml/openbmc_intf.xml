@@ -1,0 +1,165 @@
+<node>
+	<interface name="org.openbmc.Occ">
+		<method name="init"/>
+		<method name="collect"/>
+		<property name="state" type="s" access="readwrite"/>
+		<property name="poll_interval" type="i" access="readwrite"/>
+	</interface>
+
+	<interface name="org.openbmc.Fan">
+		<method name="setCoolingZone">
+			<arg name="cooling_zone" type="i" direction="in"/>
+		</method>
+		<method name="getSpeed">
+			<arg name="speed" type="i" direction="out"/>
+		</method>			
+		<method name="setSpeed">
+			<arg name="speed" type="i" direction="in"/>
+		</method>
+		<property name="speed" type="i" access="readwrite"/>
+		<property name="cooling_zone" type="i" access="readwrite"/>
+		<property name="pwm_num"  type="i" access="readwrite"/>
+		<signal name="SpeedChanged">
+			<arg name="speed" type="i"/>
+		</signal>
+		<signal name="TachError"/>
+	</interface>
+	<interface name="org.openbmc.SensorValue">
+		<method name="init"/>
+		<method name="getValue">
+			<arg name="value" type="v" direction="out"/>
+		</method>
+		<method name="setValue">
+			<arg name="value" type="v" direction="in"/>
+		</method>
+
+                <property name="value" type="v" access="read"/>
+		<property name="units" type="s" access="read"/>
+		<property name="poll_interval" type="i" access="readwrite"/>
+		<property name="heatbeat" type="i" access="read"/>
+		<property name="settable" type="b" access="read"/>
+		<property name="ipmi_entity_id" type="y" access="read"/>
+		<property name="ipmi_id" type="y" access="readwrite"/>
+
+		<signal name="Changed">
+			<arg name="value" type="v"/>
+			<arg name="units" type="s"/>
+		</signal>
+		<signal name="Heartbeat">
+			<arg name="bus_name" type="s"/>
+		</signal>
+	</interface>
+	<interface name="org.openbmc.SensorThreshold">
+		<method name="getState">
+			<arg name="state" type="y" direction="out"/>
+		</method>
+
+		<property name="lower_critical" type="v" access="readwrite"/>
+		<property name="lower_warning"  type="v" access="readwrite"/>
+		<property name="upper_warning"  type="v" access="readwrite"/>
+		<property name="upper_critical" type="v" access="readwrite"/>
+		<property name="state" type="y" access="read"/>
+
+		<signal name="Warning"/>
+		<signal name="Critical"/>
+		<signal name="Normal"/>
+	</interface>
+	<interface name="org.openbmc.SensorI2c">
+		<property name="dev_path" type="s" access="readwrite"/>
+		<property name="address"  type="s" access="readwrite"/>
+	</interface>
+	<interface name="org.openbmc.SensorMatch">
+		<property name="match_value" type="v" access="read"/>
+		<property name="state" type="y" access="read"/>
+		<signal name="SensorMatch">
+			<arg name="state" type="y"/>
+		</signal>
+	</interface>
+	<interface name="org.openbmc.Process">
+		<method name="stop"/>
+	</interface>
+	<interface name="org.openbmc.Control">
+		<method name="init"/>
+		<property name="poll_interval" type="i" access="readwrite"/>
+		<property name="heatbeat" type="i" access="read"/>
+		<signal name="Heartbeat">
+                        <arg name="bus_name" type="s"/>
+                </signal>
+		<signal name="GotoSystemState">
+			<arg name="state_name" type="s"/>
+		</signal>
+	</interface>
+	<interface name="org.openbmc.control.Bmc">
+		<method name="place_holder"/>
+	</interface>
+	<interface name="org.openbmc.control.Host">
+		<method name="boot"/>
+		<method name="shutdown"/>
+		<method name="reboot"/>
+		<signal name="Booted"/>
+	</interface>
+	<interface name="org.openbmc.control.Power">
+		<method name="setPowerState">
+			<arg name="state" type="i" direction="in"/>
+		</method>
+		<method name="getPowerState">
+			<arg name="state" type="i" direction="out"/>
+		</method>
+		<signal name="PowerGood">
+		</signal>
+		<signal name="PowerLost">
+		</signal>
+		<property name="pgood" type="i" access="read"/>
+		<property name="state" type="i" access="read"/>
+	</interface>
+	<interface name="org.openbmc.Watchdog">
+		<method name="start"/>
+		<method name="poke"/>
+		<method name="stop"/>
+		<property name="watchdog" type="i" access="readwrite"/>
+		<property name="poll_interval" type="i" access="readwrite"/>
+		<signal name="WatchdogError"/>
+	</interface>
+	<interface name="org.openbmc.EventLog">
+		<method name="getMessage">
+			<arg name="message" type="a{ss}" direction="out"/>
+		</method>
+                <property name="message" type="a{ss}" access="read"/>
+		<signal name="EventLog">
+			<arg name="message" type="a{ss}"/>
+		</signal>
+	</interface>	
+	<interface name="org.openbmc.Flash">
+		<method name="updateViaFile">
+			<arg name="file" type="s" direction="in"/>
+		</method>
+		<method name="updateViaHttp">
+			<arg name="url" type="s" direction="in"/>
+		</method>
+		<method name="erase"/>
+		<method name="init"/>
+		<signal name="Updated"/>
+	</interface>
+	<interface name="org.openbmc.Button">
+		<method name="isOn">
+			<arg name="state" type="b" direction="out"/>
+		</method>
+		<method name="simButtonPress"/>
+		<method name="simButtonLongPress"/>
+	
+                <property name="state" type="b" access="read"/>
+		<signal name="ButtonRelease"/>
+		<signal name="ButtonPressed"/>
+		<signal name="ButtonPressedLong"/>
+	</interface>
+	<interface name="org.openbmc.Led">
+		<method name="setOn"/>
+		<method name="setOff"/>
+		<method name="setBlinkSlow"/>
+		<method name="setBlinkFast"/>
+		
+                <property name="color" type="i" access="read"/>
+		<property name="function" type="s" access="read"/>
+
+	</interface>
+</node>	

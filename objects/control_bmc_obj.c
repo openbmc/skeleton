@@ -1,34 +1,35 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include "interfaces/openbmc_intf.h"
-#include "gpio.h"
 #include "openbmc.h"
+#include "gpio.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
-static const gchar* dbus_object_path = "/org/openbmc/buttons";
-static const gchar* dbus_name        = "org.openbmc.buttons.Power";
+static const gchar* dbus_object_path = "/org/openbmc/control";
+static const gchar* dbus_name        = "org.openbmc.control.Bmc";
+
 
 static GDBusObjectManagerServer *manager = NULL;
 
 static gboolean
-on_is_on       (Button          *btn,
-                GDBusMethodInvocation  *invocation,
-                gpointer                user_data)
+on_init (Control          *control,
+         GDBusMethodInvocation  *invocation,
+         gpointer                user_data)
 {
-  gboolean btn_state=button_get_state(btn);
-  button_complete_is_on(btn,invocation,btn_state);
-  return TRUE;
-
-}
-
-static gboolean
-on_sim_button_press       (Button          *btn,
-                GDBusMethodInvocation  *invocation,
-                gpointer                user_data)
-{
-  g_print("Simulating button pressed\n");
-  button_emit_button_pressed(btn);
-  button_complete_sim_button_press(btn,invocation);
-  return TRUE;
-
+	g_print("BMC init\n");
+	// BMC init done here
+	// must be blocking
+	
+	control_complete_init(control,invocation);
+	control_emit_goto_system_state(control,"STANDBY");
+	
+	return TRUE;
 }
 
 static void 
@@ -49,31 +50,35 @@ on_bus_acquired (GDBusConnection *connection,
   	for (i=1;i<cmd->argc;i++)
   	{
 		gchar *s;
-		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
-		object = object_skeleton_new (s);
-		g_free (s);
+  		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+  		object = object_skeleton_new (s);
+  		g_free (s);
 
-		Button* button = button_skeleton_new ();
-		object_skeleton_set_button (object, button);
-		g_object_unref (button);
+		ControlBmc* control_bmc = control_bmc_skeleton_new ();
+		object_skeleton_set_control_bmc (object, control_bmc);
+		g_object_unref (control_bmc);
 
-		//define method callbacks
-		g_signal_connect (button,
-                    "handle-is-on",
-                    G_CALLBACK (on_is_on),
-                    NULL); /* user_data */
-		g_signal_connect (button,
-                    "handle-sim-button-press",
-                    G_CALLBACK (on_sim_button_press),
-                    NULL); /* user_data */
+		Control* control = control_skeleton_new ();
+		object_skeleton_set_control (object, control);
+		g_object_unref (control);
+
+		EventLog* event_log = event_log_skeleton_new ();
+		object_skeleton_set_event_log (object, event_log);
+		g_object_unref (event_log);
+
+		//define method callbacks here
+		g_signal_connect (control,
+        	            "handle-init",
+                	    G_CALLBACK (on_init),
+                	    NULL); /* user_data */
 
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
 		g_object_unref (object);
-
 	}
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection (manager, connection);
+
 }
 
 static void
@@ -89,15 +94,19 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
- // g_print ("Lost the name %s\n", name);
+//  g_print ("Lost the name %s\n", name);
 }
 
+
+
+
+/*----------------------------------------------------------------*/
+/* Main Event Loop                                                */
 
 gint
 main (gint argc, gchar *argv[])
 {
   GMainLoop *loop;
-
   cmdline cmd;
   cmd.argc = argc;
   cmd.argv = argv;

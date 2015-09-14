@@ -7,32 +7,74 @@ import Openbmc
 HOME_PATH = '/media/sf_vbox/openbmc/'
 BIN_PATH = HOME_PATH+'bin/'
 CACHE_PATH = HOME_PATH+'cache/'
+FRU_PATH = CACHE_PATH+'frus/'
 
-CACHED_INTERFACES = {
-	'org.openbmc.Fru' : True
+SYSTEM_STATES = [
+	'INIT',
+	'STANDBY',
+	'POWERING_ON',
+	'POWERED_ON',
+	'BOOTING',
+	'HOST_UP',
+	'SHUTTING_DOWN',
+	'POWERING_DOWN'
+]
+
+ENTER_STATE_CALLBACK = {
+	'POWERED_ON' : { 
+		'bus_name'    : 'org.openbmc.control.Host',
+		'obj_name'    : '/org/openbmc/control/Host_0',
+		'interface_name' : 'org.openbmc.control.Host',
+		'method_name' : 'boot'
+	}
 }
 
 SYSTEM_CONFIG = {}
 
-SYSTEM_CONFIG['org.openbmc.watchdog.HostWatchdog'] = {
+SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
+		'system_state' : 'INIT',
 		'start_process' : True,
-		'process_name' : 'host_watchdog.exe',
+		'process_name' : 'control_bmc.exe',
 		'heartbeat' : 'no',
-		'rest_name' : 'watchdog',
 		'instances' : [	
 			{
-				'name' : 'Watchdog1',
-				'user_label': 'Host Watchdog',
-				'properties' : { 
-					'org.openbmc.Watchdog' : {
-						'poll_interval': 300000,
-					}
-				}
+				'name' : 'Bmc_0',
+				'user_label': 'Master Bmc',
 			}
 		]
 	}
 
+SYSTEM_CONFIG['org.openbmc.managers.Frus'] = {
+		'system_state' : 'STANDBY',
+		'start_process' : True,
+		'process_name' : 'fru_manager.py',
+		'heartbeat' : 'no',
+		'rest_name' : 'frus',
+		'instances' : [	
+			{
+				'name' : 'Barreleye',
+				'user_label': 'Fru Manager',
+			}
+		]
+	}
+
+SYSTEM_CONFIG['org.openbmc.managers.Ipmi'] = {
+		'system_state' : 'STANDBY',
+		'start_process' : True,
+		'process_name' : 'ipmi_manager.py',
+		'heartbeat' : 'no',
+		'rest_name' : 'frus',
+		'instances' : [	
+			{
+				'name' : 'Barreleye',
+				'user_label': 'Fru Manager',
+			}
+		]
+	}
+
+
 SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'sensor_manager.py',
 		'heartbeat' : 'no',
@@ -46,6 +88,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'eventlogger.py',
 		'heartbeat' : 'no',
@@ -58,26 +101,33 @@ SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
 		]
 	}
 
-SYSTEM_CONFIG['org.openbmc.managers.IpmiTranslator'] = {
+SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
-		'process_name' : 'ipmi_translator.py',
+		'process_name' : 'host_watchdog.exe',
 		'heartbeat' : 'no',
+		'rest_name' : 'watchdog',
 		'instances' : [	
 			{
-				'name' : 'Barreleye',
-				'user_label': 'IPMI Translator',
+				'name' : 'HostWatchdog_0',
+				'user_label': 'Host Watchdog',
+				'properties' : { 
+					'org.openbmc.Watchdog' : {
+						'poll_interval': 3000,
+					}
+				}
 			}
 		]
 	}
 
-
 SYSTEM_CONFIG['org.openbmc.control.Power'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'power_control.exe',
 		'heartbeat' : 'yes',
 		'instances' : [	
 			{
-				'name' : 'PowerControl1',
+				'name' : 'SystemPower_0',
 				'user_label': 'Power control',
 				'properties' : { 
 					'org.openbmc.Control': {
@@ -89,18 +139,17 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'sensor_ambient.exe',
 		'heartbeat' : 'yes',
-		'init_methods' : ['org.openbmc.SensorValue'],
 		'instances' : [	
 			{
-				'name' : 'AmbientTemperature1',
+				'name' : 'FrontChassis',
 				'user_label': 'Ambient Temperature 1',
-				'sensor_id' : 41,
 				'properties' : { 
 					'org.openbmc.SensorValue': {
-						'poll_interval' : 5000
+						'poll_interval' : 5000,
 					},
 					'org.openbmc.SensorThreshold' : {
 						'lower_critical': 5,
@@ -114,85 +163,77 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 					}
 				}
 			},
-			{
-				'name' : 'AmbientTemperature2',
-				'user_label': 'Ambient Temperature 2',
- 				'properties' : { 
-					'org.openbmc.SensorValue': {
-						'poll_interval' : 5000
-					},
-					'org.openbmc.SensorThreshold' : {
-						'lower_critical': 5,
-						'lower_warning' : 10,
-						'upper_warning' : 15,
-						'upper_critical': 20
-					},
-					'org.openbmc.SensorI2c' : {
-						'dev_path' : '/dev/i2c/i2c0',
-						'address' : '0xA2'
-					}
-				}
-			}
 		]
 	}
-SYSTEM_CONFIG['org.openbmc.buttons.ButtonPower'] = {
+SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'button_power.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
-				'name' : 'PowerButton1',
+				'name' : 'PowerButton_0',
 				'user_label': 'Main Power Button',
 			}
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'sensor_host_status.exe',
 		'heartbeat' : "no",
 		'instances' : [	
 			{
-				'name' : 'HostStatus1',
+				'name' : 'HostStatus_0',
 				'user_label': 'Host Status',
-				'sensor_id' : 43,
+				'properties' : { 
+					'org.openbmc.SensorValue': {
+						'ipmi_id' : 43,
+					},
+				}
+
 			}
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'chassis_identify.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
-				'name' : 'ChassisIdentify1',
+				'name' : 'ChassisIdentify_0',
 				'user_label': 'Chassis Identify LED',
 			}
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'flash_bios.exe',
 		'heartbeat' : 'no',
 		'rest_name' : 'flash',
 		'instances' : [	
 			{
-				'name' : 'BIOS1',
+				'name' : 'BIOS_0',
 				'user_label': 'BIOS SPI Flash',
 			}
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'control_host.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
-				'name' : 'HostControl1',
+				'name' : 'Host_0',
 				'user_label': 'Host Control',
 			}
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'chassis_control.py',
 		'heartbeat' : 'no',
@@ -204,174 +245,87 @@ SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 			}
 		]
 	}
-SYSTEM_CONFIG['org.openbmc.frus.Fan'] = {
+
+SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
+		'system_state' : 'POWERED_ON',
+		'start_process' : True,
+		'process_name' : 'sensor_occ.exe',
+		'heartbeat' : 'no',
+		'instances' : [
+			{
+				'name' : 'Occ_0',
+				'user_label': 'CPU0',
+				'properties' : { 
+					'org.openbmc.Occ' : {
+						'poll_interval' : 3000,
+					}
+				}
+			},
+
+		]
+	}
+
+SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'process_name' : 'fan.exe',
 		'heartbeat' : 'no',
-		'instances' : [	
-			{
-				'name' : 'Fan0',
-				'user_label': 'Fan 0',
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'FAN0',
-						'location' : 'F0',
-						'type' : Openbmc.FRU_TYPES['FAN'],
-					}
-				}
-
-			},
-			{
-				'name' : 'Fan1',
-				'user_label': 'Fan 1',
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'FAN1',
-						'location' : 'F1',
-						'type' : Openbmc.FRU_TYPES['FAN'],
-					}
-				}
-
-			},
-			{
-				'name' : 'Fan2',
-				'user_label': 'Fan 2',
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'FAN2',
-						'location' : 'F2',
-						'type' : Openbmc.FRU_TYPES['FAN'],
-					}
-				}
-
-			},
-			{
-				'name' : 'Fan3',
-				'user_label': 'Fan 3',
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'FAN3',
-						'location' : 'F3',
-						'type' : Openbmc.FRU_TYPES['FAN'],
-					}
-				}
-
-			},
-			{
-				'name' : 'Fan4',
-				'user_label': 'Fan 4',				
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'FAN4',
-						'location' : 'F4',
-						'type' : Openbmc.FRU_TYPES['FAN'],
-					}
-				}
-
-			},
-			{
-				'name' : 'Fan5',
-				'user_label': 'Fan 5',
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'FAN5',
-						'location' : 'F5',
-						'type' : Openbmc.FRU_TYPES['FAN'],
-					}
-				}
-
-			}
-
-		]
-	}
-
-SYSTEM_CONFIG['org.openbmc.frus.Board'] = {
-		'start_process' : True,
-		'process_name' : 'fru_board.exe',
-		'init_methods' : ['org.openbmc.Fru'],
-		'heartbeat' : 'no',
 		'instances' : [
 			{
-				'name' : 'IO_Planer',
-				'user_label': 'IO Planar',
-				'fru_id' : 61,
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'IO Planar',
-						'location' : 'IO_PLANAR',
-						'type' : Openbmc.FRU_TYPES['BACKPLANE']
-					},
-					'org.openbmc.Fru.Eeprom' : {
-						'i2c_address' : '0xA8',
-						'i2c_dev_path' : '/dev/i2c/i2c5'
-					}
-				}
-			}
-		]
-	}
-
-SYSTEM_CONFIG['org.openbmc.frus.Fru'] = {
-		'start_process' : True,
-		'process_name' : 'fru_generic.exe',
-		'heartbeat' : 'no',
-		'instances' : [
-			{
-				'name' : 'Backplane',
-				'user_label': '2S Motherboard',
-				'fru_id' : 60,
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'MAIN_PLANAR',
-						'location' : 'C0',
-						'type' : Openbmc.FRU_TYPES['BACKPLANE'],
-					}
-				}
+				'name' : 'Fan_0',
+				'user_label': 'FAN 0',
 			},
 			{
-				'name' : 'DIMM0',
-				'user_label': 'DIMM A0 Slot 0',
-				'fru_id' : 12,
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'DIMM0',
-						'location' : 'A0',
-						'type' : Openbmc.FRU_TYPES['DIMM'],
-					}
-				}
+				'name' : 'Fan_1',
+				'user_label': 'FAN 1',
 			},
 			{
-				'name' : 'DIMM1',
-				'user_label': 'DIMM A1 Slot 0',
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'DIMM1',
-						'location' : 'A1',
-						'type' : Openbmc.FRU_TYPES['DIMM'],
-					}
-				}
-			},
-			{
-				'name' : 'CPU0',
-				'user_label': 'CPU0',
-				'properties' : { 
-					'org.openbmc.Fru' : {
-						'label' : 'CPU0',
-						'location' : 'CPU0',
-						'type' : Openbmc.FRU_TYPES['CPU'],
-					}
-				}
+				'name' : 'Fan_2',
+				'user_label': 'FAN 2',
 			},
 
 		]
 	}
+
+NON_CACHABLE_PROPERTIES = {
+	'name'       : True,
+	'user_label' : True,
+	'location'   : True,
+	'cache'      : True
+}
+
+FRUS = {}
+
+## key is IPMI FRU ID
+
+FRUS[32] = {
+		'name' : 'CPU0',
+		'user_label' : "IBM POWER8 CPU",
+		'ftype' : Openbmc.FRU_TYPES['CPU'],
+		'location' : "P0",
+		'manufacturer' : "IBM",
+		'cache' : True,
+		'state' : Openbmc.FRU_STATES['NORMAL'],
+		'sensor_id' : 10,
+	}
+
+FRUS[21] = {
+		'name' : 'IO_PLANAR',
+		'user_label' : "BARRELEYE IO PLANAR",
+		'ftype' : Openbmc.FRU_TYPES['BACKPLANE'],	
+		'cache' : False,
+		'state' : Openbmc.FRU_STATES['NORMAL'],
+		'sensor_id' : 11,
+	}
+
 
 GPIO_CONFIG = {}
-GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 23, 'direction': 'out' }
-GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 24, 'direction': 'out' }
-GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 25, 'direction': 'out' }
-GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 26, 'direction': 'out'  }
-GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 27, 'direction': 'out'  }
-GPIO_CONFIG['PGOOD']      = { 'gpio_num': 28, 'direction': 'in'  }
-GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 30, 'direction': 'out' }
-GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_num': 31, 'direction': 'in' }
+GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 4, 'direction': 'out' }
+GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 5, 'direction': 'out' }
+GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 24, 'direction': 'out' }
+GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 33, 'direction': 'out'  }
+GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 6, 'direction': 'out'  }
+GPIO_CONFIG['PGOOD']      = { 'gpio_num': 23, 'direction': 'in'  }
+GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 34, 'direction': 'out' }
+GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_num': 32, 'direction': 'in' }
 

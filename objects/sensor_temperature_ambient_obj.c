@@ -1,11 +1,11 @@
-#include "interfaces/sensor.h"
+#include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "sensor_threshold.h"
 
 
 /* ---------------------------------------------------------------------------------------------------- */
 
-static const gchar* dbus_object_path = "/org/openbmc/sensors/Temperature/Ambient";
+static const gchar* dbus_object_path = "/org/openbmc/sensors";
 static const gchar* dbus_name        = "org.openbmc.sensors.Temperature.Ambient";
 static guint heartbeat = 0;
 
@@ -23,12 +23,12 @@ poll_sensor(gpointer user_data)
 
 	//TODO:  Change to actually read sensor
 	double value = GET_VARIANT_D(v_value);
-	g_print("Reading I2C = %s; Address = %s; %f\n",
-		sensor_i2c_get_dev_path(i2c),sensor_i2c_get_address(i2c),value);
+	//g_print("Reading I2C = %s; Address = %s; %f\n",
+	//	sensor_i2c_get_dev_path(i2c),sensor_i2c_get_address(i2c),value);
 
 	value = value+1;
 
-	if (heartbeat > 10000)
+	if (heartbeat > 4000)
 	{
 		heartbeat = 0;
 		sensor_value_emit_heartbeat(sensor,dbus_name);
@@ -71,7 +71,7 @@ on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  	g_print ("Acquired a message bus connection: %s\n",name);
+  //	g_print ("Acquired a message bus connection: %s\n",name);
 
   	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
@@ -84,7 +84,7 @@ on_bus_acquired (GDBusConnection *connection,
   	for (i=1;i<cmd->argc;i++)
   	{
 		gchar *s;
- 		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+ 		s = g_strdup_printf ("%s/Temperature/%s",dbus_object_path,cmd->argv[i]);
 		ObjectSkeleton *object = object_skeleton_new (s);
 		g_free (s);
 
@@ -145,7 +145,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  g_print ("Acquired the name %s\n", name);
+//  g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -153,7 +153,7 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  g_print ("Lost the name %s\n", name);
+//  g_print ("Lost the name %s\n", name);
 }
 
 

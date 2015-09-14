@@ -32,8 +32,9 @@ class PropertyManager():
 			directory = self.save_path+directory.lstrip('.')
 			filename = directory+"/"+prop_interface
 			if (os.path.isfile(filename) == False):
+				pass
 				## not an error	
-				print "No cache available for: "+filename
+				#print "No cache available for: "+filename
 			else:
 				try:
 					print "Loading from disk: "+obj_path

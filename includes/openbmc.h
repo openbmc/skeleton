@@ -18,7 +18,8 @@
 
 typedef struct {
 	gint argc;
-	gchar **argv;	
+	gchar **argv;
+	GMainLoop *loop;	
 
 } cmdline;
 

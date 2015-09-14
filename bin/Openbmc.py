@@ -2,6 +2,7 @@ import dbus
 import xml.etree.ElementTree as ET
 
 BUS_PREFIX = 'org.openbmc'
+OBJ_PREFIX = "/org/openbmc"
 GPIO_DEV = '/sys/class/gpio'
 
 
@@ -12,60 +13,104 @@ FRU_TYPES = {
 	'RISER_CARD' : 4,
 	'FAN' : 5
 }
+FRU_STATES = {
+	'NORMAL'            : 0,
+	'RECOVERABLE_ERROR' : 1,
+	'FATAL_ERROR'       : 2,
+	'NOT_PRESENT'       : 3,
+}
 ENUMS = {
 	'org.openbmc.SensorIntegerThreshold.state' : 
 		['NOT_SET','NORMAL','LOWER_CRITICAL','LOWER_WARNING','UPPER_WARNING','UPPER_CRITICAL'],
-	'org.openbmc.Fru.type' :
-		['NONE','CPU','DIMM','BACKPLANE','RISER_CARD','FAN']
+}
+
+DBUS_TO_BASE_TYPES = {
+	'dbus.Byte' : 'int',
+	'dbus.Double' : 'float',
+	'dbus.Int32' : 'int',
+	'dbus.UInt32' : 'long',
+	'dbus.String' : 'str',
+	'dbus.UInt64' : 'long',
+	'dbus.Boolean' : 'bool',
+}
+
+BASE_TO_DBUS_TYPES = {
+	'int'   : 'dbus.Int32',
+	'float' : 'dbus.Double',
+	'str'   : 'dbus.String',
+	'long'  : 'dbus.Int64',
+	'bool'  : 'dbus.Boolean'
 }
 
 
-def object_to_bus_name(obj):
-	parts = obj.split('/')
-	parts.pop(0)
-	parts.pop()
-	return ".".join(parts)	
+def getManagerInterface(bus,manager):
+	bus_name = "org.openbmc.managers."+manager
+	obj_name = "/org/openbmc/managers/"+manager
+	obj = bus.get_object(bus_name,obj_name)
+	return dbus.Interface(obj,bus_name)
 
-def bus_to_object_name(bus_name):
-	return "/"+bus_name.replace('.','/')
 
-def get_methods(obj):
-	methods = {}
+def get_objs(bus,bus_name,path,objects):
+	obj = bus.get_object(bus_name,path)
 	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
+	#print introspect_iface.Introspect()
  	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
  	root = tree.getroot()
-	for intf in root.iter('interface'):
- 		intf_name = intf.attrib['name']
-		if (intf_name.find(BUS_PREFIX)==0):
-			methods[intf_name] = {}
-			for method in intf.iter('method'):
-				methods[intf_name][method.attrib['name']] = True
-		
-	return methods
+	for node in root.iter('node'):
+		if (node.attrib.has_key('name') == False):
+			for intf in node.iter('interface'):
+				intf_name = intf.attrib['name']
+				if (intf_name.find(BUS_PREFIX)==0):
+					parts=path.split('/')
+					instance = parts[len(parts)-1]
+					if (objects.has_key(instance) == False):
+						objects[instance] = {}
+						objects[instance]['PATH'] = path
+						objects[instance]['INIT'] = []
+					for method in intf.iter('method'):
+						if (method.attrib['name'] == "init"):
+							objects[instance]['INIT'].append(intf_name)
+
+		else:
+			node_name = node.attrib['name']
+			if (node_name != path):
+				get_objs(bus,bus_name,path+"/"+node.attrib['name'],objects)
+
+
+
+#def get_methods(obj):
+#	methods = {}
+#	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
+ #	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
+ #	root = tree.getroot()
+#	for intf in root.iter('interface'):
+ #		intf_name = intf.attrib['name']
+#		if (intf_name.find(BUS_PREFIX)==0):
+#			methods[intf_name] = {}
+#			for method in intf.iter('method'):
+#				methods[intf_name][method.attrib['name']] = True
+#		
+#	return methods
 
 class DbusProperty:
 	def __init__(self,name,value):
-		self.dbusBaseType = {
-			'dbus.Byte' : 'int',
-			'dbus.Double' : 'float',
-			'dbus.Int32' : 'int',
-			'dbus.UInt32' : 'long',
-			'dbus.String' : 'str',
-			'dbus.UInt64' : 'long',
-		}
 		self.name = str(name)	
 		self.dbusType = str(type(value)).split("'")[1]
-		self.variant_level = value.variant_level
+		self.variant_level = 2
 		self.value = None
-
-		try: 
-			self.value = eval(self.dbusBaseType[self.dbusType]+"(value)")
-		except:
-			raise Exception("Unknown dbus type: "+self.dbusType)
+		if (BASE_TO_DBUS_TYPES.has_key(self.dbusType) == False):
+			self.variant_level = value.variant_level
+			try: 
+				self.value = eval(DBUS_TO_BASE_TYPES[self.dbusType]+"(value)")
+			except:
+				raise Exception("Unknown dbus type: "+self.dbusType)
+		else:
+			self.dbusType = BASE_TO_DBUS_TYPES[self.dbusType]
+			self.value = value
 
 	def setValue(self,value):
 		try: 
-			self.value = eval(self.dbusBaseType[self.dbusType]+"(value)")
+			self.value = eval(DBUS_TO_BASE_TYPES[self.dbusType]+"(value)")
 		except:
 			raise Exception("Unknown dbus type: "+self.dbusType)
 
@@ -79,12 +124,8 @@ class DbusProperty:
 		e = self.dbusType+"(self.value, variant_level="+str(self.variant_level)+")"
 		return eval(e)
 
-	#def __getstate__(self):
-	#	odict = self.__dict__.copy() # copy the dict since we change it
- 	#	return odict
-
-	##def __setstate__(self, dict):
-        #	self.__dict__.update(dict)   # update attributes
+	def getBaseValue(self):
+		return self.value
 
 	def __str__(self):
 		return self.dbusType+":"+str(self.value)

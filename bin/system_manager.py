@@ -32,30 +32,39 @@ class SystemManager(dbus.service.Object):
 		bus.add_signal_receiver(self.NewBusHandler,
 					dbus_interface = 'org.freedesktop.DBus', 
 					signal_name = "NameOwnerChanged")
-		bus.add_signal_receiver(self.CacheMeHandler,
-					signal_name = 'CacheMe', path_keyword='path',interface_keyword='interface')
 		bus.add_signal_receiver(self.HeartbeatHandler, signal_name = "Heartbeat")
+		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 
-		try:
-			# launch dbus object processes
-			for bus_name in System.SYSTEM_CONFIG.keys():
+		self.current_state = ""
+		self.system_states = {}
+		self.IPMI_ID_LOOKUP = {}
+		for bus_name in System.SYSTEM_CONFIG.keys():
+			sys_state = System.SYSTEM_CONFIG[bus_name]['system_state']
+			if (self.system_states.has_key(sys_state) == False):
+				self.system_states[sys_state] = []
+			self.system_states[sys_state].append(bus_name)
+		self.SystemStateHandler("INIT")
+		print "SystemManager Init Done"
+
+
+	def SystemStateHandler(self,state_name):
+		print "Running System State: "+state_name
+		if (self.system_states.has_key(state_name)):
+			for bus_name in self.system_states[state_name]:
 				self.start_process(bus_name)
-		except Exception as e:
-			## TODO: error handling
-			pass
 		
-		## Add poll for heartbeat
-    		GObject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
+		if (state_name == "INIT"):
+			## Add poll for heartbeat
+	    		GObject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
 		
+		if (System.ENTER_STATE_CALLBACK.has_key(state_name)):
+			cb = System.ENTER_STATE_CALLBACK[state_name]
+			obj = bus.get_object(cb['bus_name'],cb['obj_name'])
+			method = obj.get_dbus_method(cb['method_name'],cb['interface_name'])
+			method()
 
-	def CacheMeHandler(self,busname,path=None,interface=None):
-		#interface_name = 'org.openbmc.Fru'
-		print "CacheME: "+busname+","+path+","+interface
-		data = {}
-		cache = System.CACHED_INTERFACES.has_key(interface)
-		self.property_manager.saveProperties(busname,path,interface,cache,data)
-
-
+		current_state = state_name
+			
 	def start_process(self,bus_name):
 		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
 			process_name = System.BIN_PATH+System.SYSTEM_CONFIG[bus_name]['process_name']
@@ -64,16 +73,17 @@ class SystemManager(dbus.service.Object):
 			for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
 				cmdline.append(instance['name'])
 			try:
-				print "Starting process: "+" ".join(cmdline)
+				print "Starting process: "+" ".join(cmdline)+": "+bus_name
 				System.SYSTEM_CONFIG[bus_name]['popen'] = subprocess.Popen(cmdline);
 			except Exception as e:
 				## TODO: error
 				print "Error starting process: "+" ".join(cmdline)
 
 	def heartbeat_check(self):
-		print "heartbeat check"
+		#print "heartbeat check"
 		for bus_name in System.SYSTEM_CONFIG.keys():
-			if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
+			if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True and
+				System.SYSTEM_CONFIG[bus_name].has_key('popen')):
 				## even if process doesn't request heartbeat check, 
 				##   make sure process is still alive
 				p = System.SYSTEM_CONFIG[bus_name]['popen']
@@ -97,44 +107,50 @@ class SystemManager(dbus.service.Object):
 						self.start_process(bus_name)			
 					else:
 						System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
-						print "Heartbeat ok: "+bus_name
+						#print "Heartbeat ok: "+bus_name
 					
 		return True
 
 	def HeartbeatHandler(self,bus_name):
+		#print "Heartbeat seen: "+bus_name
 		System.SYSTEM_CONFIG[bus_name]['heartbeat_count']=1	
 
 	def NewBusHandler(self, bus_name, a, b):
 		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
 				System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
-				obj_root = "/"+bus_name.replace('.','/')
-				obj_paths = []
+				objects = {}
+				Openbmc.get_objs(bus,bus_name,Openbmc.OBJ_PREFIX,objects)
+					
+				for instance_name in objects.keys(): 
+					obj_path = objects[instance_name]['PATH']
+					for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
+						if (instance.has_key('properties') and instance['name'] == instance_name):
+							props = instance['properties']
+							print "Load Properties: "+obj_path
+							self.property_manager.loadProperties(bus_name,obj_path,props)
+							## create a lookup for ipmi id to object path
+							if (props.has_key('org.openbmc.SensorValue')):
+								if (props['org.openbmc.SensorValue'].has_key('ipmi_id')):
+									ipmi_id = props['org.openbmc.SensorValue']['ipmi_id']
+									## TODO: check for duplicate ipmi id
+									self.IPMI_ID_LOOKUP[ipmi_id]=[bus_name,obj_path]
 
-				## Loads object properties from system config file
-				##  then overlays saved properties from file
-				for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
-					obj_path = obj_root+'/'+instance['name']
-					obj_paths.append(obj_path)
-					if (instance.has_key('properties')):
-						print "load props: "+obj_path
-						self.property_manager.loadProperties(bus_name,obj_path,												instance['properties'])
-
-				## scan all used interfaces and get interfaces with init method
-				
-
-				## After object properties are setup, call init method if requested
-				#if (System.SYSTEM_CONFIG[bus_name].has_key('init_methods')):
-				for obj_path in obj_paths:
-					obj = bus.get_object(bus_name,obj_path)
-					methods = Openbmc.get_methods(obj)
-					for intf_name in methods.keys():
-						if (methods[intf_name].has_key('init')):
-							intf = dbus.Interface(obj,intf_name)
-							print "Calling init: " +intf_name
-							intf.init()
-
-
+					## If object has an init method, call it
+					for init_intf in objects[instance_name]['INIT']:
+						obj = bus.get_object(bus_name,obj_path)
+						intf = dbus.Interface(obj,init_intf)
+						print "Calling init method: " +obj_path+" : "+init_intf
+						intf.init()
+#
+	@dbus.service.method(DBUS_NAME,
+		in_signature='y', out_signature='ss')
+	def getObjFromIpmi(self,ipmi_id):
+		obj_path = ""
+		## TODO: handle lookup failing
+		if (self.IPMI_ID_LOOKUP.has_key(ipmi_id) == True):
+			obj_info = self.IPMI_ID_LOOKUP[ipmi_id]
+		return obj_info
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='s', out_signature='sis')

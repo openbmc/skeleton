@@ -2,7 +2,7 @@
 #define __SENSOR_THRESHOLDS_H__
 
 #include <stdint.h>
-#include "interfaces/sensor.h"
+#include "interfaces/openbmc_intf.h"
 
 typedef enum { NOT_SET,NORMAL,LOWER_CRITICAL,LOWER_WARNING,UPPER_WARNING,UPPER_CRITICAL } threshold_states;
 
