@@ -5,7 +5,8 @@ OBJS	+= objects/pflash/arm_io.o
 LIBS=/gsa/ausgsa/home/n/j/njames/openbmc
 OFLAGS =-L$(HOME)/lib -lopenbmc_intf
 HOME = /media/sf_vbox/openbmc
-CFLAGS=$(shell pkg-config --libs --cflags gtk+-2.0 glib-2.0)
+#CFLAGS=$(shell pkg-config --libs --cflags gtk+-2.0 glib-2.0)
+CFLAGS = -pthread -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -lgio-2.0 -lgobject-2.0 -lglib-2.0
 
 %.o: interfaces/%.c 
 	$(CC) -c -fPIC -o obj/$@ $< -I$(HOME) -I$(HOME)/includes $(CFLAGS)
@@ -18,6 +19,8 @@ CFLAGS=$(shell pkg-config --libs --cflags gtk+-2.0 glib-2.0)
 
 %.o: objects/pflash/%.c
 	$(CC) -c -o obj/$@ $< -I$(HOME) -I$(HOME)/objects/pflash $(CFLAGS)
+
+
 
 libopenbmc_intf: openbmc_intf.o
 	$(CC) -shared -o lib/$@.so obj/openbmc_intf.o $(CFLAGS)
@@ -57,3 +60,6 @@ sensor_occ: sensor_occ_obj.o
 
 board_vpd: board_vpd_obj.o
 	$(CC) -o bin/$@.exe obj/board_vpd_obj.o $(OFLAGS) $(CFLAGS)
+
+
+all: libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host flash_bios fan host_watchdog control_bmc sensor_occ board_vpd
