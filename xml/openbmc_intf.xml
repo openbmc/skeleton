@@ -45,6 +45,7 @@
 			<arg name="value" type="v"/>
 			<arg name="units" type="s"/>
 		</signal>
+		<signal name="Error"/>
 		<signal name="Heartbeat">
 			<arg name="bus_name" type="s"/>
 		</signal>
@@ -111,6 +112,7 @@
 		</signal>
 		<property name="pgood" type="i" access="read"/>
 		<property name="state" type="i" access="read"/>
+		<property name="pgood_timeout" type="i" access="readwrite"/>
 	</interface>
 	<interface name="org.openbmc.Watchdog">
 		<method name="start"/>
@@ -121,12 +123,9 @@
 		<signal name="WatchdogError"/>
 	</interface>
 	<interface name="org.openbmc.EventLog">
-		<method name="getMessage">
-			<arg name="message" type="a{ss}" direction="out"/>
-		</method>
-                <property name="message" type="a{ss}" access="read"/>
 		<signal name="EventLog">
-			<arg name="message" type="a{ss}"/>
+			<arg name="e_type" type="y"/>
+			<arg name="message" type="s"/>
 		</signal>
 	</interface>	
 	<interface name="org.openbmc.Flash">

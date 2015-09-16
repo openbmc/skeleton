@@ -22,6 +22,9 @@ class SensorManager(dbus.service.Object):
 		bus.add_signal_receiver(self.SensorChangedHandler,
 					dbus_interface = 'org.openbmc.SensorValue', 
 					signal_name = 'Changed', path_keyword='path')
+		bus.add_signal_receiver(self.SensorErrorHandler,
+					dbus_interface = 'org.openbmc.SensorValue', 
+					signal_name = 'Error', path_keyword='path')
 		bus.add_signal_receiver(self.NormalThreshold,
 					dbus_interface = 'org.openbmc.SensorThreshold', 
 					signal_name = 'Normal', path_keyword='path')
@@ -71,7 +74,11 @@ class SensorManager(dbus.service.Object):
 			print "Unknown sensor at: "+path
 		return val
 	
-	## Signal handlers	
+	## Signal handlers
+	def SensorErrorHandler(self,path = None):
+		self.initSensorEntry(path)
+		self.sensor_cache[path]['error'] = True
+
 	def SensorChangedHandler(self,value,units,path = None):
 		self.initSensorEntry(path)
 		self.sensor_cache[path]['value'] = value

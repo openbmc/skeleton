@@ -3580,6 +3580,17 @@ static const _ExtendedGDBusSignalInfo _sensor_value_signal_info_changed =
   "changed"
 };
 
+static const _ExtendedGDBusSignalInfo _sensor_value_signal_info_error =
+{
+  {
+    -1,
+    (gchar *) "Error",
+    NULL,
+    NULL
+  },
+  "error"
+};
+
 static const _ExtendedGDBusArgInfo _sensor_value_signal_info_heartbeat_ARG_bus_name =
 {
   {
@@ -3611,6 +3622,7 @@ static const _ExtendedGDBusSignalInfo _sensor_value_signal_info_heartbeat =
 static const _ExtendedGDBusSignalInfo * const _sensor_value_signal_info_pointers[] =
 {
   &_sensor_value_signal_info_changed,
+  &_sensor_value_signal_info_error,
   &_sensor_value_signal_info_heartbeat,
   NULL
 };
@@ -3790,6 +3802,7 @@ sensor_value_override_properties (GObjectClass *klass, guint property_id_begin)
  * @get_units: Getter for the #SensorValue:units property.
  * @get_value: Getter for the #SensorValue:value property.
  * @changed: Handler for the #SensorValue::changed signal.
+ * @error: Handler for the #SensorValue::error signal.
  * @heartbeat: Handler for the #SensorValue::heartbeat signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorValue.top_of_page">org.openbmc.SensorValue</link>.
@@ -3889,6 +3902,24 @@ sensor_value_default_init (SensorValueIface *iface)
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
     2, G_TYPE_VARIANT, G_TYPE_STRING);
+
+  /**
+   * SensorValue::error:
+   * @object: A #SensorValue.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-SensorValue.Error">"Error"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("error",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SensorValueIface, error),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    0);
 
   /**
    * SensorValue::heartbeat:
@@ -4247,6 +4278,19 @@ sensor_value_emit_changed (
     const gchar *arg_units)
 {
   g_signal_emit_by_name (object, "changed", arg_value, arg_units);
+}
+
+/**
+ * sensor_value_emit_error:
+ * @object: A #SensorValue.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-SensorValue.Error">"Error"</link> D-Bus signal.
+ */
+void
+sensor_value_emit_error (
+    SensorValue *object)
+{
+  g_signal_emit_by_name (object, "error");
 }
 
 /**
@@ -5370,6 +5414,28 @@ _sensor_value_on_signal_changed (
 }
 
 static void
+_sensor_value_on_signal_error (
+    SensorValue *object)
+{
+  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("()"));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorValue", "Error",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void
 _sensor_value_on_signal_heartbeat (
     SensorValue *object,
     const gchar *arg_bus_name)
@@ -5686,6 +5752,7 @@ static void
 sensor_value_skeleton_iface_init (SensorValueIface *iface)
 {
   iface->changed = _sensor_value_on_signal_changed;
+  iface->error = _sensor_value_on_signal_error;
   iface->heartbeat = _sensor_value_on_signal_heartbeat;
   iface->get_value = sensor_value_skeleton_get_value;
   iface->get_units = sensor_value_skeleton_get_units;
@@ -14421,10 +14488,24 @@ static const _ExtendedGDBusPropertyInfo _control_power_property_info_state =
   FALSE
 };
 
+static const _ExtendedGDBusPropertyInfo _control_power_property_info_pgood_timeout =
+{
+  {
+    -1,
+    (gchar *) "pgood_timeout",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "pgood-timeout",
+  FALSE
+};
+
 static const _ExtendedGDBusPropertyInfo * const _control_power_property_info_pointers[] =
 {
   &_control_power_property_info_pgood,
   &_control_power_property_info_state,
+  &_control_power_property_info_pgood_timeout,
   NULL
 };
 
@@ -14470,6 +14551,7 @@ control_power_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "pgood");
   g_object_class_override_property (klass, property_id_begin++, "state");
+  g_object_class_override_property (klass, property_id_begin++, "pgood-timeout");
   return property_id_begin - 1;
 }
 
@@ -14487,6 +14569,7 @@ control_power_override_properties (GObjectClass *klass, guint property_id_begin)
  * @handle_get_power_state: Handler for the #ControlPower::handle-get-power-state signal.
  * @handle_set_power_state: Handler for the #ControlPower::handle-set-power-state signal.
  * @get_pgood: Getter for the #ControlPower:pgood property.
+ * @get_pgood_timeout: Getter for the #ControlPower:pgood-timeout property.
  * @get_state: Getter for the #ControlPower:state property.
  * @power_good: Handler for the #ControlPower::power-good signal.
  * @power_lost: Handler for the #ControlPower::power-lost signal.
@@ -14602,6 +14685,15 @@ control_power_default_init (ControlPowerIface *iface)
    */
   g_object_interface_install_property (iface,
     g_param_spec_int ("state", "state", "state", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * ControlPower:pgood-timeout:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-control-Power.pgood_timeout">"pgood_timeout"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("pgood-timeout", "pgood_timeout", "pgood_timeout", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -14664,6 +14756,37 @@ void
 control_power_set_state (ControlPower *object, gint value)
 {
   g_object_set (G_OBJECT (object), "state", value, NULL);
+}
+
+/**
+ * control_power_get_pgood_timeout: (skip)
+ * @object: A #ControlPower.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-control-Power.pgood_timeout">"pgood_timeout"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+control_power_get_pgood_timeout (ControlPower *object)
+{
+  return CONTROL_POWER_GET_IFACE (object)->get_pgood_timeout (object);
+}
+
+/**
+ * control_power_set_pgood_timeout: (skip)
+ * @object: A #ControlPower.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-control-Power.pgood_timeout">"pgood_timeout"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+control_power_set_pgood_timeout (ControlPower *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "pgood-timeout", value, NULL);
 }
 
 /**
@@ -14975,7 +15098,7 @@ control_power_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _control_power_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -15022,7 +15145,7 @@ control_power_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _control_power_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -15134,6 +15257,21 @@ control_power_proxy_get_state (ControlPower *object)
   return value;
 }
 
+static gint 
+control_power_proxy_get_pgood_timeout (ControlPower *object)
+{
+  ControlPowerProxy *proxy = CONTROL_POWER_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "pgood_timeout");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static void
 control_power_proxy_init (ControlPowerProxy *proxy)
 {
@@ -15173,6 +15311,7 @@ control_power_proxy_iface_init (ControlPowerIface *iface)
 {
   iface->get_pgood = control_power_proxy_get_pgood;
   iface->get_state = control_power_proxy_get_state;
+  iface->get_pgood_timeout = control_power_proxy_get_pgood_timeout;
 }
 
 /**
@@ -15643,7 +15782,7 @@ control_power_skeleton_finalize (GObject *object)
 {
   ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
   guint n;
-  for (n = 0; n < 2; n++)
+  for (n = 0; n < 3; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -15661,7 +15800,7 @@ control_power_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -15778,7 +15917,7 @@ control_power_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -15803,9 +15942,10 @@ control_power_skeleton_init (ControlPowerSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 2);
+  skeleton->priv->properties = g_new0 (GValue, 3);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
 }
 
 static gint 
@@ -15826,6 +15966,17 @@ control_power_skeleton_get_state (ControlPower *object)
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_int (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static gint 
+control_power_skeleton_get_pgood_timeout (ControlPower *object)
+{
+  ControlPowerSkeleton *skeleton = CONTROL_POWER_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[2]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -15863,6 +16014,7 @@ control_power_skeleton_iface_init (ControlPowerIface *iface)
   iface->power_lost = _control_power_on_signal_power_lost;
   iface->get_pgood = control_power_skeleton_get_pgood;
   iface->get_state = control_power_skeleton_get_state;
+  iface->get_pgood_timeout = control_power_skeleton_get_pgood_timeout;
 }
 
 /**
@@ -17517,40 +17669,15 @@ watchdog_skeleton_new (void)
 
 /* ---- Introspection data for org.openbmc.EventLog ---- */
 
-static const _ExtendedGDBusArgInfo _event_log_method_info_get_message_OUT_ARG_message =
+static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_e_type =
 {
   {
     -1,
-    (gchar *) "message",
-    (gchar *) "a{ss}",
+    (gchar *) "e_type",
+    (gchar *) "y",
     NULL
   },
   FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _event_log_method_info_get_message_OUT_ARG_pointers[] =
-{
-  &_event_log_method_info_get_message_OUT_ARG_message,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _event_log_method_info_get_message =
-{
-  {
-    -1,
-    (gchar *) "getMessage",
-    NULL,
-    (GDBusArgInfo **) &_event_log_method_info_get_message_OUT_ARG_pointers,
-    NULL
-  },
-  "handle-get-message",
-  FALSE
-};
-
-static const _ExtendedGDBusMethodInfo * const _event_log_method_info_pointers[] =
-{
-  &_event_log_method_info_get_message,
-  NULL
 };
 
 static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_message =
@@ -17558,7 +17685,7 @@ static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_message 
   {
     -1,
     (gchar *) "message",
-    (gchar *) "a{ss}",
+    (gchar *) "s",
     NULL
   },
   FALSE
@@ -17566,6 +17693,7 @@ static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_message 
 
 static const _ExtendedGDBusArgInfo * const _event_log_signal_info_event_log_ARG_pointers[] =
 {
+  &_event_log_signal_info_event_log_ARG_e_type,
   &_event_log_signal_info_event_log_ARG_message,
   NULL
 };
@@ -17587,33 +17715,14 @@ static const _ExtendedGDBusSignalInfo * const _event_log_signal_info_pointers[] 
   NULL
 };
 
-static const _ExtendedGDBusPropertyInfo _event_log_property_info_message =
-{
-  {
-    -1,
-    (gchar *) "message",
-    (gchar *) "a{ss}",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
-    NULL
-  },
-  "message",
-  FALSE
-};
-
-static const _ExtendedGDBusPropertyInfo * const _event_log_property_info_pointers[] =
-{
-  &_event_log_property_info_message,
-  NULL
-};
-
 static const _ExtendedGDBusInterfaceInfo _event_log_interface_info =
 {
   {
     -1,
     (gchar *) "org.openbmc.EventLog",
-    (GDBusMethodInfo **) &_event_log_method_info_pointers,
+    NULL,
     (GDBusSignalInfo **) &_event_log_signal_info_pointers,
-    (GDBusPropertyInfo **) &_event_log_property_info_pointers,
+    NULL,
     NULL
   },
   "event-log",
@@ -17646,7 +17755,6 @@ event_log_interface_info (void)
 guint
 event_log_override_properties (GObjectClass *klass, guint property_id_begin)
 {
-  g_object_class_override_property (klass, property_id_begin++, "message");
   return property_id_begin - 1;
 }
 
@@ -17661,8 +17769,6 @@ event_log_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * EventLogIface:
  * @parent_iface: The parent interface.
- * @handle_get_message: Handler for the #EventLog::handle-get-message signal.
- * @get_message: Getter for the #EventLog:message property.
  * @event_log: Handler for the #EventLog::event-log signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-EventLog.top_of_page">org.openbmc.EventLog</link>.
@@ -17674,33 +17780,11 @@ G_DEFINE_INTERFACE (EventLog, event_log, G_TYPE_OBJECT);
 static void
 event_log_default_init (EventLogIface *iface)
 {
-  /* GObject signals for incoming D-Bus method calls: */
-  /**
-   * EventLog::handle-get-message:
-   * @object: A #EventLog.
-   * @invocation: A #GDBusMethodInvocation.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call event_log_complete_get_message() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-get-message",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (EventLogIface, handle_get_message),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    1,
-    G_TYPE_DBUS_METHOD_INVOCATION);
-
   /* GObject signals for received D-Bus signals: */
   /**
    * EventLog::event-log:
    * @object: A #EventLog.
+   * @arg_e_type: Argument.
    * @arg_message: Argument.
    *
    * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-EventLog.EventLog">"EventLog"</link> is received.
@@ -17715,74 +17799,14 @@ event_log_default_init (EventLogIface *iface)
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
-    1, G_TYPE_VARIANT);
+    2, G_TYPE_UCHAR, G_TYPE_STRING);
 
-  /* GObject properties for D-Bus properties: */
-  /**
-   * EventLog:message:
-   *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-EventLog.message">"message"</link>.
-   *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
-   */
-  g_object_interface_install_property (iface,
-    g_param_spec_variant ("message", "message", "message", G_VARIANT_TYPE ("a{ss}"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-}
-
-/**
- * event_log_get_message: (skip)
- * @object: A #EventLog.
- *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-EventLog.message">"message"</link> D-Bus property.
- *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
- *
- * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use event_log_dup_message() if on another thread.</warning>
- *
- * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
- */
-GVariant *
-event_log_get_message (EventLog *object)
-{
-  return EVENT_LOG_GET_IFACE (object)->get_message (object);
-}
-
-/**
- * event_log_dup_message: (skip)
- * @object: A #EventLog.
- *
- * Gets a copy of the <link linkend="gdbus-property-org-openbmc-EventLog.message">"message"</link> D-Bus property.
- *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
- *
- * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
- */
-GVariant *
-event_log_dup_message (EventLog *object)
-{
-  GVariant *value;
-  g_object_get (G_OBJECT (object), "message", &value, NULL);
-  return value;
-}
-
-/**
- * event_log_set_message: (skip)
- * @object: A #EventLog.
- * @value: The value to set.
- *
- * Sets the <link linkend="gdbus-property-org-openbmc-EventLog.message">"message"</link> D-Bus property to @value.
- *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
- */
-void
-event_log_set_message (EventLog *object, GVariant *value)
-{
-  g_object_set (G_OBJECT (object), "message", value, NULL);
 }
 
 /**
  * event_log_emit_event_log:
  * @object: A #EventLog.
+ * @arg_e_type: Argument to pass with the signal.
  * @arg_message: Argument to pass with the signal.
  *
  * Emits the <link linkend="gdbus-signal-org-openbmc-EventLog.EventLog">"EventLog"</link> D-Bus signal.
@@ -17790,128 +17814,10 @@ event_log_set_message (EventLog *object, GVariant *value)
 void
 event_log_emit_event_log (
     EventLog *object,
-    GVariant *arg_message)
+    guchar arg_e_type,
+    const gchar *arg_message)
 {
-  g_signal_emit_by_name (object, "event-log", arg_message);
-}
-
-/**
- * event_log_call_get_message:
- * @proxy: A #EventLogProxy.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call event_log_call_get_message_finish() to get the result of the operation.
- *
- * See event_log_call_get_message_sync() for the synchronous, blocking version of this method.
- */
-void
-event_log_call_get_message (
-    EventLog *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "getMessage",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * event_log_call_get_message_finish:
- * @proxy: A #EventLogProxy.
- * @out_message: (out): Return location for return parameter or %NULL to ignore.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to event_log_call_get_message().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with event_log_call_get_message().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-event_log_call_get_message_finish (
-    EventLog *proxy,
-    GVariant **out_message,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(@a{ss})",
-                 out_message);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * event_log_call_get_message_sync:
- * @proxy: A #EventLogProxy.
- * @out_message: (out): Return location for return parameter or %NULL to ignore.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See event_log_call_get_message() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-event_log_call_get_message_sync (
-    EventLog *proxy,
-    GVariant **out_message,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "getMessage",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "(@a{ss})",
-                 out_message);
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * event_log_complete_get_message:
- * @object: A #EventLog.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- * @message: Parameter to return.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-EventLog.getMessage">getMessage()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-event_log_complete_get_message (
-    EventLog *object,
-    GDBusMethodInvocation *invocation,
-    GVariant *message)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("(@a{ss})",
-                   message));
+  g_signal_emit_by_name (object, "event-log", arg_e_type, arg_message);
 }
 
 /* ------------------------------------------------------------------------ */
@@ -17960,45 +17866,6 @@ event_log_proxy_get_property (GObject      *object,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
-  const _ExtendedGDBusPropertyInfo *info;
-  GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
-  info = _event_log_property_info_pointers[prop_id - 1];
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
-  if (info->use_gvariant)
-    {
-      g_value_set_variant (value, variant);
-    }
-  else
-    {
-      if (variant != NULL)
-        g_dbus_gvariant_to_gvalue (variant, value);
-    }
-  if (variant != NULL)
-    g_variant_unref (variant);
-}
-
-static void
-event_log_proxy_set_property_cb (GDBusProxy *proxy,
-  GAsyncResult *res,
-  gpointer      user_data)
-{
-  const _ExtendedGDBusPropertyInfo *info = user_data;
-  GError *error;
-  GVariant *_ret;
-  error = NULL;
-  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
-  if (!_ret)
-    {
-      g_warning ("Error setting property '%s' on interface org.openbmc.EventLog: %s (%s, %d)",
-                 info->parent_struct.name, 
-                 error->message, g_quark_to_string (error->domain), error->code);
-      g_error_free (error);
-    }
-  else
-    {
-      g_variant_unref (_ret);
-    }
 }
 
 static void
@@ -18007,18 +17874,6 @@ event_log_proxy_set_property (GObject      *object,
   const GValue *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
-  const _ExtendedGDBusPropertyInfo *info;
-  GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
-  info = _event_log_property_info_pointers[prop_id - 1];
-  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
-  g_dbus_proxy_call (G_DBUS_PROXY (object),
-    "org.freedesktop.DBus.Properties.Set",
-    g_variant_new ("(ssv)", "org.openbmc.EventLog", info->parent_struct.name, variant),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    NULL, (GAsyncReadyCallback) event_log_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
-  g_variant_unref (variant);
 }
 
 static void
@@ -18091,19 +17946,6 @@ event_log_proxy_g_properties_changed (GDBusProxy *_proxy,
     }
 }
 
-static GVariant *
-event_log_proxy_get_message (EventLog *object)
-{
-  EventLogProxy *proxy = EVENT_LOG_PROXY (object);
-  GVariant *variant;
-  GVariant *value = NULL;
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "message");
-  value = variant;
-  if (variant != NULL)
-    g_variant_unref (variant);
-  return value;
-}
-
 static void
 event_log_proxy_init (EventLogProxy *proxy)
 {
@@ -18131,8 +17973,6 @@ event_log_proxy_class_init (EventLogProxyClass *klass)
   proxy_class->g_signal = event_log_proxy_g_signal;
   proxy_class->g_properties_changed = event_log_proxy_g_properties_changed;
 
-  event_log_override_properties (gobject_class, 1);
-
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
   g_type_class_add_private (klass, sizeof (EventLogProxyPrivate));
 #endif
@@ -18141,7 +17981,6 @@ event_log_proxy_class_init (EventLogProxyClass *klass)
 static void
 event_log_proxy_iface_init (EventLogIface *iface)
 {
-  iface->get_message = event_log_proxy_get_message;
 }
 
 /**
@@ -18531,31 +18370,16 @@ out:
   return g_variant_builder_end (&builder);
 }
 
-static gboolean _event_log_emit_changed (gpointer user_data);
-
 static void
 event_log_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 {
-  EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (_skeleton);
-  gboolean emit_changed = FALSE;
-
-  g_mutex_lock (&skeleton->priv->lock);
-  if (skeleton->priv->changed_properties_idle_source != NULL)
-    {
-      g_source_destroy (skeleton->priv->changed_properties_idle_source);
-      skeleton->priv->changed_properties_idle_source = NULL;
-      emit_changed = TRUE;
-    }
-  g_mutex_unlock (&skeleton->priv->lock);
-
-  if (emit_changed)
-    _event_log_emit_changed (skeleton);
 }
 
 static void
 _event_log_on_signal_event_log (
     EventLog *object,
-    GVariant *arg_message)
+    guchar arg_e_type,
+    const gchar *arg_message)
 {
   EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
 
@@ -18563,7 +18387,8 @@ _event_log_on_signal_event_log (
   GVariant   *signal_variant;
   connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
 
-  signal_variant = g_variant_ref_sink (g_variant_new ("(@a{ss})",
+  signal_variant = g_variant_ref_sink (g_variant_new ("(ys)",
+                   arg_e_type,
                    arg_message));
   for (l = connections; l != NULL; l = l->next)
     {
@@ -18591,154 +18416,12 @@ static void
 event_log_skeleton_finalize (GObject *object)
 {
   EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
-  guint n;
-  for (n = 0; n < 1; n++)
-    g_value_unset (&skeleton->priv->properties[n]);
-  g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
   if (skeleton->priv->changed_properties_idle_source != NULL)
     g_source_destroy (skeleton->priv->changed_properties_idle_source);
   g_main_context_unref (skeleton->priv->context);
   g_mutex_clear (&skeleton->priv->lock);
   G_OBJECT_CLASS (event_log_skeleton_parent_class)->finalize (object);
-}
-
-static void
-event_log_skeleton_get_property (GObject      *object,
-  guint         prop_id,
-  GValue       *value,
-  GParamSpec   *pspec G_GNUC_UNUSED)
-{
-  EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
-  g_mutex_lock (&skeleton->priv->lock);
-  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
-  g_mutex_unlock (&skeleton->priv->lock);
-}
-
-static gboolean
-_event_log_emit_changed (gpointer user_data)
-{
-  EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (user_data);
-  GList *l;
-  GVariantBuilder builder;
-  GVariantBuilder invalidated_builder;
-  guint num_changes;
-
-  g_mutex_lock (&skeleton->priv->lock);
-  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
-  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
-  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
-    {
-      ChangedProperty *cp = l->data;
-      GVariant *variant;
-      const GValue *cur_value;
-
-      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
-      if (!_g_value_equal (cur_value, &cp->orig_value))
-        {
-          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
-          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
-          g_variant_unref (variant);
-          num_changes++;
-        }
-    }
-  if (num_changes > 0)
-    {
-      GList *connections, *ll;
-      GVariant *signal_variant;
-      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.EventLog",
-                                           &builder, &invalidated_builder));
-      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
-      for (ll = connections; ll != NULL; ll = ll->next)
-        {
-          GDBusConnection *connection = ll->data;
-
-          g_dbus_connection_emit_signal (connection,
-                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
-                                         "org.freedesktop.DBus.Properties",
-                                         "PropertiesChanged",
-                                         signal_variant,
-                                         NULL);
-        }
-      g_variant_unref (signal_variant);
-      g_list_free_full (connections, g_object_unref);
-    }
-  else
-    {
-      g_variant_builder_clear (&builder);
-      g_variant_builder_clear (&invalidated_builder);
-    }
-  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
-  skeleton->priv->changed_properties = NULL;
-  skeleton->priv->changed_properties_idle_source = NULL;
-  g_mutex_unlock (&skeleton->priv->lock);
-  return FALSE;
-}
-
-static void
-_event_log_schedule_emit_changed (EventLogSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
-{
-  ChangedProperty *cp;
-  GList *l;
-  cp = NULL;
-  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
-    {
-      ChangedProperty *i_cp = l->data;
-      if (i_cp->info == info)
-        {
-          cp = i_cp;
-          break;
-        }
-    }
-  if (cp == NULL)
-    {
-      cp = g_new0 (ChangedProperty, 1);
-      cp->prop_id = prop_id;
-      cp->info = info;
-      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
-      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
-      g_value_copy (orig_value, &cp->orig_value);
-    }
-}
-
-static void
-event_log_skeleton_notify (GObject      *object,
-  GParamSpec *pspec G_GNUC_UNUSED)
-{
-  EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
-  g_mutex_lock (&skeleton->priv->lock);
-  if (skeleton->priv->changed_properties != NULL &&
-      skeleton->priv->changed_properties_idle_source == NULL)
-    {
-      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
-      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
-      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _event_log_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
-      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
-      g_source_unref (skeleton->priv->changed_properties_idle_source);
-    }
-  g_mutex_unlock (&skeleton->priv->lock);
-}
-
-static void
-event_log_skeleton_set_property (GObject      *object,
-  guint         prop_id,
-  const GValue *value,
-  GParamSpec   *pspec)
-{
-  EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
-  g_mutex_lock (&skeleton->priv->lock);
-  g_object_freeze_notify (object);
-  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
-    {
-      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
-        _event_log_schedule_emit_changed (skeleton, _event_log_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
-      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
-      g_object_notify_by_pspec (object, pspec);
-    }
-  g_mutex_unlock (&skeleton->priv->lock);
-  g_object_thaw_notify (object);
 }
 
 static void
@@ -18752,19 +18435,6 @@ event_log_skeleton_init (EventLogSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 1);
-  g_value_init (&skeleton->priv->properties[0], G_TYPE_VARIANT);
-}
-
-static GVariant *
-event_log_skeleton_get_message (EventLog *object)
-{
-  EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
-  GVariant *value;
-  g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_variant (&(skeleton->priv->properties[0]));
-  g_mutex_unlock (&skeleton->priv->lock);
-  return value;
 }
 
 static void
@@ -18775,12 +18445,6 @@ event_log_skeleton_class_init (EventLogSkeletonClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = event_log_skeleton_finalize;
-  gobject_class->get_property = event_log_skeleton_get_property;
-  gobject_class->set_property = event_log_skeleton_set_property;
-  gobject_class->notify       = event_log_skeleton_notify;
-
-
-  event_log_override_properties (gobject_class, 1);
 
   skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
   skeleton_class->get_info = event_log_skeleton_dbus_interface_get_info;
@@ -18797,7 +18461,6 @@ static void
 event_log_skeleton_iface_init (EventLogIface *iface)
 {
   iface->event_log = _event_log_on_signal_event_log;
-  iface->get_message = event_log_skeleton_get_message;
 }
 
 /**

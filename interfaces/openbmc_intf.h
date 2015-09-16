@@ -493,6 +493,9 @@ struct _SensorValueIface
     GVariant *arg_value,
     const gchar *arg_units);
 
+  void (*error) (
+    SensorValue *object);
+
   void (*heartbeat) (
     SensorValue *object,
     const gchar *arg_bus_name);
@@ -526,6 +529,9 @@ void sensor_value_emit_changed (
     SensorValue *object,
     GVariant *arg_value,
     const gchar *arg_units);
+
+void sensor_value_emit_error (
+    SensorValue *object);
 
 void sensor_value_emit_heartbeat (
     SensorValue *object,
@@ -1915,6 +1921,8 @@ struct _ControlPowerIface
 
   gint  (*get_pgood) (ControlPower *object);
 
+  gint  (*get_pgood_timeout) (ControlPower *object);
+
   gint  (*get_state) (ControlPower *object);
 
   void (*power_good) (
@@ -1997,6 +2005,9 @@ void control_power_set_pgood (ControlPower *object, gint value);
 
 gint control_power_get_state (ControlPower *object);
 void control_power_set_state (ControlPower *object, gint value);
+
+gint control_power_get_pgood_timeout (ControlPower *object);
+void control_power_set_pgood_timeout (ControlPower *object, gint value);
 
 
 /* ---- */
@@ -2332,17 +2343,10 @@ struct _EventLogIface
 {
   GTypeInterface parent_iface;
 
-
-
-  gboolean (*handle_get_message) (
-    EventLog *object,
-    GDBusMethodInvocation *invocation);
-
-  GVariant * (*get_message) (EventLog *object);
-
   void (*event_log) (
     EventLog *object,
-    GVariant *arg_message);
+    guchar arg_e_type,
+    const gchar *arg_message);
 
 };
 
@@ -2352,46 +2356,12 @@ GDBusInterfaceInfo *event_log_interface_info (void);
 guint event_log_override_properties (GObjectClass *klass, guint property_id_begin);
 
 
-/* D-Bus method call completion functions: */
-void event_log_complete_get_message (
-    EventLog *object,
-    GDBusMethodInvocation *invocation,
-    GVariant *message);
-
-
-
 /* D-Bus signal emissions functions: */
 void event_log_emit_event_log (
     EventLog *object,
-    GVariant *arg_message);
+    guchar arg_e_type,
+    const gchar *arg_message);
 
-
-
-/* D-Bus method calls: */
-void event_log_call_get_message (
-    EventLog *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean event_log_call_get_message_finish (
-    EventLog *proxy,
-    GVariant **out_message,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean event_log_call_get_message_sync (
-    EventLog *proxy,
-    GVariant **out_message,
-    GCancellable *cancellable,
-    GError **error);
-
-
-
-/* D-Bus property accessors: */
-GVariant *event_log_get_message (EventLog *object);
-GVariant *event_log_dup_message (EventLog *object);
-void event_log_set_message (EventLog *object, GVariant *value);
 
 
 /* ---- */

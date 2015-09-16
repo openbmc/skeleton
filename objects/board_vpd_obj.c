@@ -45,6 +45,10 @@ main (gint argc, gchar *argv[])
 	
 	//g_main_loop_run (loop);
 	//g_bus_unown_name (id);
+	//g_variant_unref(result);
+	//g_variant_unref(parm);
+	g_object_unref(p);
+	g_object_unref(c);
  	g_main_loop_unref (loop);
  	return 0;
 }

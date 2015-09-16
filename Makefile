@@ -25,8 +25,8 @@ CFLAGS = -pthread -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/li
 libopenbmc_intf: openbmc_intf.o
 	$(CC) -shared -o lib/$@.so obj/openbmc_intf.o $(CFLAGS)
 
-power_control: power_control_obj.o gpio.o
-	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o $(OFLAGS) $(CFLAGS)
+power_control: power_control_obj.o gpio.o event_log.o
+	$(CC) -o bin/$@.exe obj/event_log.o obj/gpio.o obj/power_control_obj.o $(OFLAGS) $(CFLAGS)
 
 chassis_identify: chassis_identify_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/chassis_identify_obj.o $(OFLAGS) $(CFLAGS)

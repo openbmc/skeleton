@@ -14,12 +14,20 @@ typedef struct {
 
 
 //gpio functions
-void gpio_init(GDBusConnection*, GPIO*);
+#define GPIO_OK 0
+#define GPIO_ERROR -1
+#define GPIO_OPEN_ERROR -2
+#define GPIO_INIT_ERROR -3
+#define GPIO_READ_ERROR -4
+#define GPIO_WRITE_ERROR -5
+#define GPIO_LOOKUP_ERROR -6
+
+int gpio_init(GDBusConnection*, GPIO*);
 void gpio_close(GPIO*);
 int  gpio_open(GPIO*);
-void gpio_write(GPIO*, uint8_t);
-void gpio_writec(GPIO*, char);
-void gpio_clock_cycle(GPIO*, int);
-uint8_t gpio_read(GPIO*);
+int gpio_write(GPIO*, uint8_t);
+int gpio_writec(GPIO*, char);
+int gpio_clock_cycle(GPIO*, int);
+int gpio_read(GPIO*,uint8_t*);
 
 #endif

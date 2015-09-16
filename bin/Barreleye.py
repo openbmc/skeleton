@@ -139,6 +139,9 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 				'properties' : { 
 					'org.openbmc.Control': {
 						'poll_interval' : 3000
+					},
+					'org.openbmc.control.Power': {
+						'pgood_timeout' : 10000
 					}
 				}
 			}

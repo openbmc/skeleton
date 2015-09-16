@@ -9,11 +9,13 @@
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "gpio.h"
+#include "event_log.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* dbus_name        = "org.openbmc.control.Power";
 
+//This object will use these GPIOs
 GPIO power_pin    = (GPIO){ "POWER_PIN" };
 GPIO pgood        = (GPIO){ "PGOOD" };
 
@@ -21,6 +23,7 @@ static GDBusObjectManagerServer *manager = NULL;
 
 guint tmp_pgood = 0;
 guint last_pgood = 0;
+guint pgood_timeout_count = 0;
 
 static gboolean poll_pgood(gpointer user_data)
 {
@@ -28,7 +31,17 @@ static gboolean poll_pgood(gpointer user_data)
 	Control* control = object_get_control((Object*)user_data);
 	EventLog* event_log = object_get_event_log((Object*)user_data);
 	control_emit_heartbeat(control,dbus_name);
+	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
 
+	guint pgood_timeout = control_power_get_pgood_timeout(control_power)/
+		control_get_poll_interval(control);
+
+	if (pgood_timeout_count > pgood_timeout)
+	{
+		event_log_emit_event_log(event_log, FATAL, "Pgood poll timeout");
+		control_power_set_pgood_timeout(control_power,0);
+		//return FALSE;
+	}
 	//For simulation, remove
 	if (tmp_pgood!=last_pgood) {
 		if (tmp_pgood == 1) {
@@ -39,21 +52,38 @@ static gboolean poll_pgood(gpointer user_data)
 	}
 
 	last_pgood = tmp_pgood;
-	uint8_t gpio = gpio_read(&pgood);
-	//if changed, set property and emit signal
-	if (gpio != control_power_get_pgood(control_power))
+	uint8_t gpio;
+	int rc = gpio_read(&pgood,&gpio);
+	if (rc == GPIO_OK)
 	{
- 		control_power_set_pgood(control_power,gpio);
- 		if (gpio==0)
- 		{
- 			control_power_emit_power_lost(control_power);
-			control_emit_goto_system_state(control,"POWERED_OFF");
- 		}
- 		else
- 		{
- 			control_power_emit_power_good(control_power);
-			control_emit_goto_system_state(control,"POWERED_ON");
- 		}
+		//if changed, set property and emit signal
+		if (gpio != control_power_get_pgood(control_power))
+		{
+ 			control_power_set_pgood(control_power,gpio);
+ 			if (gpio==0)
+ 			{
+ 				control_power_emit_power_lost(control_power);
+				control_emit_goto_system_state(control,"POWERED_OFF");
+ 			}
+ 			else
+ 			{
+ 				control_power_emit_power_good(control_power);
+				control_emit_goto_system_state(control,"POWERED_ON");
+ 			}
+		}
+	} else {
+		event_log_emit_event_log(event_log, FATAL, "GPIO read error");
+		//return FALSE;
+	}
+	//pgood is not at desired state yet
+	if (gpio != control_power_get_state(control_power) &&
+		control_power_get_pgood_timeout(control_power) != 0)
+	{
+		pgood_timeout_count++;
+	}
+	else 
+	{
+		pgood_timeout_count = 0;
 	}
 	return TRUE;
 }
@@ -67,6 +97,8 @@ on_set_power_state (ControlPower          *pwr,
                 gpointer                user_data)
 {
 	Control* control = object_get_control((Object*)user_data);
+	EventLog* event_log = object_get_event_log((Object*)user_data);
+	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
 	if (state > 1)
 	{
 		g_dbus_method_invocation_return_dbus_error (invocation,
@@ -85,17 +117,23 @@ on_set_power_state (ControlPower          *pwr,
 		g_print("Set power state: %d\n",state);
 		//temporary until real hardware works
 		tmp_pgood = state;
-		gpio_open(&power_pin);
-		gpio_write(&power_pin,!state); 
-		gpio_close(&power_pin);
-		control_power_set_state(pwr,state);
-		if (state == 1)
+		int error = 0;
+		do {
+			error = gpio_open(&power_pin);
+			if (error != GPIO_OK) {	break;	}
+			error = gpio_write(&power_pin,!state);
+			if (error != GPIO_OK) {	break;	}
+			gpio_close(&power_pin);
+			control_power_set_state(pwr,state);
+			if (state == 1) {
+				control_emit_goto_system_state(control,"POWERING_ON");
+			} else {
+				control_emit_goto_system_state(control,"POWERING_OFF");
+			}
+		} while(0);
+		if (error != GPIO_OK)
 		{
-			control_emit_goto_system_state(control,"POWERING_ON");
-		}
-		else
-		{
-			control_emit_goto_system_state(control,"POWERING_OFF");
+			event_log_emit_event_log(event_log, FATAL, "GPIO setup error");
 		}
 	}
 	return TRUE;
@@ -183,9 +221,15 @@ on_bus_acquired (GDBusConnection *connection,
 	g_dbus_object_manager_server_set_connection (manager, connection);
 
 	// get gpio device paths
-	gpio_init(connection,&power_pin);
-	gpio_init(connection,&pgood);
-	gpio_open(&pgood);
+	do {
+		int rc = GPIO_OK;
+		rc = gpio_init(connection,&power_pin);
+		if (rc != GPIO_OK) { break; }
+		rc = gpio_init(connection,&pgood);
+		if (rc != GPIO_OK) { break; }
+		rc = gpio_open(&pgood);
+		if (rc != GPIO_OK) { break; }
+	} while(0);
 }
 
 static void

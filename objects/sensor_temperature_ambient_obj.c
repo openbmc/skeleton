@@ -27,6 +27,8 @@ poll_sensor(gpointer user_data)
 	//	sensor_i2c_get_dev_path(i2c),sensor_i2c_get_address(i2c),value);
 
 	value = value+1;
+	// Do this in case of an error
+	//sensor_value_emit_error(sensor);
 
 	if (heartbeat > 4000)
 	{

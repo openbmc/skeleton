@@ -13,17 +13,23 @@
 #define NEW_VARIANT_B(v)       g_variant_new_variant(g_variant_new_byte(v)) 
 #define VARIANT_COMPARE(x,y)   g_variant_compare(GET_VARIANT(x),GET_VARIANT(y))
 
-
-static inline void writel(uint32_t val,void* addr)
+#ifdef __arm__
+static inline void write_reg(uint32_t val,void* addr)
 {
         asm volatile("" : : : "memory");
         *(volatile uint32_t *)addr = val;
 }
 static inline devmem(uint32_t val, uint32_t reg)
 {
-       writel(val,reg);
+	void* r = (void*)reg;
+       write_reg(val,r);
 }
+#else
+static inline devmem(uint32_t val, uint32_t reg)
+{
 
+}
+#endif
 
 typedef struct {
 	gint argc;

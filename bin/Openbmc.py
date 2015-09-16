@@ -19,6 +19,10 @@ FRU_STATES = {
 	'FATAL_ERROR'       : 2,
 	'NOT_PRESENT'       : 3,
 }
+
+EVENT_TYPES = ['NONE','FATAL','RECOVERABLE','WARNING','SW_ERROR','INFO']
+
+
 ENUMS = {
 	'org.openbmc.SensorIntegerThreshold.state' : 
 		['NOT_SET','NORMAL','LOWER_CRITICAL','LOWER_WARNING','UPPER_WARNING','UPPER_CRITICAL'],
