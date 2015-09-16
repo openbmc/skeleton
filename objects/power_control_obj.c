@@ -6,10 +6,10 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <syslog.h>
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "gpio.h"
-#include "event_log.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
@@ -27,6 +27,7 @@ guint pgood_timeout_count = 0;
 
 static gboolean poll_pgood(gpointer user_data)
 {
+	g_print("polling\n");
 	ControlPower *control_power = object_get_control_power((Object*)user_data);
 	Control* control = object_get_control((Object*)user_data);
 	EventLog* event_log = object_get_event_log((Object*)user_data);
@@ -38,9 +39,10 @@ static gboolean poll_pgood(gpointer user_data)
 
 	if (pgood_timeout_count > pgood_timeout)
 	{
-		event_log_emit_event_log(event_log, FATAL, "Pgood poll timeout");
+		event_log_emit_event_log(event_log, LOG_ALERT, "Pgood poll timeout");
 		control_power_set_pgood_timeout(control_power,0);
-		//return FALSE;
+		pgood_timeout_count = 0;
+		return TRUE;
 	}
 	//For simulation, remove
 	if (tmp_pgood!=last_pgood) {
@@ -72,8 +74,8 @@ static gboolean poll_pgood(gpointer user_data)
  			}
 		}
 	} else {
-		event_log_emit_event_log(event_log, FATAL, "GPIO read error");
-		//return FALSE;
+		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO read error");
+		return FALSE;
 	}
 	//pgood is not at desired state yet
 	if (gpio != control_power_get_state(control_power) &&
@@ -133,7 +135,7 @@ on_set_power_state (ControlPower          *pwr,
 		} while(0);
 		if (error != GPIO_OK)
 		{
-			event_log_emit_event_log(event_log, FATAL, "GPIO setup error");
+			event_log_emit_event_log(event_log, LOG_ALERT, "GPIO setup error");
 		}
 	}
 	return TRUE;

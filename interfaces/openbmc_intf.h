@@ -2345,7 +2345,7 @@ struct _EventLogIface
 
   void (*event_log) (
     EventLog *object,
-    guchar arg_e_type,
+    gint arg_priority,
     const gchar *arg_message);
 
 };
@@ -2359,7 +2359,7 @@ guint event_log_override_properties (GObjectClass *klass, guint property_id_begi
 /* D-Bus signal emissions functions: */
 void event_log_emit_event_log (
     EventLog *object,
-    guchar arg_e_type,
+    gint arg_priority,
     const gchar *arg_message);
 
 

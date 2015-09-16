@@ -43,18 +43,26 @@ int gpio_read(GPIO* gpio, uint8_t* value)
 {
 	char buf[1];
 	int r = GPIO_OK;
-	if (read(gpio->fd,&buf,1) != 1)
+	if (gpio->fd <= 0)
 	{
-		r = GPIO_READ_ERROR;
-	} else {
-		if (buf[0]=='1') {
-			*value = 1;
+		r = GPIO_ERROR;	
+	}
+	else
+	{
+		if (read(gpio->fd,&buf,1) != 1)
+		{
+			g_print("here1\n");
+			r = GPIO_READ_ERROR;
 		} else {
-			*value = 0;
+			g_print("here2\n");
+			if (buf[0]=='1') {
+				*value = 1;
+			} else {
+				*value = 0;
+			}
 		}
 	}
 	return r;
-
 }
 int gpio_clock_cycle(GPIO* gpio, int num_clks) {
         int i=0;

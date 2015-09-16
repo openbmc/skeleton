@@ -124,7 +124,7 @@
 	</interface>
 	<interface name="org.openbmc.EventLog">
 		<signal name="EventLog">
-			<arg name="e_type" type="y"/>
+			<arg name="priority" type="i"/>
 			<arg name="message" type="s"/>
 		</signal>
 	</interface>	

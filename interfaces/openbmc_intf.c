@@ -17669,12 +17669,12 @@ watchdog_skeleton_new (void)
 
 /* ---- Introspection data for org.openbmc.EventLog ---- */
 
-static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_e_type =
+static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_priority =
 {
   {
     -1,
-    (gchar *) "e_type",
-    (gchar *) "y",
+    (gchar *) "priority",
+    (gchar *) "i",
     NULL
   },
   FALSE
@@ -17693,7 +17693,7 @@ static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_message 
 
 static const _ExtendedGDBusArgInfo * const _event_log_signal_info_event_log_ARG_pointers[] =
 {
-  &_event_log_signal_info_event_log_ARG_e_type,
+  &_event_log_signal_info_event_log_ARG_priority,
   &_event_log_signal_info_event_log_ARG_message,
   NULL
 };
@@ -17784,7 +17784,7 @@ event_log_default_init (EventLogIface *iface)
   /**
    * EventLog::event-log:
    * @object: A #EventLog.
-   * @arg_e_type: Argument.
+   * @arg_priority: Argument.
    * @arg_message: Argument.
    *
    * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-EventLog.EventLog">"EventLog"</link> is received.
@@ -17799,14 +17799,14 @@ event_log_default_init (EventLogIface *iface)
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
-    2, G_TYPE_UCHAR, G_TYPE_STRING);
+    2, G_TYPE_INT, G_TYPE_STRING);
 
 }
 
 /**
  * event_log_emit_event_log:
  * @object: A #EventLog.
- * @arg_e_type: Argument to pass with the signal.
+ * @arg_priority: Argument to pass with the signal.
  * @arg_message: Argument to pass with the signal.
  *
  * Emits the <link linkend="gdbus-signal-org-openbmc-EventLog.EventLog">"EventLog"</link> D-Bus signal.
@@ -17814,10 +17814,10 @@ event_log_default_init (EventLogIface *iface)
 void
 event_log_emit_event_log (
     EventLog *object,
-    guchar arg_e_type,
+    gint arg_priority,
     const gchar *arg_message)
 {
-  g_signal_emit_by_name (object, "event-log", arg_e_type, arg_message);
+  g_signal_emit_by_name (object, "event-log", arg_priority, arg_message);
 }
 
 /* ------------------------------------------------------------------------ */
@@ -18378,7 +18378,7 @@ event_log_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 static void
 _event_log_on_signal_event_log (
     EventLog *object,
-    guchar arg_e_type,
+    gint arg_priority,
     const gchar *arg_message)
 {
   EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
@@ -18387,8 +18387,8 @@ _event_log_on_signal_event_log (
   GVariant   *signal_variant;
   connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
 
-  signal_variant = g_variant_ref_sink (g_variant_new ("(ys)",
-                   arg_e_type,
+  signal_variant = g_variant_ref_sink (g_variant_new ("(is)",
+                   arg_priority,
                    arg_message));
   for (l = connections; l != NULL; l = l->next)
     {

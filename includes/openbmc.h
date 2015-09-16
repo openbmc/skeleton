@@ -13,6 +13,8 @@
 #define NEW_VARIANT_B(v)       g_variant_new_variant(g_variant_new_byte(v)) 
 #define VARIANT_COMPARE(x,y)   g_variant_compare(GET_VARIANT(x),GET_VARIANT(y))
 
+
+
 #ifdef __arm__
 static inline void write_reg(uint32_t val,void* addr)
 {
