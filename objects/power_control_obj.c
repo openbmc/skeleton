@@ -34,8 +34,13 @@ static gboolean poll_pgood(gpointer user_data)
 	control_emit_heartbeat(control,dbus_name);
 	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
 
-	guint pgood_timeout = control_power_get_pgood_timeout(control_power)/
-		control_get_poll_interval(control);
+	guint poll_int = control_get_poll_interval(control);
+	if (poll_int == 0)
+	{
+		event_log_emit_event_log(event_log, LOG_ALERT, "Poll interval cannot be 0");
+		return FALSE;
+	}
+	guint pgood_timeout = control_power_get_pgood_timeout(control_power)/poll_int;
 
 	if (pgood_timeout_count > pgood_timeout)
 	{
@@ -75,7 +80,7 @@ static gboolean poll_pgood(gpointer user_data)
 		}
 	} else {
 		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO read error");
-		return FALSE;
+		//return FALSE;
 	}
 	//pgood is not at desired state yet
 	if (gpio != control_power_get_state(control_power) &&
