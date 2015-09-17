@@ -27,10 +27,11 @@ guint pgood_timeout_count = 0;
 
 static gboolean poll_pgood(gpointer user_data)
 {
-	g_print("polling\n");
 	ControlPower *control_power = object_get_control_power((Object*)user_data);
 	Control* control = object_get_control((Object*)user_data);
 	EventLog* event_log = object_get_event_log((Object*)user_data);
+
+	//send the heartbeat
 	control_emit_heartbeat(control,dbus_name);
 	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
 
@@ -40,11 +41,13 @@ static gboolean poll_pgood(gpointer user_data)
 		event_log_emit_event_log(event_log, LOG_ALERT, "Poll interval cannot be 0");
 		return FALSE;
 	}
+	//calculate timeout count
 	guint pgood_timeout = control_power_get_pgood_timeout(control_power)/poll_int;
 
 	if (pgood_timeout_count > pgood_timeout)
 	{
 		event_log_emit_event_log(event_log, LOG_ALERT, "Pgood poll timeout");
+		// set timeout to 0 so timeout doesn't happen again
 		control_power_set_pgood_timeout(control_power,0);
 		pgood_timeout_count = 0;
 		return TRUE;
@@ -228,8 +231,9 @@ on_bus_acquired (GDBusConnection *connection,
 	g_dbus_object_manager_server_set_connection (manager, connection);
 
 	// get gpio device paths
+	int rc = GPIO_OK;
 	do {
-		int rc = GPIO_OK;
+
 		rc = gpio_init(connection,&power_pin);
 		if (rc != GPIO_OK) { break; }
 		rc = gpio_init(connection,&pgood);
@@ -237,6 +241,10 @@ on_bus_acquired (GDBusConnection *connection,
 		rc = gpio_open(&pgood);
 		if (rc != GPIO_OK) { break; }
 	} while(0);
+	if (rc != GPIO_OK)
+	{
+		//event_log_emit_event_log(event_log, LOG_ALERT, "GPIO setup error");
+	}
 }
 
 static void
