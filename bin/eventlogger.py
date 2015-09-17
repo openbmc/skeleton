@@ -35,7 +35,7 @@ class EventLogger(dbus.service.Object):
 
 		json_dump = json.dumps(message)
 		print "EVENT_LOG: "+json_dump
-		syslog.openlog('[OpenBmc]',logoption=syslog.LOG_PID)
+		syslog.openlog('OpenBmc',logoption=syslog.LOG_PID)
 		syslog.syslog(priority,json_dump)
 		syslog.closelog()
 		

@@ -13,9 +13,12 @@ static gchar *instance_name = NULL;
 
 static gboolean poll_occ(gpointer user_data)
 {
-/*
+	//g_dbus_object_get_object_path(G_DBUS_OBJECT(user_data)),
+	Occ* occ = object_get_occ((Object*)user_data);
+
 	gchar *s;
-	s = g_strdup_printf ("%s/Temperature/%d",g_dbus_object_get_object_path(G_DBUS_OBJECT(user_data)), 1);
+	s = g_strdup_printf ("%s/Temperature/P8_%s_Core_%d",
+			dbus_object_path,occ_get_instance_name(occ),1);
 	g_print("%s\n",s);
 
 	GDBusInterface* interface = g_dbus_object_manager_get_interface((GDBusObjectManager*)manager,s,
@@ -31,11 +34,8 @@ static gboolean poll_occ(gpointer user_data)
 	}
 	g_free (s);
 	//g_free(interface);
-*/
 	return TRUE;
 }
-
-
 
 static gboolean
 on_init (Occ         *occ,
@@ -84,6 +84,7 @@ on_bus_acquired (GDBusConnection *connection,
 		Occ *occ = occ_skeleton_new ();
   		object_skeleton_set_occ (object, occ);
   		g_object_unref (occ);
+		occ_set_instance_name(occ,cmd->argv[i]);
 
 		SensorI2c *i2c = sensor_i2c_skeleton_new ();
   		object_skeleton_set_sensor_i2c (object, i2c);

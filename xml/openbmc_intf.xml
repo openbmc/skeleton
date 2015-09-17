@@ -3,6 +3,7 @@
 		<method name="init"/>
 		<method name="collect"/>
 		<property name="state" type="s" access="readwrite"/>
+		<property name="instance_name" type="s" access="read"/>
 		<property name="poll_interval" type="i" access="readwrite"/>
 	</interface>
 
@@ -123,6 +124,9 @@
 		<signal name="WatchdogError"/>
 	</interface>
 	<interface name="org.openbmc.EventLog">
+		<method name="getEventLog">
+			<arg name="log" type="a(s)" direction="out"/>
+		</method>
 		<signal name="EventLog">
 			<arg name="priority" type="i"/>
 			<arg name="message" type="s"/>

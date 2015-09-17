@@ -209,6 +209,19 @@ static const _ExtendedGDBusPropertyInfo _occ_property_info_state =
   FALSE
 };
 
+static const _ExtendedGDBusPropertyInfo _occ_property_info_instance_name =
+{
+  {
+    -1,
+    (gchar *) "instance_name",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "instance-name",
+  FALSE
+};
+
 static const _ExtendedGDBusPropertyInfo _occ_property_info_poll_interval =
 {
   {
@@ -225,6 +238,7 @@ static const _ExtendedGDBusPropertyInfo _occ_property_info_poll_interval =
 static const _ExtendedGDBusPropertyInfo * const _occ_property_info_pointers[] =
 {
   &_occ_property_info_state,
+  &_occ_property_info_instance_name,
   &_occ_property_info_poll_interval,
   NULL
 };
@@ -270,6 +284,7 @@ guint
 occ_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "state");
+  g_object_class_override_property (klass, property_id_begin++, "instance-name");
   g_object_class_override_property (klass, property_id_begin++, "poll-interval");
   return property_id_begin - 1;
 }
@@ -287,6 +302,7 @@ occ_override_properties (GObjectClass *klass, guint property_id_begin)
  * @parent_iface: The parent interface.
  * @handle_collect: Handler for the #Occ::handle-collect signal.
  * @handle_init: Handler for the #Occ::handle-init signal.
+ * @get_instance_name: Getter for the #Occ:instance-name property.
  * @get_poll_interval: Getter for the #Occ:poll-interval property.
  * @get_state: Getter for the #Occ:state property.
  *
@@ -355,6 +371,15 @@ occ_default_init (OccIface *iface)
   g_object_interface_install_property (iface,
     g_param_spec_string ("state", "state", "state", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
+   * Occ:instance-name:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Occ.instance_name">"instance_name"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("instance-name", "instance_name", "instance_name", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
    * Occ:poll-interval:
    *
    * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Occ.poll_interval">"poll_interval"</link>.
@@ -414,6 +439,57 @@ void
 occ_set_state (Occ *object, const gchar *value)
 {
   g_object_set (G_OBJECT (object), "state", value, NULL);
+}
+
+/**
+ * occ_get_instance_name: (skip)
+ * @object: A #Occ.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Occ.instance_name">"instance_name"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use occ_dup_instance_name() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+occ_get_instance_name (Occ *object)
+{
+  return OCC_GET_IFACE (object)->get_instance_name (object);
+}
+
+/**
+ * occ_dup_instance_name: (skip)
+ * @object: A #Occ.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Occ.instance_name">"instance_name"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+occ_dup_instance_name (Occ *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "instance-name", &value, NULL);
+  return value;
+}
+
+/**
+ * occ_set_instance_name: (skip)
+ * @object: A #Occ.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Occ.instance_name">"instance_name"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+occ_set_instance_name (Occ *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "instance-name", value, NULL);
 }
 
 /**
@@ -715,7 +791,7 @@ occ_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _occ_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -762,7 +838,7 @@ occ_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _occ_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -859,6 +935,21 @@ occ_proxy_get_state (Occ *object)
   return value;
 }
 
+static const gchar *
+occ_proxy_get_instance_name (Occ *object)
+{
+  OccProxy *proxy = OCC_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "instance_name");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static gint 
 occ_proxy_get_poll_interval (Occ *object)
 {
@@ -912,6 +1003,7 @@ static void
 occ_proxy_iface_init (OccIface *iface)
 {
   iface->get_state = occ_proxy_get_state;
+  iface->get_instance_name = occ_proxy_get_instance_name;
   iface->get_poll_interval = occ_proxy_get_poll_interval;
 }
 
@@ -1339,7 +1431,7 @@ occ_skeleton_finalize (GObject *object)
 {
   OccSkeleton *skeleton = OCC_SKELETON (object);
   guint n;
-  for (n = 0; n < 2; n++)
+  for (n = 0; n < 3; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -1357,7 +1449,7 @@ occ_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   OccSkeleton *skeleton = OCC_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -1474,7 +1566,7 @@ occ_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   OccSkeleton *skeleton = OCC_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -1499,9 +1591,10 @@ occ_skeleton_init (OccSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 2);
+  skeleton->priv->properties = g_new0 (GValue, 3);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_STRING);
-  g_value_init (&skeleton->priv->properties[1], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
 }
 
 static const gchar *
@@ -1515,13 +1608,24 @@ occ_skeleton_get_state (Occ *object)
   return value;
 }
 
+static const gchar *
+occ_skeleton_get_instance_name (Occ *object)
+{
+  OccSkeleton *skeleton = OCC_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
 static gint 
 occ_skeleton_get_poll_interval (Occ *object)
 {
   OccSkeleton *skeleton = OCC_SKELETON (object);
   gint value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_int (&(skeleton->priv->properties[1]));
+  value = g_value_get_int (&(skeleton->priv->properties[2]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -1556,6 +1660,7 @@ static void
 occ_skeleton_iface_init (OccIface *iface)
 {
   iface->get_state = occ_skeleton_get_state;
+  iface->get_instance_name = occ_skeleton_get_instance_name;
   iface->get_poll_interval = occ_skeleton_get_poll_interval;
 }
 
@@ -17669,6 +17774,42 @@ watchdog_skeleton_new (void)
 
 /* ---- Introspection data for org.openbmc.EventLog ---- */
 
+static const _ExtendedGDBusArgInfo _event_log_method_info_get_event_log_OUT_ARG_log =
+{
+  {
+    -1,
+    (gchar *) "log",
+    (gchar *) "a(s)",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _event_log_method_info_get_event_log_OUT_ARG_pointers[] =
+{
+  &_event_log_method_info_get_event_log_OUT_ARG_log,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _event_log_method_info_get_event_log =
+{
+  {
+    -1,
+    (gchar *) "getEventLog",
+    NULL,
+    (GDBusArgInfo **) &_event_log_method_info_get_event_log_OUT_ARG_pointers,
+    NULL
+  },
+  "handle-get-event-log",
+  FALSE
+};
+
+static const _ExtendedGDBusMethodInfo * const _event_log_method_info_pointers[] =
+{
+  &_event_log_method_info_get_event_log,
+  NULL
+};
+
 static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_priority =
 {
   {
@@ -17720,7 +17861,7 @@ static const _ExtendedGDBusInterfaceInfo _event_log_interface_info =
   {
     -1,
     (gchar *) "org.openbmc.EventLog",
-    NULL,
+    (GDBusMethodInfo **) &_event_log_method_info_pointers,
     (GDBusSignalInfo **) &_event_log_signal_info_pointers,
     NULL,
     NULL
@@ -17769,6 +17910,7 @@ event_log_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * EventLogIface:
  * @parent_iface: The parent interface.
+ * @handle_get_event_log: Handler for the #EventLog::handle-get-event-log signal.
  * @event_log: Handler for the #EventLog::event-log signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-EventLog.top_of_page">org.openbmc.EventLog</link>.
@@ -17780,6 +17922,29 @@ G_DEFINE_INTERFACE (EventLog, event_log, G_TYPE_OBJECT);
 static void
 event_log_default_init (EventLogIface *iface)
 {
+  /* GObject signals for incoming D-Bus method calls: */
+  /**
+   * EventLog::handle-get-event-log:
+   * @object: A #EventLog.
+   * @invocation: A #GDBusMethodInvocation.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-EventLog.getEventLog">getEventLog()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call event_log_complete_get_event_log() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-get-event-log",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (EventLogIface, handle_get_event_log),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
+
   /* GObject signals for received D-Bus signals: */
   /**
    * EventLog::event-log:
@@ -17818,6 +17983,125 @@ event_log_emit_event_log (
     const gchar *arg_message)
 {
   g_signal_emit_by_name (object, "event-log", arg_priority, arg_message);
+}
+
+/**
+ * event_log_call_get_event_log:
+ * @proxy: A #EventLogProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.getEventLog">getEventLog()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call event_log_call_get_event_log_finish() to get the result of the operation.
+ *
+ * See event_log_call_get_event_log_sync() for the synchronous, blocking version of this method.
+ */
+void
+event_log_call_get_event_log (
+    EventLog *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "getEventLog",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * event_log_call_get_event_log_finish:
+ * @proxy: A #EventLogProxy.
+ * @out_log: (out): Return location for return parameter or %NULL to ignore.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to event_log_call_get_event_log().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with event_log_call_get_event_log().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+event_log_call_get_event_log_finish (
+    EventLog *proxy,
+    GVariant **out_log,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(@a(s))",
+                 out_log);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * event_log_call_get_event_log_sync:
+ * @proxy: A #EventLogProxy.
+ * @out_log: (out): Return location for return parameter or %NULL to ignore.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-EventLog.getEventLog">getEventLog()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See event_log_call_get_event_log() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+event_log_call_get_event_log_sync (
+    EventLog *proxy,
+    GVariant **out_log,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "getEventLog",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(@a(s))",
+                 out_log);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * event_log_complete_get_event_log:
+ * @object: A #EventLog.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ * @log: Parameter to return.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-EventLog.getEventLog">getEventLog()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+event_log_complete_get_event_log (
+    EventLog *object,
+    GDBusMethodInvocation *invocation,
+    GVariant *log)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("(@a(s))",
+                   log));
 }
 
 /* ------------------------------------------------------------------------ */

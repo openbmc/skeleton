@@ -279,7 +279,7 @@ SYSTEM_CONFIG['org.openbmc.vpd'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
-		'system_state' : 'HOST_UP',
+		'system_state' : 'BOOTED',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensor_occ.exe',

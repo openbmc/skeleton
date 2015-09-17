@@ -38,8 +38,10 @@ class SensorManager(dbus.service.Object):
 		self.sensor_cache = {}
 
 	@dbus.service.method(DBUS_NAME,
-		in_signature='', out_signature='a{sv}')
+		in_signature='', out_signature='a{sa{sv}}')
 	def getSensorsAll(self):
+		## this is probably not ok
+		##sensors = []
 		return self.sensor_cache;
 	
 	@dbus.service.method(DBUS_NAME,

@@ -37,6 +37,8 @@ struct _OccIface
     Occ *object,
     GDBusMethodInvocation *invocation);
 
+  const gchar * (*get_instance_name) (Occ *object);
+
   gint  (*get_poll_interval) (Occ *object);
 
   const gchar * (*get_state) (Occ *object);
@@ -99,6 +101,10 @@ gboolean occ_call_collect_sync (
 const gchar *occ_get_state (Occ *object);
 gchar *occ_dup_state (Occ *object);
 void occ_set_state (Occ *object, const gchar *value);
+
+const gchar *occ_get_instance_name (Occ *object);
+gchar *occ_dup_instance_name (Occ *object);
+void occ_set_instance_name (Occ *object, const gchar *value);
 
 gint occ_get_poll_interval (Occ *object);
 void occ_set_poll_interval (Occ *object, gint value);
@@ -2343,6 +2349,11 @@ struct _EventLogIface
 {
   GTypeInterface parent_iface;
 
+
+  gboolean (*handle_get_event_log) (
+    EventLog *object,
+    GDBusMethodInvocation *invocation);
+
   void (*event_log) (
     EventLog *object,
     gint arg_priority,
@@ -2356,11 +2367,40 @@ GDBusInterfaceInfo *event_log_interface_info (void);
 guint event_log_override_properties (GObjectClass *klass, guint property_id_begin);
 
 
+/* D-Bus method call completion functions: */
+void event_log_complete_get_event_log (
+    EventLog *object,
+    GDBusMethodInvocation *invocation,
+    GVariant *log);
+
+
+
 /* D-Bus signal emissions functions: */
 void event_log_emit_event_log (
     EventLog *object,
     gint arg_priority,
     const gchar *arg_message);
+
+
+
+/* D-Bus method calls: */
+void event_log_call_get_event_log (
+    EventLog *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean event_log_call_get_event_log_finish (
+    EventLog *proxy,
+    GVariant **out_log,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean event_log_call_get_event_log_sync (
+    EventLog *proxy,
+    GVariant **out_log,
+    GCancellable *cancellable,
+    GError **error);
 
 
 
