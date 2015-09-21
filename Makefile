@@ -1,21 +1,21 @@
-CC=gcc
+#CC=gcc
 OBJS    = objects/pflash/progress.o objects/pflash/ast-sf-ctrl.o
 OBJS	+= objects/pflash/libflash/libflash.o objects/pflash/libflash/libffs.o
 OBJS	+= objects/pflash/arm_io.o
-LIBS=/gsa/ausgsa/home/n/j/njames/openbmc
-OFLAGS =-L$(HOME)/lib -lopenbmc_intf
-HOME = /media/sf_vbox/openbmc
-#CFLAGS=$(shell pkg-config --libs --cflags gtk+-2.0 glib-2.0)
-CFLAGS = -pthread -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -lgio-2.0 -lgobject-2.0 -lglib-2.0
+LIBS = ./bin
+OFLAGS =-L$(LIBS) -lopenbmc_intf
+HOME = .
+CFLAGS=$(shell pkg-config --libs --cflags gio-unix-2.0 glib-2.0)
+#CFLAGS = -pthread -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -lgio-2.0 -lgobject-2.0 -lglib-2.0
 
 %.o: interfaces/%.c 
 	$(CC) -c -fPIC -o obj/$@ $< -I$(HOME) -I$(HOME)/includes $(CFLAGS)
 
 %.o: objects/%.c
-	$(CC) -c -o obj/$@ $< -L$(HOME)/lib -I$(HOME) -I$(HOME)/includes -I$(HOME)/objects/pflash -lfru $(CFLAGS)
+	$(CC) -c -o obj/$@ $< -L$(LIBS) -I$(HOME) -I$(HOME)/includes -I$(HOME)/objects/pflash  $(CFLAGS)
 
 %.o: includes/%.c
-	$(CC) -c -o obj/$@ $< -I$(HOME) -I$(HOME)/includes -I$(HOME)/objects/pflash $(CFLAGS)
+	$(CC) -c -o obj/$@ $< -L$(LIBS) -I$(HOME) -I$(HOME)/includes -I$(HOME)/objects/pflash $(CFLAGS)
 
 %.o: objects/pflash/%.c
 	$(CC) -c -o obj/$@ $< -I$(HOME) -I$(HOME)/objects/pflash $(CFLAGS)
@@ -23,7 +23,7 @@ CFLAGS = -pthread -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/li
 
 
 libopenbmc_intf: openbmc_intf.o
-	$(CC) -shared -o lib/$@.so obj/openbmc_intf.o $(CFLAGS)
+	$(CC) -shared -o bin/$@.so obj/openbmc_intf.o $(CFLAGS)
 
 power_control: power_control_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o $(OFLAGS) $(CFLAGS)
@@ -62,4 +62,4 @@ board_vpd: board_vpd_obj.o
 	$(CC) -o bin/$@.exe obj/board_vpd_obj.o $(OFLAGS) $(CFLAGS)
 
 
-all: libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host flash_bios fan host_watchdog control_bmc sensor_occ board_vpd
+all: libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd

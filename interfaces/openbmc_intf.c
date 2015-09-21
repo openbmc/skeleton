@@ -17832,10 +17832,22 @@ static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_message 
   FALSE
 };
 
+static const _ExtendedGDBusArgInfo _event_log_signal_info_event_log_ARG_rc =
+{
+  {
+    -1,
+    (gchar *) "rc",
+    (gchar *) "i",
+    NULL
+  },
+  FALSE
+};
+
 static const _ExtendedGDBusArgInfo * const _event_log_signal_info_event_log_ARG_pointers[] =
 {
   &_event_log_signal_info_event_log_ARG_priority,
   &_event_log_signal_info_event_log_ARG_message,
+  &_event_log_signal_info_event_log_ARG_rc,
   NULL
 };
 
@@ -17951,6 +17963,7 @@ event_log_default_init (EventLogIface *iface)
    * @object: A #EventLog.
    * @arg_priority: Argument.
    * @arg_message: Argument.
+   * @arg_rc: Argument.
    *
    * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-EventLog.EventLog">"EventLog"</link> is received.
    *
@@ -17964,7 +17977,7 @@ event_log_default_init (EventLogIface *iface)
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
-    2, G_TYPE_INT, G_TYPE_STRING);
+    3, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT);
 
 }
 
@@ -17973,6 +17986,7 @@ event_log_default_init (EventLogIface *iface)
  * @object: A #EventLog.
  * @arg_priority: Argument to pass with the signal.
  * @arg_message: Argument to pass with the signal.
+ * @arg_rc: Argument to pass with the signal.
  *
  * Emits the <link linkend="gdbus-signal-org-openbmc-EventLog.EventLog">"EventLog"</link> D-Bus signal.
  */
@@ -17980,9 +17994,10 @@ void
 event_log_emit_event_log (
     EventLog *object,
     gint arg_priority,
-    const gchar *arg_message)
+    const gchar *arg_message,
+    gint arg_rc)
 {
-  g_signal_emit_by_name (object, "event-log", arg_priority, arg_message);
+  g_signal_emit_by_name (object, "event-log", arg_priority, arg_message, arg_rc);
 }
 
 /**
@@ -18663,7 +18678,8 @@ static void
 _event_log_on_signal_event_log (
     EventLog *object,
     gint arg_priority,
-    const gchar *arg_message)
+    const gchar *arg_message,
+    gint arg_rc)
 {
   EventLogSkeleton *skeleton = EVENT_LOG_SKELETON (object);
 
@@ -18671,9 +18687,10 @@ _event_log_on_signal_event_log (
   GVariant   *signal_variant;
   connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
 
-  signal_variant = g_variant_ref_sink (g_variant_new ("(is)",
+  signal_variant = g_variant_ref_sink (g_variant_new ("(isi)",
                    arg_priority,
-                   arg_message));
+                   arg_message,
+                   arg_rc));
   for (l = connections; l != NULL; l = l->next)
     {
       GDBusConnection *connection = l->data;

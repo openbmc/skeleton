@@ -7,11 +7,14 @@ GPIO_DEV = '/sys/class/gpio'
 
 
 FRU_TYPES = {
+	'SYSTEM' : 0,
 	'CPU' : 1,
 	'DIMM' : 2,
-	'BACKPLANE' : 3,
+	'MAIN_PLANAR' : 3,
 	'RISER_CARD' : 4,
-	'FAN' : 5
+	'FAN' : 5,
+	'BMC' : 6,
+	'CORE' : 7,
 }
 FRU_STATES = {
 	'NORMAL'            : 0,

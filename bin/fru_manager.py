@@ -17,7 +17,7 @@ import Openbmc
 
 DBUS_NAME = 'org.openbmc.managers.Frus'
 OBJ_NAME = '/org/openbmc/managers/Frus'
-FRU_PATH = System.FRU_PATH
+FRUS = System.FRU_INSTANCES
 
 class Fru:
 	def __init__(self,fru_id,data):
@@ -89,13 +89,13 @@ class FruManager(dbus.service.Object):
 					signal_name = 'UpdateFru')
 
 		self.fru_db = {}
-		for fid in System.FRUS.keys():
-			self.updateFru(fid,System.FRUS[fid])
+		self.fru_id_lookup = {}
+		for fru in FRUS.keys():
+			#self.updateFru(fid,System.FRUS[fid])
+			if (FRUS[fru].has_key('fru_id')):
+				print fru
+				print FRUS[fru]['fru_id']
 			
-			
-	#@dbus.service.signal(DBUS_NAME)
-	#def OpenBmcRunning(self):
-	#	pass
 	def UpdateFruHandler(self,fru_id,data):
 		self.updateFru(fru_id,data)		
 

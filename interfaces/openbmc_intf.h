@@ -2357,7 +2357,8 @@ struct _EventLogIface
   void (*event_log) (
     EventLog *object,
     gint arg_priority,
-    const gchar *arg_message);
+    const gchar *arg_message,
+    gint arg_rc);
 
 };
 
@@ -2379,7 +2380,8 @@ void event_log_complete_get_event_log (
 void event_log_emit_event_log (
     EventLog *object,
     gint arg_priority,
-    const gchar *arg_message);
+    const gchar *arg_message,
+    gint arg_rc);
 
 
 

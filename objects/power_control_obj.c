@@ -21,9 +21,9 @@ GPIO pgood        = (GPIO){ "PGOOD" };
 
 static GDBusObjectManagerServer *manager = NULL;
 
-guint tmp_pgood = 0;
-guint last_pgood = 0;
-guint pgood_timeout_count = 0;
+//guint tmp_pgood = 0;
+//guint last_pgood = 0;
+time_t pgood_timeout_start = 0;
 
 static gboolean poll_pgood(gpointer user_data)
 {
@@ -38,21 +38,22 @@ static gboolean poll_pgood(gpointer user_data)
 	guint poll_int = control_get_poll_interval(control);
 	if (poll_int == 0)
 	{
-		event_log_emit_event_log(event_log, LOG_ALERT, "Poll interval cannot be 0");
+		event_log_emit_event_log(event_log, LOG_ALERT, "Poll interval cannot be 0",0);
 		return FALSE;
 	}
-	//calculate timeout count
-	guint pgood_timeout = control_power_get_pgood_timeout(control_power)/poll_int;
-
-	if (pgood_timeout_count > pgood_timeout)
+	//handle timeout
+	time_t current_time = time(NULL);
+	if (difftime(current_time,pgood_timeout_start) > control_power_get_pgood_timeout(control_power)
+		&& pgood_timeout_start != 0)
 	{
-		event_log_emit_event_log(event_log, LOG_ALERT, "Pgood poll timeout");
+		event_log_emit_event_log(event_log, LOG_ALERT, "Pgood poll timeout",0);
 		// set timeout to 0 so timeout doesn't happen again
 		control_power_set_pgood_timeout(control_power,0);
-		pgood_timeout_count = 0;
+		pgood_timeout_start = 0;
 		return TRUE;
 	}
 	//For simulation, remove
+	/*
 	if (tmp_pgood!=last_pgood) {
 		if (tmp_pgood == 1) {
 			control_emit_goto_system_state(control,"POWERED_ON");
@@ -60,10 +61,14 @@ static gboolean poll_pgood(gpointer user_data)
 			control_emit_goto_system_state(control,"POWERED_OFF");
 		}
 	}
-
+	
 	last_pgood = tmp_pgood;
+	*/
 	uint8_t gpio;
-	int rc = gpio_read(&pgood,&gpio);
+	
+	int rc = gpio_open(&pgood);
+	rc = gpio_read(&pgood,&gpio);
+	gpio_close(&pgood);	
 	if (rc == GPIO_OK)
 	{
 		//if changed, set property and emit signal
@@ -82,18 +87,21 @@ static gboolean poll_pgood(gpointer user_data)
  			}
 		}
 	} else {
-		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO read error");
+		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO read error",rc);
 		//return FALSE;
 	}
 	//pgood is not at desired state yet
+	g_print("GPIO: %d;  %d\n",gpio,control_power_get_state(control_power));
 	if (gpio != control_power_get_state(control_power) &&
-		control_power_get_pgood_timeout(control_power) != 0)
+		control_power_get_pgood_timeout(control_power) > 0)
 	{
-		pgood_timeout_count++;
+		if (pgood_timeout_start == 0 ) {
+			pgood_timeout_start = current_time;
+		}
 	}
 	else 
 	{
-		pgood_timeout_count = 0;
+		pgood_timeout_start = 0;
 	}
 	return TRUE;
 }
@@ -126,13 +134,13 @@ on_set_power_state (ControlPower          *pwr,
 	{
 		g_print("Set power state: %d\n",state);
 		//temporary until real hardware works
-		tmp_pgood = state;
+		//tmp_pgood = state;
 		int error = 0;
 		do {
 			error = gpio_open(&power_pin);
-			if (error != GPIO_OK) {	break;	}
+			if (error != GPIO_OK) { break;	}
 			error = gpio_write(&power_pin,!state);
-			if (error != GPIO_OK) {	break;	}
+			if (error != GPIO_OK) { break;	}
 			gpio_close(&power_pin);
 			control_power_set_state(pwr,state);
 			if (state == 1) {
@@ -143,7 +151,7 @@ on_set_power_state (ControlPower          *pwr,
 		} while(0);
 		if (error != GPIO_OK)
 		{
-			event_log_emit_event_log(event_log, LOG_ALERT, "GPIO setup error");
+			event_log_emit_event_log(event_log, LOG_ALERT, "GPIO set power state error",error);
 		}
 	}
 	return TRUE;
@@ -154,6 +162,7 @@ on_init (Control         *control,
          GDBusMethodInvocation  *invocation,
          gpointer                user_data)
 {
+	pgood_timeout_start = 0;
 	guint poll_interval = control_get_poll_interval(control);
 	g_timeout_add(poll_interval, poll_pgood, user_data);
 	control_complete_init(control,invocation);
@@ -184,49 +193,45 @@ on_bus_acquired (GDBusConnection *connection,
 		return;
 	}	
   	manager = g_dbus_object_manager_server_new (dbus_object_path);
-  	int i=0;
-  	for (i=1;i<cmd->argc;i++)
-  	{
-		gchar *s;
-  		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
-		g_print("%s\n",s);
-  		object = object_skeleton_new (s);
-  		g_free (s);
+	gchar *s;
+  	s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[1]);
+	g_print("%s\n",s);
+  	object = object_skeleton_new (s);
+  	g_free (s);
 
-		ControlPower* control_power = control_power_skeleton_new ();
-		object_skeleton_set_control_power (object, control_power);
-		g_object_unref (control_power);
+	ControlPower* control_power = control_power_skeleton_new ();
+	object_skeleton_set_control_power (object, control_power);
+	g_object_unref (control_power);
+	
+	Control* control = control_skeleton_new ();
+	object_skeleton_set_control (object, control);
+	g_object_unref (control);
 
-		Control* control = control_skeleton_new ();
-		object_skeleton_set_control (object, control);
-		g_object_unref (control);
+	EventLog* event_log = event_log_skeleton_new ();
+	object_skeleton_set_event_log (object, event_log);
+	g_object_unref (event_log);
 
-		EventLog* event_log = event_log_skeleton_new ();
-		object_skeleton_set_event_log (object, event_log);
-		g_object_unref (event_log);
+	//define method callbacks here
+	g_signal_connect (control_power,
+       	            "handle-set-power-state",
+               	    G_CALLBACK (on_set_power_state),
+               	    object); /* user_data */
 
-		//define method callbacks here
-		g_signal_connect (control_power,
-        	            "handle-set-power-state",
-                	    G_CALLBACK (on_set_power_state),
-                	    object); /* user_data */
+	g_signal_connect (control_power,
+               	    "handle-get-power-state",
+               	    G_CALLBACK (on_get_power_state),
+               	    NULL); /* user_data */
 
-		g_signal_connect (control_power,
-                	    "handle-get-power-state",
-                	    G_CALLBACK (on_get_power_state),
-                	    NULL); /* user_data */
-
-		g_signal_connect (control,
-                	    "handle-init",
-                	    G_CALLBACK (on_init),
-                	    object); /* user_data */
+	g_signal_connect (control,
+               	    "handle-init",
+               	    G_CALLBACK (on_init),
+               	    object); /* user_data */
 
 
+	/* Export the object (@manager takes its own reference to @object) */
+	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+	g_object_unref (object);
 
-		/* Export the object (@manager takes its own reference to @object) */
-		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
-		g_object_unref (object);
-	}
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection (manager, connection);
 
@@ -239,12 +244,21 @@ on_bus_acquired (GDBusConnection *connection,
 		rc = gpio_init(connection,&pgood);
 		if (rc != GPIO_OK) { break; }
 		rc = gpio_open(&pgood);
-		if (rc != GPIO_OK) { break; }
+
 	} while(0);
 	if (rc != GPIO_OK)
 	{
-		//event_log_emit_event_log(event_log, LOG_ALERT, "GPIO setup error");
+		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO setup error",rc);
 	}
+	int rc = gpio_open(&pgood);
+	rc = gpio_read(&pgood,&gpio);
+	gpio_close(&pgood);	
+	if (rc == GPIO_OK) {
+		control_power_set_pgood(control_power,gpio);
+
+	} else {
+	}
+
 }
 
 static void

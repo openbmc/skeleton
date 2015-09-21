@@ -9,7 +9,8 @@ import dbus.service
 import dbus.mainloop.glib
 import os
 import PropertyManager
-
+import time
+import json
 import Openbmc
 
 if (len(sys.argv) < 2):
@@ -35,6 +36,12 @@ class SystemManager(dbus.service.Object):
 					signal_name = "NameOwnerChanged")
 		bus.add_signal_receiver(self.HeartbeatHandler, signal_name = "Heartbeat")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
+		bus.add_signal_receiver(self.event_log_signal_handler, 
+					dbus_interface = "org.openbmc.EventLog", 
+					signal_name = "EventLog",
+					path_keyword='path')
+
+
 
 		self.current_state = ""
 		self.system_states = {}
@@ -168,6 +175,22 @@ class SystemManager(dbus.service.Object):
 
 		return [Openbmc.GPIO_DEV, gpio_num, System.GPIO_CONFIG[name]['direction']]
 
+	## Signal handler
+	def event_log_signal_handler(self,priority,msg,rc,path = None):
+		message = {}
+		ts = time.time()
+
+		message['priority'] = priority
+		message['object_path'] = path
+		message['message'] = msg
+		message['rc'] = rc
+
+		json_dump = json.dumps(message)
+		print "EVENT_LOG: "+json_dump
+		#syslog.openlog('OpenBmc',logoption=syslog.LOG_PID)
+		#syslog.syslog(priority,json_dump)
+		#syslog.closelog()
+		
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)

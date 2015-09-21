@@ -39,7 +39,7 @@ int gpio_write(GPIO* gpio, uint8_t value)
 	return rc;
 }
 
-int gpio_read(GPIO* gpio, uint8_t* value)
+int gpio_read(GPIO* gpio, uint8_t *value)
 {
 	char buf[1];
 	int r = GPIO_OK;
@@ -51,10 +51,8 @@ int gpio_read(GPIO* gpio, uint8_t* value)
 	{
 		if (read(gpio->fd,&buf,1) != 1)
 		{
-			g_print("here1\n");
 			r = GPIO_READ_ERROR;
 		} else {
-			g_print("here2\n");
 			if (buf[0]=='1') {
 				*value = 1;
 			} else {
@@ -121,21 +119,28 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 	//export and set direction
 	char dev[254];
 	char data[4];
-	sprintf(dev,"%s/export",gpio->dev);
+	int fd;
 	do {
-		int fd = open(dev, O_WRONLY);
-		if (fd == GPIO_ERROR) {
-			rc = GPIO_OPEN_ERROR;
-			break;
-		} 
-		sprintf(data,"%d",gpio->num);
-		rc = write(fd,data,strlen(data));
-		close(fd);
-		if (rc == GPIO_ERROR) {
-			rc = GPIO_WRITE_ERROR;
-			break;
+		struct stat st;
+		
+		sprintf(dev,"%s/gpio%d/direction",gpio->dev,gpio->num);
+    		int result = stat(dev, &st);
+    		if (result)
+		{
+			sprintf(dev,"%s/export",gpio->dev);
+			fd = open(dev, O_WRONLY);
+			if (fd == GPIO_ERROR) {
+				rc = GPIO_OPEN_ERROR;
+				break;
+			} 
+			sprintf(data,"%d",gpio->num);
+			rc = write(fd,data,strlen(data));
+			close(fd);
+			if (rc != strlen(data)) {
+				rc = GPIO_WRITE_ERROR;
+				break;
+			}
 		}
-
 		sprintf(dev,"%s/gpio%d/direction",gpio->dev,gpio->num);
 		fd = open(dev,O_WRONLY);
 		if (fd == GPIO_ERROR) {
@@ -143,7 +148,13 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 			break;
 		}
 		rc = write(fd,gpio->direction,strlen(gpio->direction));
+		if (rc != strlen(gpio->direction)) {
+			rc = GPIO_WRITE_ERROR;
+			break;
+		}
+
 		close(fd);
+		rc = 0;
 	} while(0);
 
 	return rc;
@@ -171,7 +182,10 @@ int gpio_open(GPIO* gpio)
 		gpio->fd = open(buf, O_WRONLY);
 
 	}
-	return gpio->fd;
+	if (gpio->fd == -1) {
+		return GPIO_OPEN_ERROR;
+	}
+	return GPIO_OK;
 }
 
 void gpio_close(GPIO* gpio)

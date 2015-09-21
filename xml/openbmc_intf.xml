@@ -130,6 +130,7 @@
 		<signal name="EventLog">
 			<arg name="priority" type="i"/>
 			<arg name="message" type="s"/>
+			<arg name="rc" type="i"/>
 		</signal>
 	</interface>	
 	<interface name="org.openbmc.Flash">

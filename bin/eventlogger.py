@@ -25,13 +25,14 @@ class EventLogger(dbus.service.Object):
 					path_keyword='path')
 
 	## Signal handler
-	def event_log_signal_handler(self,priority,msg,path = None):
+	def event_log_signal_handler(self,priority,msg,rc,path = None):
 		message = {}
 		ts = time.time()
 
 		message['priority'] = priority
 		message['object_path'] = path
 		message['message'] = msg
+		message['rc'] = rc
 
 		json_dump = json.dumps(message)
 		print "EVENT_LOG: "+json_dump

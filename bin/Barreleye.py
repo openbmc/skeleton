@@ -4,8 +4,8 @@
 import dbus
 import Openbmc
 
-HOME_PATH = '/media/sf_vbox/openbmc/'
-BIN_PATH = HOME_PATH+'bin/'
+HOME_PATH = './'
+BIN_PATH = HOME_PATH
 CACHE_PATH = HOME_PATH+'cache/'
 FRU_PATH = CACHE_PATH+'frus/'
 
@@ -70,7 +70,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Ipmi'] = {
 		'instances' : [	
 			{
 				'name' : 'Barreleye',
-				'user_label': 'Fru Manager',
+				'user_label': 'Ipmi Manager',
 			}
 		]
 	}
@@ -92,8 +92,8 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
-		'system_state' : 'STANDBY',
-		'start_process' : True,
+		'system_state' : 'INIT',
+		'start_process' : False,
 		'monitor_process' : True,
 		'process_name' : 'eventlogger.py',
 		'heartbeat' : 'no',
@@ -141,7 +141,7 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 						'poll_interval' : 3000
 					},
 					'org.openbmc.control.Power': {
-						'pgood_timeout' : 10000
+						'pgood_timeout' : 10
 					}
 				}
 			}
@@ -223,7 +223,7 @@ SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
 	}
 SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
 		'system_state' : 'STANDBY',
-		'start_process' : True,
+		'start_process' : False,
 		'monitor_process' : True,
 		'process_name' : 'flash_bios.exe',
 		'heartbeat' : 'no',
@@ -328,29 +328,77 @@ NON_CACHABLE_PROPERTIES = {
 	'cache'      : True
 }
 
-FRUS = {}
-
-## key is IPMI FRU ID
-
-FRUS[32] = {
-		'name' : 'CPU0',
-		'user_label' : "IBM POWER8 CPU",
-		'ftype' : Openbmc.FRU_TYPES['CPU'],
-		'location' : "P0",
-		'manufacturer' : "IBM",
-		'cache' : True,
-		'state' : Openbmc.FRU_STATES['NORMAL'],
-		'sensor_id' : 10,
-	}
-
-FRUS[21] = {
-		'name' : 'IO_PLANAR',
-		'user_label' : "BARRELEYE IO PLANAR",
-		'ftype' : Openbmc.FRU_TYPES['BACKPLANE'],	
-		'cache' : False,
-		'state' : Openbmc.FRU_STATES['NORMAL'],
-		'sensor_id' : 11,
-	}
+FRU_INSTANCES = {
+	'/system' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['SYSTEM'],
+		'fru'	       : True,
+	},
+	'/system/motherboard' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['MAIN_PLANAR'],
+		'manufacturer' : 'FOXCONN',
+		'fru'	       : True,
+		'fru_id'       : 31,
+		'location' : 'C0',
+	},
+	'/system/fan0' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['FAN'],
+		'manufacturer' : 'DELTA',
+		'fru'	       : True,
+		'location' : 'F0',
+		'sensor_link' : 'fans/Fan_0',
+	},
+	'/system/fan1' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['FAN'],
+		'manufacturer' : 'DELTA',
+		'fru'	       : True,
+		'location' : 'F1',
+		'sensor_link' : 'fans/Fan_1',
+	},
+	'/system/motherboard/bmc' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['BMC'],
+		'manufacturer' : 'ASPEED',
+		'fru'	       : True,
+	},
+	'/system/motherboard/cpu0' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['CPU'],
+		'manufacturer' : 'IBM',
+		'fru'	       : True,
+		'location' : 'P0',
+		'fru_id'   : 10,
+	},
+	'/system/motherboard/cpu0/core0' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['CORE'],
+		'fru'	       : False,
+		'sensor_link' : 1,	
+	},
+	'/system/motherboard/cpu0/core1' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['CORE'],
+		'fru'	       : False,
+		'sensor_link' : 2,	
+	},
+	'/system/motherboard/dimm0' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['DIMM'],
+		'fru'	       : True,
+		'fru_id'       : 12,
+		'sensor_link'  : 20,	
+	},
+	'/system/motherboard/dimm1' :
+	{
+		'ftype'        : Openbmc.FRU_TYPES['DIMM'],
+		'fru'	       : True,
+		'fru_id'       : 13,
+		'sensor_link'  : 21,	
+	},
+}
 
 
 GPIO_CONFIG = {}
