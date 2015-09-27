@@ -13,9 +13,11 @@ on_init (Flash          *f,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-  flash_complete_init(f,invocation);
-  return TRUE;
-
+	flash_complete_init(f,invocation);
+	//tune flash
+	g_print("Tuning BIOS Flash\n");
+	flash_access_setup_pnor(true, false, false);
+	return TRUE;
 }
 
 static gboolean

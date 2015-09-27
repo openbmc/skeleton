@@ -39,9 +39,7 @@ class SensorManager(dbus.service.Object):
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='a{sa{sv}}')
-	def getSensorsAll(self):
-		## this is probably not ok
-		##sensors = []
+	def getSensors(self):
 		return self.sensor_cache;
 	
 	@dbus.service.method(DBUS_NAME,
@@ -56,6 +54,15 @@ class SensorManager(dbus.service.Object):
 	@dbus.service.method(DBUS_NAME,
 		in_signature='yv', out_signature='')
 	def setSensorFromId(self,ipmi_id,value):
+		## first check if fru functional sensor
+		intf_inv = Openbmc.getManagerInterface(bus,"Inventory")
+		fru_path = intf_inv.getFruSensor(ipmi_id)
+		if (fru_path != ""):
+			data = { 'state': value }
+			intf_inv.updateFru(fru_path,data)
+			print "Found Fru Based Sensor: "+fru_path
+			return None
+
 		intf_sys = Openbmc.getManagerInterface(bus,"System")
 		obj_info = intf_sys.getObjFromIpmi(ipmi_id)
 		

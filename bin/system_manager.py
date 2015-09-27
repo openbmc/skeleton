@@ -56,6 +56,14 @@ class SystemManager(dbus.service.Object):
 
 
 	def SystemStateHandler(self,state_name):
+		print "Checking previous state started..."
+		i = 0
+		not_started=True
+		while(i<10 and not_started):
+			not_started = self.check_state_started()	
+			i=i+1
+			# add sleep	
+
 		print "Running System State: "+state_name
 		if (self.system_states.has_key(state_name)):
 			for bus_name in self.system_states[state_name]:
@@ -67,22 +75,23 @@ class SystemManager(dbus.service.Object):
 		
 		if (System.ENTER_STATE_CALLBACK.has_key(state_name)):
 			cb = System.ENTER_STATE_CALLBACK[state_name]
-			obj = bus.get_object(cb['bus_name'],cb['obj_name'])
+			obj = bus.get_<F11>object(cb['bus_name'],cb['obj_name'])
 			method = obj.get_dbus_method(cb['method_name'],cb['interface_name'])
 			method()
 
-		current_state = state_name
+		self.current_state = state_name
 			
 	def start_process(self,bus_name):
 		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
 			process_name = System.BIN_PATH+System.SYSTEM_CONFIG[bus_name]['process_name']
 			cmdline = [ ]
 			cmdline.append(process_name)
+			System.SYSTEM_CONFIG[bus_name]['popen'] = None
 			for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
 				cmdline.append(instance['name'])
 			try:
 				print "Starting process: "+" ".join(cmdline)+": "+bus_name
-				System.SYSTEM_CONFIG[bus_name]['popen'] = subprocess.Popen(cmdline);
+				System.SYSTEM_CONFIG[bus_name]['popen'] = subprocess.Popen(cmdline)
 			except Exception as e:
 				## TODO: error
 				print "Error starting process: "+" ".join(cmdline)
@@ -124,13 +133,26 @@ class SystemManager(dbus.service.Object):
 		#print "Heartbeat seen: "+bus_name
 		System.SYSTEM_CONFIG[bus_name]['heartbeat_count']=1	
 
+	def check_state_started(self):
+		r = True
+		if (self.current_state == ""):
+			return True
+		for bus_name in self.system_states[self.current_state]:
+			if (System.SYSTEM_CONFIG[bus_name].has_key('popen') == False and
+				System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
+				print "Not found: "+bus_name
+				r = False
+				break;	
+		return r
+	
+
 	def NewBusHandler(self, bus_name, a, b):
 		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
 				System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
 				objects = {}
-				Openbmc.get_objs(bus,bus_name,Openbmc.OBJ_PREFIX,objects)
-					
+				Openbmc.get_objs(bus,bus_name,Openbmc.OBJ_PREFIX,objects)				
+	
 				for instance_name in objects.keys(): 
 					obj_path = objects[instance_name]['PATH']
 					for instance in System.SYSTEM_CONFIG[bus_name]['instances']:

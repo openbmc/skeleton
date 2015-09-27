@@ -16,16 +16,18 @@
 
 
 #ifdef __arm__
-static inline void write_reg(uint32_t val,void* addr)
+static inline void devmem(void* addr, uint32_t val)
 {
+	printf("devmem 0x%08x = 0x%08x\n",addr,val);
         asm volatile("" : : : "memory");
         *(volatile uint32_t *)addr = val;
 }
-static inline devmem(uint32_t val, uint32_t reg)
-{
-	void* r = (void*)reg;
-       write_reg(val,r);
-}
+//static inline devmem(uint32_t reg, uint32_t val)
+//{
+//	printf("devmem 0x%08x = 0x%08x\n",reg,val);
+//	//void* r = (void*)reg;
+ //       write_reg(reg,val);
+//}
 #else
 static inline devmem(uint32_t val, uint32_t reg)
 {

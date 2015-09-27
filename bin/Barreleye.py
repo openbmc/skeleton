@@ -5,7 +5,7 @@ import dbus
 import Openbmc
 
 HOME_PATH = './'
-BIN_PATH = HOME_PATH
+BIN_PATH = HOME_PATH+'bin/'
 CACHE_PATH = HOME_PATH+'cache/'
 FRU_PATH = CACHE_PATH+'frus/'
 
@@ -45,32 +45,17 @@ SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 		]
 	}
 
-SYSTEM_CONFIG['org.openbmc.managers.Frus'] = {
+SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'monitor_process' : True,
-		'process_name' : 'fru_manager.py',
+		'process_name' : 'inventory_manager.py',
 		'heartbeat' : 'no',
 		'rest_name' : 'frus',
 		'instances' : [	
 			{
 				'name' : 'Barreleye',
-				'user_label': 'Fru Manager',
-			}
-		]
-	}
-
-SYSTEM_CONFIG['org.openbmc.managers.Ipmi'] = {
-		'system_state' : 'STANDBY',
-		'start_process' : True,
-		'monitor_process' : True,
-		'process_name' : 'ipmi_manager.py',
-		'heartbeat' : 'no',
-		'rest_name' : 'frus',
-		'instances' : [	
-			{
-				'name' : 'Barreleye',
-				'user_label': 'Ipmi Manager',
+				'user_label': 'Inventory Manager',
 			}
 		]
 	}
@@ -348,7 +333,6 @@ FRU_INSTANCES = {
 		'manufacturer' : 'DELTA',
 		'fru'	       : True,
 		'location' : 'F0',
-		'sensor_link' : 'fans/Fan_0',
 	},
 	'/system/fan1' :
 	{
@@ -356,7 +340,6 @@ FRU_INSTANCES = {
 		'manufacturer' : 'DELTA',
 		'fru'	       : True,
 		'location' : 'F1',
-		'sensor_link' : 'fans/Fan_1',
 	},
 	'/system/motherboard/bmc' :
 	{
@@ -376,27 +359,27 @@ FRU_INSTANCES = {
 	{
 		'ftype'        : Openbmc.FRU_TYPES['CORE'],
 		'fru'	       : False,
-		'sensor_link' : 1,	
+		'sensor_id'    : 1,	
 	},
 	'/system/motherboard/cpu0/core1' :
 	{
 		'ftype'        : Openbmc.FRU_TYPES['CORE'],
 		'fru'	       : False,
-		'sensor_link' : 2,	
+		'sensor_id'    : 2,	
 	},
 	'/system/motherboard/dimm0' :
 	{
 		'ftype'        : Openbmc.FRU_TYPES['DIMM'],
 		'fru'	       : True,
 		'fru_id'       : 12,
-		'sensor_link'  : 20,	
+		'sensor_id'    : 20,	
 	},
 	'/system/motherboard/dimm1' :
 	{
 		'ftype'        : Openbmc.FRU_TYPES['DIMM'],
 		'fru'	       : True,
 		'fru_id'       : 13,
-		'sensor_link'  : 21,	
+		'sensor_id'    : 21,	
 	},
 }
 

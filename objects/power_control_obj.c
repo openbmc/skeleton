@@ -52,18 +52,6 @@ static gboolean poll_pgood(gpointer user_data)
 		pgood_timeout_start = 0;
 		return TRUE;
 	}
-	//For simulation, remove
-	/*
-	if (tmp_pgood!=last_pgood) {
-		if (tmp_pgood == 1) {
-			control_emit_goto_system_state(control,"POWERED_ON");
-		} else {
-			control_emit_goto_system_state(control,"POWERED_OFF");
-		}
-	}
-	
-	last_pgood = tmp_pgood;
-	*/
 	uint8_t gpio;
 	
 	int rc = gpio_open(&pgood);
@@ -91,7 +79,7 @@ static gboolean poll_pgood(gpointer user_data)
 		//return FALSE;
 	}
 	//pgood is not at desired state yet
-	g_print("GPIO: %d;  %d\n",gpio,control_power_get_state(control_power));
+	//g_print("GPIO: %d;  %d\n",gpio,control_power_get_state(control_power));
 	if (gpio != control_power_get_state(control_power) &&
 		control_power_get_pgood_timeout(control_power) > 0)
 	{
@@ -238,27 +226,22 @@ on_bus_acquired (GDBusConnection *connection,
 	// get gpio device paths
 	int rc = GPIO_OK;
 	do {
-
 		rc = gpio_init(connection,&power_pin);
 		if (rc != GPIO_OK) { break; }
 		rc = gpio_init(connection,&pgood);
 		if (rc != GPIO_OK) { break; }
+		uint8_t gpio;
 		rc = gpio_open(&pgood);
-
+		if (rc != GPIO_OK) { break; }
+		rc = gpio_read(&pgood,&gpio);
+		if (rc != GPIO_OK) { break; }
+		gpio_close(&pgood);	
+		control_power_set_pgood(control_power,gpio);
 	} while(0);
 	if (rc != GPIO_OK)
 	{
 		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO setup error",rc);
-	}
-	int rc = gpio_open(&pgood);
-	rc = gpio_read(&pgood,&gpio);
-	gpio_close(&pgood);	
-	if (rc == GPIO_OK) {
-		control_power_set_pgood(control_power,gpio);
-
-	} else {
-	}
-
+	} 
 }
 
 static void

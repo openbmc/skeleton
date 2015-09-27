@@ -13,6 +13,7 @@
 
 int gpio_writec(GPIO* gpio, char value)
 {
+	g_assert (gpio != NULL);
 	int rc = GPIO_OK;
 	char buf[1];
 	buf[0] = value;
@@ -25,6 +26,7 @@ int gpio_writec(GPIO* gpio, char value)
 
 int gpio_write(GPIO* gpio, uint8_t value)
 {
+	g_assert (gpio != NULL);
 	int rc = GPIO_OK;
 	char buf[1];
 	buf[0] = '0';
@@ -41,6 +43,7 @@ int gpio_write(GPIO* gpio, uint8_t value)
 
 int gpio_read(GPIO* gpio, uint8_t *value)
 {
+	g_assert (gpio != NULL);
 	char buf[1];
 	int r = GPIO_OK;
 	if (gpio->fd <= 0)
@@ -63,6 +66,7 @@ int gpio_read(GPIO* gpio, uint8_t *value)
 	return r;
 }
 int gpio_clock_cycle(GPIO* gpio, int num_clks) {
+	g_assert (gpio != NULL);
         int i=0;
 	int r=GPIO_OK;
         for (i=0;i<num_clks;i++) {
@@ -168,9 +172,13 @@ char* get_gpio_dev(GPIO* gpio)
 
 int gpio_open(GPIO* gpio)
 {
+	g_assert (gpio != NULL);
 	// open gpio for writing or reading
 	char buf[254];
 	int rc = 0;
+	if (gpio->direction == NULL) {
+		return GPIO_OPEN_ERROR;
+	}
 	if (strcmp(gpio->direction,"in")==0)
 	{
 		sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
