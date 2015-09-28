@@ -10,6 +10,20 @@ import PropertyManager
 
 import Openbmc
 
+DBUS_NAME = 'org.openbmc.sensors.IpmiBt'
+OBJ_NAME = '/org/openbmc/sensors/IpmiBt'
+
+class IpmiBt(dbus.service.Object):
+	def __init__(self,bus,name):
+		dbus.service.Object.__init__(self,bus,name)
+
+	@dbus.service.signal('org.openbmc.sensors.IpmiBt')
+	def SetSensor(self, ipmi_id, value):
+        	pass
+
+	@dbus.service.signal('org.openbmc.sensors.IpmiBt')
+	def UpdateFru(self, ipmi_id, data):
+        	pass
 
 
 def getWatchdog():
@@ -30,8 +44,15 @@ def prettyPrint(data):
 		for k2 in data[k].keys():
 			print "\t"+k2+" = "+str(data[k][k2])
 
+
+
 if __name__ == '__main__':
+	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
  	bus = dbus.SessionBus()
+	name = dbus.service.BusName(DBUS_NAME,bus)
+	obj = IpmiBt(bus,OBJ_NAME)
+	mainloop = gobject.MainLoop()
+
 	cmd = sys.argv[1]
 	data = None
 	ipmi_id = dbus.Byte(0)
@@ -47,18 +68,14 @@ if __name__ == '__main__':
 		intf = getChassisControl()
 		intf.powerOff()
 	elif (cmd == "setsensor"):
-		intf_sens = Openbmc.getManagerInterface(bus,"Sensors")
-		intf_sens.setSensorFromId(ipmi_id,data)
-	elif (cmd == "getsensor"):
-		intf_sens = Openbmc.getManagerInterface(bus,"Sensors")
-		print intf_sens.getSensorFromId(ipmi_id)
+		obj.SetSensor(ipmi_id,dbus.Byte(int(data)))
 	elif (cmd == "getsensors"):
 		intf_sens = Openbmc.getManagerInterface(bus,"Sensors")
 		data = intf_sens.getSensors()
 		prettyPrint(data)
 	elif (cmd == "updatefru"):
-		intf_fru = Openbmc.getManagerInterface(bus,"Inventory")
-		intf_fru.updateFruFromId(ipmi_id,data)
+		d = { 'manufacturer' : data }	
+		obj.UpdateFru(ipmi_id,d)
 	elif (cmd == "getfrus"):
 		intf_fru = Openbmc.getManagerInterface(bus,"Inventory")
 		data = intf_fru.getFrus()

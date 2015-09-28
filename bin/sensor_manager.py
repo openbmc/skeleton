@@ -36,41 +36,15 @@ class SensorManager(dbus.service.Object):
 					signal_name = 'Critical', path_keyword='path')
 
 		self.sensor_cache = {}
+	@dbus.service.signal('org.openbmc.EventLog')
+	def EventLog(self, priority, message, rc):
+        	pass
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='a{sa{sv}}')
 	def getSensors(self):
 		return self.sensor_cache;
 	
-	@dbus.service.method(DBUS_NAME,
-		in_signature='y', out_signature='v')
-	def getSensorFromId(self,ipmi_id):
-		intf_sys = Openbmc.getManagerInterface(bus,"System")
-		obj_info = intf_sys.getObjFromIpmi(ipmi_id)
-		intf_name = str(obj_info[0])
-		obj_name = str(obj_info[1])
-		return self.getSensor(obj_name)
-
-	@dbus.service.method(DBUS_NAME,
-		in_signature='yv', out_signature='')
-	def setSensorFromId(self,ipmi_id,value):
-		## first check if fru functional sensor
-		intf_inv = Openbmc.getManagerInterface(bus,"Inventory")
-		fru_path = intf_inv.getFruSensor(ipmi_id)
-		if (fru_path != ""):
-			data = { 'state': value }
-			intf_inv.updateFru(fru_path,data)
-			print "Found Fru Based Sensor: "+fru_path
-			return None
-
-		intf_sys = Openbmc.getManagerInterface(bus,"System")
-		obj_info = intf_sys.getObjFromIpmi(ipmi_id)
-		
-		obj = bus.get_object(obj_info[0],obj_info[1])
-		intf = dbus.Interface(obj,"org.openbmc.SensorValue")
-		intf.setValue(value)
-		return None
-
 	
 	@dbus.service.method(DBUS_NAME,
 		in_signature='s', out_signature='v')
@@ -79,8 +53,7 @@ class SensorManager(dbus.service.Object):
 		if (self.sensor_cache.has_key(path) == True):
 			val = self.sensor_cache[path]['value']
 		else:
-			# TODO: error handling
-			print "Unknown sensor at: "+path
+			self.EventLog(1,"Unknown sensor: "+path,1)
 		return val
 	
 	## Signal handlers

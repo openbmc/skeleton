@@ -475,16 +475,7 @@ struct _SensorValueIface
     SensorValue *object,
     GDBusMethodInvocation *invocation);
 
-  gboolean (*handle_set_value) (
-    SensorValue *object,
-    GDBusMethodInvocation *invocation,
-    GVariant *arg_value);
-
   gint  (*get_heatbeat) (SensorValue *object);
-
-  guchar  (*get_ipmi_entity_id) (SensorValue *object);
-
-  guchar  (*get_ipmi_id) (SensorValue *object);
 
   gint  (*get_poll_interval) (SensorValue *object);
 
@@ -523,10 +514,6 @@ void sensor_value_complete_get_value (
     SensorValue *object,
     GDBusMethodInvocation *invocation,
     GVariant *value);
-
-void sensor_value_complete_set_value (
-    SensorValue *object,
-    GDBusMethodInvocation *invocation);
 
 
 
@@ -580,24 +567,6 @@ gboolean sensor_value_call_get_value_sync (
     GCancellable *cancellable,
     GError **error);
 
-void sensor_value_call_set_value (
-    SensorValue *proxy,
-    GVariant *arg_value,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean sensor_value_call_set_value_finish (
-    SensorValue *proxy,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean sensor_value_call_set_value_sync (
-    SensorValue *proxy,
-    GVariant *arg_value,
-    GCancellable *cancellable,
-    GError **error);
-
 
 
 /* D-Bus property accessors: */
@@ -617,12 +586,6 @@ void sensor_value_set_heatbeat (SensorValue *object, gint value);
 
 gboolean sensor_value_get_settable (SensorValue *object);
 void sensor_value_set_settable (SensorValue *object, gboolean value);
-
-guchar sensor_value_get_ipmi_entity_id (SensorValue *object);
-void sensor_value_set_ipmi_entity_id (SensorValue *object, guchar value);
-
-guchar sensor_value_get_ipmi_id (SensorValue *object);
-void sensor_value_set_ipmi_id (SensorValue *object, guchar value);
 
 
 /* ---- */
@@ -719,6 +682,138 @@ struct _SensorValueSkeletonClass
 GType sensor_value_skeleton_get_type (void) G_GNUC_CONST;
 
 SensorValue *sensor_value_skeleton_new (void);
+
+
+/* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.SensorIpmi */
+
+#define TYPE_SENSOR_IPMI (sensor_ipmi_get_type ())
+#define SENSOR_IPMI(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_IPMI, SensorIpmi))
+#define IS_SENSOR_IPMI(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_IPMI))
+#define SENSOR_IPMI_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SENSOR_IPMI, SensorIpmiIface))
+
+struct _SensorIpmi;
+typedef struct _SensorIpmi SensorIpmi;
+typedef struct _SensorIpmiIface SensorIpmiIface;
+
+struct _SensorIpmiIface
+{
+  GTypeInterface parent_iface;
+
+  guchar  (*get_entity_id) (SensorIpmi *object);
+
+  guchar  (*get_sensor_id) (SensorIpmi *object);
+
+};
+
+GType sensor_ipmi_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *sensor_ipmi_interface_info (void);
+guint sensor_ipmi_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus property accessors: */
+guchar sensor_ipmi_get_sensor_id (SensorIpmi *object);
+void sensor_ipmi_set_sensor_id (SensorIpmi *object, guchar value);
+
+guchar sensor_ipmi_get_entity_id (SensorIpmi *object);
+void sensor_ipmi_set_entity_id (SensorIpmi *object, guchar value);
+
+
+/* ---- */
+
+#define TYPE_SENSOR_IPMI_PROXY (sensor_ipmi_proxy_get_type ())
+#define SENSOR_IPMI_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_IPMI_PROXY, SensorIpmiProxy))
+#define SENSOR_IPMI_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_IPMI_PROXY, SensorIpmiProxyClass))
+#define SENSOR_IPMI_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_IPMI_PROXY, SensorIpmiProxyClass))
+#define IS_SENSOR_IPMI_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_IPMI_PROXY))
+#define IS_SENSOR_IPMI_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_IPMI_PROXY))
+
+typedef struct _SensorIpmiProxy SensorIpmiProxy;
+typedef struct _SensorIpmiProxyClass SensorIpmiProxyClass;
+typedef struct _SensorIpmiProxyPrivate SensorIpmiProxyPrivate;
+
+struct _SensorIpmiProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  SensorIpmiProxyPrivate *priv;
+};
+
+struct _SensorIpmiProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType sensor_ipmi_proxy_get_type (void) G_GNUC_CONST;
+
+void sensor_ipmi_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+SensorIpmi *sensor_ipmi_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+SensorIpmi *sensor_ipmi_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void sensor_ipmi_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+SensorIpmi *sensor_ipmi_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+SensorIpmi *sensor_ipmi_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_SENSOR_IPMI_SKELETON (sensor_ipmi_skeleton_get_type ())
+#define SENSOR_IPMI_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SENSOR_IPMI_SKELETON, SensorIpmiSkeleton))
+#define SENSOR_IPMI_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SENSOR_IPMI_SKELETON, SensorIpmiSkeletonClass))
+#define SENSOR_IPMI_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SENSOR_IPMI_SKELETON, SensorIpmiSkeletonClass))
+#define IS_SENSOR_IPMI_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SENSOR_IPMI_SKELETON))
+#define IS_SENSOR_IPMI_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SENSOR_IPMI_SKELETON))
+
+typedef struct _SensorIpmiSkeleton SensorIpmiSkeleton;
+typedef struct _SensorIpmiSkeletonClass SensorIpmiSkeletonClass;
+typedef struct _SensorIpmiSkeletonPrivate SensorIpmiSkeletonPrivate;
+
+struct _SensorIpmiSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  SensorIpmiSkeletonPrivate *priv;
+};
+
+struct _SensorIpmiSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType sensor_ipmi_skeleton_get_type (void) G_GNUC_CONST;
+
+SensorIpmi *sensor_ipmi_skeleton_new (void);
 
 
 /* ------------------------------------------------------------------------ */
@@ -3228,6 +3323,7 @@ GType object_get_type (void) G_GNUC_CONST;
 Occ *object_get_occ (Object *object);
 Fan *object_get_fan (Object *object);
 SensorValue *object_get_sensor_value (Object *object);
+SensorIpmi *object_get_sensor_ipmi (Object *object);
 SensorThreshold *object_get_sensor_threshold (Object *object);
 SensorI2c *object_get_sensor_i2c (Object *object);
 SensorMatch *object_get_sensor_match (Object *object);
@@ -3244,6 +3340,7 @@ Led *object_get_led (Object *object);
 Occ *object_peek_occ (Object *object);
 Fan *object_peek_fan (Object *object);
 SensorValue *object_peek_sensor_value (Object *object);
+SensorIpmi *object_peek_sensor_ipmi (Object *object);
 SensorThreshold *object_peek_sensor_threshold (Object *object);
 SensorI2c *object_peek_sensor_i2c (Object *object);
 SensorMatch *object_peek_sensor_match (Object *object);
@@ -3312,6 +3409,7 @@ ObjectSkeleton *object_skeleton_new (const gchar *object_path);
 void object_skeleton_set_occ (ObjectSkeleton *object, Occ *interface_);
 void object_skeleton_set_fan (ObjectSkeleton *object, Fan *interface_);
 void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_);
+void object_skeleton_set_sensor_ipmi (ObjectSkeleton *object, SensorIpmi *interface_);
 void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThreshold *interface_);
 void object_skeleton_set_sensor_i2c (ObjectSkeleton *object, SensorI2c *interface_);
 void object_skeleton_set_sensor_match (ObjectSkeleton *object, SensorMatch *interface_);

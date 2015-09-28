@@ -87,7 +87,12 @@ class InventoryManager(dbus.service.Object):
 		dbus.service.Object.__init__(self,bus,name)
 		
 		bus.add_signal_receiver(self.UpdateFruHandler,
+					dbus_interface = "org.openbmc.sensors.IpmiBt", 
 					signal_name = 'UpdateFru')
+
+		bus.add_signal_receiver(self.SetSensorHandler, 
+					dbus_interface = "org.openbmc.sensors.IpmiBt", 
+					signal_name = "SetSensor")
 
 		self.fru_db = {}
 		self.fru_id_lookup = {}
@@ -103,8 +108,15 @@ class InventoryManager(dbus.service.Object):
 
 			
 	def UpdateFruHandler(self,fru_id,data):
-		self.updateFru(fru_id,data)		
+		self.updateFruFromId(fru_id,data)		
 
+	def SetSensorHandler(self,sensor_id,data):
+		fru_path = self.getFruSensor(sensor_id)
+		if (fru_path != ""):
+			state = { 'state' : data }
+			self.updateFru(fru_path,state)
+			
+		
 	@dbus.service.method(DBUS_NAME,
 		in_signature='y', out_signature='s')	
 	def getFruSensor(self,sensor_id):

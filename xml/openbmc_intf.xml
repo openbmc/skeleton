@@ -30,17 +30,12 @@
 		<method name="getValue">
 			<arg name="value" type="v" direction="out"/>
 		</method>
-		<method name="setValue">
-			<arg name="value" type="v" direction="in"/>
-		</method>
 
                 <property name="value" type="v" access="read"/>
 		<property name="units" type="s" access="read"/>
 		<property name="poll_interval" type="i" access="readwrite"/>
 		<property name="heatbeat" type="i" access="read"/>
 		<property name="settable" type="b" access="read"/>
-		<property name="ipmi_entity_id" type="y" access="read"/>
-		<property name="ipmi_id" type="y" access="readwrite"/>
 
 		<signal name="Changed">
 			<arg name="value" type="v"/>
@@ -50,6 +45,10 @@
 		<signal name="Heartbeat">
 			<arg name="bus_name" type="s"/>
 		</signal>
+	</interface>
+	<interface name="org.openbmc.SensorIpmi">
+		<property name="sensor_id" type="y" access="readwrite"/>
+		<property name="entity_id" type="y" access="readwrite"/>
 	</interface>
 	<interface name="org.openbmc.SensorThreshold">
 		<method name="getState">

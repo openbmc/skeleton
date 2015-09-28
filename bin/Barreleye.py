@@ -1,6 +1,5 @@
 #! /usr/bin/python
 
-## todos: event logger, 
 import dbus
 import Openbmc
 
@@ -37,12 +36,7 @@ SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 		'monitor_process' : True,
 		'process_name' : 'control_bmc.exe',
 		'heartbeat' : 'no',
-		'instances' : [	
-			{
-				'name' : 'Bmc_0',
-				'user_label': 'Master Bmc',
-			}
-		]
+		'instances' : [	{ 'name' : 'Bmc_0' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
@@ -51,13 +45,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
 		'monitor_process' : True,
 		'process_name' : 'inventory_manager.py',
 		'heartbeat' : 'no',
-		'rest_name' : 'frus',
-		'instances' : [	
-			{
-				'name' : 'Barreleye',
-				'user_label': 'Inventory Manager',
-			}
-		]
+		'instances' : [	{ 'name' : 'Barreleye' } ]
 	}
 
 
@@ -67,28 +55,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		'monitor_process' : True,
 		'process_name' : 'sensor_manager.py',
 		'heartbeat' : 'no',
-		'rest_name' : 'sensors',
-		'instances' : [	
-			{
-				'name' : 'Barreleye',
-				'user_label': 'Sensor Manager',
-			}
-		]
-	}
-
-SYSTEM_CONFIG['org.openbmc.loggers.EventLogger'] = {
-		'system_state' : 'INIT',
-		'start_process' : False,
-		'monitor_process' : True,
-		'process_name' : 'eventlogger.py',
-		'heartbeat' : 'no',
-		'rest_name' : 'events',
-		'instances' : [	
-			{
-				'name' : 'Barreleye',
-				'user_label': 'Event Logger',
-			}
-		]
+		'instances' : [ { 'name' : 'Barreleye' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
@@ -97,11 +64,9 @@ SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
 		'monitor_process' : True,
 		'process_name' : 'host_watchdog.exe',
 		'heartbeat' : 'no',
-		'rest_name' : 'watchdog',
 		'instances' : [	
 			{
 				'name' : 'HostWatchdog_0',
-				'user_label': 'Host Watchdog',
 				'properties' : { 
 					'org.openbmc.Watchdog' : {
 						'poll_interval': 3000,
@@ -167,12 +132,7 @@ SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
 		'monitor_process' : True,
 		'process_name' : 'button_power.exe',
 		'heartbeat' : 'no',
-		'instances' : [	
-			{
-				'name' : 'PowerButton_0',
-				'user_label': 'Main Power Button',
-			}
-		]
+		'instances' : [	{ 'name' : 'PowerButton_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 		'system_state' : 'STANDBY',
@@ -180,13 +140,10 @@ SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 		'monitor_process' : True,
 		'process_name' : 'sensor_host_status.exe',
 		'heartbeat' : "no",
-		'instances' : [	
-			{
-				'name' : 'HostStatus_0',
-				'user_label': 'Host Status',
+		'instances' : [ { 'name' : 'HostStatus_0',
 				'properties' : { 
-					'org.openbmc.SensorValue': {
-						'ipmi_id' : 43,
+					'org.openbmc.SensorIpmi': {
+						'sensor_id' : 43,
 					},
 				}
 
@@ -199,12 +156,7 @@ SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
 		'monitor_process' : True,
 		'process_name' : 'chassis_identify.exe',
 		'heartbeat' : 'no',
-		'instances' : [	
-			{
-				'name' : 'ChassisIdentify_0',
-				'user_label': 'Chassis Identify LED',
-			}
-		]
+		'instances' : [	{ 'name' : 'ChassisIdentify_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
 		'system_state' : 'STANDBY',
@@ -212,13 +164,7 @@ SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
 		'monitor_process' : True,
 		'process_name' : 'flash_bios.exe',
 		'heartbeat' : 'no',
-		'rest_name' : 'flash',
-		'instances' : [	
-			{
-				'name' : 'BIOS_0',
-				'user_label': 'BIOS SPI Flash',
-			}
-		]
+		'instances' : [	{ 'name' : 'BIOS_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		'system_state' : 'STANDBY',
@@ -226,12 +172,7 @@ SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		'monitor_process' : True,
 		'process_name' : 'control_host.exe',
 		'heartbeat' : 'no',
-		'instances' : [	
-			{
-				'name' : 'Host_0',
-				'user_label': 'Host Control',
-			}
-		]
+		'instances' : [ { 'name' : 'Host_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 		'system_state' : 'STANDBY',
@@ -239,13 +180,7 @@ SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 		'monitor_process' : True,
 		'process_name' : 'chassis_control.py',
 		'heartbeat' : 'no',
-		'rest_name' : 'chassis',
-		'instances' : [	
-			{
-				'name' : 'Chassis',
-				'user_label': 'Chassis Control',
-			}
-		]
+		'instances' : [ { 'name' : 'Chassis' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.vpd'] = {
@@ -254,13 +189,7 @@ SYSTEM_CONFIG['org.openbmc.vpd'] = {
 		'monitor_process' : False,
 		'process_name' : 'board_vpd.exe',
 		'heartbeat' : 'no',
-		'instances' : [
-			{
-				'name' : 'MBVPD_0',
-				'user_label': 'VPD',
-			},
-
-		]
+		'instances' : [ { 'name' : 'MBVPD_0' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
@@ -272,7 +201,6 @@ SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
 		'instances' : [
 			{
 				'name' : 'Occ_0',
-				'user_label': 'CPU0',
 				'properties' : { 
 					'org.openbmc.Occ' : {
 						'poll_interval' : 3000,
@@ -289,21 +217,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
 		'monitor_process' : True,
 		'process_name' : 'fan.exe',
 		'heartbeat' : 'no',
-		'instances' : [
-			{
-				'name' : 'Fan_0',
-				'user_label': 'FAN 0',
-			},
-			{
-				'name' : 'Fan_1',
-				'user_label': 'FAN 1',
-			},
-			{
-				'name' : 'Fan_2',
-				'user_label': 'FAN 2',
-			},
-
-		]
+		'instances' : [	{'name' : 'Fan_0' }, {'name' : 'Fan_1'}, {'name' : 'Fan_2'} ]
 	}
 
 NON_CACHABLE_PROPERTIES = {

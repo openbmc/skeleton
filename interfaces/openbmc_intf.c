@@ -3607,41 +3607,10 @@ static const _ExtendedGDBusMethodInfo _sensor_value_method_info_get_value =
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo _sensor_value_method_info_set_value_IN_ARG_value =
-{
-  {
-    -1,
-    (gchar *) "value",
-    (gchar *) "v",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _sensor_value_method_info_set_value_IN_ARG_pointers[] =
-{
-  &_sensor_value_method_info_set_value_IN_ARG_value,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _sensor_value_method_info_set_value =
-{
-  {
-    -1,
-    (gchar *) "setValue",
-    (GDBusArgInfo **) &_sensor_value_method_info_set_value_IN_ARG_pointers,
-    NULL,
-    NULL
-  },
-  "handle-set-value",
-  FALSE
-};
-
 static const _ExtendedGDBusMethodInfo * const _sensor_value_method_info_pointers[] =
 {
   &_sensor_value_method_info_init,
   &_sensor_value_method_info_get_value,
-  &_sensor_value_method_info_set_value,
   NULL
 };
 
@@ -3797,32 +3766,6 @@ static const _ExtendedGDBusPropertyInfo _sensor_value_property_info_settable =
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _sensor_value_property_info_ipmi_entity_id =
-{
-  {
-    -1,
-    (gchar *) "ipmi_entity_id",
-    (gchar *) "y",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
-    NULL
-  },
-  "ipmi-entity-id",
-  FALSE
-};
-
-static const _ExtendedGDBusPropertyInfo _sensor_value_property_info_ipmi_id =
-{
-  {
-    -1,
-    (gchar *) "ipmi_id",
-    (gchar *) "y",
-    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
-    NULL
-  },
-  "ipmi-id",
-  FALSE
-};
-
 static const _ExtendedGDBusPropertyInfo * const _sensor_value_property_info_pointers[] =
 {
   &_sensor_value_property_info_value,
@@ -3830,8 +3773,6 @@ static const _ExtendedGDBusPropertyInfo * const _sensor_value_property_info_poin
   &_sensor_value_property_info_poll_interval,
   &_sensor_value_property_info_heatbeat,
   &_sensor_value_property_info_settable,
-  &_sensor_value_property_info_ipmi_entity_id,
-  &_sensor_value_property_info_ipmi_id,
   NULL
 };
 
@@ -3880,8 +3821,6 @@ sensor_value_override_properties (GObjectClass *klass, guint property_id_begin)
   g_object_class_override_property (klass, property_id_begin++, "poll-interval");
   g_object_class_override_property (klass, property_id_begin++, "heatbeat");
   g_object_class_override_property (klass, property_id_begin++, "settable");
-  g_object_class_override_property (klass, property_id_begin++, "ipmi-entity-id");
-  g_object_class_override_property (klass, property_id_begin++, "ipmi-id");
   return property_id_begin - 1;
 }
 
@@ -3898,10 +3837,7 @@ sensor_value_override_properties (GObjectClass *klass, guint property_id_begin)
  * @parent_iface: The parent interface.
  * @handle_get_value: Handler for the #SensorValue::handle-get-value signal.
  * @handle_init: Handler for the #SensorValue::handle-init signal.
- * @handle_set_value: Handler for the #SensorValue::handle-set-value signal.
  * @get_heatbeat: Getter for the #SensorValue:heatbeat property.
- * @get_ipmi_entity_id: Getter for the #SensorValue:ipmi-entity-id property.
- * @get_ipmi_id: Getter for the #SensorValue:ipmi-id property.
  * @get_poll_interval: Getter for the #SensorValue:poll-interval property.
  * @get_settable: Getter for the #SensorValue:settable property.
  * @get_units: Getter for the #SensorValue:units property.
@@ -3963,29 +3899,6 @@ sensor_value_default_init (SensorValueIface *iface)
     G_TYPE_BOOLEAN,
     1,
     G_TYPE_DBUS_METHOD_INVOCATION);
-
-  /**
-   * SensorValue::handle-set-value:
-   * @object: A #SensorValue.
-   * @invocation: A #GDBusMethodInvocation.
-   * @arg_value: Argument passed by remote caller.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call sensor_value_complete_set_value() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-set-value",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (SensorValueIface, handle_set_value),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    2,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_VARIANT);
 
   /* GObject signals for received D-Bus signals: */
   /**
@@ -4091,24 +4004,6 @@ sensor_value_default_init (SensorValueIface *iface)
    */
   g_object_interface_install_property (iface,
     g_param_spec_boolean ("settable", "settable", "settable", FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  /**
-   * SensorValue:ipmi-entity-id:
-   *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorValue.ipmi_entity_id">"ipmi_entity_id"</link>.
-   *
-   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
-   */
-  g_object_interface_install_property (iface,
-    g_param_spec_uchar ("ipmi-entity-id", "ipmi_entity_id", "ipmi_entity_id", 0, 255, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  /**
-   * SensorValue:ipmi-id:
-   *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorValue.ipmi_id">"ipmi_id"</link>.
-   *
-   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
-   */
-  g_object_interface_install_property (iface,
-    g_param_spec_uchar ("ipmi-id", "ipmi_id", "ipmi_id", 0, 255, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -4304,68 +4199,6 @@ void
 sensor_value_set_settable (SensorValue *object, gboolean value)
 {
   g_object_set (G_OBJECT (object), "settable", value, NULL);
-}
-
-/**
- * sensor_value_get_ipmi_entity_id: (skip)
- * @object: A #SensorValue.
- *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorValue.ipmi_entity_id">"ipmi_entity_id"</link> D-Bus property.
- *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
- *
- * Returns: The property value.
- */
-guchar 
-sensor_value_get_ipmi_entity_id (SensorValue *object)
-{
-  return SENSOR_VALUE_GET_IFACE (object)->get_ipmi_entity_id (object);
-}
-
-/**
- * sensor_value_set_ipmi_entity_id: (skip)
- * @object: A #SensorValue.
- * @value: The value to set.
- *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorValue.ipmi_entity_id">"ipmi_entity_id"</link> D-Bus property to @value.
- *
- * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
- */
-void
-sensor_value_set_ipmi_entity_id (SensorValue *object, guchar value)
-{
-  g_object_set (G_OBJECT (object), "ipmi-entity-id", value, NULL);
-}
-
-/**
- * sensor_value_get_ipmi_id: (skip)
- * @object: A #SensorValue.
- *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorValue.ipmi_id">"ipmi_id"</link> D-Bus property.
- *
- * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
- *
- * Returns: The property value.
- */
-guchar 
-sensor_value_get_ipmi_id (SensorValue *object)
-{
-  return SENSOR_VALUE_GET_IFACE (object)->get_ipmi_id (object);
-}
-
-/**
- * sensor_value_set_ipmi_id: (skip)
- * @object: A #SensorValue.
- * @value: The value to set.
- *
- * Sets the <link linkend="gdbus-property-org-openbmc-SensorValue.ipmi_id">"ipmi_id"</link> D-Bus property to @value.
- *
- * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
- */
-void
-sensor_value_set_ipmi_id (SensorValue *object, guchar value)
-{
-  g_object_set (G_OBJECT (object), "ipmi-id", value, NULL);
 }
 
 /**
@@ -4604,104 +4437,6 @@ _out:
 }
 
 /**
- * sensor_value_call_set_value:
- * @proxy: A #SensorValueProxy.
- * @arg_value: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call sensor_value_call_set_value_finish() to get the result of the operation.
- *
- * See sensor_value_call_set_value_sync() for the synchronous, blocking version of this method.
- */
-void
-sensor_value_call_set_value (
-    SensorValue *proxy,
-    GVariant *arg_value,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "setValue",
-    g_variant_new ("(@v)",
-                   arg_value),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * sensor_value_call_set_value_finish:
- * @proxy: A #SensorValueProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_value_call_set_value().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with sensor_value_call_set_value().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_value_call_set_value_finish (
-    SensorValue *proxy,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * sensor_value_call_set_value_sync:
- * @proxy: A #SensorValueProxy.
- * @arg_value: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See sensor_value_call_set_value() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-sensor_value_call_set_value_sync (
-    SensorValue *proxy,
-    GVariant *arg_value,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "setValue",
-    g_variant_new ("(@v)",
-                   arg_value),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
  * sensor_value_complete_init:
  * @object: A #SensorValue.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
@@ -4738,24 +4473,6 @@ sensor_value_complete_get_value (
   g_dbus_method_invocation_return_value (invocation,
     g_variant_new ("(@v)",
                    value));
-}
-
-/**
- * sensor_value_complete_set_value:
- * @object: A #SensorValue.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SensorValue.setValue">setValue()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-sensor_value_complete_set_value (
-    SensorValue *object,
-    GDBusMethodInvocation *invocation)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
 }
 
 /* ------------------------------------------------------------------------ */
@@ -4806,7 +4523,7 @@ sensor_value_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 7);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   info = _sensor_value_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -4853,7 +4570,7 @@ sensor_value_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 7);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   info = _sensor_value_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -5008,36 +4725,6 @@ sensor_value_proxy_get_settable (SensorValue *object)
   return value;
 }
 
-static guchar 
-sensor_value_proxy_get_ipmi_entity_id (SensorValue *object)
-{
-  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (object);
-  GVariant *variant;
-  guchar value = 0;
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "ipmi_entity_id");
-  if (variant != NULL)
-    {
-      value = g_variant_get_byte (variant);
-      g_variant_unref (variant);
-    }
-  return value;
-}
-
-static guchar 
-sensor_value_proxy_get_ipmi_id (SensorValue *object)
-{
-  SensorValueProxy *proxy = SENSOR_VALUE_PROXY (object);
-  GVariant *variant;
-  guchar value = 0;
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "ipmi_id");
-  if (variant != NULL)
-    {
-      value = g_variant_get_byte (variant);
-      g_variant_unref (variant);
-    }
-  return value;
-}
-
 static void
 sensor_value_proxy_init (SensorValueProxy *proxy)
 {
@@ -5080,8 +4767,6 @@ sensor_value_proxy_iface_init (SensorValueIface *iface)
   iface->get_poll_interval = sensor_value_proxy_get_poll_interval;
   iface->get_heatbeat = sensor_value_proxy_get_heatbeat;
   iface->get_settable = sensor_value_proxy_get_settable;
-  iface->get_ipmi_entity_id = sensor_value_proxy_get_ipmi_entity_id;
-  iface->get_ipmi_id = sensor_value_proxy_get_ipmi_id;
 }
 
 /**
@@ -5580,7 +5265,7 @@ sensor_value_skeleton_finalize (GObject *object)
 {
   SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
   guint n;
-  for (n = 0; n < 7; n++)
+  for (n = 0; n < 5; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -5598,7 +5283,7 @@ sensor_value_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 7);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -5715,7 +5400,7 @@ sensor_value_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 7);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -5740,14 +5425,12 @@ sensor_value_skeleton_init (SensorValueSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 7);
+  skeleton->priv->properties = g_new0 (GValue, 5);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_VARIANT);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
   g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[3], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[4], G_TYPE_BOOLEAN);
-  g_value_init (&skeleton->priv->properties[5], G_TYPE_UCHAR);
-  g_value_init (&skeleton->priv->properties[6], G_TYPE_UCHAR);
 }
 
 static GVariant *
@@ -5805,28 +5488,6 @@ sensor_value_skeleton_get_settable (SensorValue *object)
   return value;
 }
 
-static guchar 
-sensor_value_skeleton_get_ipmi_entity_id (SensorValue *object)
-{
-  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
-  guchar value;
-  g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_uchar (&(skeleton->priv->properties[5]));
-  g_mutex_unlock (&skeleton->priv->lock);
-  return value;
-}
-
-static guchar 
-sensor_value_skeleton_get_ipmi_id (SensorValue *object)
-{
-  SensorValueSkeleton *skeleton = SENSOR_VALUE_SKELETON (object);
-  guchar value;
-  g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_uchar (&(skeleton->priv->properties[6]));
-  g_mutex_unlock (&skeleton->priv->lock);
-  return value;
-}
-
 static void
 sensor_value_skeleton_class_init (SensorValueSkeletonClass *klass)
 {
@@ -5864,8 +5525,6 @@ sensor_value_skeleton_iface_init (SensorValueIface *iface)
   iface->get_poll_interval = sensor_value_skeleton_get_poll_interval;
   iface->get_heatbeat = sensor_value_skeleton_get_heatbeat;
   iface->get_settable = sensor_value_skeleton_get_settable;
-  iface->get_ipmi_entity_id = sensor_value_skeleton_get_ipmi_entity_id;
-  iface->get_ipmi_id = sensor_value_skeleton_get_ipmi_id;
 }
 
 /**
@@ -5879,6 +5538,1110 @@ SensorValue *
 sensor_value_skeleton_new (void)
 {
   return SENSOR_VALUE (g_object_new (TYPE_SENSOR_VALUE_SKELETON, NULL));
+}
+
+/* ------------------------------------------------------------------------
+ * Code for interface org.openbmc.SensorIpmi
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * SECTION:SensorIpmi
+ * @title: SensorIpmi
+ * @short_description: Generated C code for the org.openbmc.SensorIpmi D-Bus interface
+ *
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link> D-Bus interface in C.
+ */
+
+/* ---- Introspection data for org.openbmc.SensorIpmi ---- */
+
+static const _ExtendedGDBusPropertyInfo _sensor_ipmi_property_info_sensor_id =
+{
+  {
+    -1,
+    (gchar *) "sensor_id",
+    (gchar *) "y",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "sensor-id",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _sensor_ipmi_property_info_entity_id =
+{
+  {
+    -1,
+    (gchar *) "entity_id",
+    (gchar *) "y",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "entity-id",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo * const _sensor_ipmi_property_info_pointers[] =
+{
+  &_sensor_ipmi_property_info_sensor_id,
+  &_sensor_ipmi_property_info_entity_id,
+  NULL
+};
+
+static const _ExtendedGDBusInterfaceInfo _sensor_ipmi_interface_info =
+{
+  {
+    -1,
+    (gchar *) "org.openbmc.SensorIpmi",
+    NULL,
+    NULL,
+    (GDBusPropertyInfo **) &_sensor_ipmi_property_info_pointers,
+    NULL
+  },
+  "sensor-ipmi",
+};
+
+
+/**
+ * sensor_ipmi_interface_info:
+ *
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link> D-Bus interface.
+ *
+ * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
+ */
+GDBusInterfaceInfo *
+sensor_ipmi_interface_info (void)
+{
+  return (GDBusInterfaceInfo *) &_sensor_ipmi_interface_info.parent_struct;
+}
+
+/**
+ * sensor_ipmi_override_properties:
+ * @klass: The class structure for a #GObject<!-- -->-derived class.
+ * @property_id_begin: The property id to assign to the first overridden property.
+ *
+ * Overrides all #GObject properties in the #SensorIpmi interface for a concrete class.
+ * The properties are overridden in the order they are defined.
+ *
+ * Returns: The last property id.
+ */
+guint
+sensor_ipmi_override_properties (GObjectClass *klass, guint property_id_begin)
+{
+  g_object_class_override_property (klass, property_id_begin++, "sensor-id");
+  g_object_class_override_property (klass, property_id_begin++, "entity-id");
+  return property_id_begin - 1;
+}
+
+
+
+/**
+ * SensorIpmi:
+ *
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link>.
+ */
+
+/**
+ * SensorIpmiIface:
+ * @parent_iface: The parent interface.
+ * @get_entity_id: Getter for the #SensorIpmi:entity-id property.
+ * @get_sensor_id: Getter for the #SensorIpmi:sensor-id property.
+ *
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link>.
+ */
+
+typedef SensorIpmiIface SensorIpmiInterface;
+G_DEFINE_INTERFACE (SensorIpmi, sensor_ipmi, G_TYPE_OBJECT);
+
+static void
+sensor_ipmi_default_init (SensorIpmiIface *iface)
+{
+  /* GObject properties for D-Bus properties: */
+  /**
+   * SensorIpmi:sensor-id:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIpmi.sensor_id">"sensor_id"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_uchar ("sensor-id", "sensor_id", "sensor_id", 0, 255, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SensorIpmi:entity-id:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SensorIpmi.entity_id">"entity_id"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_uchar ("entity-id", "entity_id", "entity_id", 0, 255, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+}
+
+/**
+ * sensor_ipmi_get_sensor_id: (skip)
+ * @object: A #SensorIpmi.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIpmi.sensor_id">"sensor_id"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+guchar 
+sensor_ipmi_get_sensor_id (SensorIpmi *object)
+{
+  return SENSOR_IPMI_GET_IFACE (object)->get_sensor_id (object);
+}
+
+/**
+ * sensor_ipmi_set_sensor_id: (skip)
+ * @object: A #SensorIpmi.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorIpmi.sensor_id">"sensor_id"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+sensor_ipmi_set_sensor_id (SensorIpmi *object, guchar value)
+{
+  g_object_set (G_OBJECT (object), "sensor-id", value, NULL);
+}
+
+/**
+ * sensor_ipmi_get_entity_id: (skip)
+ * @object: A #SensorIpmi.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SensorIpmi.entity_id">"entity_id"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+guchar 
+sensor_ipmi_get_entity_id (SensorIpmi *object)
+{
+  return SENSOR_IPMI_GET_IFACE (object)->get_entity_id (object);
+}
+
+/**
+ * sensor_ipmi_set_entity_id: (skip)
+ * @object: A #SensorIpmi.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SensorIpmi.entity_id">"entity_id"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+sensor_ipmi_set_entity_id (SensorIpmi *object, guchar value)
+{
+  g_object_set (G_OBJECT (object), "entity-id", value, NULL);
+}
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * SensorIpmiProxy:
+ *
+ * The #SensorIpmiProxy structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * SensorIpmiProxyClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #SensorIpmiProxy.
+ */
+
+struct _SensorIpmiProxyPrivate
+{
+  GData *qdata;
+};
+
+static void sensor_ipmi_proxy_iface_init (SensorIpmiIface *iface);
+
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (SensorIpmiProxy, sensor_ipmi_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (SensorIpmiProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_IPMI, sensor_ipmi_proxy_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (SensorIpmiProxy, sensor_ipmi_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_IPMI, sensor_ipmi_proxy_iface_init));
+
+#endif
+static void
+sensor_ipmi_proxy_finalize (GObject *object)
+{
+  SensorIpmiProxy *proxy = SENSOR_IPMI_PROXY (object);
+  g_datalist_clear (&proxy->priv->qdata);
+  G_OBJECT_CLASS (sensor_ipmi_proxy_parent_class)->finalize (object);
+}
+
+static void
+sensor_ipmi_proxy_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _sensor_ipmi_property_info_pointers[prop_id - 1];
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
+  if (info->use_gvariant)
+    {
+      g_value_set_variant (value, variant);
+    }
+  else
+    {
+      if (variant != NULL)
+        g_dbus_gvariant_to_gvalue (variant, value);
+    }
+  if (variant != NULL)
+    g_variant_unref (variant);
+}
+
+static void
+sensor_ipmi_proxy_set_property_cb (GDBusProxy *proxy,
+  GAsyncResult *res,
+  gpointer      user_data)
+{
+  const _ExtendedGDBusPropertyInfo *info = user_data;
+  GError *error;
+  GVariant *_ret;
+  error = NULL;
+  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
+  if (!_ret)
+    {
+      g_warning ("Error setting property '%s' on interface org.openbmc.SensorIpmi: %s (%s, %d)",
+                 info->parent_struct.name, 
+                 error->message, g_quark_to_string (error->domain), error->code);
+      g_error_free (error);
+    }
+  else
+    {
+      g_variant_unref (_ret);
+    }
+}
+
+static void
+sensor_ipmi_proxy_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _sensor_ipmi_property_info_pointers[prop_id - 1];
+  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
+  g_dbus_proxy_call (G_DBUS_PROXY (object),
+    "org.freedesktop.DBus.Properties.Set",
+    g_variant_new ("(ssv)", "org.openbmc.SensorIpmi", info->parent_struct.name, variant),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    NULL, (GAsyncReadyCallback) sensor_ipmi_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+  g_variant_unref (variant);
+}
+
+static void
+sensor_ipmi_proxy_g_signal (GDBusProxy *proxy,
+  const gchar *sender_name G_GNUC_UNUSED,
+  const gchar *signal_name,
+  GVariant *parameters)
+{
+  _ExtendedGDBusSignalInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint n;
+  guint signal_id;
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_sensor_ipmi_interface_info.parent_struct, signal_name);
+  if (info == NULL)
+    return;
+  num_params = g_variant_n_children (parameters);
+  paramv = g_new0 (GValue, num_params + 1);
+  g_value_init (&paramv[0], TYPE_SENSOR_IPMI);
+  g_value_set_object (&paramv[0], proxy);
+  g_variant_iter_init (&iter, parameters);
+  n = 1;
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.args[n - 1];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_IPMI);
+  g_signal_emitv (paramv, signal_id, 0, NULL);
+  for (n = 0; n < num_params + 1; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static void
+sensor_ipmi_proxy_g_properties_changed (GDBusProxy *_proxy,
+  GVariant *changed_properties,
+  const gchar *const *invalidated_properties)
+{
+  SensorIpmiProxy *proxy = SENSOR_IPMI_PROXY (_proxy);
+  guint n;
+  const gchar *key;
+  GVariantIter *iter;
+  _ExtendedGDBusPropertyInfo *info;
+  g_variant_get (changed_properties, "a{sv}", &iter);
+  while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_ipmi_interface_info.parent_struct, key);
+      g_datalist_remove_data (&proxy->priv->qdata, key);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+  g_variant_iter_free (iter);
+  for (n = 0; invalidated_properties[n] != NULL; n++)
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_ipmi_interface_info.parent_struct, invalidated_properties[n]);
+      g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+}
+
+static guchar 
+sensor_ipmi_proxy_get_sensor_id (SensorIpmi *object)
+{
+  SensorIpmiProxy *proxy = SENSOR_IPMI_PROXY (object);
+  GVariant *variant;
+  guchar value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "sensor_id");
+  if (variant != NULL)
+    {
+      value = g_variant_get_byte (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static guchar 
+sensor_ipmi_proxy_get_entity_id (SensorIpmi *object)
+{
+  SensorIpmiProxy *proxy = SENSOR_IPMI_PROXY (object);
+  GVariant *variant;
+  guchar value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "entity_id");
+  if (variant != NULL)
+    {
+      value = g_variant_get_byte (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static void
+sensor_ipmi_proxy_init (SensorIpmiProxy *proxy)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  proxy->priv = sensor_ipmi_proxy_get_instance_private (proxy);
+#else
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_SENSOR_IPMI_PROXY, SensorIpmiProxyPrivate);
+#endif
+
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), sensor_ipmi_interface_info ());
+}
+
+static void
+sensor_ipmi_proxy_class_init (SensorIpmiProxyClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusProxyClass *proxy_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize     = sensor_ipmi_proxy_finalize;
+  gobject_class->get_property = sensor_ipmi_proxy_get_property;
+  gobject_class->set_property = sensor_ipmi_proxy_set_property;
+
+  proxy_class = G_DBUS_PROXY_CLASS (klass);
+  proxy_class->g_signal = sensor_ipmi_proxy_g_signal;
+  proxy_class->g_properties_changed = sensor_ipmi_proxy_g_properties_changed;
+
+  sensor_ipmi_override_properties (gobject_class, 1);
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (SensorIpmiProxyPrivate));
+#endif
+}
+
+static void
+sensor_ipmi_proxy_iface_init (SensorIpmiIface *iface)
+{
+  iface->get_sensor_id = sensor_ipmi_proxy_get_sensor_id;
+  iface->get_entity_id = sensor_ipmi_proxy_get_entity_id;
+}
+
+/**
+ * sensor_ipmi_proxy_new:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link>. See g_dbus_proxy_new() for more details.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call sensor_ipmi_proxy_new_finish() to get the result of the operation.
+ *
+ * See sensor_ipmi_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+sensor_ipmi_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_SENSOR_IPMI_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIpmi", NULL);
+}
+
+/**
+ * sensor_ipmi_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_ipmi_proxy_new().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with sensor_ipmi_proxy_new().
+ *
+ * Returns: (transfer full) (type SensorIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SensorIpmi *
+sensor_ipmi_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return SENSOR_IPMI (ret);
+  else
+    return NULL;
+}
+
+/**
+ * sensor_ipmi_proxy_new_sync:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link>. See g_dbus_proxy_new_sync() for more details.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See sensor_ipmi_proxy_new() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type SensorIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SensorIpmi *
+sensor_ipmi_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_SENSOR_IPMI_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIpmi", NULL);
+  if (ret != NULL)
+    return SENSOR_IPMI (ret);
+  else
+    return NULL;
+}
+
+
+/**
+ * sensor_ipmi_proxy_new_for_bus:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Like sensor_ipmi_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call sensor_ipmi_proxy_new_for_bus_finish() to get the result of the operation.
+ *
+ * See sensor_ipmi_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+sensor_ipmi_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_SENSOR_IPMI_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIpmi", NULL);
+}
+
+/**
+ * sensor_ipmi_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to sensor_ipmi_proxy_new_for_bus().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with sensor_ipmi_proxy_new_for_bus().
+ *
+ * Returns: (transfer full) (type SensorIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SensorIpmi *
+sensor_ipmi_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return SENSOR_IPMI (ret);
+  else
+    return NULL;
+}
+
+/**
+ * sensor_ipmi_proxy_new_for_bus_sync:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Like sensor_ipmi_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See sensor_ipmi_proxy_new_for_bus() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type SensorIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SensorIpmi *
+sensor_ipmi_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_SENSOR_IPMI_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SensorIpmi", NULL);
+  if (ret != NULL)
+    return SENSOR_IPMI (ret);
+  else
+    return NULL;
+}
+
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * SensorIpmiSkeleton:
+ *
+ * The #SensorIpmiSkeleton structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * SensorIpmiSkeletonClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #SensorIpmiSkeleton.
+ */
+
+struct _SensorIpmiSkeletonPrivate
+{
+  GValue *properties;
+  GList *changed_properties;
+  GSource *changed_properties_idle_source;
+  GMainContext *context;
+  GMutex lock;
+};
+
+static void
+_sensor_ipmi_skeleton_handle_method_call (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name,
+  const gchar *method_name,
+  GVariant *parameters,
+  GDBusMethodInvocation *invocation,
+  gpointer user_data)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (user_data);
+  _ExtendedGDBusMethodInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint num_extra;
+  guint n;
+  guint signal_id;
+  GValue return_value = G_VALUE_INIT;
+  info = (_ExtendedGDBusMethodInfo *) g_dbus_method_invocation_get_method_info (invocation);
+  g_assert (info != NULL);
+  num_params = g_variant_n_children (parameters);
+  num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
+  n = 0;
+  g_value_init (&paramv[n], TYPE_SENSOR_IPMI);
+  g_value_set_object (&paramv[n++], skeleton);
+  g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
+  g_value_set_object (&paramv[n++], invocation);
+  if (info->pass_fdlist)
+    {
+#ifdef G_OS_UNIX
+      g_value_init (&paramv[n], G_TYPE_UNIX_FD_LIST);
+      g_value_set_object (&paramv[n++], g_dbus_message_get_unix_fd_list (g_dbus_method_invocation_get_message (invocation)));
+#else
+      g_assert_not_reached ();
+#endif
+    }
+  g_variant_iter_init (&iter, parameters);
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.in_args[n - num_extra];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SENSOR_IPMI);
+  g_value_init (&return_value, G_TYPE_BOOLEAN);
+  g_signal_emitv (paramv, signal_id, 0, &return_value);
+  if (!g_value_get_boolean (&return_value))
+    g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD, "Method %s is not implemented on interface %s", method_name, interface_name);
+  g_value_unset (&return_value);
+  for (n = 0; n < num_params + num_extra; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static GVariant *
+_sensor_ipmi_skeleton_handle_get_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GError **error,
+  gpointer user_data)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  GVariant *ret;
+  ret = NULL;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_ipmi_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      g_value_init (&value, pspec->value_type);
+      g_object_get_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      ret = g_dbus_gvalue_to_gvariant (&value, G_VARIANT_TYPE (info->parent_struct.signature));
+      g_value_unset (&value);
+    }
+  return ret;
+}
+
+static gboolean
+_sensor_ipmi_skeleton_handle_set_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GVariant *variant,
+  GError **error,
+  gpointer user_data)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  gboolean ret;
+  ret = FALSE;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_sensor_ipmi_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      if (info->use_gvariant)
+        g_value_set_variant (&value, variant);
+      else
+        g_dbus_gvariant_to_gvalue (variant, &value);
+      g_object_set_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      g_value_unset (&value);
+      ret = TRUE;
+    }
+  return ret;
+}
+
+static const GDBusInterfaceVTable _sensor_ipmi_skeleton_vtable =
+{
+  _sensor_ipmi_skeleton_handle_method_call,
+  _sensor_ipmi_skeleton_handle_get_property,
+  _sensor_ipmi_skeleton_handle_set_property,
+  {NULL}
+};
+
+static GDBusInterfaceInfo *
+sensor_ipmi_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return sensor_ipmi_interface_info ();
+}
+
+static GDBusInterfaceVTable *
+sensor_ipmi_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return (GDBusInterfaceVTable *) &_sensor_ipmi_skeleton_vtable;
+}
+
+static GVariant *
+sensor_ipmi_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (_skeleton);
+
+  GVariantBuilder builder;
+  guint n;
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  if (_sensor_ipmi_interface_info.parent_struct.properties == NULL)
+    goto out;
+  for (n = 0; _sensor_ipmi_interface_info.parent_struct.properties[n] != NULL; n++)
+    {
+      GDBusPropertyInfo *info = _sensor_ipmi_interface_info.parent_struct.properties[n];
+      if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
+        {
+          GVariant *value;
+          value = _sensor_ipmi_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SensorIpmi", info->name, NULL, skeleton);
+          if (value != NULL)
+            {
+              g_variant_take_ref (value);
+              g_variant_builder_add (&builder, "{sv}", info->name, value);
+              g_variant_unref (value);
+            }
+        }
+    }
+out:
+  return g_variant_builder_end (&builder);
+}
+
+static gboolean _sensor_ipmi_emit_changed (gpointer user_data);
+
+static void
+sensor_ipmi_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (_skeleton);
+  gboolean emit_changed = FALSE;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    {
+      g_source_destroy (skeleton->priv->changed_properties_idle_source);
+      skeleton->priv->changed_properties_idle_source = NULL;
+      emit_changed = TRUE;
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+
+  if (emit_changed)
+    _sensor_ipmi_emit_changed (skeleton);
+}
+
+static void sensor_ipmi_skeleton_iface_init (SensorIpmiIface *iface);
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (SensorIpmiSkeleton, sensor_ipmi_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (SensorIpmiSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_IPMI, sensor_ipmi_skeleton_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (SensorIpmiSkeleton, sensor_ipmi_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_SENSOR_IPMI, sensor_ipmi_skeleton_iface_init));
+
+#endif
+static void
+sensor_ipmi_skeleton_finalize (GObject *object)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (object);
+  guint n;
+  for (n = 0; n < 2; n++)
+    g_value_unset (&skeleton->priv->properties[n]);
+  g_free (skeleton->priv->properties);
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    g_source_destroy (skeleton->priv->changed_properties_idle_source);
+  g_main_context_unref (skeleton->priv->context);
+  g_mutex_clear (&skeleton->priv->lock);
+  G_OBJECT_CLASS (sensor_ipmi_skeleton_parent_class)->finalize (object);
+}
+
+static void
+sensor_ipmi_skeleton_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static gboolean
+_sensor_ipmi_emit_changed (gpointer user_data)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (user_data);
+  GList *l;
+  GVariantBuilder builder;
+  GVariantBuilder invalidated_builder;
+  guint num_changes;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
+  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
+    {
+      ChangedProperty *cp = l->data;
+      GVariant *variant;
+      const GValue *cur_value;
+
+      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
+      if (!_g_value_equal (cur_value, &cp->orig_value))
+        {
+          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
+          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
+          g_variant_unref (variant);
+          num_changes++;
+        }
+    }
+  if (num_changes > 0)
+    {
+      GList *connections, *ll;
+      GVariant *signal_variant;
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.SensorIpmi",
+                                           &builder, &invalidated_builder));
+      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+      for (ll = connections; ll != NULL; ll = ll->next)
+        {
+          GDBusConnection *connection = ll->data;
+
+          g_dbus_connection_emit_signal (connection,
+                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
+                                         "org.freedesktop.DBus.Properties",
+                                         "PropertiesChanged",
+                                         signal_variant,
+                                         NULL);
+        }
+      g_variant_unref (signal_variant);
+      g_list_free_full (connections, g_object_unref);
+    }
+  else
+    {
+      g_variant_builder_clear (&builder);
+      g_variant_builder_clear (&invalidated_builder);
+    }
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  skeleton->priv->changed_properties = NULL;
+  skeleton->priv->changed_properties_idle_source = NULL;
+  g_mutex_unlock (&skeleton->priv->lock);
+  return FALSE;
+}
+
+static void
+_sensor_ipmi_schedule_emit_changed (SensorIpmiSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+{
+  ChangedProperty *cp;
+  GList *l;
+  cp = NULL;
+  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
+    {
+      ChangedProperty *i_cp = l->data;
+      if (i_cp->info == info)
+        {
+          cp = i_cp;
+          break;
+        }
+    }
+  if (cp == NULL)
+    {
+      cp = g_new0 (ChangedProperty, 1);
+      cp->prop_id = prop_id;
+      cp->info = info;
+      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
+      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
+      g_value_copy (orig_value, &cp->orig_value);
+    }
+}
+
+static void
+sensor_ipmi_skeleton_notify (GObject      *object,
+  GParamSpec *pspec G_GNUC_UNUSED)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (object);
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties != NULL &&
+      skeleton->priv->changed_properties_idle_source == NULL)
+    {
+      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
+      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _sensor_ipmi_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
+      g_source_unref (skeleton->priv->changed_properties_idle_source);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static void
+sensor_ipmi_skeleton_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_object_freeze_notify (object);
+  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
+    {
+      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
+        _sensor_ipmi_schedule_emit_changed (skeleton, _sensor_ipmi_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
+      g_object_notify_by_pspec (object, pspec);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+  g_object_thaw_notify (object);
+}
+
+static void
+sensor_ipmi_skeleton_init (SensorIpmiSkeleton *skeleton)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  skeleton->priv = sensor_ipmi_skeleton_get_instance_private (skeleton);
+#else
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_SENSOR_IPMI_SKELETON, SensorIpmiSkeletonPrivate);
+#endif
+
+  g_mutex_init (&skeleton->priv->lock);
+  skeleton->priv->context = g_main_context_ref_thread_default ();
+  skeleton->priv->properties = g_new0 (GValue, 2);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_UCHAR);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_UCHAR);
+}
+
+static guchar 
+sensor_ipmi_skeleton_get_sensor_id (SensorIpmi *object)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (object);
+  guchar value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_uchar (&(skeleton->priv->properties[0]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static guchar 
+sensor_ipmi_skeleton_get_entity_id (SensorIpmi *object)
+{
+  SensorIpmiSkeleton *skeleton = SENSOR_IPMI_SKELETON (object);
+  guchar value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_uchar (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static void
+sensor_ipmi_skeleton_class_init (SensorIpmiSkeletonClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusInterfaceSkeletonClass *skeleton_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = sensor_ipmi_skeleton_finalize;
+  gobject_class->get_property = sensor_ipmi_skeleton_get_property;
+  gobject_class->set_property = sensor_ipmi_skeleton_set_property;
+  gobject_class->notify       = sensor_ipmi_skeleton_notify;
+
+
+  sensor_ipmi_override_properties (gobject_class, 1);
+
+  skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+  skeleton_class->get_info = sensor_ipmi_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = sensor_ipmi_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = sensor_ipmi_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = sensor_ipmi_skeleton_dbus_interface_get_vtable;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (SensorIpmiSkeletonPrivate));
+#endif
+}
+
+static void
+sensor_ipmi_skeleton_iface_init (SensorIpmiIface *iface)
+{
+  iface->get_sensor_id = sensor_ipmi_skeleton_get_sensor_id;
+  iface->get_entity_id = sensor_ipmi_skeleton_get_entity_id;
+}
+
+/**
+ * sensor_ipmi_skeleton_new:
+ *
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link>.
+ *
+ * Returns: (transfer full) (type SensorIpmiSkeleton): The skeleton object.
+ */
+SensorIpmi *
+sensor_ipmi_skeleton_new (void)
+{
+  return SENSOR_IPMI (g_object_new (TYPE_SENSOR_IPMI_SKELETON, NULL));
 }
 
 /* ------------------------------------------------------------------------
@@ -23679,6 +24442,15 @@ object_default_init (ObjectIface *iface)
   g_object_interface_install_property (iface, g_param_spec_object ("sensor-value", "sensor-value", "sensor-value", TYPE_SENSOR_VALUE, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
   /**
+   * Object:sensor-ipmi:
+   *
+   * The #SensorIpmi instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link>, if any.
+   *
+   * Connect to the #GObject::notify signal to get informed of property changes.
+   */
+  g_object_interface_install_property (iface, g_param_spec_object ("sensor-ipmi", "sensor-ipmi", "sensor-ipmi", TYPE_SENSOR_IPMI, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+
+  /**
    * Object:sensor-threshold:
    *
    * The #SensorThreshold instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorThreshold.top_of_page">org.openbmc.SensorThreshold</link>, if any.
@@ -23846,6 +24618,23 @@ SensorValue *object_get_sensor_value (Object *object)
   if (ret == NULL)
     return NULL;
   return SENSOR_VALUE (ret);
+}
+
+/**
+ * object_get_sensor_ipmi:
+ * @object: A #Object.
+ *
+ * Gets the #SensorIpmi instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link> on @object, if any.
+ *
+ * Returns: (transfer full): A #SensorIpmi that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ */
+SensorIpmi *object_get_sensor_ipmi (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIpmi");
+  if (ret == NULL)
+    return NULL;
+  return SENSOR_IPMI (ret);
 }
 
 /**
@@ -24128,6 +24917,26 @@ SensorValue *object_peek_sensor_value (Object *object)
     return NULL;
   g_object_unref (ret);
   return SENSOR_VALUE (ret);
+}
+
+/**
+ * object_peek_sensor_ipmi: (skip)
+ * @object: A #Object.
+ *
+ * Like object_get_sensor_ipmi() but doesn't increase the reference count on the returned object.
+ *
+ * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
+ *
+ * Returns: (transfer none): A #SensorIpmi or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ */
+SensorIpmi *object_peek_sensor_ipmi (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIpmi");
+  if (ret == NULL)
+    return NULL;
+  g_object_unref (ret);
+  return SENSOR_IPMI (ret);
 }
 
 /**
@@ -24473,66 +25282,71 @@ object_proxy_get_property (GObject      *gobject,
       break;
 
     case 4:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIpmi");
       g_value_take_object (value, interface);
       break;
 
     case 5:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
     case 6:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
 
     case 7:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
       g_value_take_object (value, interface);
       break;
 
     case 8:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
       g_value_take_object (value, interface);
       break;
 
     case 9:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
     case 10:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
     case 11:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
     case 12:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
     case 13:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
     case 14:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
     case 15:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
     case 16:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      g_value_take_object (value, interface);
+      break;
+
+    case 17:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
       g_value_take_object (value, interface);
       break;
@@ -24554,19 +25368,20 @@ object_proxy_class_init (ObjectProxyClass *klass)
   g_object_class_override_property (gobject_class, 1, "occ");
   g_object_class_override_property (gobject_class, 2, "fan");
   g_object_class_override_property (gobject_class, 3, "sensor-value");
-  g_object_class_override_property (gobject_class, 4, "sensor-threshold");
-  g_object_class_override_property (gobject_class, 5, "sensor-i2c");
-  g_object_class_override_property (gobject_class, 6, "sensor-match");
-  g_object_class_override_property (gobject_class, 7, "process");
-  g_object_class_override_property (gobject_class, 8, "control");
-  g_object_class_override_property (gobject_class, 9, "control-bmc");
-  g_object_class_override_property (gobject_class, 10, "control-host");
-  g_object_class_override_property (gobject_class, 11, "control-power");
-  g_object_class_override_property (gobject_class, 12, "watchdog");
-  g_object_class_override_property (gobject_class, 13, "event-log");
-  g_object_class_override_property (gobject_class, 14, "flash");
-  g_object_class_override_property (gobject_class, 15, "button");
-  g_object_class_override_property (gobject_class, 16, "led");
+  g_object_class_override_property (gobject_class, 4, "sensor-ipmi");
+  g_object_class_override_property (gobject_class, 5, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 6, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 7, "sensor-match");
+  g_object_class_override_property (gobject_class, 8, "process");
+  g_object_class_override_property (gobject_class, 9, "control");
+  g_object_class_override_property (gobject_class, 10, "control-bmc");
+  g_object_class_override_property (gobject_class, 11, "control-host");
+  g_object_class_override_property (gobject_class, 12, "control-power");
+  g_object_class_override_property (gobject_class, 13, "watchdog");
+  g_object_class_override_property (gobject_class, 14, "event-log");
+  g_object_class_override_property (gobject_class, 15, "flash");
+  g_object_class_override_property (gobject_class, 16, "button");
+  g_object_class_override_property (gobject_class, 17, "led");
 }
 
 /**
@@ -24676,6 +25491,19 @@ object_skeleton_set_property (GObject      *gobject,
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
+          g_warn_if_fail (IS_SENSOR_IPMI (interface));
+          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
+        }
+      else
+        {
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.SensorIpmi");
+        }
+      break;
+
+    case 5:
+      interface = g_value_get_object (value);
+      if (interface != NULL)
+        {
           g_warn_if_fail (IS_SENSOR_THRESHOLD (interface));
           g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
         }
@@ -24685,7 +25513,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 5:
+    case 6:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24698,7 +25526,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 6:
+    case 7:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24711,7 +25539,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 7:
+    case 8:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24724,7 +25552,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 8:
+    case 9:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24737,7 +25565,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 9:
+    case 10:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24750,7 +25578,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 10:
+    case 11:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24763,7 +25591,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 11:
+    case 12:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24776,7 +25604,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 12:
+    case 13:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24789,7 +25617,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 13:
+    case 14:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24802,7 +25630,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 14:
+    case 15:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24815,7 +25643,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 15:
+    case 16:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24828,7 +25656,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 16:
+    case 17:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -24874,66 +25702,71 @@ object_skeleton_get_property (GObject      *gobject,
       break;
 
     case 4:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorIpmi");
       g_value_take_object (value, interface);
       break;
 
     case 5:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
     case 6:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
 
     case 7:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
       g_value_take_object (value, interface);
       break;
 
     case 8:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
       g_value_take_object (value, interface);
       break;
 
     case 9:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
     case 10:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
     case 11:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
     case 12:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
     case 13:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
     case 14:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
     case 15:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
     case 16:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      g_value_take_object (value, interface);
+      break;
+
+    case 17:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
       g_value_take_object (value, interface);
       break;
@@ -24955,19 +25788,20 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
   g_object_class_override_property (gobject_class, 1, "occ");
   g_object_class_override_property (gobject_class, 2, "fan");
   g_object_class_override_property (gobject_class, 3, "sensor-value");
-  g_object_class_override_property (gobject_class, 4, "sensor-threshold");
-  g_object_class_override_property (gobject_class, 5, "sensor-i2c");
-  g_object_class_override_property (gobject_class, 6, "sensor-match");
-  g_object_class_override_property (gobject_class, 7, "process");
-  g_object_class_override_property (gobject_class, 8, "control");
-  g_object_class_override_property (gobject_class, 9, "control-bmc");
-  g_object_class_override_property (gobject_class, 10, "control-host");
-  g_object_class_override_property (gobject_class, 11, "control-power");
-  g_object_class_override_property (gobject_class, 12, "watchdog");
-  g_object_class_override_property (gobject_class, 13, "event-log");
-  g_object_class_override_property (gobject_class, 14, "flash");
-  g_object_class_override_property (gobject_class, 15, "button");
-  g_object_class_override_property (gobject_class, 16, "led");
+  g_object_class_override_property (gobject_class, 4, "sensor-ipmi");
+  g_object_class_override_property (gobject_class, 5, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 6, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 7, "sensor-match");
+  g_object_class_override_property (gobject_class, 8, "process");
+  g_object_class_override_property (gobject_class, 9, "control");
+  g_object_class_override_property (gobject_class, 10, "control-bmc");
+  g_object_class_override_property (gobject_class, 11, "control-host");
+  g_object_class_override_property (gobject_class, 12, "control-power");
+  g_object_class_override_property (gobject_class, 13, "watchdog");
+  g_object_class_override_property (gobject_class, 14, "event-log");
+  g_object_class_override_property (gobject_class, 15, "flash");
+  g_object_class_override_property (gobject_class, 16, "button");
+  g_object_class_override_property (gobject_class, 17, "led");
 }
 
 /**
@@ -25019,6 +25853,18 @@ void object_skeleton_set_fan (ObjectSkeleton *object, Fan *interface_)
 void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_)
 {
   g_object_set (G_OBJECT (object), "sensor-value", interface_, NULL);
+}
+
+/**
+ * object_skeleton_set_sensor_ipmi:
+ * @object: A #ObjectSkeleton.
+ * @interface_: (allow-none): A #SensorIpmi or %NULL to clear the interface.
+ *
+ * Sets the #SensorIpmi instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SensorIpmi.top_of_page">org.openbmc.SensorIpmi</link> on @object.
+ */
+void object_skeleton_set_sensor_ipmi (ObjectSkeleton *object, SensorIpmi *interface_)
+{
+  g_object_set (G_OBJECT (object), "sensor-ipmi", interface_, NULL);
 }
 
 /**
@@ -25242,6 +26088,7 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Occ", GSIZE_TO_POINTER (TYPE_OCC_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Fan", GSIZE_TO_POINTER (TYPE_FAN_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorValue", GSIZE_TO_POINTER (TYPE_SENSOR_VALUE_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorIpmi", GSIZE_TO_POINTER (TYPE_SENSOR_IPMI_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorThreshold", GSIZE_TO_POINTER (TYPE_SENSOR_THRESHOLD_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorI2c", GSIZE_TO_POINTER (TYPE_SENSOR_I2C_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorMatch", GSIZE_TO_POINTER (TYPE_SENSOR_MATCH_PROXY));

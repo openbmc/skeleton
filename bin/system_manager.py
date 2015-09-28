@@ -45,7 +45,6 @@ class SystemManager(dbus.service.Object):
 
 		self.current_state = ""
 		self.system_states = {}
-		self.IPMI_ID_LOOKUP = {}
 		for bus_name in System.SYSTEM_CONFIG.keys():
 			sys_state = System.SYSTEM_CONFIG[bus_name]['system_state']
 			if (self.system_states.has_key(sys_state) == False):
@@ -54,15 +53,22 @@ class SystemManager(dbus.service.Object):
 		self.SystemStateHandler("INIT")
 		print "SystemManager Init Done"
 
+	@dbus.service.signal('org.openbmc.EventLog')
+	def EventLog(self, priority, message, rc):
+        	pass
 
 	def SystemStateHandler(self,state_name):
 		print "Checking previous state started..."
 		i = 0
-		not_started=True
-		while(i<10 and not_started):
-			not_started = self.check_state_started()	
+		started=False
+		while(i<10 and started == False):
+			started = self.check_state_started()	
 			i=i+1
-			# add sleep	
+			time.sleep(1)	
+
+		if (i == 10):
+			self.EventLog(1,"Timeout waiting for state to finish: "+self.current_state,1)	
+			return					
 
 		print "Running System State: "+state_name
 		if (self.system_states.has_key(state_name)):
@@ -160,28 +166,13 @@ class SystemManager(dbus.service.Object):
 							props = instance['properties']
 							print "Load Properties: "+obj_path
 							self.property_manager.loadProperties(bus_name,obj_path,props)
-							## create a lookup for ipmi id to object path
-							if (props.has_key('org.openbmc.SensorValue')):
-								if (props['org.openbmc.SensorValue'].has_key('ipmi_id')):
-									ipmi_id = props['org.openbmc.SensorValue']['ipmi_id']
-									## TODO: check for duplicate ipmi id
-									self.IPMI_ID_LOOKUP[ipmi_id]=[bus_name,obj_path]
-
 					## If object has an init method, call it
 					for init_intf in objects[instance_name]['INIT']:
 						obj = bus.get_object(bus_name,obj_path)
 						intf = dbus.Interface(obj,init_intf)
 						print "Calling init method: " +obj_path+" : "+init_intf
 						intf.init()
-#
-	@dbus.service.method(DBUS_NAME,
-		in_signature='y', out_signature='ss')
-	def getObjFromIpmi(self,ipmi_id):
-		obj_path = ""
-		## TODO: handle lookup failing
-		if (self.IPMI_ID_LOOKUP.has_key(ipmi_id) == True):
-			obj_info = self.IPMI_ID_LOOKUP[ipmi_id]
-		return obj_info
+
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='s', out_signature='sis')
