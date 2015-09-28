@@ -224,6 +224,7 @@ NON_CACHABLE_PROPERTIES = {
 	'name'       : True,
 	'user_label' : True,
 	'location'   : True,
+	'state'   : True,
 	'cache'      : True
 }
 

@@ -60,7 +60,7 @@ class SystemManager(dbus.service.Object):
 	def SystemStateHandler(self,state_name):
 		print "Checking previous state started..."
 		i = 0
-		started=False
+		started = self.check_state_started()	
 		while(i<10 and started == False):
 			started = self.check_state_started()	
 			i=i+1

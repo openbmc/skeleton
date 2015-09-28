@@ -49,16 +49,17 @@ class Fru:
 
 	def getCacheFilename(self):
 		global FRU_PATH
-		filename = FRU_PATH+self.fru.replace('/','.')
+		name = self.fru.replace('/','.')
+		filename = FRU_PATH+name[1:]+".fru"
 		return filename
 	
 	def saveToCache(self):
 		if (self.isCached() == False):
 			return
 		print "Caching: "+self.fru
+		# TODO: error handling
 		output = open(self.getCacheFilename(), 'wb')
 		## just pickle dict not whole object
-		print FRUS[self.fru]
 		cPickle.dump(FRUS[self.fru],output)
 		output.close()
 
@@ -69,6 +70,7 @@ class Fru:
 		filename=self.getCacheFilename()
 		if (os.path.isfile(filename)):
 			print "Loading from cache: "+filename
+			# TODO: error handling
 			p = open(filename, 'rb')
 			data2 = cPickle.load(p)
 			for k in data2.keys():
@@ -106,7 +108,10 @@ class InventoryManager(dbus.service.Object):
 			if (f.has_key('sensor_id')):
 				self.sensor_id_lookup[f['sensor_id']] = fru_path
 
-			
+	@dbus.service.signal('org.openbmc.EventLog')
+	def EventLog(self, priority, message, rc):
+        	pass
+		
 	def UpdateFruHandler(self,fru_id,data):
 		self.updateFruFromId(fru_id,data)		
 
@@ -116,7 +121,6 @@ class InventoryManager(dbus.service.Object):
 			state = { 'state' : data }
 			self.updateFru(fru_path,state)
 			
-		
 	@dbus.service.method(DBUS_NAME,
 		in_signature='y', out_signature='s')	
 	def getFruSensor(self,sensor_id):
@@ -134,8 +138,7 @@ class InventoryManager(dbus.service.Object):
 	def updateFruFromId(self,fru_id,data):
 		iid = int(fru_id)
 		if (self.fru_id_lookup.has_key(iid) == False):
-			# TODO: event log
-			print "fru id "+str(iid)+" not found"
+			self.EventLog(1,"FRU ID not found: "+str(iid),1)
 		else:
 			self.updateFru(self.fru_id_lookup[iid],data)
 		
