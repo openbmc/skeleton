@@ -162,6 +162,20 @@
 		
                 <property name="color" type="i" access="read"/>
 		<property name="function" type="s" access="read"/>
-
+	</interface>
+	<interface name="org.openbmc.HostIpmi">
+		<signal name="ReceivedMessage">
+			<arg type="y" name="seq" />
+			<arg type="y" name="netfn" />
+			<arg type="y" name="cmd" />
+			<arg type="ay" name="data" />
+		</signal>
+		<method name="sendMessage">
+			<arg direction="in" type="y" name="seq" />
+			<arg direction="in" type="y" name="netfn" />
+			<arg direction="in" type="y" name="cmd" />
+			<arg direction="in" type="ay" name="data" />
+			<arg direction="out" type="x" />
+		</method>
 	</interface>
 </node>	
