@@ -76,10 +76,8 @@ static gboolean poll_pgood(gpointer user_data)
 		}
 	} else {
 		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO read error",rc);
-		//return FALSE;
 	}
 	//pgood is not at desired state yet
-	//g_print("GPIO: %d;  %d\n",gpio,control_power_get_state(control_power));
 	if (gpio != control_power_get_state(control_power) &&
 		control_power_get_pgood_timeout(control_power) > 0)
 	{
@@ -120,22 +118,19 @@ on_set_power_state (ControlPower          *pwr,
 	}
 	else
 	{
-		g_print("Set power state: %d\n",state);
-		//temporary until real hardware works
-		//tmp_pgood = state;
 		int error = 0;
 		do {
+			if (state == 1) {
+				control_emit_goto_system_state(control,"POWERING_ON");
+			} else {
+				control_emit_goto_system_state(control,"POWERING_OFF");
+			}
 			error = gpio_open(&power_pin);
 			if (error != GPIO_OK) { break;	}
 			error = gpio_write(&power_pin,!state);
 			if (error != GPIO_OK) { break;	}
 			gpio_close(&power_pin);
 			control_power_set_state(pwr,state);
-			if (state == 1) {
-				control_emit_goto_system_state(control,"POWERING_ON");
-			} else {
-				control_emit_goto_system_state(control,"POWERING_OFF");
-			}
 		} while(0);
 		if (error != GPIO_OK)
 		{

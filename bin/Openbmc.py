@@ -15,6 +15,7 @@ FRU_TYPES = {
 	'FAN' : 5,
 	'BMC' : 6,
 	'CORE' : 7,
+	'PCIE_CARD' : 8,
 }
 FRU_STATES = {
 	'NORMAL'            : 0,
@@ -56,30 +57,39 @@ def getManagerInterface(bus,manager):
 
 
 def get_objs(bus,bus_name,path,objects):
-	obj = bus.get_object(bus_name,path)
+	#print ">>>>>>>>>>>>>>>>>>>>>>>>>>>> "+bus_name+"; "+path
+	tmp_path = path
+	if (path == ""):
+		tmp_path="/"
+	obj = bus.get_object(bus_name,tmp_path)
 	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
 	#print introspect_iface.Introspect()
  	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
  	root = tree.getroot()
+	parent = True
 	for node in root.iter('node'):
-		if (node.attrib.has_key('name') == False):
-			for intf in node.iter('interface'):
-				intf_name = intf.attrib['name']
-				if (intf_name.find(BUS_PREFIX)==0):
-					parts=path.split('/')
-					instance = parts[len(parts)-1]
-					if (objects.has_key(instance) == False):
-						objects[instance] = {}
-						objects[instance]['PATH'] = path
-						objects[instance]['INIT'] = []
-					for method in intf.iter('method'):
-						if (method.attrib['name'] == "init"):
-							objects[instance]['INIT'].append(intf_name)
+		for intf in node.iter('interface'):
+			intf_name = intf.attrib['name']
+			#if (intf_name.find(BUS_PREFIX)==0):
+			parts=path.split('/')
+			instance = parts[len(parts)-1]
+			if (objects.has_key(instance) == False):
+				objects[instance] = {}
+				objects[instance]['PATH'] = path
+				objects[instance]['INIT'] = []
+			for method in intf.iter('method'):
+				if (method.attrib['name'] == "init"):
+					objects[instance]['INIT'].append(intf_name)
 
-		else:
+		if (node.attrib.has_key('name') == True):
 			node_name = node.attrib['name']
-			if (node_name != path):
-				get_objs(bus,bus_name,path+"/"+node.attrib['name'],objects)
+			if (parent == False):
+				get_objs(bus,bus_name,path+"/"+node_name,objects)
+			else:
+				if (node_name != "" and node_name != path):
+					get_objs(bus,bus_name,node_name,objects)
+			
+		parent = False
 
 
 class DbusProperty:

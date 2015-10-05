@@ -27,41 +27,31 @@ on_init_control         (Control *control,
 	control_complete_init(control,invocation);
 	return TRUE;
 }
-
-static void
-on_set_ipmi (GDBusConnection* connection,
-               const gchar* sender_name,
-               const gchar* object_path,
-               const gchar* interface_name,
-               const gchar* signal_name,
-               GVariant* parameters,
-               gpointer user_data) 
+static gboolean
+on_set_value    (SensorValue *sen,
+                GDBusMethodInvocation  *invocation,
+		guchar                  host_status,
+                gpointer                user_data)
 {
+	SensorValue *v = object_get_sensor_value((Object*)user_data);
 	SensorMatch *match = object_get_sensor_match((Object*)user_data);
-	SensorValue *sen = object_get_sensor_value((Object*)user_data);
-	SensorIpmi *ipmi = object_get_sensor_ipmi((Object*)user_data);
 	Control* control = object_get_control((Object*)user_data);
 	
-	guchar sensor_id;
-	guchar host_status;
-	g_variant_get (parameters, "(yy)", &sensor_id,&host_status);
-	guchar my_sensor_id = sensor_ipmi_get_sensor_id(ipmi);
-	if (my_sensor_id == sensor_id)
+	GVariant *old_value = sensor_value_get_value(sen);
+	GVariant *value = NEW_VARIANT_B(host_status);
+	if (VARIANT_COMPARE(old_value,value) != 0)
 	{
-		GVariant *old_value = sensor_value_get_value(sen);
-		GVariant *value = NEW_VARIANT_B(host_status);
-		if (VARIANT_COMPARE(old_value,value) != 0)
+		sensor_value_set_value(sen, value);
+		sensor_value_emit_changed(sen, value, "");
+		if (host_status == BOOTED)
 		{
-			sensor_value_set_value(sen, value);
-			sensor_value_emit_changed(sen, value, "");
-			if (host_status == BOOTED)
-			{
-				sensor_match_set_state(match,host_status);
-				sensor_match_emit_sensor_match(match,host_status);
-				control_emit_goto_system_state(control,"BOOTED");
-			}
+			sensor_match_set_state(match,host_status);
+			sensor_match_emit_sensor_match(match,host_status);
+			control_emit_goto_system_state(control,"BOOTED");
 		}
 	}
+	sensor_value_complete_set_value(sen,invocation);
+	return TRUE;
 }
 
 static void 
@@ -94,10 +84,6 @@ on_bus_acquired (GDBusConnection *connection,
   		object_skeleton_set_sensor_match (object, match);
   		g_object_unref (match);
 
-		SensorIpmi *ipmi = sensor_ipmi_skeleton_new ();
-  		object_skeleton_set_sensor_ipmi (object, ipmi);
-  		g_object_unref (ipmi);
-
 		Control *control = control_skeleton_new ();
   		object_skeleton_set_control (object, control);
   		g_object_unref (control);
@@ -113,7 +99,7 @@ on_bus_acquired (GDBusConnection *connection,
 		sensor_value_emit_changed(sensor,v,"");
 
 		//signal handlers
-		g_dbus_connection_signal_subscribe(connection,
+		/*g_dbus_connection_signal_subscribe(connection,
                                    "org.openbmc.sensors.IpmiBt",
                                    "org.openbmc.sensors.IpmiBt",
                                    "SetSensor",
@@ -123,6 +109,7 @@ on_bus_acquired (GDBusConnection *connection,
                                    (GDBusSignalCallback) on_set_ipmi,
                                    object,
                                    NULL );
+		*/
   		//define method callbacks here
   		g_signal_connect (sensor,
                     "handle-init",
@@ -134,10 +121,10 @@ on_bus_acquired (GDBusConnection *connection,
                     G_CALLBACK (on_init_control),
                     NULL); /* user_data */
 
-		//g_signal_connect (sensor,
-                  //  "handle-set-value",
-                  //  G_CALLBACK (on_set_value),
-                  //  object); /* user_data */
+		g_signal_connect (sensor,
+                    "handle-set-value",
+                    G_CALLBACK (on_set_value),
+                    object); /* user_data */
 
 
   		/* Export the object (@manager takes its own reference to @object) */

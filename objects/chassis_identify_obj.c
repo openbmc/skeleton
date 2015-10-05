@@ -17,9 +17,18 @@ on_set_on       (Led          *led,
 {
 	g_print("Turn on chassis identify led\n");
 	led_complete_set_on(led,invocation);
-	gpio_open(&led_gpio);
-	gpio_write(&led_gpio,1); 
+	int rc = GPIO_OK;
+	do {
+		rc = gpio_open(&led_gpio);
+		if (rc != GPIO_OK) { break; }
+		rc = gpio_write(&led_gpio,1); 
+		if (rc != GPIO_OK) { break; }
+	} while(0);
 	gpio_close(&led_gpio);
+	if (rc != GPIO_OK)
+	{
+		g_print("GPIO Error: %d\n",rc);
+	}
 
 	return TRUE;
 
@@ -32,10 +41,18 @@ on_set_off       (Led          *led,
 {
 	g_print("Turn off chassis identify led\n");
 	led_complete_set_off(led,invocation);
-	gpio_open(&led_gpio);
-	gpio_write(&led_gpio,0); 
+	int rc = GPIO_OK;
+	do {
+		rc = gpio_open(&led_gpio);
+		if (rc != GPIO_OK) { break; }
+		rc = gpio_write(&led_gpio,0); 
+		if (rc != GPIO_OK) { break; }
+	} while(0);
 	gpio_close(&led_gpio);
-
+	if (rc != GPIO_OK)
+	{
+		g_print("GPIO Error: %d\n",rc);
+	}
 	return TRUE;
 }
 
@@ -46,7 +63,6 @@ on_bus_acquired (GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
 
-	//g_print ("Acquired a message bus connection: %s\n",name);
 	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
 	{
@@ -95,7 +111,6 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  //g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -103,7 +118,6 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
- // g_print ("Lost the name %s\n", name);
 }
 
 

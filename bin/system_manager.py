@@ -2,7 +2,6 @@
 
 import sys
 import subprocess
-#from gi.repository import GObject
 import gobject
 import dbus
 import dbus.service
@@ -41,15 +40,23 @@ class SystemManager(dbus.service.Object):
 					signal_name = "EventLog",
 					path_keyword='path')
 
-
-
 		self.current_state = ""
 		self.system_states = {}
+		self.bus_name_lookup = {}
+
 		for bus_name in System.SYSTEM_CONFIG.keys():
 			sys_state = System.SYSTEM_CONFIG[bus_name]['system_state']
 			if (self.system_states.has_key(sys_state) == False):
 				self.system_states[sys_state] = []
 			self.system_states[sys_state].append(bus_name)
+	
+		## replace symbolic path in ID_LOOKUP
+		for category in System.ID_LOOKUP:
+			for key in System.ID_LOOKUP[category]:
+				val = System.ID_LOOKUP[category][key]
+				new_val = val.replace("<inventory_root>",System.INVENTORY_ROOT)
+				System.ID_LOOKUP[category][key] = new_val
+	
 		self.SystemStateHandler("INIT")
 		print "SystemManager Init Done"
 
@@ -86,7 +93,27 @@ class SystemManager(dbus.service.Object):
 			method()
 
 		self.current_state = state_name
-			
+		
+	@dbus.service.method(DBUS_NAME,
+		in_signature='ss', out_signature='a{ss}')
+	def getObjectFromId(self,category,key):
+		bus_name = ""
+		obj_path = ""
+
+		if (System.ID_LOOKUP.has_key(category)):
+			if (System.ID_LOOKUP[category].has_key(key)):
+				obj_path = System.ID_LOOKUP[category][key]
+		else:
+			print "ERROR: key not found: "+category+","+key
+
+		if (self.bus_name_lookup.has_key(obj_path)):
+			bus_name = self.bus_name_lookup[obj_path]
+		else:
+			print "ERROR: bus name not found for: "+obj_path
+		r = { 'bus_name' : bus_name, 'obj_path' : obj_path }
+		return r
+	
+	
 	def start_process(self,bus_name):
 		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
 			process_name = System.BIN_PATH+System.SYSTEM_CONFIG[bus_name]['process_name']
@@ -154,11 +181,13 @@ class SystemManager(dbus.service.Object):
 
 	def NewBusHandler(self, bus_name, a, b):
 		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
+			objects = {}
+			Openbmc.get_objs(bus,bus_name,"",objects)
+			for instance_name in objects.keys():
+				self.bus_name_lookup[objects[instance_name]['PATH']] = bus_name
+			
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
 				System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
-				objects = {}
-				Openbmc.get_objs(bus,bus_name,Openbmc.OBJ_PREFIX,objects)				
-	
 				for instance_name in objects.keys(): 
 					obj_path = objects[instance_name]['PATH']
 					for instance in System.SYSTEM_CONFIG[bus_name]['instances']:

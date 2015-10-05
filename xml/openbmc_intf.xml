@@ -30,6 +30,9 @@
 		<method name="getValue">
 			<arg name="value" type="v" direction="out"/>
 		</method>
+		<method name="setValue">
+			<arg name="value" type="v" direction="in"/>
+		</method>
 
                 <property name="value" type="v" access="read"/>
 		<property name="units" type="s" access="read"/>
@@ -45,10 +48,6 @@
 		<signal name="Heartbeat">
 			<arg name="bus_name" type="s"/>
 		</signal>
-	</interface>
-	<interface name="org.openbmc.SensorIpmi">
-		<property name="sensor_id" type="y" access="readwrite"/>
-		<property name="entity_id" type="y" access="readwrite"/>
 	</interface>
 	<interface name="org.openbmc.SensorThreshold">
 		<method name="getState">

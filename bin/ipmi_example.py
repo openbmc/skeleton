@@ -10,20 +10,11 @@ import PropertyManager
 
 import Openbmc
 
-DBUS_NAME = 'org.openbmc.sensors.IpmiBt'
-OBJ_NAME = '/org/openbmc/sensors/IpmiBt'
+SENSOR_INTERFACE = "org.openbmc.SensorValue"
 
 class IpmiBt(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
-
-	@dbus.service.signal('org.openbmc.sensors.IpmiBt')
-	def SetSensor(self, ipmi_id, value):
-        	pass
-
-	@dbus.service.signal('org.openbmc.sensors.IpmiBt')
-	def UpdateFru(self, ipmi_id, data):
-        	pass
 
 
 def getWatchdog():
@@ -47,17 +38,16 @@ def prettyPrint(data):
 
 
 if __name__ == '__main__':
-	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+	#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
  	bus = dbus.SessionBus()
-	name = dbus.service.BusName(DBUS_NAME,bus)
-	obj = IpmiBt(bus,OBJ_NAME)
-	mainloop = gobject.MainLoop()
+	#name = dbus.service.BusName(DBUS_NAME,bus)
+	#mainloop = gobject.MainLoop()
 
 	cmd = sys.argv[1]
 	data = None
 	ipmi_id = dbus.Byte(0)
 	if (len(sys.argv) > 2):
-		ipmi_id = dbus.Byte(int(sys.argv[2]))
+		ipmi_id = sys.argv[2]
 	if (len(sys.argv)>3):
 		data = sys.argv[3]
 
@@ -68,18 +58,36 @@ if __name__ == '__main__':
 		intf = getChassisControl()
 		intf.powerOff()
 	elif (cmd == "setsensor"):
-		obj.SetSensor(ipmi_id,dbus.Byte(int(data)))
+		intf_sys = Openbmc.getManagerInterface(bus,"System")
+		obj_info = intf_sys.getObjectFromId("SENSOR",ipmi_id)
+		obj_path = obj_info['obj_path']
+		bus_name = obj_info['bus_name']
+		if (obj_path != "" and bus_name != ""):
+			obj = bus.get_object(bus_name,obj_path)
+			intf = dbus.Interface(obj,SENSOR_INTERFACE)
+			intf.setValue(dbus.Byte(int(data)))	
+			
 	elif (cmd == "getsensors"):
 		intf_sens = Openbmc.getManagerInterface(bus,"Sensors")
 		data = intf_sens.getSensors()
 		prettyPrint(data)
 	elif (cmd == "updatefru"):
 		d = { 'manufacturer' : data }	
-		obj.UpdateFru(ipmi_id,d)
+		intf_sys = Openbmc.getManagerInterface(bus,"System")
+		obj_info = intf_sys.getObjectFromId("FRU",ipmi_id)
+		obj_path = obj_info['obj_path']
+		bus_name = obj_info['bus_name']
+		if (obj_path != "" and bus_name != ""):
+			obj = bus.get_object(bus_name,obj_path)
+			intf = dbus.Interface(obj,"org.openbmc.InventoryItem")
+			intf.update(d)	
+
 	elif (cmd == "getfrus"):
 		intf_fru = Openbmc.getManagerInterface(bus,"Inventory")
-		data = intf_fru.getFrus()
-		prettyPrint(data)
+		data = intf_fru.getItems()
+		for i in data:
+			for k in data[i].keys():
+				print k+" = "+str(data[i][k]) 
 	elif (cmd == "pokewatchdog"):
 		intf = self.getWatchdog()
 		intf.poke()

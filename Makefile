@@ -61,5 +61,8 @@ sensor_occ: sensor_occ_obj.o
 board_vpd: board_vpd_obj.o
 	$(CC) -o bin/$@.exe obj/board_vpd_obj.o $(OFLAGS) $(CFLAGS)
 
+pcie_slot_present: pcie_slot_present_obj.o gpio.o
+	$(CC) -o bin/$@.exe obj/pcie_slot_present_obj.o obj/gpio.o $(OFLAGS) $(CFLAGS)
+
 
 all: libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd

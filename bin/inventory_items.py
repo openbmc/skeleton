@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import gobject
+import dbus
+import dbus.service
+import dbus.mainloop.glib
+import cPickle
+import json
+
+if (len(sys.argv) < 2):
+	print "Usage:  inventory_items.py [system name]"
+	exit(1)
+System = __import__(sys.argv[1])
+import Openbmc
+
+
+INTF_NAME = 'org.openbmc.InventoryItem'
+DBUS_NAME = 'org.openbmc.managers.Inventory'
+
+FRUS = System.FRU_INSTANCES
+FRU_PATH = System.FRU_PATH
+
+class Inventory(dbus.service.Object):
+	def __init__(self,bus,name):
+		dbus.service.Object.__init__(self,bus,name)
+		self.objects = [ ]
+
+	def addItem(self,item):
+		self.objects.append(item)
+
+	@dbus.service.method("org.openbmc.managers.Inventory",
+		in_signature='', out_signature='a{sa{sv}}')
+	def getItems(self):
+		tmp_obj = {}
+		for item in self.objects:
+			tmp_obj[str(item.item['name'])]=item.getItemDict()
+		return tmp_obj
+			
+
+
+class InventoryItem(dbus.service.Object):
+	def __init__(self,bus,name):
+		dbus.service.Object.__init__(self,bus,name)
+		## store all properties in a dict so can easily
+		## send on dbus
+		self.item = {
+			'name' : name,
+			'is_fru' : False,
+			'fru_type' : 0,
+			'state'  : 0,
+			'data' : { 'manufacturer' : "" }
+		}
+		#self.name = name
+		#self.is_fru = False
+		#self.fru_type = 0
+		self.cache = True
+		#self.state = 0
+
+	def getItemDict(self):
+		return self.item
+
+	@dbus.service.signal('org.openbmc.EventLog')
+	def EventLog(self, priority, message, rc):
+        	pass
+		
+	@dbus.service.method('org.openbmc.InventoryItem',
+		in_signature='a{sv}', out_signature='')
+	def update(self,data):
+		## translate dbus data into basic data types
+		for k in data.keys():
+			d = Openbmc.DbusProperty(k,data[k])
+			self.item['data'][str(k)] = d.getBaseValue()
+		self.saveToCache()
+
+	@dbus.service.method("org.openbmc.SensorValue",
+		in_signature='y', out_signature='')
+	def setValue(self,data):
+		self.item['state'] = data
+		#self.saveToCache()
+		print "Update Fru State: "+str(self.item['state'])
+
+	def isCached(self):
+		return self.cache
+
+	def getCacheFilename(self):
+		global FRU_PATH
+		name = self.item['name'].replace('/','.')
+		filename = FRU_PATH+name[1:]+".fru"
+		return filename
+	
+	def saveToCache(self):
+		if (self.isCached() == False):
+			return
+		print "Caching: "+self.item['name']
+		# TODO: error handling
+		output = open(self.getCacheFilename(), 'wb')
+		## just pickle dict not whole object
+		cPickle.dump(self.item['data'],output)
+		output.close()
+
+	def loadFromCache(self):
+		if (self.isCached() == False):
+			return;
+		## overlay with pickled data
+		filename=self.getCacheFilename()
+		if (os.path.isfile(filename)):
+			print "Loading from cache: "+filename
+			# TODO: error handling
+			p = open(filename, 'rb')
+			data2 = cPickle.load(p)
+			for k in data2.keys():
+				self.item['data'][k] = data2[k]
+
+
+
+if __name__ == '__main__':
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    bus = dbus.SessionBus()
+    name = dbus.service.BusName(DBUS_NAME,bus)
+    mainloop = gobject.MainLoop()
+    obj_parent = Inventory(bus, '/org/openbmc/managers/Inventory')
+
+    for f in FRUS.keys():
+	obj_path=f.replace("<inventory_root>",System.INVENTORY_ROOT)
+    	obj = InventoryItem(bus,obj_path)
+	obj.is_fru = FRUS[f]['is_fru']
+	obj.fru_type = FRUS[f]['fru_type']
+	obj.loadFromCache();
+	obj_parent.addItem(obj)
+	
+    print "Running Inventory Manager"
+    mainloop.run()
+

@@ -8,6 +8,9 @@ static const gchar* dbus_name        = "org.openbmc.buttons.Power";
 
 static GDBusObjectManagerServer *manager = NULL;
 
+//This object will use these GPIOs
+GPIO button    = (GPIO){ "POWER_BUTTON" };
+
 static gboolean
 on_is_on       (Button          *btn,
                 GDBusMethodInvocation  *invocation,
@@ -20,15 +23,13 @@ on_is_on       (Button          *btn,
 }
 
 static gboolean
-on_sim_button_press       (Button          *btn,
+on_button_press       (Button          *btn,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-  g_print("Simulating button pressed\n");
-  button_emit_button_pressed(btn);
-  button_complete_sim_button_press(btn,invocation);
-  return TRUE;
-
+	button_emit_button_pressed(btn);
+	button_complete_sim_button_press(btn,invocation);
+	return TRUE;
 }
 
 static void 
@@ -64,8 +65,10 @@ on_bus_acquired (GDBusConnection *connection,
                     NULL); /* user_data */
 		g_signal_connect (button,
                     "handle-sim-button-press",
-                    G_CALLBACK (on_sim_button_press),
+                    G_CALLBACK (on_button_press),
                     NULL); /* user_data */
+
+		
 
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));

@@ -43,9 +43,17 @@ SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'monitor_process' : True,
-		'process_name' : 'inventory_manager.py',
+		'process_name' : 'inventory_items.py',
 		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Barreleye' } ]
+	}
+SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
+		'system_state' : 'POWERING_ON',
+		'start_process' : True,
+		'monitor_process' : False,
+		'process_name' : 'pcie_slot_present.exe',
+		'heartbeat' : 'no',
+		'instances' : [	{ 'name' : 'Slots_0' } ]
 	}
 
 
@@ -140,15 +148,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 		'monitor_process' : True,
 		'process_name' : 'sensor_host_status.exe',
 		'heartbeat' : "no",
-		'instances' : [ { 'name' : 'HostStatus_0',
-				'properties' : { 
-					'org.openbmc.SensorIpmi': {
-						'sensor_id' : 43,
-					},
-				}
-
-			}
-		]
+		'instances' : [ { 'name' : 'HostStatus_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
 		'system_state' : 'STANDBY',
@@ -224,80 +224,149 @@ NON_CACHABLE_PROPERTIES = {
 	'name'       : True,
 	'user_label' : True,
 	'location'   : True,
-	'state'   : True,
+	'state'      : True,
 	'cache'      : True
 }
+INVENTORY_ROOT = '/org/openbmc/inventory/items'
 
 FRU_INSTANCES = {
-	'/system' :
+	'<inventory_root>/system' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['SYSTEM'],
-		'fru'	       : True,
+		'fru_type'        : Openbmc.FRU_TYPES['SYSTEM'],
+		'is_fru'       : True,
 	},
-	'/system/motherboard' :
+	'<inventory_root>/system/io_board' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['MAIN_PLANAR'],
+		'fru_type'        : Openbmc.FRU_TYPES['MAIN_PLANAR'],
 		'manufacturer' : 'FOXCONN',
-		'fru'	       : True,
-		'fru_id'       : 31,
-		'location' : 'C0',
+		'is_fru'       : True,
+		'location'     : 'C1',
 	},
-	'/system/fan0' :
+
+	'<inventory_root>/system/motherboard' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['FAN'],
+		'fru_type'        : Openbmc.FRU_TYPES['MAIN_PLANAR'],
+		'manufacturer' : 'FOXCONN',
+		'is_fru'       : True,
+		'location'     : 'C0',
+	},
+	'<inventory_root>/system/fan0' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['FAN'],
 		'manufacturer' : 'DELTA',
-		'fru'	       : True,
-		'location' : 'F0',
+		'is_fru'       : True,
+		'location'     : 'F0',
 	},
-	'/system/fan1' :
+	'<inventory_root>/system/fan1' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['FAN'],
+		'fru_type'        : Openbmc.FRU_TYPES['FAN'],
 		'manufacturer' : 'DELTA',
-		'fru'	       : True,
-		'location' : 'F1',
+		'is_fru'       : True,
+		'location'     : 'F1',
 	},
-	'/system/motherboard/bmc' :
+	'<inventory_root>/system/io_board/bmc' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['BMC'],
+		'fru_type'        : Openbmc.FRU_TYPES['BMC'],
 		'manufacturer' : 'ASPEED',
-		'fru'	       : True,
+		'is_fru'       : False,
 	},
-	'/system/motherboard/cpu0' :
+	'<inventory_root>/system/motherboard/cpu0' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['CPU'],
+		'fru_type'        : Openbmc.FRU_TYPES['CPU'],
 		'manufacturer' : 'IBM',
-		'fru'	       : True,
-		'location' : 'P0',
-		'fru_id'   : 10,
+		'is_fru'       : True,
+		'location'     : 'P0',
 	},
-	'/system/motherboard/cpu0/core0' :
+	'<inventory_root>/system/motherboard/cpu0/core0' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['CORE'],
-		'fru'	       : False,
-		'sensor_id'    : 1,	
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
 	},
-	'/system/motherboard/cpu0/core1' :
+	'<inventory_root>/system/motherboard/cpu0/core1' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['CORE'],
-		'fru'	       : False,
-		'sensor_id'    : 2,	
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
 	},
-	'/system/motherboard/dimm0' :
+	'<inventory_root>/system/motherboard/dimm0' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['DIMM'],
-		'fru'	       : True,
-		'fru_id'       : 12,
-		'sensor_id'    : 20,	
+		'fru_type'        : Openbmc.FRU_TYPES['DIMM'],
+		'is_fru'       : True,
 	},
-	'/system/motherboard/dimm1' :
+	'<inventory_root>/system/motherboard/dimm1' :
 	{
-		'ftype'        : Openbmc.FRU_TYPES['DIMM'],
-		'fru'	       : True,
-		'fru_id'       : 13,
-		'sensor_id'    : 21,	
+		'fru_type'        : Openbmc.FRU_TYPES['DIMM'],
+		'is_fru'       : True,
 	},
+	'<inventory_root>/system/io_board/pcie_left_slot_riser' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['RISER_CARD'],
+		'user_label'      : 'Left Slot Riser',
+		'is_fru'       : True,
+	},
+	'<inventory_root>/system/io_board/pcie_right_slot_riser' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['RISER_CARD'],
+		'user_label'      : 'Right Slot Riser',
+		'is_fru'       : True,
+	},
+	'<inventory_root>/system/io_board/pcie_x16_slot_riser' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['RISER_CARD'],
+		'user_label'      : 'PCIE x16 Slot Riser',
+		'is_fru'       : True,
+	},
+	'<inventory_root>/system/io_board/pcie_slot0' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['PCIE_CARD'],
+		'user_label'      : 'OCP Mezz card 0',
+		'is_fru'       : True,
+	},
+	'<inventory_root>/system/io_board/pcie_slot1' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['PCIE_CARD'],
+		'user_label'      : 'OCP Mezz card 1',
+		'is_fru'       : True,
+	},
+	'<inventory_root>/system/io_board/pcie_slot2' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['PCIE_CARD'],
+		'user_label'      : 'OCP Mezz card 2',
+		'is_fru'       : True,
+	},
+	'<inventory_root>/system/io_board/pcie_mezz0' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['PCIE_CARD'],
+		'user_label'      : 'OCP Mezz card 0',
+		'is_fru'       : True,
+	},
+	'<inventory_root>/system/io_board/pcie_mezz1' :
+	{
+		'fru_type'        : Openbmc.FRU_TYPES['PCIE_CARD'],
+		'user_label'      : 'OCP Mezz card 1',
+		'is_fru'       : True,
+	},
+
 }
 
+ID_LOOKUP = {
+	'FRU' : {
+		'14' : '<inventory_root>/system/motherboard/dimm0',
+	},
+	'SENSOR' : {
+		'21' : '<inventory_root>/system/motherboard/dimm0',
+		'14' : '/org/openbmc/sensors/HostStatus_0',
+	},
+	'GPIO_PRESENT' : {
+		'SLOT0_RISER_PRESENT' : '<inventory_root>/system/io_board/pcie_left_slot_riser', 
+		'SLOT1_RISER_PRESENT' : '<inventory_root>/system/io_board/pcie_right_slot_riser', 
+		'SLOT2_RISER_PRESENT' : '<inventory_root>/system/io_board/pcie_x16_slot_riser',
+		'SLOT0_PRESENT' : '<inventory_root>/system/io_board/pcie_slot0', 
+		'SLOT1_PRESENT' : '<inventory_root>/system/io_board/pcie_slot1', 
+		'SLOT2_PRESENT' : '<inventory_root>/system/io_board/pcie_slot2',
+		'MEZZ0_PRESENT' : '<inventory_root>/system/io_board/pcie_mezz0', 
+		'MEZZ1_PRESENT' : '<inventory_root>/system/io_board/pcie_mezz1',
+	}
+}
 
 GPIO_CONFIG = {}
 GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 4, 'direction': 'out' }
@@ -307,5 +376,14 @@ GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 33, 'direction': 'out'  }
 GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 6, 'direction': 'out'  }
 GPIO_CONFIG['PGOOD']      = { 'gpio_num': 23, 'direction': 'in'  }
 GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 34, 'direction': 'out' }
-GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_num': 32, 'direction': 'in' }
+GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 32, 'direction': 'in' }
+GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 104, 'direction': 'in' }
+GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 105, 'direction': 'in' }
+GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_num': 106, 'direction': 'in' }
+GPIO_CONFIG['SLOT0_PRESENT'] =  { 'gpio_num': 107, 'direction': 'in' }
+GPIO_CONFIG['SLOT1_PRESENT'] =  { 'gpio_num': 108, 'direction': 'in' }
+GPIO_CONFIG['SLOT2_PRESENT'] =  { 'gpio_num': 109, 'direction': 'in' }
+GPIO_CONFIG['MEZZ0_PRESENT'] =  { 'gpio_num': 112, 'direction': 'in' }
+GPIO_CONFIG['MEZZ1_PRESENT'] =  { 'gpio_num': 113, 'direction': 'in' }
+
 
