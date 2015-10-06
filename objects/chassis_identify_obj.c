@@ -1,4 +1,5 @@
 #include "interfaces/openbmc_intf.h"
+#include <stdio.h>
 #include "openbmc.h"
 #include "gpio.h"
 
@@ -15,7 +16,7 @@ on_set_on       (Led          *led,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-	g_print("Turn on chassis identify led\n");
+	printf("Turn on chassis identify led\n");
 	led_complete_set_on(led,invocation);
 	int rc = GPIO_OK;
 	do {
@@ -27,7 +28,7 @@ on_set_on       (Led          *led,
 	gpio_close(&led_gpio);
 	if (rc != GPIO_OK)
 	{
-		g_print("GPIO Error: %d\n",rc);
+		printf("ERROR ChassisIdentify: GPIO error %s (rc=%d)\n",led_gpio.name,rc);
 	}
 
 	return TRUE;
@@ -51,7 +52,7 @@ on_set_off       (Led          *led,
 	gpio_close(&led_gpio);
 	if (rc != GPIO_OK)
 	{
-		g_print("GPIO Error: %d\n",rc);
+		printf("ERROR ChassisIdentify: GPIO error %s (rc=%d)\n",led_gpio.name,rc);
 	}
 	return TRUE;
 }

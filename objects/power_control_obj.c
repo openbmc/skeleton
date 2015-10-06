@@ -21,10 +21,9 @@ GPIO pgood        = (GPIO){ "PGOOD" };
 
 static GDBusObjectManagerServer *manager = NULL;
 
-//guint tmp_pgood = 0;
-//guint last_pgood = 0;
 time_t pgood_timeout_start = 0;
 
+// TODO:  Change to interrupt driven instead of polling
 static gboolean poll_pgood(gpointer user_data)
 {
 	ControlPower *control_power = object_get_control_power((Object*)user_data);

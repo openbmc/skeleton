@@ -1,5 +1,6 @@
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
+#include <stdio.h>
 #include "gpio.h"
 #define NUM_SLOTS 8
 GPIO slots[NUM_SLOTS] = {
@@ -23,7 +24,7 @@ typedef struct {
 /* ---------------------------------------------------------------------------------------------------- */
 int get_object(GDBusProxy *proxy, GPIO* gpio, object_info* obj_info)
 {
-	g_print("Here: %s\n",gpio->name);
+	g_print("Checking Presence: %s\n",gpio->name);
  	GError *error;
 	GVariant *parm;
 	GVariant *result;
@@ -83,7 +84,7 @@ int get_presence(GDBusConnection* connection, GPIO* gpio, uint8_t* present)
 	} while(0);
 	if (rc != GPIO_OK)
 	{
-		g_print("ERROR: gpio error %s\n",gpio->name);
+		printf("ERROR pcie_slot_present: GPIO error %s (rc=%d)\n",gpio->name,rc);
 	}
 	return rc; 
 }
