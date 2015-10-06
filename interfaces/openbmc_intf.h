@@ -2509,23 +2509,14 @@ struct _FlashIface
   GTypeInterface parent_iface;
 
 
-  gboolean (*handle_erase) (
-    Flash *object,
-    GDBusMethodInvocation *invocation);
-
   gboolean (*handle_init) (
     Flash *object,
     GDBusMethodInvocation *invocation);
 
-  gboolean (*handle_update_via_file) (
+  gboolean (*handle_update) (
     Flash *object,
     GDBusMethodInvocation *invocation,
-    const gchar *arg_file);
-
-  gboolean (*handle_update_via_http) (
-    Flash *object,
-    GDBusMethodInvocation *invocation,
-    const gchar *arg_url);
+    const gchar *arg_filename);
 
   void (*updated) (
     Flash *object);
@@ -2539,15 +2530,7 @@ guint flash_override_properties (GObjectClass *klass, guint property_id_begin);
 
 
 /* D-Bus method call completion functions: */
-void flash_complete_update_via_file (
-    Flash *object,
-    GDBusMethodInvocation *invocation);
-
-void flash_complete_update_via_http (
-    Flash *object,
-    GDBusMethodInvocation *invocation);
-
-void flash_complete_erase (
+void flash_complete_update (
     Flash *object,
     GDBusMethodInvocation *invocation);
 
@@ -2564,55 +2547,21 @@ void flash_emit_updated (
 
 
 /* D-Bus method calls: */
-void flash_call_update_via_file (
+void flash_call_update (
     Flash *proxy,
-    const gchar *arg_file,
+    const gchar *arg_filename,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean flash_call_update_via_file_finish (
+gboolean flash_call_update_finish (
     Flash *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean flash_call_update_via_file_sync (
+gboolean flash_call_update_sync (
     Flash *proxy,
-    const gchar *arg_file,
-    GCancellable *cancellable,
-    GError **error);
-
-void flash_call_update_via_http (
-    Flash *proxy,
-    const gchar *arg_url,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean flash_call_update_via_http_finish (
-    Flash *proxy,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean flash_call_update_via_http_sync (
-    Flash *proxy,
-    const gchar *arg_url,
-    GCancellable *cancellable,
-    GError **error);
-
-void flash_call_erase (
-    Flash *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean flash_call_erase_finish (
-    Flash *proxy,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean flash_call_erase_sync (
-    Flash *proxy,
+    const gchar *arg_filename,
     GCancellable *cancellable,
     GError **error);
 
@@ -3197,6 +3146,189 @@ GType led_skeleton_get_type (void) G_GNUC_CONST;
 Led *led_skeleton_new (void);
 
 
+/* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.HostIpmi */
+
+#define TYPE_HOST_IPMI (host_ipmi_get_type ())
+#define HOST_IPMI(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_HOST_IPMI, HostIpmi))
+#define IS_HOST_IPMI(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_HOST_IPMI))
+#define HOST_IPMI_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_HOST_IPMI, HostIpmiIface))
+
+struct _HostIpmi;
+typedef struct _HostIpmi HostIpmi;
+typedef struct _HostIpmiIface HostIpmiIface;
+
+struct _HostIpmiIface
+{
+  GTypeInterface parent_iface;
+
+
+  gboolean (*handle_send_message) (
+    HostIpmi *object,
+    GDBusMethodInvocation *invocation,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data);
+
+  void (*received_message) (
+    HostIpmi *object,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data);
+
+};
+
+GType host_ipmi_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *host_ipmi_interface_info (void);
+guint host_ipmi_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus method call completion functions: */
+void host_ipmi_complete_send_message (
+    HostIpmi *object,
+    GDBusMethodInvocation *invocation,
+    gint64 unnamed_arg4);
+
+
+
+/* D-Bus signal emissions functions: */
+void host_ipmi_emit_received_message (
+    HostIpmi *object,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data);
+
+
+
+/* D-Bus method calls: */
+void host_ipmi_call_send_message (
+    HostIpmi *proxy,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean host_ipmi_call_send_message_finish (
+    HostIpmi *proxy,
+    gint64 *out_unnamed_arg4,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean host_ipmi_call_send_message_sync (
+    HostIpmi *proxy,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data,
+    gint64 *out_unnamed_arg4,
+    GCancellable *cancellable,
+    GError **error);
+
+
+
+/* ---- */
+
+#define TYPE_HOST_IPMI_PROXY (host_ipmi_proxy_get_type ())
+#define HOST_IPMI_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_HOST_IPMI_PROXY, HostIpmiProxy))
+#define HOST_IPMI_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_HOST_IPMI_PROXY, HostIpmiProxyClass))
+#define HOST_IPMI_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_HOST_IPMI_PROXY, HostIpmiProxyClass))
+#define IS_HOST_IPMI_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_HOST_IPMI_PROXY))
+#define IS_HOST_IPMI_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_HOST_IPMI_PROXY))
+
+typedef struct _HostIpmiProxy HostIpmiProxy;
+typedef struct _HostIpmiProxyClass HostIpmiProxyClass;
+typedef struct _HostIpmiProxyPrivate HostIpmiProxyPrivate;
+
+struct _HostIpmiProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  HostIpmiProxyPrivate *priv;
+};
+
+struct _HostIpmiProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType host_ipmi_proxy_get_type (void) G_GNUC_CONST;
+
+void host_ipmi_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+HostIpmi *host_ipmi_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+HostIpmi *host_ipmi_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void host_ipmi_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+HostIpmi *host_ipmi_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+HostIpmi *host_ipmi_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_HOST_IPMI_SKELETON (host_ipmi_skeleton_get_type ())
+#define HOST_IPMI_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_HOST_IPMI_SKELETON, HostIpmiSkeleton))
+#define HOST_IPMI_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_HOST_IPMI_SKELETON, HostIpmiSkeletonClass))
+#define HOST_IPMI_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_HOST_IPMI_SKELETON, HostIpmiSkeletonClass))
+#define IS_HOST_IPMI_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_HOST_IPMI_SKELETON))
+#define IS_HOST_IPMI_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_HOST_IPMI_SKELETON))
+
+typedef struct _HostIpmiSkeleton HostIpmiSkeleton;
+typedef struct _HostIpmiSkeletonClass HostIpmiSkeletonClass;
+typedef struct _HostIpmiSkeletonPrivate HostIpmiSkeletonPrivate;
+
+struct _HostIpmiSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  HostIpmiSkeletonPrivate *priv;
+};
+
+struct _HostIpmiSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType host_ipmi_skeleton_get_type (void) G_GNUC_CONST;
+
+HostIpmi *host_ipmi_skeleton_new (void);
+
+
 /* ---- */
 
 #define TYPE_OBJECT (object_get_type ())
@@ -3231,6 +3363,7 @@ EventLog *object_get_event_log (Object *object);
 Flash *object_get_flash (Object *object);
 Button *object_get_button (Object *object);
 Led *object_get_led (Object *object);
+HostIpmi *object_get_host_ipmi (Object *object);
 Occ *object_peek_occ (Object *object);
 Fan *object_peek_fan (Object *object);
 SensorValue *object_peek_sensor_value (Object *object);
@@ -3247,6 +3380,7 @@ EventLog *object_peek_event_log (Object *object);
 Flash *object_peek_flash (Object *object);
 Button *object_peek_button (Object *object);
 Led *object_peek_led (Object *object);
+HostIpmi *object_peek_host_ipmi (Object *object);
 
 #define TYPE_OBJECT_PROXY (object_proxy_get_type ())
 #define OBJECT_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OBJECT_PROXY, ObjectProxy))
@@ -3315,6 +3449,7 @@ void object_skeleton_set_event_log (ObjectSkeleton *object, EventLog *interface_
 void object_skeleton_set_flash (ObjectSkeleton *object, Flash *interface_);
 void object_skeleton_set_button (ObjectSkeleton *object, Button *interface_);
 void object_skeleton_set_led (ObjectSkeleton *object, Led *interface_);
+void object_skeleton_set_host_ipmi (ObjectSkeleton *object, HostIpmi *interface_);
 
 /* ---- */
 

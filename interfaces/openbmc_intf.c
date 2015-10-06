@@ -18622,76 +18622,33 @@ event_log_skeleton_new (void)
 
 /* ---- Introspection data for org.openbmc.Flash ---- */
 
-static const _ExtendedGDBusArgInfo _flash_method_info_update_via_file_IN_ARG_file =
+static const _ExtendedGDBusArgInfo _flash_method_info_update_IN_ARG_filename =
 {
   {
     -1,
-    (gchar *) "file",
+    (gchar *) "filename",
     (gchar *) "s",
     NULL
   },
   FALSE
 };
 
-static const _ExtendedGDBusArgInfo * const _flash_method_info_update_via_file_IN_ARG_pointers[] =
+static const _ExtendedGDBusArgInfo * const _flash_method_info_update_IN_ARG_pointers[] =
 {
-  &_flash_method_info_update_via_file_IN_ARG_file,
+  &_flash_method_info_update_IN_ARG_filename,
   NULL
 };
 
-static const _ExtendedGDBusMethodInfo _flash_method_info_update_via_file =
+static const _ExtendedGDBusMethodInfo _flash_method_info_update =
 {
   {
     -1,
-    (gchar *) "updateViaFile",
-    (GDBusArgInfo **) &_flash_method_info_update_via_file_IN_ARG_pointers,
+    (gchar *) "update",
+    (GDBusArgInfo **) &_flash_method_info_update_IN_ARG_pointers,
     NULL,
     NULL
   },
-  "handle-update-via-file",
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo _flash_method_info_update_via_http_IN_ARG_url =
-{
-  {
-    -1,
-    (gchar *) "url",
-    (gchar *) "s",
-    NULL
-  },
-  FALSE
-};
-
-static const _ExtendedGDBusArgInfo * const _flash_method_info_update_via_http_IN_ARG_pointers[] =
-{
-  &_flash_method_info_update_via_http_IN_ARG_url,
-  NULL
-};
-
-static const _ExtendedGDBusMethodInfo _flash_method_info_update_via_http =
-{
-  {
-    -1,
-    (gchar *) "updateViaHttp",
-    (GDBusArgInfo **) &_flash_method_info_update_via_http_IN_ARG_pointers,
-    NULL,
-    NULL
-  },
-  "handle-update-via-http",
-  FALSE
-};
-
-static const _ExtendedGDBusMethodInfo _flash_method_info_erase =
-{
-  {
-    -1,
-    (gchar *) "erase",
-    NULL,
-    NULL,
-    NULL
-  },
-  "handle-erase",
+  "handle-update",
   FALSE
 };
 
@@ -18710,9 +18667,7 @@ static const _ExtendedGDBusMethodInfo _flash_method_info_init =
 
 static const _ExtendedGDBusMethodInfo * const _flash_method_info_pointers[] =
 {
-  &_flash_method_info_update_via_file,
-  &_flash_method_info_update_via_http,
-  &_flash_method_info_erase,
+  &_flash_method_info_update,
   &_flash_method_info_init,
   NULL
 };
@@ -18788,10 +18743,8 @@ flash_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * FlashIface:
  * @parent_iface: The parent interface.
- * @handle_erase: Handler for the #Flash::handle-erase signal.
  * @handle_init: Handler for the #Flash::handle-init signal.
- * @handle_update_via_file: Handler for the #Flash::handle-update-via-file signal.
- * @handle_update_via_http: Handler for the #Flash::handle-update-via-http signal.
+ * @handle_update: Handler for the #Flash::handle-update signal.
  * @updated: Handler for the #Flash::updated signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Flash.top_of_page">org.openbmc.Flash</link>.
@@ -18805,72 +18758,27 @@ flash_default_init (FlashIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
   /**
-   * Flash::handle-update-via-file:
+   * Flash::handle-update:
    * @object: A #Flash.
    * @invocation: A #GDBusMethodInvocation.
-   * @arg_file: Argument passed by remote caller.
+   * @arg_filename: Argument passed by remote caller.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Flash.updateViaFile">updateViaFile()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Flash.update">update()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_complete_update_via_file() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_complete_update() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
-  g_signal_new ("handle-update-via-file",
+  g_signal_new ("handle-update",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (FlashIface, handle_update_via_file),
+    G_STRUCT_OFFSET (FlashIface, handle_update),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
     G_TYPE_BOOLEAN,
     2,
     G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING);
-
-  /**
-   * Flash::handle-update-via-http:
-   * @object: A #Flash.
-   * @invocation: A #GDBusMethodInvocation.
-   * @arg_url: Argument passed by remote caller.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Flash.updateViaHttp">updateViaHttp()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_complete_update_via_http() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-update-via-http",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (FlashIface, handle_update_via_http),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    2,
-    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING);
-
-  /**
-   * Flash::handle-erase:
-   * @object: A #Flash.
-   * @invocation: A #GDBusMethodInvocation.
-   *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Flash.erase">erase()</link> D-Bus method.
-   *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_complete_erase() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
-   *
-   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
-   */
-  g_signal_new ("handle-erase",
-    G_TYPE_FROM_INTERFACE (iface),
-    G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (FlashIface, handle_erase),
-    g_signal_accumulator_true_handled,
-    NULL,
-    g_cclosure_marshal_generic,
-    G_TYPE_BOOLEAN,
-    1,
-    G_TYPE_DBUS_METHOD_INVOCATION);
 
   /**
    * Flash::handle-init:
@@ -18929,31 +18837,31 @@ flash_emit_updated (
 }
 
 /**
- * flash_call_update_via_file:
+ * flash_call_update:
  * @proxy: A #FlashProxy.
- * @arg_file: Argument to pass with the method invocation.
+ * @arg_filename: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.updateViaFile">updateViaFile()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.update">update()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call flash_call_update_via_file_finish() to get the result of the operation.
+ * You can then call flash_call_update_finish() to get the result of the operation.
  *
- * See flash_call_update_via_file_sync() for the synchronous, blocking version of this method.
+ * See flash_call_update_sync() for the synchronous, blocking version of this method.
  */
 void
-flash_call_update_via_file (
+flash_call_update (
     Flash *proxy,
-    const gchar *arg_file,
+    const gchar *arg_filename,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "updateViaFile",
+    "update",
     g_variant_new ("(s)",
-                   arg_file),
+                   arg_filename),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
     cancellable,
@@ -18962,17 +18870,17 @@ flash_call_update_via_file (
 }
 
 /**
- * flash_call_update_via_file_finish:
+ * flash_call_update_finish:
  * @proxy: A #FlashProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_call_update_via_file().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_call_update().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with flash_call_update_via_file().
+ * Finishes an operation started with flash_call_update().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-flash_call_update_via_file_finish (
+flash_call_update_finish (
     Flash *proxy,
     GAsyncResult *res,
     GError **error)
@@ -18989,220 +18897,30 @@ _out:
 }
 
 /**
- * flash_call_update_via_file_sync:
+ * flash_call_update_sync:
  * @proxy: A #FlashProxy.
- * @arg_file: Argument to pass with the method invocation.
+ * @arg_filename: Argument to pass with the method invocation.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.updateViaFile">updateViaFile()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.update">update()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See flash_call_update_via_file() for the asynchronous version of this method.
+ * See flash_call_update() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-flash_call_update_via_file_sync (
+flash_call_update_sync (
     Flash *proxy,
-    const gchar *arg_file,
+    const gchar *arg_filename,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "updateViaFile",
+    "update",
     g_variant_new ("(s)",
-                   arg_file),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * flash_call_update_via_http:
- * @proxy: A #FlashProxy.
- * @arg_url: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.updateViaHttp">updateViaHttp()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call flash_call_update_via_http_finish() to get the result of the operation.
- *
- * See flash_call_update_via_http_sync() for the synchronous, blocking version of this method.
- */
-void
-flash_call_update_via_http (
-    Flash *proxy,
-    const gchar *arg_url,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "updateViaHttp",
-    g_variant_new ("(s)",
-                   arg_url),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * flash_call_update_via_http_finish:
- * @proxy: A #FlashProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_call_update_via_http().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with flash_call_update_via_http().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-flash_call_update_via_http_finish (
-    Flash *proxy,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * flash_call_update_via_http_sync:
- * @proxy: A #FlashProxy.
- * @arg_url: Argument to pass with the method invocation.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.updateViaHttp">updateViaHttp()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See flash_call_update_via_http() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-flash_call_update_via_http_sync (
-    Flash *proxy,
-    const gchar *arg_url,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "updateViaHttp",
-    g_variant_new ("(s)",
-                   arg_url),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * flash_call_erase:
- * @proxy: A #FlashProxy.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
- * @user_data: User data to pass to @callback.
- *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.erase">erase()</link> D-Bus method on @proxy.
- * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call flash_call_erase_finish() to get the result of the operation.
- *
- * See flash_call_erase_sync() for the synchronous, blocking version of this method.
- */
-void
-flash_call_erase (
-    Flash *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data)
-{
-  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "erase",
-    g_variant_new ("()"),
-    G_DBUS_CALL_FLAGS_NONE,
-    -1,
-    cancellable,
-    callback,
-    user_data);
-}
-
-/**
- * flash_call_erase_finish:
- * @proxy: A #FlashProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_call_erase().
- * @error: Return location for error or %NULL.
- *
- * Finishes an operation started with flash_call_erase().
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-flash_call_erase_finish (
-    Flash *proxy,
-    GAsyncResult *res,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
-  if (_ret == NULL)
-    goto _out;
-  g_variant_get (_ret,
-                 "()");
-  g_variant_unref (_ret);
-_out:
-  return _ret != NULL;
-}
-
-/**
- * flash_call_erase_sync:
- * @proxy: A #FlashProxy.
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @error: Return location for error or %NULL.
- *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.erase">erase()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
- *
- * See flash_call_erase() for the asynchronous version of this method.
- *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
- */
-gboolean
-flash_call_erase_sync (
-    Flash *proxy,
-    GCancellable *cancellable,
-    GError **error)
-{
-  GVariant *_ret;
-  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "erase",
-    g_variant_new ("()"),
+                   arg_filename),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
     cancellable,
@@ -19309,52 +19027,16 @@ _out:
 }
 
 /**
- * flash_complete_update_via_file:
+ * flash_complete_update:
  * @object: A #Flash.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Flash.updateViaFile">updateViaFile()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Flash.update">update()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-flash_complete_update_via_file (
-    Flash *object,
-    GDBusMethodInvocation *invocation)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
-}
-
-/**
- * flash_complete_update_via_http:
- * @object: A #Flash.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Flash.updateViaHttp">updateViaHttp()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-flash_complete_update_via_http (
-    Flash *object,
-    GDBusMethodInvocation *invocation)
-{
-  g_dbus_method_invocation_return_value (invocation,
-    g_variant_new ("()"));
-}
-
-/**
- * flash_complete_erase:
- * @object: A #Flash.
- * @invocation: (transfer full): A #GDBusMethodInvocation.
- *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Flash.erase">erase()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
- *
- * This method will free @invocation, you cannot use it afterwards.
- */
-void
-flash_complete_erase (
+flash_complete_update (
     Flash *object,
     GDBusMethodInvocation *invocation)
 {
@@ -23450,6 +23132,1122 @@ led_skeleton_new (void)
 }
 
 /* ------------------------------------------------------------------------
+ * Code for interface org.openbmc.HostIpmi
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * SECTION:HostIpmi
+ * @title: HostIpmi
+ * @short_description: Generated C code for the org.openbmc.HostIpmi D-Bus interface
+ *
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link> D-Bus interface in C.
+ */
+
+/* ---- Introspection data for org.openbmc.HostIpmi ---- */
+
+static const _ExtendedGDBusArgInfo _host_ipmi_method_info_send_message_IN_ARG_seq =
+{
+  {
+    -1,
+    (gchar *) "seq",
+    (gchar *) "y",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_method_info_send_message_IN_ARG_netfn =
+{
+  {
+    -1,
+    (gchar *) "netfn",
+    (gchar *) "y",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_method_info_send_message_IN_ARG_cmd =
+{
+  {
+    -1,
+    (gchar *) "cmd",
+    (gchar *) "y",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_method_info_send_message_IN_ARG_data =
+{
+  {
+    -1,
+    (gchar *) "data",
+    (gchar *) "ay",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _host_ipmi_method_info_send_message_IN_ARG_pointers[] =
+{
+  &_host_ipmi_method_info_send_message_IN_ARG_seq,
+  &_host_ipmi_method_info_send_message_IN_ARG_netfn,
+  &_host_ipmi_method_info_send_message_IN_ARG_cmd,
+  &_host_ipmi_method_info_send_message_IN_ARG_data,
+  NULL
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_method_info_send_message_OUT_ARG_unnamed_arg4 =
+{
+  {
+    -1,
+    (gchar *) "unnamed_arg4",
+    (gchar *) "x",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _host_ipmi_method_info_send_message_OUT_ARG_pointers[] =
+{
+  &_host_ipmi_method_info_send_message_OUT_ARG_unnamed_arg4,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _host_ipmi_method_info_send_message =
+{
+  {
+    -1,
+    (gchar *) "sendMessage",
+    (GDBusArgInfo **) &_host_ipmi_method_info_send_message_IN_ARG_pointers,
+    (GDBusArgInfo **) &_host_ipmi_method_info_send_message_OUT_ARG_pointers,
+    NULL
+  },
+  "handle-send-message",
+  FALSE
+};
+
+static const _ExtendedGDBusMethodInfo * const _host_ipmi_method_info_pointers[] =
+{
+  &_host_ipmi_method_info_send_message,
+  NULL
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_signal_info_received_message_ARG_seq =
+{
+  {
+    -1,
+    (gchar *) "seq",
+    (gchar *) "y",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_signal_info_received_message_ARG_netfn =
+{
+  {
+    -1,
+    (gchar *) "netfn",
+    (gchar *) "y",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_signal_info_received_message_ARG_cmd =
+{
+  {
+    -1,
+    (gchar *) "cmd",
+    (gchar *) "y",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _host_ipmi_signal_info_received_message_ARG_data =
+{
+  {
+    -1,
+    (gchar *) "data",
+    (gchar *) "ay",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _host_ipmi_signal_info_received_message_ARG_pointers[] =
+{
+  &_host_ipmi_signal_info_received_message_ARG_seq,
+  &_host_ipmi_signal_info_received_message_ARG_netfn,
+  &_host_ipmi_signal_info_received_message_ARG_cmd,
+  &_host_ipmi_signal_info_received_message_ARG_data,
+  NULL
+};
+
+static const _ExtendedGDBusSignalInfo _host_ipmi_signal_info_received_message =
+{
+  {
+    -1,
+    (gchar *) "ReceivedMessage",
+    (GDBusArgInfo **) &_host_ipmi_signal_info_received_message_ARG_pointers,
+    NULL
+  },
+  "received-message"
+};
+
+static const _ExtendedGDBusSignalInfo * const _host_ipmi_signal_info_pointers[] =
+{
+  &_host_ipmi_signal_info_received_message,
+  NULL
+};
+
+static const _ExtendedGDBusInterfaceInfo _host_ipmi_interface_info =
+{
+  {
+    -1,
+    (gchar *) "org.openbmc.HostIpmi",
+    (GDBusMethodInfo **) &_host_ipmi_method_info_pointers,
+    (GDBusSignalInfo **) &_host_ipmi_signal_info_pointers,
+    NULL,
+    NULL
+  },
+  "host-ipmi",
+};
+
+
+/**
+ * host_ipmi_interface_info:
+ *
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link> D-Bus interface.
+ *
+ * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
+ */
+GDBusInterfaceInfo *
+host_ipmi_interface_info (void)
+{
+  return (GDBusInterfaceInfo *) &_host_ipmi_interface_info.parent_struct;
+}
+
+/**
+ * host_ipmi_override_properties:
+ * @klass: The class structure for a #GObject<!-- -->-derived class.
+ * @property_id_begin: The property id to assign to the first overridden property.
+ *
+ * Overrides all #GObject properties in the #HostIpmi interface for a concrete class.
+ * The properties are overridden in the order they are defined.
+ *
+ * Returns: The last property id.
+ */
+guint
+host_ipmi_override_properties (GObjectClass *klass, guint property_id_begin)
+{
+  return property_id_begin - 1;
+}
+
+
+
+/**
+ * HostIpmi:
+ *
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link>.
+ */
+
+/**
+ * HostIpmiIface:
+ * @parent_iface: The parent interface.
+ * @handle_send_message: Handler for the #HostIpmi::handle-send-message signal.
+ * @received_message: Handler for the #HostIpmi::received-message signal.
+ *
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link>.
+ */
+
+typedef HostIpmiIface HostIpmiInterface;
+G_DEFINE_INTERFACE (HostIpmi, host_ipmi, G_TYPE_OBJECT);
+
+static void
+host_ipmi_default_init (HostIpmiIface *iface)
+{
+  /* GObject signals for incoming D-Bus method calls: */
+  /**
+   * HostIpmi::handle-send-message:
+   * @object: A #HostIpmi.
+   * @invocation: A #GDBusMethodInvocation.
+   * @arg_seq: Argument passed by remote caller.
+   * @arg_netfn: Argument passed by remote caller.
+   * @arg_cmd: Argument passed by remote caller.
+   * @arg_data: Argument passed by remote caller.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-HostIpmi.sendMessage">sendMessage()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call host_ipmi_complete_send_message() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-send-message",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (HostIpmiIface, handle_send_message),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    5,
+    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_UCHAR, G_TYPE_UCHAR, G_TYPE_UCHAR, G_TYPE_STRING);
+
+  /* GObject signals for received D-Bus signals: */
+  /**
+   * HostIpmi::received-message:
+   * @object: A #HostIpmi.
+   * @arg_seq: Argument.
+   * @arg_netfn: Argument.
+   * @arg_cmd: Argument.
+   * @arg_data: Argument.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-HostIpmi.ReceivedMessage">"ReceivedMessage"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("received-message",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (HostIpmiIface, received_message),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    4, G_TYPE_UCHAR, G_TYPE_UCHAR, G_TYPE_UCHAR, G_TYPE_STRING);
+
+}
+
+/**
+ * host_ipmi_emit_received_message:
+ * @object: A #HostIpmi.
+ * @arg_seq: Argument to pass with the signal.
+ * @arg_netfn: Argument to pass with the signal.
+ * @arg_cmd: Argument to pass with the signal.
+ * @arg_data: Argument to pass with the signal.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-HostIpmi.ReceivedMessage">"ReceivedMessage"</link> D-Bus signal.
+ */
+void
+host_ipmi_emit_received_message (
+    HostIpmi *object,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data)
+{
+  g_signal_emit_by_name (object, "received-message", arg_seq, arg_netfn, arg_cmd, arg_data);
+}
+
+/**
+ * host_ipmi_call_send_message:
+ * @proxy: A #HostIpmiProxy.
+ * @arg_seq: Argument to pass with the method invocation.
+ * @arg_netfn: Argument to pass with the method invocation.
+ * @arg_cmd: Argument to pass with the method invocation.
+ * @arg_data: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-HostIpmi.sendMessage">sendMessage()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call host_ipmi_call_send_message_finish() to get the result of the operation.
+ *
+ * See host_ipmi_call_send_message_sync() for the synchronous, blocking version of this method.
+ */
+void
+host_ipmi_call_send_message (
+    HostIpmi *proxy,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "sendMessage",
+    g_variant_new ("(yyy^ay)",
+                   arg_seq,
+                   arg_netfn,
+                   arg_cmd,
+                   arg_data),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * host_ipmi_call_send_message_finish:
+ * @proxy: A #HostIpmiProxy.
+ * @out_unnamed_arg4: (out): Return location for return parameter or %NULL to ignore.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to host_ipmi_call_send_message().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with host_ipmi_call_send_message().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+host_ipmi_call_send_message_finish (
+    HostIpmi *proxy,
+    gint64 *out_unnamed_arg4,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(x)",
+                 out_unnamed_arg4);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * host_ipmi_call_send_message_sync:
+ * @proxy: A #HostIpmiProxy.
+ * @arg_seq: Argument to pass with the method invocation.
+ * @arg_netfn: Argument to pass with the method invocation.
+ * @arg_cmd: Argument to pass with the method invocation.
+ * @arg_data: Argument to pass with the method invocation.
+ * @out_unnamed_arg4: (out): Return location for return parameter or %NULL to ignore.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-HostIpmi.sendMessage">sendMessage()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See host_ipmi_call_send_message() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+host_ipmi_call_send_message_sync (
+    HostIpmi *proxy,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data,
+    gint64 *out_unnamed_arg4,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "sendMessage",
+    g_variant_new ("(yyy^ay)",
+                   arg_seq,
+                   arg_netfn,
+                   arg_cmd,
+                   arg_data),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(x)",
+                 out_unnamed_arg4);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * host_ipmi_complete_send_message:
+ * @object: A #HostIpmi.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ * @unnamed_arg4: Parameter to return.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-HostIpmi.sendMessage">sendMessage()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+host_ipmi_complete_send_message (
+    HostIpmi *object,
+    GDBusMethodInvocation *invocation,
+    gint64 unnamed_arg4)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("(x)",
+                   unnamed_arg4));
+}
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * HostIpmiProxy:
+ *
+ * The #HostIpmiProxy structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * HostIpmiProxyClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #HostIpmiProxy.
+ */
+
+struct _HostIpmiProxyPrivate
+{
+  GData *qdata;
+};
+
+static void host_ipmi_proxy_iface_init (HostIpmiIface *iface);
+
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (HostIpmiProxy, host_ipmi_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (HostIpmiProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_HOST_IPMI, host_ipmi_proxy_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (HostIpmiProxy, host_ipmi_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_HOST_IPMI, host_ipmi_proxy_iface_init));
+
+#endif
+static void
+host_ipmi_proxy_finalize (GObject *object)
+{
+  HostIpmiProxy *proxy = HOST_IPMI_PROXY (object);
+  g_datalist_clear (&proxy->priv->qdata);
+  G_OBJECT_CLASS (host_ipmi_proxy_parent_class)->finalize (object);
+}
+
+static void
+host_ipmi_proxy_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+}
+
+static void
+host_ipmi_proxy_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+}
+
+static void
+host_ipmi_proxy_g_signal (GDBusProxy *proxy,
+  const gchar *sender_name G_GNUC_UNUSED,
+  const gchar *signal_name,
+  GVariant *parameters)
+{
+  _ExtendedGDBusSignalInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint n;
+  guint signal_id;
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_host_ipmi_interface_info.parent_struct, signal_name);
+  if (info == NULL)
+    return;
+  num_params = g_variant_n_children (parameters);
+  paramv = g_new0 (GValue, num_params + 1);
+  g_value_init (&paramv[0], TYPE_HOST_IPMI);
+  g_value_set_object (&paramv[0], proxy);
+  g_variant_iter_init (&iter, parameters);
+  n = 1;
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.args[n - 1];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_HOST_IPMI);
+  g_signal_emitv (paramv, signal_id, 0, NULL);
+  for (n = 0; n < num_params + 1; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static void
+host_ipmi_proxy_g_properties_changed (GDBusProxy *_proxy,
+  GVariant *changed_properties,
+  const gchar *const *invalidated_properties)
+{
+  HostIpmiProxy *proxy = HOST_IPMI_PROXY (_proxy);
+  guint n;
+  const gchar *key;
+  GVariantIter *iter;
+  _ExtendedGDBusPropertyInfo *info;
+  g_variant_get (changed_properties, "a{sv}", &iter);
+  while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_host_ipmi_interface_info.parent_struct, key);
+      g_datalist_remove_data (&proxy->priv->qdata, key);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+  g_variant_iter_free (iter);
+  for (n = 0; invalidated_properties[n] != NULL; n++)
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_host_ipmi_interface_info.parent_struct, invalidated_properties[n]);
+      g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+}
+
+static void
+host_ipmi_proxy_init (HostIpmiProxy *proxy)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  proxy->priv = host_ipmi_proxy_get_instance_private (proxy);
+#else
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_HOST_IPMI_PROXY, HostIpmiProxyPrivate);
+#endif
+
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), host_ipmi_interface_info ());
+}
+
+static void
+host_ipmi_proxy_class_init (HostIpmiProxyClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusProxyClass *proxy_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize     = host_ipmi_proxy_finalize;
+  gobject_class->get_property = host_ipmi_proxy_get_property;
+  gobject_class->set_property = host_ipmi_proxy_set_property;
+
+  proxy_class = G_DBUS_PROXY_CLASS (klass);
+  proxy_class->g_signal = host_ipmi_proxy_g_signal;
+  proxy_class->g_properties_changed = host_ipmi_proxy_g_properties_changed;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (HostIpmiProxyPrivate));
+#endif
+}
+
+static void
+host_ipmi_proxy_iface_init (HostIpmiIface *iface)
+{
+}
+
+/**
+ * host_ipmi_proxy_new:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link>. See g_dbus_proxy_new() for more details.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call host_ipmi_proxy_new_finish() to get the result of the operation.
+ *
+ * See host_ipmi_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+host_ipmi_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_HOST_IPMI_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.HostIpmi", NULL);
+}
+
+/**
+ * host_ipmi_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to host_ipmi_proxy_new().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with host_ipmi_proxy_new().
+ *
+ * Returns: (transfer full) (type HostIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+HostIpmi *
+host_ipmi_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return HOST_IPMI (ret);
+  else
+    return NULL;
+}
+
+/**
+ * host_ipmi_proxy_new_sync:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link>. See g_dbus_proxy_new_sync() for more details.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See host_ipmi_proxy_new() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type HostIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+HostIpmi *
+host_ipmi_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_HOST_IPMI_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.HostIpmi", NULL);
+  if (ret != NULL)
+    return HOST_IPMI (ret);
+  else
+    return NULL;
+}
+
+
+/**
+ * host_ipmi_proxy_new_for_bus:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Like host_ipmi_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call host_ipmi_proxy_new_for_bus_finish() to get the result of the operation.
+ *
+ * See host_ipmi_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+host_ipmi_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_HOST_IPMI_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.HostIpmi", NULL);
+}
+
+/**
+ * host_ipmi_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to host_ipmi_proxy_new_for_bus().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with host_ipmi_proxy_new_for_bus().
+ *
+ * Returns: (transfer full) (type HostIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+HostIpmi *
+host_ipmi_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return HOST_IPMI (ret);
+  else
+    return NULL;
+}
+
+/**
+ * host_ipmi_proxy_new_for_bus_sync:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Like host_ipmi_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See host_ipmi_proxy_new_for_bus() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type HostIpmiProxy): The constructed proxy object or %NULL if @error is set.
+ */
+HostIpmi *
+host_ipmi_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_HOST_IPMI_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.HostIpmi", NULL);
+  if (ret != NULL)
+    return HOST_IPMI (ret);
+  else
+    return NULL;
+}
+
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * HostIpmiSkeleton:
+ *
+ * The #HostIpmiSkeleton structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * HostIpmiSkeletonClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #HostIpmiSkeleton.
+ */
+
+struct _HostIpmiSkeletonPrivate
+{
+  GValue *properties;
+  GList *changed_properties;
+  GSource *changed_properties_idle_source;
+  GMainContext *context;
+  GMutex lock;
+};
+
+static void
+_host_ipmi_skeleton_handle_method_call (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name,
+  const gchar *method_name,
+  GVariant *parameters,
+  GDBusMethodInvocation *invocation,
+  gpointer user_data)
+{
+  HostIpmiSkeleton *skeleton = HOST_IPMI_SKELETON (user_data);
+  _ExtendedGDBusMethodInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint num_extra;
+  guint n;
+  guint signal_id;
+  GValue return_value = G_VALUE_INIT;
+  info = (_ExtendedGDBusMethodInfo *) g_dbus_method_invocation_get_method_info (invocation);
+  g_assert (info != NULL);
+  num_params = g_variant_n_children (parameters);
+  num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
+  n = 0;
+  g_value_init (&paramv[n], TYPE_HOST_IPMI);
+  g_value_set_object (&paramv[n++], skeleton);
+  g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
+  g_value_set_object (&paramv[n++], invocation);
+  if (info->pass_fdlist)
+    {
+#ifdef G_OS_UNIX
+      g_value_init (&paramv[n], G_TYPE_UNIX_FD_LIST);
+      g_value_set_object (&paramv[n++], g_dbus_message_get_unix_fd_list (g_dbus_method_invocation_get_message (invocation)));
+#else
+      g_assert_not_reached ();
+#endif
+    }
+  g_variant_iter_init (&iter, parameters);
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.in_args[n - num_extra];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_HOST_IPMI);
+  g_value_init (&return_value, G_TYPE_BOOLEAN);
+  g_signal_emitv (paramv, signal_id, 0, &return_value);
+  if (!g_value_get_boolean (&return_value))
+    g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD, "Method %s is not implemented on interface %s", method_name, interface_name);
+  g_value_unset (&return_value);
+  for (n = 0; n < num_params + num_extra; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static GVariant *
+_host_ipmi_skeleton_handle_get_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GError **error,
+  gpointer user_data)
+{
+  HostIpmiSkeleton *skeleton = HOST_IPMI_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  GVariant *ret;
+  ret = NULL;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_host_ipmi_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      g_value_init (&value, pspec->value_type);
+      g_object_get_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      ret = g_dbus_gvalue_to_gvariant (&value, G_VARIANT_TYPE (info->parent_struct.signature));
+      g_value_unset (&value);
+    }
+  return ret;
+}
+
+static gboolean
+_host_ipmi_skeleton_handle_set_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GVariant *variant,
+  GError **error,
+  gpointer user_data)
+{
+  HostIpmiSkeleton *skeleton = HOST_IPMI_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  gboolean ret;
+  ret = FALSE;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_host_ipmi_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      if (info->use_gvariant)
+        g_value_set_variant (&value, variant);
+      else
+        g_dbus_gvariant_to_gvalue (variant, &value);
+      g_object_set_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      g_value_unset (&value);
+      ret = TRUE;
+    }
+  return ret;
+}
+
+static const GDBusInterfaceVTable _host_ipmi_skeleton_vtable =
+{
+  _host_ipmi_skeleton_handle_method_call,
+  _host_ipmi_skeleton_handle_get_property,
+  _host_ipmi_skeleton_handle_set_property,
+  {NULL}
+};
+
+static GDBusInterfaceInfo *
+host_ipmi_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return host_ipmi_interface_info ();
+}
+
+static GDBusInterfaceVTable *
+host_ipmi_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return (GDBusInterfaceVTable *) &_host_ipmi_skeleton_vtable;
+}
+
+static GVariant *
+host_ipmi_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+{
+  HostIpmiSkeleton *skeleton = HOST_IPMI_SKELETON (_skeleton);
+
+  GVariantBuilder builder;
+  guint n;
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  if (_host_ipmi_interface_info.parent_struct.properties == NULL)
+    goto out;
+  for (n = 0; _host_ipmi_interface_info.parent_struct.properties[n] != NULL; n++)
+    {
+      GDBusPropertyInfo *info = _host_ipmi_interface_info.parent_struct.properties[n];
+      if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
+        {
+          GVariant *value;
+          value = _host_ipmi_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.HostIpmi", info->name, NULL, skeleton);
+          if (value != NULL)
+            {
+              g_variant_take_ref (value);
+              g_variant_builder_add (&builder, "{sv}", info->name, value);
+              g_variant_unref (value);
+            }
+        }
+    }
+out:
+  return g_variant_builder_end (&builder);
+}
+
+static void
+host_ipmi_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+{
+}
+
+static void
+_host_ipmi_on_signal_received_message (
+    HostIpmi *object,
+    guchar arg_seq,
+    guchar arg_netfn,
+    guchar arg_cmd,
+    const gchar *arg_data)
+{
+  HostIpmiSkeleton *skeleton = HOST_IPMI_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("(yyy^ay)",
+                   arg_seq,
+                   arg_netfn,
+                   arg_cmd,
+                   arg_data));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.HostIpmi", "ReceivedMessage",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void host_ipmi_skeleton_iface_init (HostIpmiIface *iface);
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (HostIpmiSkeleton, host_ipmi_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (HostIpmiSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_HOST_IPMI, host_ipmi_skeleton_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (HostIpmiSkeleton, host_ipmi_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_HOST_IPMI, host_ipmi_skeleton_iface_init));
+
+#endif
+static void
+host_ipmi_skeleton_finalize (GObject *object)
+{
+  HostIpmiSkeleton *skeleton = HOST_IPMI_SKELETON (object);
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    g_source_destroy (skeleton->priv->changed_properties_idle_source);
+  g_main_context_unref (skeleton->priv->context);
+  g_mutex_clear (&skeleton->priv->lock);
+  G_OBJECT_CLASS (host_ipmi_skeleton_parent_class)->finalize (object);
+}
+
+static void
+host_ipmi_skeleton_init (HostIpmiSkeleton *skeleton)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  skeleton->priv = host_ipmi_skeleton_get_instance_private (skeleton);
+#else
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_HOST_IPMI_SKELETON, HostIpmiSkeletonPrivate);
+#endif
+
+  g_mutex_init (&skeleton->priv->lock);
+  skeleton->priv->context = g_main_context_ref_thread_default ();
+}
+
+static void
+host_ipmi_skeleton_class_init (HostIpmiSkeletonClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusInterfaceSkeletonClass *skeleton_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = host_ipmi_skeleton_finalize;
+
+  skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+  skeleton_class->get_info = host_ipmi_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = host_ipmi_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = host_ipmi_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = host_ipmi_skeleton_dbus_interface_get_vtable;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (HostIpmiSkeletonPrivate));
+#endif
+}
+
+static void
+host_ipmi_skeleton_iface_init (HostIpmiIface *iface)
+{
+  iface->received_message = _host_ipmi_on_signal_received_message;
+}
+
+/**
+ * host_ipmi_skeleton_new:
+ *
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link>.
+ *
+ * Returns: (transfer full) (type HostIpmiSkeleton): The skeleton object.
+ */
+HostIpmi *
+host_ipmi_skeleton_new (void)
+{
+  return HOST_IPMI (g_object_new (TYPE_HOST_IPMI_SKELETON, NULL));
+}
+
+/* ------------------------------------------------------------------------
  * Code for Object, ObjectProxy and ObjectSkeleton
  * ------------------------------------------------------------------------
  */
@@ -23624,6 +24422,15 @@ object_default_init (ObjectIface *iface)
    * Connect to the #GObject::notify signal to get informed of property changes.
    */
   g_object_interface_install_property (iface, g_param_spec_object ("led", "led", "led", TYPE_LED, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+
+  /**
+   * Object:host-ipmi:
+   *
+   * The #HostIpmi instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link>, if any.
+   *
+   * Connect to the #GObject::notify signal to get informed of property changes.
+   */
+  g_object_interface_install_property (iface, g_param_spec_object ("host-ipmi", "host-ipmi", "host-ipmi", TYPE_HOST_IPMI, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
 }
 
@@ -23897,6 +24704,23 @@ Led *object_get_led (Object *object)
   if (ret == NULL)
     return NULL;
   return LED (ret);
+}
+
+/**
+ * object_get_host_ipmi:
+ * @object: A #Object.
+ *
+ * Gets the #HostIpmi instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link> on @object, if any.
+ *
+ * Returns: (transfer full): A #HostIpmi that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ */
+HostIpmi *object_get_host_ipmi (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
+  if (ret == NULL)
+    return NULL;
+  return HOST_IPMI (ret);
 }
 
 
@@ -24220,6 +25044,26 @@ Led *object_peek_led (Object *object)
   return LED (ret);
 }
 
+/**
+ * object_peek_host_ipmi: (skip)
+ * @object: A #Object.
+ *
+ * Like object_get_host_ipmi() but doesn't increase the reference count on the returned object.
+ *
+ * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
+ *
+ * Returns: (transfer none): A #HostIpmi or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ */
+HostIpmi *object_peek_host_ipmi (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
+  if (ret == NULL)
+    return NULL;
+  g_object_unref (ret);
+  return HOST_IPMI (ret);
+}
+
 
 static void
 object_notify (GDBusObject *object, GDBusInterface *interface)
@@ -24367,6 +25211,11 @@ object_proxy_get_property (GObject      *gobject,
       g_value_take_object (value, interface);
       break;
 
+    case 17:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
+      g_value_take_object (value, interface);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -24397,6 +25246,7 @@ object_proxy_class_init (ObjectProxyClass *klass)
   g_object_class_override_property (gobject_class, 14, "flash");
   g_object_class_override_property (gobject_class, 15, "button");
   g_object_class_override_property (gobject_class, 16, "led");
+  g_object_class_override_property (gobject_class, 17, "host-ipmi");
 }
 
 /**
@@ -24671,6 +25521,19 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
+    case 17:
+      interface = g_value_get_object (value);
+      if (interface != NULL)
+        {
+          g_warn_if_fail (IS_HOST_IPMI (interface));
+          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
+        }
+      else
+        {
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.HostIpmi");
+        }
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -24768,6 +25631,11 @@ object_skeleton_get_property (GObject      *gobject,
       g_value_take_object (value, interface);
       break;
 
+    case 17:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
+      g_value_take_object (value, interface);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -24798,6 +25666,7 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
   g_object_class_override_property (gobject_class, 14, "flash");
   g_object_class_override_property (gobject_class, 15, "button");
   g_object_class_override_property (gobject_class, 16, "led");
+  g_object_class_override_property (gobject_class, 17, "host-ipmi");
 }
 
 /**
@@ -25007,6 +25876,18 @@ void object_skeleton_set_led (ObjectSkeleton *object, Led *interface_)
   g_object_set (G_OBJECT (object), "led", interface_, NULL);
 }
 
+/**
+ * object_skeleton_set_host_ipmi:
+ * @object: A #ObjectSkeleton.
+ * @interface_: (allow-none): A #HostIpmi or %NULL to clear the interface.
+ *
+ * Sets the #HostIpmi instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-HostIpmi.top_of_page">org.openbmc.HostIpmi</link> on @object.
+ */
+void object_skeleton_set_host_ipmi (ObjectSkeleton *object, HostIpmi *interface_)
+{
+  g_object_set (G_OBJECT (object), "host-ipmi", interface_, NULL);
+}
+
 
 /* ------------------------------------------------------------------------
  * Code for ObjectManager client
@@ -25085,6 +25966,7 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Flash", GSIZE_TO_POINTER (TYPE_FLASH_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Button", GSIZE_TO_POINTER (TYPE_BUTTON_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Led", GSIZE_TO_POINTER (TYPE_LED_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.HostIpmi", GSIZE_TO_POINTER (TYPE_HOST_IPMI_PROXY));
       g_once_init_leave (&once_init_value, 1);
     }
   ret = (GType) GPOINTER_TO_SIZE (g_hash_table_lookup (lookup_hash, interface_name));
