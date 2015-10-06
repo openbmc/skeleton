@@ -158,7 +158,7 @@ SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
 		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'ChassisIdentify_0' } ]
 	}
-SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
+SYSTEM_CONFIG['org.openbmc.flash.Bios'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : False,
 		'monitor_process' : True,
@@ -166,6 +166,16 @@ SYSTEM_CONFIG['org.openbmc.flash.BIOS'] = {
 		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'BIOS_0' } ]
 	}
+
+SYSTEM_CONFIG['org.openbmc.manager.Flash'] = {
+		'system_state' : 'STANDBY',
+		'start_process' : True,
+		'monitor_process' : True,
+		'process_name' : 'flash_manager.py',
+		'heartbeat' : 'no',
+		'instances' : [	{ 'name' : 'FlashManager_0' } ]
+	}
+
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,

@@ -35,10 +35,6 @@ class SystemManager(dbus.service.Object):
 					signal_name = "NameOwnerChanged")
 		bus.add_signal_receiver(self.HeartbeatHandler, signal_name = "Heartbeat")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
-		bus.add_signal_receiver(self.event_log_signal_handler, 
-					dbus_interface = "org.openbmc.EventLog", 
-					signal_name = "EventLog",
-					path_keyword='path')
 
 		self.current_state = ""
 		self.system_states = {}
@@ -60,10 +56,6 @@ class SystemManager(dbus.service.Object):
 		self.SystemStateHandler("INIT")
 		print "SystemManager Init Done"
 
-	@dbus.service.signal('org.openbmc.EventLog')
-	def EventLog(self, priority, message, rc):
-        	pass
-
 	def SystemStateHandler(self,state_name):
 		print "Checking previous state started..."
 		i = 0
@@ -74,7 +66,7 @@ class SystemManager(dbus.service.Object):
 			time.sleep(1)	
 
 		if (i == 10):
-			self.EventLog(1,"Timeout waiting for state to finish: "+self.current_state,1)	
+			print "ERROR: Timeout waiting for state to finish: "+self.current_state
 			return					
 
 		print "Running System State: "+state_name
@@ -88,7 +80,7 @@ class SystemManager(dbus.service.Object):
 		
 		if (System.ENTER_STATE_CALLBACK.has_key(state_name)):
 			cb = System.ENTER_STATE_CALLBACK[state_name]
-			obj = bus.get_<F11>object(cb['bus_name'],cb['obj_name'])
+			obj = bus.get_object(cb['bus_name'],cb['obj_name'])
 			method = obj.get_dbus_method(cb['method_name'],cb['interface_name'])
 			method()
 
@@ -127,10 +119,9 @@ class SystemManager(dbus.service.Object):
 				System.SYSTEM_CONFIG[bus_name]['popen'] = subprocess.Popen(cmdline)
 			except Exception as e:
 				## TODO: error
-				print "Error starting process: "+" ".join(cmdline)
+				print "ERROR: starting process: "+" ".join(cmdline)
 
 	def heartbeat_check(self):
-		#print "heartbeat check"
 		for bus_name in System.SYSTEM_CONFIG.keys():
 			if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True and
 				System.SYSTEM_CONFIG[bus_name].has_key('popen') and
@@ -158,12 +149,10 @@ class SystemManager(dbus.service.Object):
 						self.start_process(bus_name)			
 					else:
 						System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
-						#print "Heartbeat ok: "+bus_name
 					
 		return True
 
 	def HeartbeatHandler(self,bus_name):
-		#print "Heartbeat seen: "+bus_name
 		System.SYSTEM_CONFIG[bus_name]['heartbeat_count']=1	
 
 	def check_state_started(self):
@@ -173,7 +162,6 @@ class SystemManager(dbus.service.Object):
 		for bus_name in self.system_states[self.current_state]:
 			if (System.SYSTEM_CONFIG[bus_name].has_key('popen') == False and
 				System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
-				print "Not found: "+bus_name
 				r = False
 				break;	
 		return r
@@ -217,21 +205,6 @@ class SystemManager(dbus.service.Object):
 
 		return [Openbmc.GPIO_DEV, gpio_num, System.GPIO_CONFIG[name]['direction']]
 
-	## Signal handler
-	def event_log_signal_handler(self,priority,msg,rc,path = None):
-		message = {}
-		ts = time.time()
-
-		message['priority'] = priority
-		message['object_path'] = path
-		message['message'] = msg
-		message['rc'] = rc
-
-		json_dump = json.dumps(message)
-		print "EVENT_LOG: "+json_dump
-		#syslog.openlog('OpenBmc',logoption=syslog.LOG_PID)
-		#syslog.syslog(priority,json_dump)
-		#syslog.closelog()
 		
 
 if __name__ == '__main__':

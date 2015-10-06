@@ -57,20 +57,17 @@ def getManagerInterface(bus,manager):
 
 
 def get_objs(bus,bus_name,path,objects):
-	#print ">>>>>>>>>>>>>>>>>>>>>>>>>>>> "+bus_name+"; "+path
 	tmp_path = path
 	if (path == ""):
 		tmp_path="/"
 	obj = bus.get_object(bus_name,tmp_path)
 	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
-	#print introspect_iface.Introspect()
  	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
  	root = tree.getroot()
 	parent = True
 	for node in root.iter('node'):
 		for intf in node.iter('interface'):
 			intf_name = intf.attrib['name']
-			#if (intf_name.find(BUS_PREFIX)==0):
 			parts=path.split('/')
 			instance = parts[len(parts)-1]
 			if (objects.has_key(instance) == False):

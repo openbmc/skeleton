@@ -29,7 +29,6 @@ static gboolean poll_pgood(gpointer user_data)
 {
 	ControlPower *control_power = object_get_control_power((Object*)user_data);
 	Control* control = object_get_control((Object*)user_data);
-	EventLog* event_log = object_get_event_log((Object*)user_data);
 
 	//send the heartbeat
 	control_emit_heartbeat(control,dbus_name);
@@ -38,7 +37,7 @@ static gboolean poll_pgood(gpointer user_data)
 	guint poll_int = control_get_poll_interval(control);
 	if (poll_int == 0)
 	{
-		event_log_emit_event_log(event_log, LOG_ALERT, "Poll interval cannot be 0",0);
+		printf("ERROR:  Poll interval cannot be 0\n");
 		return FALSE;
 	}
 	//handle timeout
@@ -46,7 +45,7 @@ static gboolean poll_pgood(gpointer user_data)
 	if (difftime(current_time,pgood_timeout_start) > control_power_get_pgood_timeout(control_power)
 		&& pgood_timeout_start != 0)
 	{
-		event_log_emit_event_log(event_log, LOG_ALERT, "Pgood poll timeout",0);
+		printf("ERROR: Pgood poll timeout\n");
 		// set timeout to 0 so timeout doesn't happen again
 		control_power_set_pgood_timeout(control_power,0);
 		pgood_timeout_start = 0;
@@ -75,7 +74,7 @@ static gboolean poll_pgood(gpointer user_data)
  			}
 		}
 	} else {
-		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO read error",rc);
+		printf("ERROR: GPIO read error (rc=%d)\n",rc);
 	}
 	//pgood is not at desired state yet
 	if (gpio != control_power_get_state(control_power) &&
@@ -101,7 +100,6 @@ on_set_power_state (ControlPower          *pwr,
                 gpointer                user_data)
 {
 	Control* control = object_get_control((Object*)user_data);
-	EventLog* event_log = object_get_event_log((Object*)user_data);
 	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
 	if (state > 1)
 	{
@@ -134,7 +132,7 @@ on_set_power_state (ControlPower          *pwr,
 		} while(0);
 		if (error != GPIO_OK)
 		{
-			event_log_emit_event_log(event_log, LOG_ALERT, "GPIO set power state error",error);
+			printf("ERROR: GPIO set power state (rc=%d)\n",error);
 		}
 	}
 	return TRUE;
@@ -190,10 +188,6 @@ on_bus_acquired (GDBusConnection *connection,
 	object_skeleton_set_control (object, control);
 	g_object_unref (control);
 
-	EventLog* event_log = event_log_skeleton_new ();
-	object_skeleton_set_event_log (object, event_log);
-	g_object_unref (event_log);
-
 	//define method callbacks here
 	g_signal_connect (control_power,
        	            "handle-set-power-state",
@@ -235,7 +229,7 @@ on_bus_acquired (GDBusConnection *connection,
 	} while(0);
 	if (rc != GPIO_OK)
 	{
-		event_log_emit_event_log(event_log, LOG_ALERT, "GPIO setup error",rc);
+		printf("ERROR: GPIO setup (rc=%d)\n",rc);
 	} 
 }
 
@@ -244,7 +238,6 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-  //g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -252,7 +245,6 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-  //g_print ("Lost the name %s\n", name);
 }
 
 

@@ -132,13 +132,9 @@
 		</signal>
 	</interface>	
 	<interface name="org.openbmc.Flash">
-		<method name="updateViaFile">
-			<arg name="file" type="s" direction="in"/>
+		<method name="update">
+			<arg name="filename" type="s" direction="in"/>
 		</method>
-		<method name="updateViaHttp">
-			<arg name="url" type="s" direction="in"/>
-		</method>
-		<method name="erase"/>
 		<method name="init"/>
 		<signal name="Updated"/>
 	</interface>

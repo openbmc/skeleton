@@ -36,7 +36,7 @@ void* memmap(int mem_fd,uint32_t* base)
 			PROT_READ | PROT_WRITE, MAP_SHARED, mem_fd, base);
 
 	if (bmcreg == MAP_FAILED) {
-		perror("Unable to map LPC register memory");
+		printf("ERROR: Unable to map LPC register memory");
 		exit(1);
 	}
 	return bmcreg;
@@ -50,7 +50,7 @@ void reg_init()
 	void *bmcreg;
 	int mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
 	if (mem_fd < 0) {
-		perror("Unable to open /dev/mem");
+		printf("ERROR: Unable to open /dev/mem");
 		exit(1);
 	}
 
@@ -114,7 +114,6 @@ on_bus_acquired (GDBusConnection *connection,
                  gpointer         user_data)
 {
 	ObjectSkeleton *object;
-	//g_print ("Acquired a message bus connection: %s\n",name);
  	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
 	{
@@ -138,10 +137,6 @@ on_bus_acquired (GDBusConnection *connection,
 		object_skeleton_set_control (object, control);
 		g_object_unref (control);
 
-		EventLog* event_log = event_log_skeleton_new ();
-		object_skeleton_set_event_log (object, event_log);
-		g_object_unref (event_log);
-
 		//define method callbacks here
 		g_signal_connect (control,
         	            "handle-init",
@@ -161,7 +156,6 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
-//  g_print ("Acquired the name %s\n", name);
 }
 
 static void
@@ -169,7 +163,6 @@ on_name_lost (GDBusConnection *connection,
               const gchar     *name,
               gpointer         user_data)
 {
-//  g_print ("Lost the name %s\n", name);
 }
 
 

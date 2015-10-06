@@ -36,9 +36,6 @@ class SensorManager(dbus.service.Object):
 					signal_name = 'Critical', path_keyword='path')
 
 		self.sensor_cache = {}
-	@dbus.service.signal('org.openbmc.EventLog')
-	def EventLog(self, priority, message, rc):
-        	pass
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='a{sa{sv}}')
@@ -53,7 +50,7 @@ class SensorManager(dbus.service.Object):
 		if (self.sensor_cache.has_key(path) == True):
 			val = self.sensor_cache[path]['value']
 		else:
-			self.EventLog(1,"Unknown sensor: "+path,1)
+			print "ERROR: Unknown sensor: "+path
 		return val
 	
 	## Signal handlers

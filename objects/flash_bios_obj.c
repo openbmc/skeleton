@@ -4,7 +4,7 @@
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/flash";
-static const gchar* dbus_name        = "org.openbmc.flash.BIOS";
+static const gchar* dbus_name        = "org.openbmc.flash.Bios";
 
 static GDBusObjectManagerServer *manager = NULL;
 
@@ -21,7 +21,7 @@ on_init (Flash          *f,
 }
 
 static gboolean
-on_update_via_file (Flash          *f,
+on_update (Flash          *f,
                 GDBusMethodInvocation  *invocation,
                 gchar*                  write_file,
                 gpointer                user_data)
@@ -39,7 +39,7 @@ on_update_via_file (Flash          *f,
   write_size = stbuf.st_size;
   erase_chip();
   program_file(write_file, address, write_size);
-  flash_complete_update_via_file(f,invocation);
+  flash_complete_update(f,invocation);
   return TRUE;
 }
 
@@ -71,8 +71,8 @@ on_bus_acquired (GDBusConnection *connection,
 
 		//define method callbacks here
 		g_signal_connect (flash,
-                    "handle-update-via-file",
-                    G_CALLBACK (on_update_via_file),
+                    "handle-update",
+                    G_CALLBACK (on_update),
                     NULL); /* user_data */
  
 		g_signal_connect (flash,

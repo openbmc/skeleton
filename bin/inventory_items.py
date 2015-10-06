@@ -52,19 +52,11 @@ class InventoryItem(dbus.service.Object):
 			'state'  : 0,
 			'data' : { 'manufacturer' : "" }
 		}
-		#self.name = name
-		#self.is_fru = False
-		#self.fru_type = 0
 		self.cache = True
-		#self.state = 0
 
 	def getItemDict(self):
 		return self.item
 
-	@dbus.service.signal('org.openbmc.EventLog')
-	def EventLog(self, priority, message, rc):
-        	pass
-		
 	@dbus.service.method('org.openbmc.InventoryItem',
 		in_signature='a{sv}', out_signature='')
 	def update(self,data):
@@ -78,8 +70,10 @@ class InventoryItem(dbus.service.Object):
 		in_signature='y', out_signature='')
 	def setValue(self,data):
 		self.item['state'] = data
-		#self.saveToCache()
 		print "Update Fru State: "+str(self.item['state'])
+
+	def setField(self,field,value):
+		self.item['data'][field] = value
 
 	def isCached(self):
 		return self.cache
@@ -94,11 +88,14 @@ class InventoryItem(dbus.service.Object):
 		if (self.isCached() == False):
 			return
 		print "Caching: "+self.item['name']
-		# TODO: error handling
-		output = open(self.getCacheFilename(), 'wb')
-		## just pickle dict not whole object
-		cPickle.dump(self.item['data'],output)
-		output.close()
+		try: 
+			output = open(self.getCacheFilename(), 'wb')
+			## just pickle dict not whole object
+			cPickle.dump(self.item['data'],output)
+		except Exception as e:
+			print "ERROR: "+str(e)
+		finally:
+			output.close()
 
 	def loadFromCache(self):
 		if (self.isCached() == False):
@@ -107,12 +104,15 @@ class InventoryItem(dbus.service.Object):
 		filename=self.getCacheFilename()
 		if (os.path.isfile(filename)):
 			print "Loading from cache: "+filename
-			# TODO: error handling
-			p = open(filename, 'rb')
-			data2 = cPickle.load(p)
-			for k in data2.keys():
-				self.item['data'][k] = data2[k]
-
+			try:	
+				p = open(filename, 'rb')
+				data2 = cPickle.load(p)
+				for k in data2.keys():
+					self.item['data'][k] = data2[k]
+			except Exception as e:
+				print "ERROR: " +str(e)
+			finally:
+				p.close()
 
 
 if __name__ == '__main__':
@@ -125,8 +125,8 @@ if __name__ == '__main__':
     for f in FRUS.keys():
 	obj_path=f.replace("<inventory_root>",System.INVENTORY_ROOT)
     	obj = InventoryItem(bus,obj_path)
-	obj.is_fru = FRUS[f]['is_fru']
-	obj.fru_type = FRUS[f]['fru_type']
+	obj.setField('is_fru',FRUS[f]['is_fru'])
+	obj.setField('fru_type',FRUS[f]['fru_type'])
 	obj.loadFromCache();
 	obj_parent.addItem(obj)
 	
