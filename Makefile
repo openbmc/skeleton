@@ -35,7 +35,7 @@ sensor_ambient: sensor_threshold.o sensor_temperature_ambient_obj.o
 	$(CC) -o bin/$@.exe obj/sensor_threshold.o obj/sensor_temperature_ambient_obj.o $(OFLAGS) $(CFLAGS)
 
 button_power: button_power_obj.o gpio.o
-	$(CC) -o bin/$@.exe obj/button_power_obj.o $(OFLAGS) $(CFLAGS)
+	$(CC) -o bin/$@.exe obj/button_power_obj.o obj/gpio.o $(OFLAGS) $(CFLAGS)
 
 sensor_host_status: sensor_host_status_obj.o
 	$(CC) -o bin/$@.exe obj/sensor_host_status_obj.o $(OFLAGS) $(CFLAGS)
