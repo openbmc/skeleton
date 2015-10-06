@@ -194,7 +194,7 @@ SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.vpd'] = {
-		'system_state' : 'POWERED_ON',
+		'system_state' : 'POWERING_ON',
 		'start_process' : True,
 		'monitor_process' : False,
 		'process_name' : 'board_vpd.exe',

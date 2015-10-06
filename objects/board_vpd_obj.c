@@ -23,19 +23,29 @@ main (gint argc, gchar *argv[])
 	p = g_dbus_proxy_new_sync (c,
                              G_DBUS_PROXY_FLAGS_NONE,
                              NULL,                      /* GDBusInterfaceInfo* */
-                             "org.openbmc.managers.Frus", /* name */
-                             "/org/openbmc/managers/Frus", /* object path */
-                             "org.openbmc.managers.Frus",        /* interface name */
+                             "org.openbmc.managers.Inventory", /* name */
+                             "/org/openbmc/inventory/items/system/io_board", /* object path */
+                             "org.openbmc.InventoryItem",        /* interface name */
                              NULL,                      /* GCancellable */
                              &error);
 	g_assert_no_error (error);
 
 	//TODO:  Read actual vpd
 	g_print("Reading VPD\n");
+	GVariantBuilder *b;
+	GVariant *dict;
 
-	parm = g_variant_new("(isv)",21,"manufacturer",g_variant_new_string("ibmibm"));
+	b = g_variant_builder_new (G_VARIANT_TYPE ("a{sv}"));
+	g_variant_builder_add (b, "{sv}", "manufacturer", g_variant_new_string ("ibm"));
+	g_variant_builder_add (b, "{sv}", "part_num", g_variant_new_string("3N0001"));
+	dict = g_variant_builder_end (b);
+
+	//proxy_call wants parm as an array
+	parm = g_variant_new("(v)",dict);
+
+	error = NULL;
 	result = g_dbus_proxy_call_sync (p,
-                                   "updateFruField",
+                                   "update",
 				   parm,
                                    G_DBUS_CALL_FLAGS_NONE,
                                    -1,
@@ -43,10 +53,6 @@ main (gint argc, gchar *argv[])
                                    &error);
 	g_assert_no_error (error);
 	
-	//g_main_loop_run (loop);
-	//g_bus_unown_name (id);
-	//g_variant_unref(result);
-	//g_variant_unref(parm);
 	g_object_unref(p);
 	g_object_unref(c);
  	g_main_loop_unref (loop);
