@@ -88,6 +88,14 @@ if __name__ == '__main__':
 		for i in data:
 			for k in data[i].keys():
 				print k+" = "+str(data[i][k]) 
+	elif (cmd == "updatefw"):
+		intf = Openbmc.getManagerInterface(bus,"Flash")
+		intf.updateFromTftp("bios","bakerstreet.aus.stglabs.ibm.com","firmware.bin")
+	elif (cmd == "fwstatus"):
+		intf = Openbmc.getManagerInterface(bus,"Flash")
+		status = intf.getStatus()
+		for i in status:
+			print i+" = "+status[i]
 	elif (cmd == "pokewatchdog"):
 		intf = self.getWatchdog()
 		intf.poke()
