@@ -37,7 +37,7 @@ static gboolean poll_pgood(gpointer user_data)
 	guint poll_int = control_get_poll_interval(control);
 	if (poll_int == 0)
 	{
-		printf("ERROR:  Poll interval cannot be 0\n");
+		printf("ERROR PowerControl: Poll interval cannot be 0\n");
 		return FALSE;
 	}
 	//handle timeout
@@ -45,7 +45,7 @@ static gboolean poll_pgood(gpointer user_data)
 	if (difftime(current_time,pgood_timeout_start) > control_power_get_pgood_timeout(control_power)
 		&& pgood_timeout_start != 0)
 	{
-		printf("ERROR: Pgood poll timeout\n");
+		printf("ERROR PowerControl: Pgood poll timeout\n");
 		// set timeout to 0 so timeout doesn't happen again
 		control_power_set_pgood_timeout(control_power,0);
 		pgood_timeout_start = 0;
@@ -74,7 +74,7 @@ static gboolean poll_pgood(gpointer user_data)
  			}
 		}
 	} else {
-		printf("ERROR: GPIO read error (rc=%d)\n",rc);
+		printf("ERROR PowerControl: GPIO read error (gpio=%s,rc=%d)\n",pgood.name,rc);
 	}
 	//pgood is not at desired state yet
 	if (gpio != control_power_get_state(control_power) &&
@@ -132,7 +132,7 @@ on_set_power_state (ControlPower          *pwr,
 		} while(0);
 		if (error != GPIO_OK)
 		{
-			printf("ERROR: GPIO set power state (rc=%d)\n",error);
+			printf("ERROR PowerControl: GPIO set power state (rc=%d)\n",error);
 		}
 	}
 	return TRUE;
@@ -229,7 +229,7 @@ on_bus_acquired (GDBusConnection *connection,
 	} while(0);
 	if (rc != GPIO_OK)
 	{
-		printf("ERROR: GPIO setup (rc=%d)\n",rc);
+		printf("ERROR PowerControl: GPIO setup (rc=%d)\n",rc);
 	} 
 }
 

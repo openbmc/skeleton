@@ -50,7 +50,7 @@ class InventoryItem(dbus.service.Object):
 			'is_fru' : False,
 			'fru_type' : 0,
 			'state'  : 0,
-			'data' : { 'manufacturer' : "" }
+			'manufacturer' : "",
 		}
 		self.cache = True
 
@@ -63,7 +63,7 @@ class InventoryItem(dbus.service.Object):
 		## translate dbus data into basic data types
 		for k in data.keys():
 			d = Openbmc.DbusProperty(k,data[k])
-			self.item['data'][str(k)] = d.getBaseValue()
+			self.item[str(k)] = d.getBaseValue()
 		self.saveToCache()
 
 	@dbus.service.method("org.openbmc.SensorValue",
@@ -73,7 +73,7 @@ class InventoryItem(dbus.service.Object):
 		print "Update Fru State: "+str(self.item['state'])
 
 	def setField(self,field,value):
-		self.item['data'][field] = value
+		self.item[field] = value
 
 	def isCached(self):
 		return self.cache
@@ -91,7 +91,7 @@ class InventoryItem(dbus.service.Object):
 		try: 
 			output = open(self.getCacheFilename(), 'wb')
 			## just pickle dict not whole object
-			cPickle.dump(self.item['data'],output)
+			cPickle.dump(self.item,output)
 		except Exception as e:
 			print "ERROR: "+str(e)
 		finally:
@@ -108,7 +108,7 @@ class InventoryItem(dbus.service.Object):
 				p = open(filename, 'rb')
 				data2 = cPickle.load(p)
 				for k in data2.keys():
-					self.item['data'][k] = data2[k]
+					self.item[k] = data2[k]
 			except Exception as e:
 				print "ERROR: " +str(e)
 			finally:
