@@ -166,7 +166,6 @@ on_bus_acquired (GDBusConnection *connection,
                  gpointer         user_data)
 {
 	ObjectSkeleton *object;
-	//g_print ("Acquired a message bus connection: %s\n",name);
  	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
 	{
