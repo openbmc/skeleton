@@ -22,7 +22,7 @@ import Openbmc
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
 HEARTBEAT_CHECK_INTERVAL = 20000
-
+STATE_START_TIMEOUT = 10
 
 class SystemManager(dbus.service.Object):
 	def __init__(self,bus,name):
@@ -65,7 +65,7 @@ class SystemManager(dbus.service.Object):
 			i=i+1
 			time.sleep(1)	
 
-		if (i == 10):
+		if (i == STATE_START_TIMEOUT):
 			print "ERROR: Timeout waiting for state to finish: "+self.current_state
 			return					
 
@@ -104,7 +104,6 @@ class SystemManager(dbus.service.Object):
 			print "ERROR: bus name not found for: "+obj_path
 		r = { 'bus_name' : bus_name, 'obj_path' : obj_path }
 		return r
-	
 	
 	def start_process(self,bus_name):
 		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
