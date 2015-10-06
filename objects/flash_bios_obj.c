@@ -14,9 +14,12 @@ on_init (Flash          *f,
                 gpointer                user_data)
 {
 	flash_complete_init(f,invocation);
-	//tune flash
-	g_print("Tuning BIOS Flash\n");
-	flash_access_setup_pnor(true, false, false);
+
+	#ifdef __arm__
+		printf("Tuning BIOS Flash\n");
+		flash_access_setup_pnor(true, false, false);
+	#endif
+
 	return TRUE;
 }
 
@@ -26,21 +29,25 @@ on_update (Flash          *f,
                 gchar*                  write_file,
                 gpointer                user_data)
 {
-  g_print("Flashing BIOS from file\n");
-  // get size from file
-  struct stat stbuf;
-  uint32_t address = 0, read_size = 0, write_size = 0;
+	printf("Flashing BIOS from file\n");
+	flash_complete_update(f,invocation);
+	// get size from file
+	struct stat stbuf;
+	uint32_t address = 0, read_size = 0, write_size = 0;
 
-  if (stat(write_file, &stbuf))
-  {
-    g_print("Failed to get file size");
-    //TODO: Error handling
-  }
-  write_size = stbuf.st_size;
-  erase_chip();
-  program_file(write_file, address, write_size);
-  flash_complete_update(f,invocation);
-  return TRUE;
+#ifdef __arm__
+	if (stat(write_file, &stbuf))
+ 	{
+ 		printf("ERROR:  Invalid flash file: %s\n",write_file);
+	}
+	write_size = stbuf.st_size;
+	// TODO: need to change pflash to return error instead of exit
+	erase_chip();
+	program_file(write_file, address, write_size);
+#endif
+
+  	flash_emit_updated(f);
+	return TRUE;
 }
 
 static void 

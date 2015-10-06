@@ -10,14 +10,14 @@ import tftpy
 
 
 DBUS_NAME = 'org.openbmc.managers.Flash'
-OBJ_NAME = '/org/openbmc/managers/'+sys.argv[1]
+OBJ_NAME = '/org/openbmc/managers/Flash'
 TFTP_PORT = 69
 DOWNLOAD_DIR = '/tmp'
 
 class FlashManagerObject(dbus.service.Object):
 	def __init__(self,bus,name):
 		self.dbus_objects = { }
-
+		self.status = { 'bios' : 'OK', 'bmc' : 'OK' }
 		dbus.service.Object.__init__(self,bus,name)
 		## load utilized objects
 		self.dbus_objects = {
@@ -33,6 +33,15 @@ class FlashManagerObject(dbus.service.Object):
 			}
 		}
 		bus = dbus.SessionBus()
+		bus.add_signal_receiver(self.UpdatedHandler, 
+			dbus_interface = "org.openbmc.Flash", signal_name = "Updated", path_keyword='path')
+
+
+	def UpdatedHandler(self,path = None):
+		print "Flash update finish: "+path
+		for flash in self.dbus_objects:
+			if (path == self.dbus_objects[flash]['object_name']):
+				self.status[flash] = 'OK'		
 
 	def getInterface(self,name):
 		o = self.dbus_objects[name]
@@ -40,20 +49,31 @@ class FlashManagerObject(dbus.service.Object):
 		return dbus.Interface(obj,o['interface_name'])
 
 	@dbus.service.method(DBUS_NAME,
+		in_signature='', out_signature='a{ss}')
+	def getStatus(self):
+		return self.status
+
+	@dbus.service.method(DBUS_NAME,
 		in_signature='sss', out_signature='')
 	def updateFromTftp(self,flash,url,filename):
 		if (self.dbus_objects.has_key(flash) == False):
-			print "Error: Not a valid flash device: "+flash	
+			print "ERROR FlashManager: Not a valid flash device: "+flash	
 			return
 		try:
+			## need to make download async
+			self.status[flash]="DOWNLOADING"
+			filename = str(filename)
 			client = tftpy.TftpClient(url, TFTP_PORT)
+			print "Downloading: "+filename+" from "+url
 			outfile = DOWNLOAD_DIR+"/"+filename
-			client.download(filename,outfile)		
+			client.download(filename,outfile)
 			intf = self.getInterface(flash)
+			self.status[flash]="FLASHING"
 			intf.update(outfile)
 					
 		except Exception as e:
-			print "ERROR: "+str(e)
+			print "ERROR FlashManager: "+str(e)
+			self.status="ERROR"
 	
 
 
