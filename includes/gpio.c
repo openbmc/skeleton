@@ -127,7 +127,8 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 	do {
 		struct stat st;
 		
-		sprintf(dev,"%s/gpio%d/direction",gpio->dev,gpio->num);
+		sprintf(dev,"%s/gpio%d/value",gpio->dev,gpio->num);
+		//check if gpio is exported, if not export
     		int result = stat(dev, &st);
     		if (result)
 		{
@@ -145,7 +146,12 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 				break;
 			}
 		}
-		sprintf(dev,"%s/gpio%d/direction",gpio->dev,gpio->num);
+		const char* file = "edge";
+		if (strcmp(gpio->direction,"in")==0 || strcmp(gpio->direction,"out")==0)
+		{
+			file = "direction";
+		}
+		sprintf(dev,"%s/gpio%d/%s",gpio->dev,gpio->num,file);
 		fd = open(dev,O_WRONLY);
 		if (fd == GPIO_ERROR) {
 			rc = GPIO_WRITE_ERROR;
@@ -158,16 +164,38 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 		}
 
 		close(fd);
-		rc = 0;
+		rc = GPIO_OK;
 	} while(0);
 
 	return rc;
 }
+
+
+
+
 char* get_gpio_dev(GPIO* gpio)
 {
 	char* buf;
 	sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
 	return buf;
+}
+
+int gpio_open_interrupt(GPIO* gpio, GIOFunc func, gpointer user_data)
+{
+	int rc = GPIO_OK;
+	char* buf;
+	sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
+	gpio->fd = open(buf, O_RDONLY | O_NONBLOCK );
+	if (gpio->fd == -1)
+	{
+		rc = GPIO_OPEN_ERROR;
+	}
+	else
+	{
+		GIOChannel* channel = g_io_channel_unix_new( gpio->fd );
+		guint id = g_io_add_watch( channel, G_IO_PRI, func, user_data );
+	}
+	return rc;
 }
 
 int gpio_open(GPIO* gpio)
@@ -176,6 +204,7 @@ int gpio_open(GPIO* gpio)
 	// open gpio for writing or reading
 	char buf[254];
 	int rc = 0;
+	gpio->fd = -1;
 	if (gpio->direction == NULL) {
 		return GPIO_OPEN_ERROR;
 	}

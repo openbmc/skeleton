@@ -25,6 +25,7 @@ typedef struct {
 int gpio_init(GDBusConnection*, GPIO*);
 void gpio_close(GPIO*);
 int  gpio_open(GPIO*);
+int gpio_open_interrupt(GPIO*, GIOFunc, gpointer);
 int gpio_write(GPIO*, uint8_t);
 int gpio_writec(GPIO*, char);
 int gpio_clock_cycle(GPIO*, int);
