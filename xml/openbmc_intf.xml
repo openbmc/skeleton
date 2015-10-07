@@ -135,8 +135,16 @@
 		<method name="update">
 			<arg name="filename" type="s" direction="in"/>
 		</method>
+		<method name="updateViaTftp">
+			<arg name="url" type="s" direction="in"/>
+			<arg name="filename" type="s" direction="in"/>
+		</method>
 		<method name="init"/>
 		<signal name="Updated"/>
+		<signal name="Download">
+			<arg name="url" type="s"/>
+			<arg name="filename" type="s"/>
+		</signal>
 	</interface>
 	<interface name="org.openbmc.Button">
 		<method name="isOn">

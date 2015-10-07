@@ -2,6 +2,8 @@
 OBJS    = objects/pflash/progress.o objects/pflash/ast-sf-ctrl.o
 OBJS	+= objects/pflash/libflash/libflash.o objects/pflash/libflash/libffs.o
 OBJS	+= objects/pflash/arm_io.o
+OBJS2   = progress.o ast-sf-ctrl.o libflash.o libffs.o arm_io.o
+OBJS3   = obj/progress.o obj/ast-sf-ctrl.o obj/libflash.o obj/libffs.o obj/arm_io.o
 LIBS = ./bin
 OFLAGS =-L$(LIBS) -lopenbmc_intf
 HOME = .
@@ -18,9 +20,13 @@ CFLAGS=$(shell pkg-config --libs --cflags gio-unix-2.0 glib-2.0)
 	$(CC) -c -o obj/$@ $< -L$(LIBS) -I$(HOME) -I$(HOME)/includes -I$(HOME)/objects/pflash $(CFLAGS)
 
 %.o: objects/pflash/%.c
-	$(CC) -c -o obj/$@ $< -I$(HOME) -I$(HOME)/objects/pflash $(CFLAGS)
+	$(CC) -c -o obj/$@ $< -I$(HOME) -I$(HOME)/objects/pflash  $(CFLAGS)
 
+%.o: objects/pflash/libflash/%.c
+	$(CC) -c -o obj/$@ $< -I$(HOME) -I$(HOME)/objects/pflash  $(CFLAGS)
 
+setup: 
+	mkdir obj
 
 libopenbmc_intf: openbmc_intf.o
 	$(CC) -shared -o bin/$@.so obj/openbmc_intf.o $(CFLAGS)
@@ -43,8 +49,8 @@ sensor_host_status: sensor_host_status_obj.o
 control_host: control_host_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/control_host_obj.o $(OFLAGS) $(CFLAGS)
 
-flash_bios: pflash.o flash_bios_obj.o
-	$(CC) -o bin/$@.exe obj/flash_bios_obj.o  $(OFLAGS)  $(OBJS)  $(CFLAGS)
+flash_bios:  $(OBJS2) pflash.o flash_bios_obj.o
+	$(CC) -o bin/$@.exe obj/flash_bios_obj.o $(OFLAGS)  $(OBJS3)  $(CFLAGS)
 
 fan: fan_generic_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/fan_generic_obj.o $(OFLAGS) $(CFLAGS)
@@ -65,4 +71,4 @@ pcie_slot_present: pcie_slot_present_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/pcie_slot_present_obj.o obj/gpio.o $(OFLAGS) $(CFLAGS)
 
 
-all: libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd
+all: setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd

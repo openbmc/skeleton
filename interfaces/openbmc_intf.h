@@ -2518,6 +2518,17 @@ struct _FlashIface
     GDBusMethodInvocation *invocation,
     const gchar *arg_filename);
 
+  gboolean (*handle_update_via_tftp) (
+    Flash *object,
+    GDBusMethodInvocation *invocation,
+    const gchar *arg_url,
+    const gchar *arg_filename);
+
+  void (*download) (
+    Flash *object,
+    const gchar *arg_url,
+    const gchar *arg_filename);
+
   void (*updated) (
     Flash *object);
 
@@ -2534,6 +2545,10 @@ void flash_complete_update (
     Flash *object,
     GDBusMethodInvocation *invocation);
 
+void flash_complete_update_via_tftp (
+    Flash *object,
+    GDBusMethodInvocation *invocation);
+
 void flash_complete_init (
     Flash *object,
     GDBusMethodInvocation *invocation);
@@ -2543,6 +2558,11 @@ void flash_complete_init (
 /* D-Bus signal emissions functions: */
 void flash_emit_updated (
     Flash *object);
+
+void flash_emit_download (
+    Flash *object,
+    const gchar *arg_url,
+    const gchar *arg_filename);
 
 
 
@@ -2561,6 +2581,26 @@ gboolean flash_call_update_finish (
 
 gboolean flash_call_update_sync (
     Flash *proxy,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GError **error);
+
+void flash_call_update_via_tftp (
+    Flash *proxy,
+    const gchar *arg_url,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean flash_call_update_via_tftp_finish (
+    Flash *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean flash_call_update_via_tftp_sync (
+    Flash *proxy,
+    const gchar *arg_url,
     const gchar *arg_filename,
     GCancellable *cancellable,
     GError **error);

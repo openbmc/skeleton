@@ -167,13 +167,13 @@ SYSTEM_CONFIG['org.openbmc.flash.Bios'] = {
 		'instances' : [	{ 'name' : 'Bios_0' } ]
 	}
 
-SYSTEM_CONFIG['org.openbmc.manager.Flash'] = {
+SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
 		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'monitor_process' : True,
-		'process_name' : 'flash_manager.py',
+		'process_name' : 'download_manager.py',
 		'heartbeat' : 'no',
-		'instances' : [	{ 'name' : 'FlashManager_0' } ]
+		'instances' : [	{ 'name' : 'DownloadManager_0' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {

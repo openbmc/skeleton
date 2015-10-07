@@ -18652,6 +18652,48 @@ static const _ExtendedGDBusMethodInfo _flash_method_info_update =
   FALSE
 };
 
+static const _ExtendedGDBusArgInfo _flash_method_info_update_via_tftp_IN_ARG_url =
+{
+  {
+    -1,
+    (gchar *) "url",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _flash_method_info_update_via_tftp_IN_ARG_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _flash_method_info_update_via_tftp_IN_ARG_pointers[] =
+{
+  &_flash_method_info_update_via_tftp_IN_ARG_url,
+  &_flash_method_info_update_via_tftp_IN_ARG_filename,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _flash_method_info_update_via_tftp =
+{
+  {
+    -1,
+    (gchar *) "updateViaTftp",
+    (GDBusArgInfo **) &_flash_method_info_update_via_tftp_IN_ARG_pointers,
+    NULL,
+    NULL
+  },
+  "handle-update-via-tftp",
+  FALSE
+};
+
 static const _ExtendedGDBusMethodInfo _flash_method_info_init =
 {
   {
@@ -18668,6 +18710,7 @@ static const _ExtendedGDBusMethodInfo _flash_method_info_init =
 static const _ExtendedGDBusMethodInfo * const _flash_method_info_pointers[] =
 {
   &_flash_method_info_update,
+  &_flash_method_info_update_via_tftp,
   &_flash_method_info_init,
   NULL
 };
@@ -18683,9 +18726,50 @@ static const _ExtendedGDBusSignalInfo _flash_signal_info_updated =
   "updated"
 };
 
+static const _ExtendedGDBusArgInfo _flash_signal_info_download_ARG_url =
+{
+  {
+    -1,
+    (gchar *) "url",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _flash_signal_info_download_ARG_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _flash_signal_info_download_ARG_pointers[] =
+{
+  &_flash_signal_info_download_ARG_url,
+  &_flash_signal_info_download_ARG_filename,
+  NULL
+};
+
+static const _ExtendedGDBusSignalInfo _flash_signal_info_download =
+{
+  {
+    -1,
+    (gchar *) "Download",
+    (GDBusArgInfo **) &_flash_signal_info_download_ARG_pointers,
+    NULL
+  },
+  "download"
+};
+
 static const _ExtendedGDBusSignalInfo * const _flash_signal_info_pointers[] =
 {
   &_flash_signal_info_updated,
+  &_flash_signal_info_download,
   NULL
 };
 
@@ -18745,6 +18829,8 @@ flash_override_properties (GObjectClass *klass, guint property_id_begin)
  * @parent_iface: The parent interface.
  * @handle_init: Handler for the #Flash::handle-init signal.
  * @handle_update: Handler for the #Flash::handle-update signal.
+ * @handle_update_via_tftp: Handler for the #Flash::handle-update-via-tftp signal.
+ * @download: Handler for the #Flash::download signal.
  * @updated: Handler for the #Flash::updated signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Flash.top_of_page">org.openbmc.Flash</link>.
@@ -18779,6 +18865,30 @@ flash_default_init (FlashIface *iface)
     G_TYPE_BOOLEAN,
     2,
     G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING);
+
+  /**
+   * Flash::handle-update-via-tftp:
+   * @object: A #Flash.
+   * @invocation: A #GDBusMethodInvocation.
+   * @arg_url: Argument passed by remote caller.
+   * @arg_filename: Argument passed by remote caller.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Flash.updateViaTftp">updateViaTftp()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_complete_update_via_tftp() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-update-via-tftp",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashIface, handle_update_via_tftp),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    3,
+    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING, G_TYPE_STRING);
 
   /**
    * Flash::handle-init:
@@ -18821,6 +18931,26 @@ flash_default_init (FlashIface *iface)
     G_TYPE_NONE,
     0);
 
+  /**
+   * Flash::download:
+   * @object: A #Flash.
+   * @arg_url: Argument.
+   * @arg_filename: Argument.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Flash.Download">"Download"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("download",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashIface, download),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    2, G_TYPE_STRING, G_TYPE_STRING);
+
 }
 
 /**
@@ -18834,6 +18964,23 @@ flash_emit_updated (
     Flash *object)
 {
   g_signal_emit_by_name (object, "updated");
+}
+
+/**
+ * flash_emit_download:
+ * @object: A #Flash.
+ * @arg_url: Argument to pass with the signal.
+ * @arg_filename: Argument to pass with the signal.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Flash.Download">"Download"</link> D-Bus signal.
+ */
+void
+flash_emit_download (
+    Flash *object,
+    const gchar *arg_url,
+    const gchar *arg_filename)
+{
+  g_signal_emit_by_name (object, "download", arg_url, arg_filename);
 }
 
 /**
@@ -18920,6 +19067,110 @@ flash_call_update_sync (
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
     "update",
     g_variant_new ("(s)",
+                   arg_filename),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_call_update_via_tftp:
+ * @proxy: A #FlashProxy.
+ * @arg_url: Argument to pass with the method invocation.
+ * @arg_filename: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.updateViaTftp">updateViaTftp()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call flash_call_update_via_tftp_finish() to get the result of the operation.
+ *
+ * See flash_call_update_via_tftp_sync() for the synchronous, blocking version of this method.
+ */
+void
+flash_call_update_via_tftp (
+    Flash *proxy,
+    const gchar *arg_url,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "updateViaTftp",
+    g_variant_new ("(ss)",
+                   arg_url,
+                   arg_filename),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * flash_call_update_via_tftp_finish:
+ * @proxy: A #FlashProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_call_update_via_tftp().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with flash_call_update_via_tftp().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_call_update_via_tftp_finish (
+    Flash *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_call_update_via_tftp_sync:
+ * @proxy: A #FlashProxy.
+ * @arg_url: Argument to pass with the method invocation.
+ * @arg_filename: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.updateViaTftp">updateViaTftp()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See flash_call_update_via_tftp() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_call_update_via_tftp_sync (
+    Flash *proxy,
+    const gchar *arg_url,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "updateViaTftp",
+    g_variant_new ("(ss)",
+                   arg_url,
                    arg_filename),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -19037,6 +19288,24 @@ _out:
  */
 void
 flash_complete_update (
+    Flash *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
+}
+
+/**
+ * flash_complete_update_via_tftp:
+ * @object: A #Flash.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Flash.updateViaTftp">updateViaTftp()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+flash_complete_update_via_tftp (
     Flash *object,
     GDBusMethodInvocation *invocation)
 {
@@ -19639,6 +19908,32 @@ _flash_on_signal_updated (
   g_list_free_full (connections, g_object_unref);
 }
 
+static void
+_flash_on_signal_download (
+    Flash *object,
+    const gchar *arg_url,
+    const gchar *arg_filename)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("(ss)",
+                   arg_url,
+                   arg_filename));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Flash", "Download",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
 static void flash_skeleton_iface_init (FlashIface *iface);
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
 G_DEFINE_TYPE_WITH_CODE (FlashSkeleton, flash_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
@@ -19699,6 +19994,7 @@ static void
 flash_skeleton_iface_init (FlashIface *iface)
 {
   iface->updated = _flash_on_signal_updated;
+  iface->download = _flash_on_signal_download;
 }
 
 /**
