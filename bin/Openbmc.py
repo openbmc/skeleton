@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 BUS_PREFIX = 'org.openbmc'
 OBJ_PREFIX = "/org/openbmc"
 GPIO_DEV = '/sys/class/gpio'
-
+BUS = "system"
 
 FRU_TYPES = {
 	'SYSTEM' : 0,
@@ -47,6 +47,14 @@ BASE_TO_DBUS_TYPES = {
 	'long'  : 'dbus.Int64',
 	'bool'  : 'dbus.Boolean'
 }
+
+def getDBus():
+	bus = None
+	if (BUS == "session"):
+		bus = dbus.SessionBus()
+	else:
+		bus = dbus.SystemBus()
+	return bus
 
 
 def getManagerInterface(bus,manager):

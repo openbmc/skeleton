@@ -6,6 +6,7 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
+import Openbmc
 
 DBUS_NAME = 'org.openbmc.control.Chassis'
 OBJ_NAME = '/org/openbmc/control/'+sys.argv[1]
@@ -36,9 +37,6 @@ class ChassisControlObject(dbus.service.Object):
 		#self.power_sequence = 0
 		self.reboot = 0	
 		self.last_power_state = 0
-
-		bus = dbus.SessionBus()
-
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed", 
@@ -150,7 +148,7 @@ class ChassisControlObject(dbus.service.Object):
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-    bus = dbus.SessionBus()
+    bus = Openbmc.getDBus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = ChassisControlObject(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()

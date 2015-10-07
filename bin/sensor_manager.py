@@ -88,7 +88,7 @@ class SensorManager(dbus.service.Object):
 				
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = dbus.SessionBus()
+    bus = Openbmc.getDBus()
     name = dbus.service.BusName(DBUS_NAME,bus)
     obj = SensorManager(bus,OBJ_NAME)
     mainloop = gobject.MainLoop()

@@ -17,7 +17,6 @@ DOWNLOAD_DIR = '/tmp'
 class DownloadManagerObject(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
-		bus = dbus.SessionBus()
 		bus.add_signal_receiver(self.DownloadHandler, 
 			dbus_interface = "org.openbmc.Flash", signal_name = "Download")
 
@@ -47,8 +46,7 @@ class DownloadManagerObject(dbus.service.Object):
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-
-    bus = dbus.SessionBus()
+    bus = Openbmc.getDBus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = DownloadManagerObject(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()

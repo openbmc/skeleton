@@ -39,7 +39,8 @@ def prettyPrint(data):
 
 if __name__ == '__main__':
 	#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
- 	bus = dbus.SessionBus()
+	bus = Openbmc.getDBus()
+
 	#name = dbus.service.BusName(DBUS_NAME,bus)
 	#mainloop = gobject.MainLoop()
 

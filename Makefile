@@ -28,6 +28,9 @@ CFLAGS=$(shell pkg-config --libs --cflags gio-unix-2.0 glib-2.0)
 setup: 
 	mkdir obj
 
+clean:  
+	rm -rf obj
+
 libopenbmc_intf: openbmc_intf.o
 	$(CC) -shared -o bin/$@.so obj/openbmc_intf.o $(CFLAGS)
 
@@ -71,4 +74,4 @@ pcie_slot_present: pcie_slot_present_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/pcie_slot_present_obj.o obj/gpio.o $(OFLAGS) $(CFLAGS)
 
 
-all: setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd
+all: clean setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd pcie_slot_present

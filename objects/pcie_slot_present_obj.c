@@ -134,7 +134,7 @@ main (gint argc, gchar *argv[])
 	loop = g_main_loop_new (NULL, FALSE);
 
 	error = NULL;
-	c = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	c = g_bus_get_sync (DBUS_TYPE, NULL, &error);
 
 	error = NULL;
 	sys_proxy = g_dbus_proxy_new_sync (c,

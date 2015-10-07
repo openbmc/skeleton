@@ -24,7 +24,12 @@ FRU_PATH = System.FRU_PATH
 
 class Inventory(dbus.service.Object):
 	def __init__(self,bus,name):
+		global FRU_PATH
 		dbus.service.Object.__init__(self,bus,name)
+		if not os.path.exists(FRU_PATH):
+   			os.makedirs(FRU_PATH)
+
+
 		self.objects = [ ]
 
 	def addItem(self,item):
@@ -110,14 +115,14 @@ class InventoryItem(dbus.service.Object):
 				for k in data2.keys():
 					self.item[k] = data2[k]
 			except Exception as e:
-				print "ERROR: " +str(e)
+				print "No cache file found: " +str(e)
 			finally:
 				p.close()
 
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = dbus.SessionBus()
+    bus = Openbmc.getDBus()
     name = dbus.service.BusName(DBUS_NAME,bus)
     mainloop = gobject.MainLoop()
     obj_parent = Inventory(bus, '/org/openbmc/managers/Inventory')

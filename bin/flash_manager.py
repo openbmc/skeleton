@@ -32,7 +32,6 @@ class FlashManagerObject(dbus.service.Object):
 				'interface_name' : 'org.openbmc.Flash'
 			}
 		}
-		bus = dbus.SessionBus()
 		bus.add_signal_receiver(self.UpdatedHandler, 
 			dbus_interface = "org.openbmc.Flash", signal_name = "Updated", path_keyword='path')
 
@@ -79,8 +78,7 @@ class FlashManagerObject(dbus.service.Object):
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-
-    bus = dbus.SessionBus()
+    bus = Openbmc.getDBus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = FlashManagerObject(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()

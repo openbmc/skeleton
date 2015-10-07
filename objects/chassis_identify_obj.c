@@ -133,7 +133,7 @@ main (gint argc, gchar *argv[])
   guint id;
   loop = g_main_loop_new (NULL, FALSE);
 
-  id = g_bus_own_name (G_BUS_TYPE_SESSION,
+  id = g_bus_own_name (DBUS_TYPE,
                        dbus_name,
                        G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
                        G_BUS_NAME_OWNER_FLAGS_REPLACE,
