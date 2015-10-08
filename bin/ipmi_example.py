@@ -92,7 +92,7 @@ if __name__ == '__main__':
 	elif (cmd == "updatefw"):
 		obj = bus.get_object('org.openbmc.flash.Bios','/org/openbmc/flash/Bios_0')
 		intf = dbus.Interface(obj,"org.openbmc.Flash")
-		intf.updateViaTftp("bakerstreet.aus.stglabs.ibm.com","firmware.bin")
+		intf.updateViaTftp(sys.argv[2],sys.argv[3])
 	elif (cmd == "fwstatus"):
 		intf = Openbmc.getManagerInterface(bus,"Flash")
 		status = intf.getStatus()
