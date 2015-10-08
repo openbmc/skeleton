@@ -93,7 +93,7 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'power_control.exe',
-		'heartbeat' : 'yes',
+		'heartbeat' : 'no',
 		'instances' : [	
 			{
 				'name' : 'SystemPower_0',
@@ -115,7 +115,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensor_ambient.exe',
-		'heartbeat' : 'yes',
+		'heartbeat' : 'no',
 		'instances' : [	
 			{
 				'name' : 'FrontChassis',
