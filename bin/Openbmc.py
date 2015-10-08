@@ -48,6 +48,12 @@ BASE_TO_DBUS_TYPES = {
 	'bool'  : 'dbus.Boolean'
 }
 
+def getSystemName():
+	#use filename as system name, strip off path and ext
+	parts = __file__.replace('.pyc','').replace('.py','').split('/')
+	return parts[len(parts)-1]
+
+
 def getDBus():
 	bus = None
 	if (BUS == "session"):

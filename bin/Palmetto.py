@@ -8,9 +8,7 @@ CACHE_PATH = HOME_PATH+'cache/'
 FRU_PATH = CACHE_PATH+'frus/'
 FLASH_DOWNLOAD_PATH = "/tmp"
 
-#use filename as system name, strip off path and ext
-parts = __file__.replace('.pyc','').split('/')
-SYSTEM_NAME = parts[len(parts)-1]
+SYSTEM_NAME = "Palmetto"
 
 SYSTEM_STATES = [
 	'INIT',
