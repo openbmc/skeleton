@@ -2,6 +2,7 @@
 #define __OPENBMC_H__
 
 #include <stdint.h>
+#include <stdio.h>
 
 //select which dbus
 #define DBUS_TYPE  G_BUS_TYPE_SYSTEM
