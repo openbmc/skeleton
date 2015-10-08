@@ -74,4 +74,4 @@ pcie_slot_present: pcie_slot_present_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/pcie_slot_present_obj.o obj/gpio.o $(OFLAGS) $(CFLAGS)
 
 
-all: clean setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd pcie_slot_present
+all: clean setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd pcie_slot_present flash_bios
