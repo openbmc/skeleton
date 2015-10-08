@@ -40,6 +40,8 @@ class SystemManager(dbus.service.Object):
 		self.system_states = {}
 		self.bus_name_lookup = {}
 
+		self.bin_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+
 		for bus_name in System.SYSTEM_CONFIG.keys():
 			sys_state = System.SYSTEM_CONFIG[bus_name]['system_state']
 			if (self.system_states.has_key(sys_state) == False):
@@ -107,7 +109,7 @@ class SystemManager(dbus.service.Object):
 	
 	def start_process(self,bus_name):
 		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
-			process_name = System.BIN_PATH+System.SYSTEM_CONFIG[bus_name]['process_name']
+			process_name = self.bin_path+"/"+System.SYSTEM_CONFIG[bus_name]['process_name']
 			cmdline = [ ]
 			cmdline.append(process_name)
 			System.SYSTEM_CONFIG[bus_name]['popen'] = None
@@ -158,11 +160,12 @@ class SystemManager(dbus.service.Object):
 		r = True
 		if (self.current_state == ""):
 			return True
-		for bus_name in self.system_states[self.current_state]:
-			if (System.SYSTEM_CONFIG[bus_name].has_key('popen') == False and
-				System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
-				r = False
-				break;	
+		if (self.system_states.has_key(self.current_state)):
+			for bus_name in self.system_states[self.current_state]:
+				if (System.SYSTEM_CONFIG[bus_name].has_key('popen') == False and
+					System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
+					r = False
+					break;	
 		return r
 	
 
