@@ -25,6 +25,7 @@ static const gchar* dbus_name        = "org.openbmc.control.Bmc";
 #define SCU_BASE                0x1e780000
 #define UART_BASE               0x1e783000
 #define COM_BASE                0x1e789000
+#define COM_BASE2               0x1e789100
 #define GPIO_BASE		0x1e6e2000
 
 static GDBusObjectManagerServer *manager = NULL;
@@ -89,6 +90,10 @@ void reg_init()
 	devmem(bmcreg+0x88,0x01C000FF);
 	devmem(bmcreg+0x8c,0xC1C000FF);
 	devmem(bmcreg+0x90,0x003FA009);
+
+	bmcreg = memmap(mem_fd,COM_BASE);
+	devmem(bmcreg+0x170,0x00000042);
+	devmem(bmcreg+0x174,0x00004000);
 
 
 	close(mem_fd);
