@@ -4,9 +4,13 @@ import dbus
 import Openbmc
 
 HOME_PATH = './'
-BIN_PATH = HOME_PATH+'bin/'
 CACHE_PATH = HOME_PATH+'cache/'
 FRU_PATH = CACHE_PATH+'frus/'
+FLASH_DOWNLOAD_PATH = "/tmp"
+
+#use filename as system name, strip off path and ext
+parts = __file__.replace('.pyc','').split('/')
+SYSTEM_NAME = parts[len(parts)-1]
 
 SYSTEM_STATES = [
 	'INIT',
@@ -45,10 +49,10 @@ SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
 		'monitor_process' : True,
 		'process_name' : 'inventory_items.py',
 		'heartbeat' : 'no',
-		'instances' : [	{ 'name' : 'Palmetto' } ]
+		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
-		'system_state' : 'POWERING_ON',
+		'system_state' : 'POWERED_ON',
 		'start_process' : True,
 		'monitor_process' : False,
 		'process_name' : 'pcie_slot_present.exe',
@@ -63,7 +67,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		'monitor_process' : True,
 		'process_name' : 'sensor_manager.py',
 		'heartbeat' : 'no',
-		'instances' : [ { 'name' : 'Palmetto' } ]
+		'instances' : [ { 'name' : SYSTEM_NAME } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
@@ -173,7 +177,7 @@ SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
 		'monitor_process' : True,
 		'process_name' : 'download_manager.py',
 		'heartbeat' : 'no',
-		'instances' : [	{ 'name' : 'DownloadManager_0' } ]
+		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {
@@ -352,14 +356,14 @@ ID_LOOKUP = {
 }
 
 GPIO_CONFIG = {}
-GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 4, 'direction': 'out' }
-GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 5, 'direction': 'out' }
-GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 24, 'direction': 'out' }
-GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 33, 'direction': 'out'  }
-GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 6, 'direction': 'out'  }
-GPIO_CONFIG['PGOOD']      = { 'gpio_num': 23, 'direction': 'in'  }
-GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 34, 'direction': 'out' }
-GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 32, 'direction': 'falling' }
+GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 484, 'direction': 'out' }
+GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 485, 'direction': 'out' }
+GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 504, 'direction': 'out' }
+GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 449, 'direction': 'out'  }
+GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 486, 'direction': 'out'  }
+GPIO_CONFIG['PGOOD']      = { 'gpio_num': 503, 'direction': 'in'  }
+GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 365, 'direction': 'out' }
+GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 448, 'direction': 'falling' }
 GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 104, 'direction': 'in' }
 GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 105, 'direction': 'in' }
 GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_num': 106, 'direction': 'in' }
