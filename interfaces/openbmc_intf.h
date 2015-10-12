@@ -1348,6 +1348,227 @@ Process *process_skeleton_new (void);
 
 
 /* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.SharedResource */
+
+#define TYPE_SHARED_RESOURCE (shared_resource_get_type ())
+#define SHARED_RESOURCE(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SHARED_RESOURCE, SharedResource))
+#define IS_SHARED_RESOURCE(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SHARED_RESOURCE))
+#define SHARED_RESOURCE_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_SHARED_RESOURCE, SharedResourceIface))
+
+struct _SharedResource;
+typedef struct _SharedResource SharedResource;
+typedef struct _SharedResourceIface SharedResourceIface;
+
+struct _SharedResourceIface
+{
+  GTypeInterface parent_iface;
+
+
+  gboolean (*handle_is_locked) (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation);
+
+  gboolean (*handle_lock) (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation,
+    const gchar *arg_name);
+
+  gboolean (*handle_unlock) (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation);
+
+  gboolean  (*get_lock) (SharedResource *object);
+
+  const gchar * (*get_name) (SharedResource *object);
+
+};
+
+GType shared_resource_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *shared_resource_interface_info (void);
+guint shared_resource_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus method call completion functions: */
+void shared_resource_complete_lock (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation);
+
+void shared_resource_complete_unlock (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation);
+
+void shared_resource_complete_is_locked (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation,
+    gboolean lock,
+    const gchar *name);
+
+
+
+/* D-Bus method calls: */
+void shared_resource_call_lock (
+    SharedResource *proxy,
+    const gchar *arg_name,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean shared_resource_call_lock_finish (
+    SharedResource *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean shared_resource_call_lock_sync (
+    SharedResource *proxy,
+    const gchar *arg_name,
+    GCancellable *cancellable,
+    GError **error);
+
+void shared_resource_call_unlock (
+    SharedResource *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean shared_resource_call_unlock_finish (
+    SharedResource *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean shared_resource_call_unlock_sync (
+    SharedResource *proxy,
+    GCancellable *cancellable,
+    GError **error);
+
+void shared_resource_call_is_locked (
+    SharedResource *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean shared_resource_call_is_locked_finish (
+    SharedResource *proxy,
+    gboolean *out_lock,
+    gchar **out_name,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean shared_resource_call_is_locked_sync (
+    SharedResource *proxy,
+    gboolean *out_lock,
+    gchar **out_name,
+    GCancellable *cancellable,
+    GError **error);
+
+
+
+/* D-Bus property accessors: */
+gboolean shared_resource_get_lock (SharedResource *object);
+void shared_resource_set_lock (SharedResource *object, gboolean value);
+
+const gchar *shared_resource_get_name (SharedResource *object);
+gchar *shared_resource_dup_name (SharedResource *object);
+void shared_resource_set_name (SharedResource *object, const gchar *value);
+
+
+/* ---- */
+
+#define TYPE_SHARED_RESOURCE_PROXY (shared_resource_proxy_get_type ())
+#define SHARED_RESOURCE_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SHARED_RESOURCE_PROXY, SharedResourceProxy))
+#define SHARED_RESOURCE_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SHARED_RESOURCE_PROXY, SharedResourceProxyClass))
+#define SHARED_RESOURCE_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SHARED_RESOURCE_PROXY, SharedResourceProxyClass))
+#define IS_SHARED_RESOURCE_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SHARED_RESOURCE_PROXY))
+#define IS_SHARED_RESOURCE_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SHARED_RESOURCE_PROXY))
+
+typedef struct _SharedResourceProxy SharedResourceProxy;
+typedef struct _SharedResourceProxyClass SharedResourceProxyClass;
+typedef struct _SharedResourceProxyPrivate SharedResourceProxyPrivate;
+
+struct _SharedResourceProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  SharedResourceProxyPrivate *priv;
+};
+
+struct _SharedResourceProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType shared_resource_proxy_get_type (void) G_GNUC_CONST;
+
+void shared_resource_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+SharedResource *shared_resource_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+SharedResource *shared_resource_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void shared_resource_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+SharedResource *shared_resource_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+SharedResource *shared_resource_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_SHARED_RESOURCE_SKELETON (shared_resource_skeleton_get_type ())
+#define SHARED_RESOURCE_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_SHARED_RESOURCE_SKELETON, SharedResourceSkeleton))
+#define SHARED_RESOURCE_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_SHARED_RESOURCE_SKELETON, SharedResourceSkeletonClass))
+#define SHARED_RESOURCE_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_SHARED_RESOURCE_SKELETON, SharedResourceSkeletonClass))
+#define IS_SHARED_RESOURCE_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_SHARED_RESOURCE_SKELETON))
+#define IS_SHARED_RESOURCE_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_SHARED_RESOURCE_SKELETON))
+
+typedef struct _SharedResourceSkeleton SharedResourceSkeleton;
+typedef struct _SharedResourceSkeletonClass SharedResourceSkeletonClass;
+typedef struct _SharedResourceSkeletonPrivate SharedResourceSkeletonPrivate;
+
+struct _SharedResourceSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  SharedResourceSkeletonPrivate *priv;
+};
+
+struct _SharedResourceSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType shared_resource_skeleton_get_type (void) G_GNUC_CONST;
+
+SharedResource *shared_resource_skeleton_new (void);
+
+
+/* ------------------------------------------------------------------------ */
 /* Declarations for org.openbmc.Control */
 
 #define TYPE_CONTROL (control_get_type ())
@@ -2509,6 +2730,7 @@ struct _FlashIface
   GTypeInterface parent_iface;
 
 
+
   gboolean (*handle_init) (
     Flash *object,
     GDBusMethodInvocation *invocation);
@@ -2523,6 +2745,14 @@ struct _FlashIface
     GDBusMethodInvocation *invocation,
     const gchar *arg_url,
     const gchar *arg_filename);
+
+  const gchar * (*get_filename) (Flash *object);
+
+  const gchar * (*get_flasher_instance) (Flash *object);
+
+  const gchar * (*get_flasher_name) (Flash *object);
+
+  const gchar * (*get_flasher_path) (Flash *object);
 
   void (*download) (
     Flash *object,
@@ -2623,6 +2853,24 @@ gboolean flash_call_init_sync (
 
 
 
+/* D-Bus property accessors: */
+const gchar *flash_get_filename (Flash *object);
+gchar *flash_dup_filename (Flash *object);
+void flash_set_filename (Flash *object, const gchar *value);
+
+const gchar *flash_get_flasher_path (Flash *object);
+gchar *flash_dup_flasher_path (Flash *object);
+void flash_set_flasher_path (Flash *object, const gchar *value);
+
+const gchar *flash_get_flasher_name (Flash *object);
+gchar *flash_dup_flasher_name (Flash *object);
+void flash_set_flasher_name (Flash *object, const gchar *value);
+
+const gchar *flash_get_flasher_instance (Flash *object);
+gchar *flash_dup_flasher_instance (Flash *object);
+void flash_set_flasher_instance (Flash *object, const gchar *value);
+
+
 /* ---- */
 
 #define TYPE_FLASH_PROXY (flash_proxy_get_type ())
@@ -2717,6 +2965,207 @@ struct _FlashSkeletonClass
 GType flash_skeleton_get_type (void) G_GNUC_CONST;
 
 Flash *flash_skeleton_new (void);
+
+
+/* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.FlashControl */
+
+#define TYPE_FLASH_CONTROL (flash_control_get_type ())
+#define FLASH_CONTROL(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_FLASH_CONTROL, FlashControl))
+#define IS_FLASH_CONTROL(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_FLASH_CONTROL))
+#define FLASH_CONTROL_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_FLASH_CONTROL, FlashControlIface))
+
+struct _FlashControl;
+typedef struct _FlashControl FlashControl;
+typedef struct _FlashControlIface FlashControlIface;
+
+struct _FlashControlIface
+{
+  GTypeInterface parent_iface;
+
+
+
+  gboolean (*handle_flash) (
+    FlashControl *object,
+    GDBusMethodInvocation *invocation,
+    const gchar *arg_type,
+    const gchar *arg_filename);
+
+  const gchar * (*get_filename) (FlashControl *object);
+
+  const gchar * (*get_type_) (FlashControl *object);
+
+  void (*done) (
+    FlashControl *object,
+    const gchar *arg_filename);
+
+  void (*error) (
+    FlashControl *object,
+    const gchar *arg_filename);
+
+  void (*progress) (
+    FlashControl *object,
+    const gchar *arg_filename,
+    guchar arg_progress);
+
+};
+
+GType flash_control_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *flash_control_interface_info (void);
+guint flash_control_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus method call completion functions: */
+void flash_control_complete_flash (
+    FlashControl *object,
+    GDBusMethodInvocation *invocation);
+
+
+
+/* D-Bus signal emissions functions: */
+void flash_control_emit_done (
+    FlashControl *object,
+    const gchar *arg_filename);
+
+void flash_control_emit_error (
+    FlashControl *object,
+    const gchar *arg_filename);
+
+void flash_control_emit_progress (
+    FlashControl *object,
+    const gchar *arg_filename,
+    guchar arg_progress);
+
+
+
+/* D-Bus method calls: */
+void flash_control_call_flash (
+    FlashControl *proxy,
+    const gchar *arg_type,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean flash_control_call_flash_finish (
+    FlashControl *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean flash_control_call_flash_sync (
+    FlashControl *proxy,
+    const gchar *arg_type,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GError **error);
+
+
+
+/* D-Bus property accessors: */
+const gchar *flash_control_get_filename (FlashControl *object);
+gchar *flash_control_dup_filename (FlashControl *object);
+void flash_control_set_filename (FlashControl *object, const gchar *value);
+
+const gchar *flash_control_get_type_ (FlashControl *object);
+gchar *flash_control_dup_type_ (FlashControl *object);
+void flash_control_set_type_ (FlashControl *object, const gchar *value);
+
+
+/* ---- */
+
+#define TYPE_FLASH_CONTROL_PROXY (flash_control_proxy_get_type ())
+#define FLASH_CONTROL_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_FLASH_CONTROL_PROXY, FlashControlProxy))
+#define FLASH_CONTROL_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_FLASH_CONTROL_PROXY, FlashControlProxyClass))
+#define FLASH_CONTROL_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_FLASH_CONTROL_PROXY, FlashControlProxyClass))
+#define IS_FLASH_CONTROL_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_FLASH_CONTROL_PROXY))
+#define IS_FLASH_CONTROL_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_FLASH_CONTROL_PROXY))
+
+typedef struct _FlashControlProxy FlashControlProxy;
+typedef struct _FlashControlProxyClass FlashControlProxyClass;
+typedef struct _FlashControlProxyPrivate FlashControlProxyPrivate;
+
+struct _FlashControlProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  FlashControlProxyPrivate *priv;
+};
+
+struct _FlashControlProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType flash_control_proxy_get_type (void) G_GNUC_CONST;
+
+void flash_control_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+FlashControl *flash_control_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+FlashControl *flash_control_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void flash_control_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+FlashControl *flash_control_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+FlashControl *flash_control_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_FLASH_CONTROL_SKELETON (flash_control_skeleton_get_type ())
+#define FLASH_CONTROL_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_FLASH_CONTROL_SKELETON, FlashControlSkeleton))
+#define FLASH_CONTROL_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_FLASH_CONTROL_SKELETON, FlashControlSkeletonClass))
+#define FLASH_CONTROL_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_FLASH_CONTROL_SKELETON, FlashControlSkeletonClass))
+#define IS_FLASH_CONTROL_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_FLASH_CONTROL_SKELETON))
+#define IS_FLASH_CONTROL_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_FLASH_CONTROL_SKELETON))
+
+typedef struct _FlashControlSkeleton FlashControlSkeleton;
+typedef struct _FlashControlSkeletonClass FlashControlSkeletonClass;
+typedef struct _FlashControlSkeletonPrivate FlashControlSkeletonPrivate;
+
+struct _FlashControlSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  FlashControlSkeletonPrivate *priv;
+};
+
+struct _FlashControlSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType flash_control_skeleton_get_type (void) G_GNUC_CONST;
+
+FlashControl *flash_control_skeleton_new (void);
 
 
 /* ------------------------------------------------------------------------ */
@@ -3394,6 +3843,7 @@ SensorThreshold *object_get_sensor_threshold (Object *object);
 SensorI2c *object_get_sensor_i2c (Object *object);
 SensorMatch *object_get_sensor_match (Object *object);
 Process *object_get_process (Object *object);
+SharedResource *object_get_shared_resource (Object *object);
 Control *object_get_control (Object *object);
 ControlBmc *object_get_control_bmc (Object *object);
 ControlHost *object_get_control_host (Object *object);
@@ -3401,6 +3851,7 @@ ControlPower *object_get_control_power (Object *object);
 Watchdog *object_get_watchdog (Object *object);
 EventLog *object_get_event_log (Object *object);
 Flash *object_get_flash (Object *object);
+FlashControl *object_get_flash_control (Object *object);
 Button *object_get_button (Object *object);
 Led *object_get_led (Object *object);
 HostIpmi *object_get_host_ipmi (Object *object);
@@ -3411,6 +3862,7 @@ SensorThreshold *object_peek_sensor_threshold (Object *object);
 SensorI2c *object_peek_sensor_i2c (Object *object);
 SensorMatch *object_peek_sensor_match (Object *object);
 Process *object_peek_process (Object *object);
+SharedResource *object_peek_shared_resource (Object *object);
 Control *object_peek_control (Object *object);
 ControlBmc *object_peek_control_bmc (Object *object);
 ControlHost *object_peek_control_host (Object *object);
@@ -3418,6 +3870,7 @@ ControlPower *object_peek_control_power (Object *object);
 Watchdog *object_peek_watchdog (Object *object);
 EventLog *object_peek_event_log (Object *object);
 Flash *object_peek_flash (Object *object);
+FlashControl *object_peek_flash_control (Object *object);
 Button *object_peek_button (Object *object);
 Led *object_peek_led (Object *object);
 HostIpmi *object_peek_host_ipmi (Object *object);
@@ -3480,6 +3933,7 @@ void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThresho
 void object_skeleton_set_sensor_i2c (ObjectSkeleton *object, SensorI2c *interface_);
 void object_skeleton_set_sensor_match (ObjectSkeleton *object, SensorMatch *interface_);
 void object_skeleton_set_process (ObjectSkeleton *object, Process *interface_);
+void object_skeleton_set_shared_resource (ObjectSkeleton *object, SharedResource *interface_);
 void object_skeleton_set_control (ObjectSkeleton *object, Control *interface_);
 void object_skeleton_set_control_bmc (ObjectSkeleton *object, ControlBmc *interface_);
 void object_skeleton_set_control_host (ObjectSkeleton *object, ControlHost *interface_);
@@ -3487,6 +3941,7 @@ void object_skeleton_set_control_power (ObjectSkeleton *object, ControlPower *in
 void object_skeleton_set_watchdog (ObjectSkeleton *object, Watchdog *interface_);
 void object_skeleton_set_event_log (ObjectSkeleton *object, EventLog *interface_);
 void object_skeleton_set_flash (ObjectSkeleton *object, Flash *interface_);
+void object_skeleton_set_flash_control (ObjectSkeleton *object, FlashControl *interface_);
 void object_skeleton_set_button (ObjectSkeleton *object, Button *interface_);
 void object_skeleton_set_led (ObjectSkeleton *object, Led *interface_);
 void object_skeleton_set_host_ipmi (ObjectSkeleton *object, HostIpmi *interface_);

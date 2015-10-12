@@ -23,13 +23,13 @@ class DownloadManagerObject(dbus.service.Object):
 		bus.add_signal_receiver(self.DownloadHandler, 
 			dbus_interface = "org.openbmc.Flash", signal_name = "Download")
 
-	@dbus.service.signal(DBUS_NAME,signature='s')
-	def DownloadComplete(self,outfile):
+	@dbus.service.signal(DBUS_NAME,signature='ss')
+	def DownloadComplete(self,outfile,filename):
 		print "Download Complete: "+outfile
 		return outfile
 
-	@dbus.service.signal(DBUS_NAME)
-	def DownloadError(self):
+	@dbus.service.signal(DBUS_NAME,signature='s')
+	def DownloadError(self,filename):
 		pass
 
 	def DownloadHandler(self,url,filename):
@@ -39,11 +39,11 @@ class DownloadManagerObject(dbus.service.Object):
 			print "Downloading: "+filename+" from "+url
 			outfile = System.FLASH_DOWNLOAD_PATH+"/"+filename
 			client.download(filename,outfile)
-			self.DownloadComplete(outfile)
+			self.DownloadComplete(outfile,filename)
 					
 		except Exception as e:
 			print "ERROR DownloadManager: "+str(e)
-			self.DownloadError()
+			self.DownloadError(filename)
 	
 
 

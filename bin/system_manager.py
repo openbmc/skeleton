@@ -33,7 +33,6 @@ class SystemManager(dbus.service.Object):
 		bus.add_signal_receiver(self.NewBusHandler,
 					dbus_interface = 'org.freedesktop.DBus', 
 					signal_name = "NameOwnerChanged")
-		bus.add_signal_receiver(self.HeartbeatHandler, signal_name = "Heartbeat")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 
 		self.current_state = ""
@@ -127,7 +126,6 @@ class SystemManager(dbus.service.Object):
 			if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True and
 				System.SYSTEM_CONFIG[bus_name].has_key('popen') and
 				System.SYSTEM_CONFIG[bus_name]['monitor_process'] == True):
-				## even if process doesn't request heartbeat check, 
 				##   make sure process is still alive
 				p = System.SYSTEM_CONFIG[bus_name]['popen']
 				p.poll()
@@ -135,26 +133,7 @@ class SystemManager(dbus.service.Object):
 					print "Process for "+bus_name+" appears to be dead"
 					self.start_process(bus_name)
 	
-				## process is alive, now check if heartbeat received
-				## during previous interval
-				elif (System.SYSTEM_CONFIG[bus_name]['heartbeat'] == 'yes'):
-					if (System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] == 0):
-						print "Heartbeat error: "+bus_name
-						p = System.SYSTEM_CONFIG[bus_name]['popen']
-						## TODO: error checking
-						p.poll()
-						if (p.returncode == None):
-							print "Process must be hung, so killing"
-							p.kill()
-						
-						self.start_process(bus_name)			
-					else:
-						System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
-					
 		return True
-
-	def HeartbeatHandler(self,bus_name):
-		System.SYSTEM_CONFIG[bus_name]['heartbeat_count']=1	
 
 	def check_state_started(self):
 		r = True
@@ -171,10 +150,18 @@ class SystemManager(dbus.service.Object):
 
 	def NewBusHandler(self, bus_name, a, b):
 		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
+			start_time = time.time()
 			objects = {}
-			Openbmc.get_objs(bus,bus_name,"",objects)
-			for instance_name in objects.keys():
-				self.bus_name_lookup[objects[instance_name]['PATH']] = bus_name
+			try:
+				Openbmc.get_objs(bus,bus_name,"",objects)
+				for instance_name in objects.keys():
+					self.bus_name_lookup[objects[instance_name]['PATH']] = bus_name
+				end_time = time.time()
+				print "Elapsed time was %g seconds" % (end_time - start_time)
+				print bus_name
+
+			except:
+				pass
 			
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
 				System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0

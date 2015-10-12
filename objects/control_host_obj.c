@@ -35,49 +35,57 @@ on_boot         (ControlHost        *host,
                 gpointer                user_data)
 {
 	// TODO: Add error checking
-	g_print("Boot\n");
+	g_print("Do Boot\n");
+	int rc = GPIO_OK;
+
 	Control* control = object_get_control((Object*)user_data);
 	control_host_complete_boot(host,invocation);
+	do {	
+		rc |= gpio_open(&fsi_clk);
+		rc |= gpio_open(&fsi_data);
+		rc |= gpio_open(&fsi_enable);
+		rc |= gpio_open(&cronus_sel);
+		if (rc!=GPIO_OK) { break; }
+		
+		rc = gpio_write(&cronus_sel,1);
+		//putcfam pu 281c 30000000 -p0
+		char a[] = "000011111111110101111000111001100111111111111111111111111111101111111111";
+		//putcfam pu 281c B0000000 -p0
+		char b[] = "000011111111110101111000111000100111111111111111111111111111101101111111";
+
+		gpio_write(&fsi_enable,1);
+		gpio_write(&fsi_clk,1);
+		gpio_write(&fsi_data,1);
+		gpio_clock_cycle(&fsi_clk,5000);
+		gpio_write(&fsi_data,0);
+		gpio_clock_cycle(&fsi_clk,256);
+		gpio_write(&fsi_data,1);
+		gpio_clock_cycle(&fsi_clk,50);
+		uint16_t i=0;
+		for(i=0;i<strlen(a);i++) {
+			gpio_writec(&fsi_data,a[i]);
+			gpio_clock_cycle(&fsi_clk,1);
+		}
+		gpio_write(&fsi_data,1); /* Data standby state */
+		gpio_clock_cycle(&fsi_clk,5000);
+
+		for(i=0;i<strlen(b);i++) {
+			gpio_writec(&fsi_data,b[i]);
+			gpio_clock_cycle(&fsi_clk,1);
+		}
+		gpio_write(&fsi_data,1); /* Data standby state */
+		gpio_clock_cycle(&fsi_clk,2);
+
+	        gpio_write(&fsi_clk,0); /* hold clk low for clock mux */
+	        gpio_write(&fsi_enable,0);
+	        gpio_clock_cycle(&fsi_clk,16);
+	        gpio_write(&fsi_clk,0); /* Data standby state */
 	
-	gpio_open(&fsi_clk);
-	gpio_open(&fsi_data);
-	gpio_open(&fsi_enable);
-	gpio_open(&cronus_sel);
-
-	gpio_write(&cronus_sel,1);
-	//putcfam pu 281c 30000000 -p0
-	char a[] = "000011111111110101111000111001100111111111111111111111111111101111111111";
-	//putcfam pu 281c B0000000 -p0
-	char b[] = "000011111111110101111000111000100111111111111111111111111111101101111111";
-
-	gpio_write(&fsi_enable,1);
-	gpio_write(&fsi_clk,1);
-	gpio_write(&fsi_data,1);
-	gpio_clock_cycle(&fsi_clk,5000);
-	gpio_write(&fsi_data,0);
-	gpio_clock_cycle(&fsi_clk,256);
-	gpio_write(&fsi_data,1);
-	gpio_clock_cycle(&fsi_clk,50);
-	uint16_t i=0;
-	for(i=0;i<strlen(a);i++) {
-		gpio_writec(&fsi_data,a[i]);
-		gpio_clock_cycle(&fsi_clk,1);
-	}
-	gpio_write(&fsi_data,1); /* Data standby state */
-	gpio_clock_cycle(&fsi_clk,5000);
-
-	for(i=0;i<strlen(b);i++) {
-		gpio_writec(&fsi_data,b[i]);
-		gpio_clock_cycle(&fsi_clk,1);
-	}
-	gpio_write(&fsi_data,1); /* Data standby state */
-	gpio_clock_cycle(&fsi_clk,2);
-
-        gpio_write(&fsi_clk,0); /* hold clk low for clock mux */
-        gpio_write(&fsi_enable,0);
-        gpio_clock_cycle(&fsi_clk,16);
-        gpio_write(&fsi_clk,0); /* Data standby state */
-	
+	} while(0);
+	if (rc != GPIO_OK)
+	{
+		printf("ERROR HostControl: GPIO sequence failed (rc=%d)\n",rc);
+	}	
 	gpio_close(&fsi_clk);
 	gpio_close(&fsi_data);
 	gpio_close(&fsi_enable);

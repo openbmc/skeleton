@@ -89,10 +89,14 @@ if __name__ == '__main__':
 		for i in data:
 			for k in data[i].keys():
 				print k+" = "+str(data[i][k]) 
-	elif (cmd == "updatefw"):
+	elif (cmd == "updatefwftp"):
 		obj = bus.get_object('org.openbmc.flash.Bios','/org/openbmc/flash/Bios_0')
 		intf = dbus.Interface(obj,"org.openbmc.Flash")
 		intf.updateViaTftp(sys.argv[2],sys.argv[3])
+	elif (cmd == "updatefwfile"):
+		obj = bus.get_object('org.openbmc.flash.Bios','/org/openbmc/flash/Bios_0')
+		intf = dbus.Interface(obj,"org.openbmc.Flash")
+		intf.update(sys.argv[2])
 	elif (cmd == "fwstatus"):
 		intf = Openbmc.getManagerInterface(bus,"Flash")
 		status = intf.getStatus()

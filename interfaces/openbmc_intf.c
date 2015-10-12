@@ -10753,6 +10753,1648 @@ process_skeleton_new (void)
 }
 
 /* ------------------------------------------------------------------------
+ * Code for interface org.openbmc.SharedResource
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * SECTION:SharedResource
+ * @title: SharedResource
+ * @short_description: Generated C code for the org.openbmc.SharedResource D-Bus interface
+ *
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link> D-Bus interface in C.
+ */
+
+/* ---- Introspection data for org.openbmc.SharedResource ---- */
+
+static const _ExtendedGDBusArgInfo _shared_resource_method_info_lock_IN_ARG_name =
+{
+  {
+    -1,
+    (gchar *) "name",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _shared_resource_method_info_lock_IN_ARG_pointers[] =
+{
+  &_shared_resource_method_info_lock_IN_ARG_name,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _shared_resource_method_info_lock =
+{
+  {
+    -1,
+    (gchar *) "lock",
+    (GDBusArgInfo **) &_shared_resource_method_info_lock_IN_ARG_pointers,
+    NULL,
+    NULL
+  },
+  "handle-lock",
+  FALSE
+};
+
+static const _ExtendedGDBusMethodInfo _shared_resource_method_info_unlock =
+{
+  {
+    -1,
+    (gchar *) "unlock",
+    NULL,
+    NULL,
+    NULL
+  },
+  "handle-unlock",
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _shared_resource_method_info_is_locked_OUT_ARG_lock =
+{
+  {
+    -1,
+    (gchar *) "lock",
+    (gchar *) "b",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _shared_resource_method_info_is_locked_OUT_ARG_name =
+{
+  {
+    -1,
+    (gchar *) "name",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _shared_resource_method_info_is_locked_OUT_ARG_pointers[] =
+{
+  &_shared_resource_method_info_is_locked_OUT_ARG_lock,
+  &_shared_resource_method_info_is_locked_OUT_ARG_name,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _shared_resource_method_info_is_locked =
+{
+  {
+    -1,
+    (gchar *) "isLocked",
+    NULL,
+    (GDBusArgInfo **) &_shared_resource_method_info_is_locked_OUT_ARG_pointers,
+    NULL
+  },
+  "handle-is-locked",
+  FALSE
+};
+
+static const _ExtendedGDBusMethodInfo * const _shared_resource_method_info_pointers[] =
+{
+  &_shared_resource_method_info_lock,
+  &_shared_resource_method_info_unlock,
+  &_shared_resource_method_info_is_locked,
+  NULL
+};
+
+static const _ExtendedGDBusPropertyInfo _shared_resource_property_info_lock =
+{
+  {
+    -1,
+    (gchar *) "lock",
+    (gchar *) "b",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "lock",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _shared_resource_property_info_name =
+{
+  {
+    -1,
+    (gchar *) "name",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "name",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo * const _shared_resource_property_info_pointers[] =
+{
+  &_shared_resource_property_info_lock,
+  &_shared_resource_property_info_name,
+  NULL
+};
+
+static const _ExtendedGDBusInterfaceInfo _shared_resource_interface_info =
+{
+  {
+    -1,
+    (gchar *) "org.openbmc.SharedResource",
+    (GDBusMethodInfo **) &_shared_resource_method_info_pointers,
+    NULL,
+    (GDBusPropertyInfo **) &_shared_resource_property_info_pointers,
+    NULL
+  },
+  "shared-resource",
+};
+
+
+/**
+ * shared_resource_interface_info:
+ *
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link> D-Bus interface.
+ *
+ * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
+ */
+GDBusInterfaceInfo *
+shared_resource_interface_info (void)
+{
+  return (GDBusInterfaceInfo *) &_shared_resource_interface_info.parent_struct;
+}
+
+/**
+ * shared_resource_override_properties:
+ * @klass: The class structure for a #GObject<!-- -->-derived class.
+ * @property_id_begin: The property id to assign to the first overridden property.
+ *
+ * Overrides all #GObject properties in the #SharedResource interface for a concrete class.
+ * The properties are overridden in the order they are defined.
+ *
+ * Returns: The last property id.
+ */
+guint
+shared_resource_override_properties (GObjectClass *klass, guint property_id_begin)
+{
+  g_object_class_override_property (klass, property_id_begin++, "lock");
+  g_object_class_override_property (klass, property_id_begin++, "name");
+  return property_id_begin - 1;
+}
+
+
+
+/**
+ * SharedResource:
+ *
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link>.
+ */
+
+/**
+ * SharedResourceIface:
+ * @parent_iface: The parent interface.
+ * @handle_is_locked: Handler for the #SharedResource::handle-is-locked signal.
+ * @handle_lock: Handler for the #SharedResource::handle-lock signal.
+ * @handle_unlock: Handler for the #SharedResource::handle-unlock signal.
+ * @get_lock: Getter for the #SharedResource:lock property.
+ * @get_name: Getter for the #SharedResource:name property.
+ *
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link>.
+ */
+
+typedef SharedResourceIface SharedResourceInterface;
+G_DEFINE_INTERFACE (SharedResource, shared_resource, G_TYPE_OBJECT);
+
+static void
+shared_resource_default_init (SharedResourceIface *iface)
+{
+  /* GObject signals for incoming D-Bus method calls: */
+  /**
+   * SharedResource::handle-lock:
+   * @object: A #SharedResource.
+   * @invocation: A #GDBusMethodInvocation.
+   * @arg_name: Argument passed by remote caller.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SharedResource.lock">lock()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call shared_resource_complete_lock() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-lock",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SharedResourceIface, handle_lock),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    2,
+    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING);
+
+  /**
+   * SharedResource::handle-unlock:
+   * @object: A #SharedResource.
+   * @invocation: A #GDBusMethodInvocation.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SharedResource.unlock">unlock()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call shared_resource_complete_unlock() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-unlock",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SharedResourceIface, handle_unlock),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
+
+  /**
+   * SharedResource::handle-is-locked:
+   * @object: A #SharedResource.
+   * @invocation: A #GDBusMethodInvocation.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-SharedResource.isLocked">isLocked()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call shared_resource_complete_is_locked() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-is-locked",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (SharedResourceIface, handle_is_locked),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
+
+  /* GObject properties for D-Bus properties: */
+  /**
+   * SharedResource:lock:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SharedResource.lock">"lock"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_boolean ("lock", "lock", "lock", FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * SharedResource:name:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-SharedResource.name">"name"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("name", "name", "name", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+}
+
+/**
+ * shared_resource_get_lock: (skip)
+ * @object: A #SharedResource.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SharedResource.lock">"lock"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gboolean 
+shared_resource_get_lock (SharedResource *object)
+{
+  return SHARED_RESOURCE_GET_IFACE (object)->get_lock (object);
+}
+
+/**
+ * shared_resource_set_lock: (skip)
+ * @object: A #SharedResource.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SharedResource.lock">"lock"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+shared_resource_set_lock (SharedResource *object, gboolean value)
+{
+  g_object_set (G_OBJECT (object), "lock", value, NULL);
+}
+
+/**
+ * shared_resource_get_name: (skip)
+ * @object: A #SharedResource.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-SharedResource.name">"name"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use shared_resource_dup_name() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+shared_resource_get_name (SharedResource *object)
+{
+  return SHARED_RESOURCE_GET_IFACE (object)->get_name (object);
+}
+
+/**
+ * shared_resource_dup_name: (skip)
+ * @object: A #SharedResource.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-SharedResource.name">"name"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+shared_resource_dup_name (SharedResource *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "name", &value, NULL);
+  return value;
+}
+
+/**
+ * shared_resource_set_name: (skip)
+ * @object: A #SharedResource.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-SharedResource.name">"name"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+shared_resource_set_name (SharedResource *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "name", value, NULL);
+}
+
+/**
+ * shared_resource_call_lock:
+ * @proxy: A #SharedResourceProxy.
+ * @arg_name: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SharedResource.lock">lock()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call shared_resource_call_lock_finish() to get the result of the operation.
+ *
+ * See shared_resource_call_lock_sync() for the synchronous, blocking version of this method.
+ */
+void
+shared_resource_call_lock (
+    SharedResource *proxy,
+    const gchar *arg_name,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "lock",
+    g_variant_new ("(s)",
+                   arg_name),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * shared_resource_call_lock_finish:
+ * @proxy: A #SharedResourceProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to shared_resource_call_lock().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with shared_resource_call_lock().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+shared_resource_call_lock_finish (
+    SharedResource *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * shared_resource_call_lock_sync:
+ * @proxy: A #SharedResourceProxy.
+ * @arg_name: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SharedResource.lock">lock()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See shared_resource_call_lock() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+shared_resource_call_lock_sync (
+    SharedResource *proxy,
+    const gchar *arg_name,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "lock",
+    g_variant_new ("(s)",
+                   arg_name),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * shared_resource_call_unlock:
+ * @proxy: A #SharedResourceProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SharedResource.unlock">unlock()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call shared_resource_call_unlock_finish() to get the result of the operation.
+ *
+ * See shared_resource_call_unlock_sync() for the synchronous, blocking version of this method.
+ */
+void
+shared_resource_call_unlock (
+    SharedResource *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "unlock",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * shared_resource_call_unlock_finish:
+ * @proxy: A #SharedResourceProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to shared_resource_call_unlock().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with shared_resource_call_unlock().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+shared_resource_call_unlock_finish (
+    SharedResource *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * shared_resource_call_unlock_sync:
+ * @proxy: A #SharedResourceProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SharedResource.unlock">unlock()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See shared_resource_call_unlock() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+shared_resource_call_unlock_sync (
+    SharedResource *proxy,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "unlock",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * shared_resource_call_is_locked:
+ * @proxy: A #SharedResourceProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-SharedResource.isLocked">isLocked()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call shared_resource_call_is_locked_finish() to get the result of the operation.
+ *
+ * See shared_resource_call_is_locked_sync() for the synchronous, blocking version of this method.
+ */
+void
+shared_resource_call_is_locked (
+    SharedResource *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "isLocked",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * shared_resource_call_is_locked_finish:
+ * @proxy: A #SharedResourceProxy.
+ * @out_lock: (out): Return location for return parameter or %NULL to ignore.
+ * @out_name: (out): Return location for return parameter or %NULL to ignore.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to shared_resource_call_is_locked().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with shared_resource_call_is_locked().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+shared_resource_call_is_locked_finish (
+    SharedResource *proxy,
+    gboolean *out_lock,
+    gchar **out_name,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(bs)",
+                 out_lock,
+                 out_name);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * shared_resource_call_is_locked_sync:
+ * @proxy: A #SharedResourceProxy.
+ * @out_lock: (out): Return location for return parameter or %NULL to ignore.
+ * @out_name: (out): Return location for return parameter or %NULL to ignore.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-SharedResource.isLocked">isLocked()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See shared_resource_call_is_locked() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+shared_resource_call_is_locked_sync (
+    SharedResource *proxy,
+    gboolean *out_lock,
+    gchar **out_name,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "isLocked",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "(bs)",
+                 out_lock,
+                 out_name);
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * shared_resource_complete_lock:
+ * @object: A #SharedResource.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SharedResource.lock">lock()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+shared_resource_complete_lock (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
+}
+
+/**
+ * shared_resource_complete_unlock:
+ * @object: A #SharedResource.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SharedResource.unlock">unlock()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+shared_resource_complete_unlock (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
+}
+
+/**
+ * shared_resource_complete_is_locked:
+ * @object: A #SharedResource.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ * @lock: Parameter to return.
+ * @name: Parameter to return.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-SharedResource.isLocked">isLocked()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+shared_resource_complete_is_locked (
+    SharedResource *object,
+    GDBusMethodInvocation *invocation,
+    gboolean lock,
+    const gchar *name)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("(bs)",
+                   lock,
+                   name));
+}
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * SharedResourceProxy:
+ *
+ * The #SharedResourceProxy structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * SharedResourceProxyClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #SharedResourceProxy.
+ */
+
+struct _SharedResourceProxyPrivate
+{
+  GData *qdata;
+};
+
+static void shared_resource_proxy_iface_init (SharedResourceIface *iface);
+
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (SharedResourceProxy, shared_resource_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (SharedResourceProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_SHARED_RESOURCE, shared_resource_proxy_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (SharedResourceProxy, shared_resource_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_SHARED_RESOURCE, shared_resource_proxy_iface_init));
+
+#endif
+static void
+shared_resource_proxy_finalize (GObject *object)
+{
+  SharedResourceProxy *proxy = SHARED_RESOURCE_PROXY (object);
+  g_datalist_clear (&proxy->priv->qdata);
+  G_OBJECT_CLASS (shared_resource_proxy_parent_class)->finalize (object);
+}
+
+static void
+shared_resource_proxy_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _shared_resource_property_info_pointers[prop_id - 1];
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
+  if (info->use_gvariant)
+    {
+      g_value_set_variant (value, variant);
+    }
+  else
+    {
+      if (variant != NULL)
+        g_dbus_gvariant_to_gvalue (variant, value);
+    }
+  if (variant != NULL)
+    g_variant_unref (variant);
+}
+
+static void
+shared_resource_proxy_set_property_cb (GDBusProxy *proxy,
+  GAsyncResult *res,
+  gpointer      user_data)
+{
+  const _ExtendedGDBusPropertyInfo *info = user_data;
+  GError *error;
+  GVariant *_ret;
+  error = NULL;
+  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
+  if (!_ret)
+    {
+      g_warning ("Error setting property '%s' on interface org.openbmc.SharedResource: %s (%s, %d)",
+                 info->parent_struct.name, 
+                 error->message, g_quark_to_string (error->domain), error->code);
+      g_error_free (error);
+    }
+  else
+    {
+      g_variant_unref (_ret);
+    }
+}
+
+static void
+shared_resource_proxy_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _shared_resource_property_info_pointers[prop_id - 1];
+  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
+  g_dbus_proxy_call (G_DBUS_PROXY (object),
+    "org.freedesktop.DBus.Properties.Set",
+    g_variant_new ("(ssv)", "org.openbmc.SharedResource", info->parent_struct.name, variant),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    NULL, (GAsyncReadyCallback) shared_resource_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+  g_variant_unref (variant);
+}
+
+static void
+shared_resource_proxy_g_signal (GDBusProxy *proxy,
+  const gchar *sender_name G_GNUC_UNUSED,
+  const gchar *signal_name,
+  GVariant *parameters)
+{
+  _ExtendedGDBusSignalInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint n;
+  guint signal_id;
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_shared_resource_interface_info.parent_struct, signal_name);
+  if (info == NULL)
+    return;
+  num_params = g_variant_n_children (parameters);
+  paramv = g_new0 (GValue, num_params + 1);
+  g_value_init (&paramv[0], TYPE_SHARED_RESOURCE);
+  g_value_set_object (&paramv[0], proxy);
+  g_variant_iter_init (&iter, parameters);
+  n = 1;
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.args[n - 1];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SHARED_RESOURCE);
+  g_signal_emitv (paramv, signal_id, 0, NULL);
+  for (n = 0; n < num_params + 1; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static void
+shared_resource_proxy_g_properties_changed (GDBusProxy *_proxy,
+  GVariant *changed_properties,
+  const gchar *const *invalidated_properties)
+{
+  SharedResourceProxy *proxy = SHARED_RESOURCE_PROXY (_proxy);
+  guint n;
+  const gchar *key;
+  GVariantIter *iter;
+  _ExtendedGDBusPropertyInfo *info;
+  g_variant_get (changed_properties, "a{sv}", &iter);
+  while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_shared_resource_interface_info.parent_struct, key);
+      g_datalist_remove_data (&proxy->priv->qdata, key);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+  g_variant_iter_free (iter);
+  for (n = 0; invalidated_properties[n] != NULL; n++)
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_shared_resource_interface_info.parent_struct, invalidated_properties[n]);
+      g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+}
+
+static gboolean 
+shared_resource_proxy_get_lock (SharedResource *object)
+{
+  SharedResourceProxy *proxy = SHARED_RESOURCE_PROXY (object);
+  GVariant *variant;
+  gboolean value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "lock");
+  if (variant != NULL)
+    {
+      value = g_variant_get_boolean (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static const gchar *
+shared_resource_proxy_get_name (SharedResource *object)
+{
+  SharedResourceProxy *proxy = SHARED_RESOURCE_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "name");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static void
+shared_resource_proxy_init (SharedResourceProxy *proxy)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  proxy->priv = shared_resource_proxy_get_instance_private (proxy);
+#else
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_SHARED_RESOURCE_PROXY, SharedResourceProxyPrivate);
+#endif
+
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), shared_resource_interface_info ());
+}
+
+static void
+shared_resource_proxy_class_init (SharedResourceProxyClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusProxyClass *proxy_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize     = shared_resource_proxy_finalize;
+  gobject_class->get_property = shared_resource_proxy_get_property;
+  gobject_class->set_property = shared_resource_proxy_set_property;
+
+  proxy_class = G_DBUS_PROXY_CLASS (klass);
+  proxy_class->g_signal = shared_resource_proxy_g_signal;
+  proxy_class->g_properties_changed = shared_resource_proxy_g_properties_changed;
+
+  shared_resource_override_properties (gobject_class, 1);
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (SharedResourceProxyPrivate));
+#endif
+}
+
+static void
+shared_resource_proxy_iface_init (SharedResourceIface *iface)
+{
+  iface->get_lock = shared_resource_proxy_get_lock;
+  iface->get_name = shared_resource_proxy_get_name;
+}
+
+/**
+ * shared_resource_proxy_new:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link>. See g_dbus_proxy_new() for more details.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call shared_resource_proxy_new_finish() to get the result of the operation.
+ *
+ * See shared_resource_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+shared_resource_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_SHARED_RESOURCE_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SharedResource", NULL);
+}
+
+/**
+ * shared_resource_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to shared_resource_proxy_new().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with shared_resource_proxy_new().
+ *
+ * Returns: (transfer full) (type SharedResourceProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SharedResource *
+shared_resource_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return SHARED_RESOURCE (ret);
+  else
+    return NULL;
+}
+
+/**
+ * shared_resource_proxy_new_sync:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link>. See g_dbus_proxy_new_sync() for more details.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See shared_resource_proxy_new() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type SharedResourceProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SharedResource *
+shared_resource_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_SHARED_RESOURCE_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.SharedResource", NULL);
+  if (ret != NULL)
+    return SHARED_RESOURCE (ret);
+  else
+    return NULL;
+}
+
+
+/**
+ * shared_resource_proxy_new_for_bus:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Like shared_resource_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call shared_resource_proxy_new_for_bus_finish() to get the result of the operation.
+ *
+ * See shared_resource_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+shared_resource_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_SHARED_RESOURCE_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SharedResource", NULL);
+}
+
+/**
+ * shared_resource_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to shared_resource_proxy_new_for_bus().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with shared_resource_proxy_new_for_bus().
+ *
+ * Returns: (transfer full) (type SharedResourceProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SharedResource *
+shared_resource_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return SHARED_RESOURCE (ret);
+  else
+    return NULL;
+}
+
+/**
+ * shared_resource_proxy_new_for_bus_sync:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Like shared_resource_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See shared_resource_proxy_new_for_bus() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type SharedResourceProxy): The constructed proxy object or %NULL if @error is set.
+ */
+SharedResource *
+shared_resource_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_SHARED_RESOURCE_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.SharedResource", NULL);
+  if (ret != NULL)
+    return SHARED_RESOURCE (ret);
+  else
+    return NULL;
+}
+
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * SharedResourceSkeleton:
+ *
+ * The #SharedResourceSkeleton structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * SharedResourceSkeletonClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #SharedResourceSkeleton.
+ */
+
+struct _SharedResourceSkeletonPrivate
+{
+  GValue *properties;
+  GList *changed_properties;
+  GSource *changed_properties_idle_source;
+  GMainContext *context;
+  GMutex lock;
+};
+
+static void
+_shared_resource_skeleton_handle_method_call (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name,
+  const gchar *method_name,
+  GVariant *parameters,
+  GDBusMethodInvocation *invocation,
+  gpointer user_data)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (user_data);
+  _ExtendedGDBusMethodInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint num_extra;
+  guint n;
+  guint signal_id;
+  GValue return_value = G_VALUE_INIT;
+  info = (_ExtendedGDBusMethodInfo *) g_dbus_method_invocation_get_method_info (invocation);
+  g_assert (info != NULL);
+  num_params = g_variant_n_children (parameters);
+  num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
+  n = 0;
+  g_value_init (&paramv[n], TYPE_SHARED_RESOURCE);
+  g_value_set_object (&paramv[n++], skeleton);
+  g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
+  g_value_set_object (&paramv[n++], invocation);
+  if (info->pass_fdlist)
+    {
+#ifdef G_OS_UNIX
+      g_value_init (&paramv[n], G_TYPE_UNIX_FD_LIST);
+      g_value_set_object (&paramv[n++], g_dbus_message_get_unix_fd_list (g_dbus_method_invocation_get_message (invocation)));
+#else
+      g_assert_not_reached ();
+#endif
+    }
+  g_variant_iter_init (&iter, parameters);
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.in_args[n - num_extra];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_SHARED_RESOURCE);
+  g_value_init (&return_value, G_TYPE_BOOLEAN);
+  g_signal_emitv (paramv, signal_id, 0, &return_value);
+  if (!g_value_get_boolean (&return_value))
+    g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD, "Method %s is not implemented on interface %s", method_name, interface_name);
+  g_value_unset (&return_value);
+  for (n = 0; n < num_params + num_extra; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static GVariant *
+_shared_resource_skeleton_handle_get_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GError **error,
+  gpointer user_data)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  GVariant *ret;
+  ret = NULL;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_shared_resource_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      g_value_init (&value, pspec->value_type);
+      g_object_get_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      ret = g_dbus_gvalue_to_gvariant (&value, G_VARIANT_TYPE (info->parent_struct.signature));
+      g_value_unset (&value);
+    }
+  return ret;
+}
+
+static gboolean
+_shared_resource_skeleton_handle_set_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GVariant *variant,
+  GError **error,
+  gpointer user_data)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  gboolean ret;
+  ret = FALSE;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_shared_resource_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      if (info->use_gvariant)
+        g_value_set_variant (&value, variant);
+      else
+        g_dbus_gvariant_to_gvalue (variant, &value);
+      g_object_set_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      g_value_unset (&value);
+      ret = TRUE;
+    }
+  return ret;
+}
+
+static const GDBusInterfaceVTable _shared_resource_skeleton_vtable =
+{
+  _shared_resource_skeleton_handle_method_call,
+  _shared_resource_skeleton_handle_get_property,
+  _shared_resource_skeleton_handle_set_property,
+  {NULL}
+};
+
+static GDBusInterfaceInfo *
+shared_resource_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return shared_resource_interface_info ();
+}
+
+static GDBusInterfaceVTable *
+shared_resource_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return (GDBusInterfaceVTable *) &_shared_resource_skeleton_vtable;
+}
+
+static GVariant *
+shared_resource_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (_skeleton);
+
+  GVariantBuilder builder;
+  guint n;
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  if (_shared_resource_interface_info.parent_struct.properties == NULL)
+    goto out;
+  for (n = 0; _shared_resource_interface_info.parent_struct.properties[n] != NULL; n++)
+    {
+      GDBusPropertyInfo *info = _shared_resource_interface_info.parent_struct.properties[n];
+      if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
+        {
+          GVariant *value;
+          value = _shared_resource_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.SharedResource", info->name, NULL, skeleton);
+          if (value != NULL)
+            {
+              g_variant_take_ref (value);
+              g_variant_builder_add (&builder, "{sv}", info->name, value);
+              g_variant_unref (value);
+            }
+        }
+    }
+out:
+  return g_variant_builder_end (&builder);
+}
+
+static gboolean _shared_resource_emit_changed (gpointer user_data);
+
+static void
+shared_resource_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (_skeleton);
+  gboolean emit_changed = FALSE;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    {
+      g_source_destroy (skeleton->priv->changed_properties_idle_source);
+      skeleton->priv->changed_properties_idle_source = NULL;
+      emit_changed = TRUE;
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+
+  if (emit_changed)
+    _shared_resource_emit_changed (skeleton);
+}
+
+static void shared_resource_skeleton_iface_init (SharedResourceIface *iface);
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (SharedResourceSkeleton, shared_resource_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (SharedResourceSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_SHARED_RESOURCE, shared_resource_skeleton_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (SharedResourceSkeleton, shared_resource_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_SHARED_RESOURCE, shared_resource_skeleton_iface_init));
+
+#endif
+static void
+shared_resource_skeleton_finalize (GObject *object)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (object);
+  guint n;
+  for (n = 0; n < 2; n++)
+    g_value_unset (&skeleton->priv->properties[n]);
+  g_free (skeleton->priv->properties);
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    g_source_destroy (skeleton->priv->changed_properties_idle_source);
+  g_main_context_unref (skeleton->priv->context);
+  g_mutex_clear (&skeleton->priv->lock);
+  G_OBJECT_CLASS (shared_resource_skeleton_parent_class)->finalize (object);
+}
+
+static void
+shared_resource_skeleton_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static gboolean
+_shared_resource_emit_changed (gpointer user_data)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (user_data);
+  GList *l;
+  GVariantBuilder builder;
+  GVariantBuilder invalidated_builder;
+  guint num_changes;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
+  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
+    {
+      ChangedProperty *cp = l->data;
+      GVariant *variant;
+      const GValue *cur_value;
+
+      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
+      if (!_g_value_equal (cur_value, &cp->orig_value))
+        {
+          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
+          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
+          g_variant_unref (variant);
+          num_changes++;
+        }
+    }
+  if (num_changes > 0)
+    {
+      GList *connections, *ll;
+      GVariant *signal_variant;
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.SharedResource",
+                                           &builder, &invalidated_builder));
+      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+      for (ll = connections; ll != NULL; ll = ll->next)
+        {
+          GDBusConnection *connection = ll->data;
+
+          g_dbus_connection_emit_signal (connection,
+                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
+                                         "org.freedesktop.DBus.Properties",
+                                         "PropertiesChanged",
+                                         signal_variant,
+                                         NULL);
+        }
+      g_variant_unref (signal_variant);
+      g_list_free_full (connections, g_object_unref);
+    }
+  else
+    {
+      g_variant_builder_clear (&builder);
+      g_variant_builder_clear (&invalidated_builder);
+    }
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  skeleton->priv->changed_properties = NULL;
+  skeleton->priv->changed_properties_idle_source = NULL;
+  g_mutex_unlock (&skeleton->priv->lock);
+  return FALSE;
+}
+
+static void
+_shared_resource_schedule_emit_changed (SharedResourceSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+{
+  ChangedProperty *cp;
+  GList *l;
+  cp = NULL;
+  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
+    {
+      ChangedProperty *i_cp = l->data;
+      if (i_cp->info == info)
+        {
+          cp = i_cp;
+          break;
+        }
+    }
+  if (cp == NULL)
+    {
+      cp = g_new0 (ChangedProperty, 1);
+      cp->prop_id = prop_id;
+      cp->info = info;
+      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
+      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
+      g_value_copy (orig_value, &cp->orig_value);
+    }
+}
+
+static void
+shared_resource_skeleton_notify (GObject      *object,
+  GParamSpec *pspec G_GNUC_UNUSED)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (object);
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties != NULL &&
+      skeleton->priv->changed_properties_idle_source == NULL)
+    {
+      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
+      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _shared_resource_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
+      g_source_unref (skeleton->priv->changed_properties_idle_source);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static void
+shared_resource_skeleton_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_object_freeze_notify (object);
+  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
+    {
+      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
+        _shared_resource_schedule_emit_changed (skeleton, _shared_resource_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
+      g_object_notify_by_pspec (object, pspec);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+  g_object_thaw_notify (object);
+}
+
+static void
+shared_resource_skeleton_init (SharedResourceSkeleton *skeleton)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  skeleton->priv = shared_resource_skeleton_get_instance_private (skeleton);
+#else
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_SHARED_RESOURCE_SKELETON, SharedResourceSkeletonPrivate);
+#endif
+
+  g_mutex_init (&skeleton->priv->lock);
+  skeleton->priv->context = g_main_context_ref_thread_default ();
+  skeleton->priv->properties = g_new0 (GValue, 2);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_BOOLEAN);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
+}
+
+static gboolean 
+shared_resource_skeleton_get_lock (SharedResource *object)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (object);
+  gboolean value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_boolean (&(skeleton->priv->properties[0]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+shared_resource_skeleton_get_name (SharedResource *object)
+{
+  SharedResourceSkeleton *skeleton = SHARED_RESOURCE_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static void
+shared_resource_skeleton_class_init (SharedResourceSkeletonClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusInterfaceSkeletonClass *skeleton_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = shared_resource_skeleton_finalize;
+  gobject_class->get_property = shared_resource_skeleton_get_property;
+  gobject_class->set_property = shared_resource_skeleton_set_property;
+  gobject_class->notify       = shared_resource_skeleton_notify;
+
+
+  shared_resource_override_properties (gobject_class, 1);
+
+  skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+  skeleton_class->get_info = shared_resource_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = shared_resource_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = shared_resource_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = shared_resource_skeleton_dbus_interface_get_vtable;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (SharedResourceSkeletonPrivate));
+#endif
+}
+
+static void
+shared_resource_skeleton_iface_init (SharedResourceIface *iface)
+{
+  iface->get_lock = shared_resource_skeleton_get_lock;
+  iface->get_name = shared_resource_skeleton_get_name;
+}
+
+/**
+ * shared_resource_skeleton_new:
+ *
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link>.
+ *
+ * Returns: (transfer full) (type SharedResourceSkeleton): The skeleton object.
+ */
+SharedResource *
+shared_resource_skeleton_new (void)
+{
+  return SHARED_RESOURCE (g_object_new (TYPE_SHARED_RESOURCE_SKELETON, NULL));
+}
+
+/* ------------------------------------------------------------------------
  * Code for interface org.openbmc.Control
  * ------------------------------------------------------------------------
  */
@@ -18773,6 +20415,67 @@ static const _ExtendedGDBusSignalInfo * const _flash_signal_info_pointers[] =
   NULL
 };
 
+static const _ExtendedGDBusPropertyInfo _flash_property_info_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "filename",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _flash_property_info_flasher_path =
+{
+  {
+    -1,
+    (gchar *) "flasher_path",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "flasher-path",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _flash_property_info_flasher_name =
+{
+  {
+    -1,
+    (gchar *) "flasher_name",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "flasher-name",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _flash_property_info_flasher_instance =
+{
+  {
+    -1,
+    (gchar *) "flasher_instance",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "flasher-instance",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo * const _flash_property_info_pointers[] =
+{
+  &_flash_property_info_filename,
+  &_flash_property_info_flasher_path,
+  &_flash_property_info_flasher_name,
+  &_flash_property_info_flasher_instance,
+  NULL
+};
+
 static const _ExtendedGDBusInterfaceInfo _flash_interface_info =
 {
   {
@@ -18780,7 +20483,7 @@ static const _ExtendedGDBusInterfaceInfo _flash_interface_info =
     (gchar *) "org.openbmc.Flash",
     (GDBusMethodInfo **) &_flash_method_info_pointers,
     (GDBusSignalInfo **) &_flash_signal_info_pointers,
-    NULL,
+    (GDBusPropertyInfo **) &_flash_property_info_pointers,
     NULL
   },
   "flash",
@@ -18813,6 +20516,10 @@ flash_interface_info (void)
 guint
 flash_override_properties (GObjectClass *klass, guint property_id_begin)
 {
+  g_object_class_override_property (klass, property_id_begin++, "filename");
+  g_object_class_override_property (klass, property_id_begin++, "flasher-path");
+  g_object_class_override_property (klass, property_id_begin++, "flasher-name");
+  g_object_class_override_property (klass, property_id_begin++, "flasher-instance");
   return property_id_begin - 1;
 }
 
@@ -18830,6 +20537,10 @@ flash_override_properties (GObjectClass *klass, guint property_id_begin)
  * @handle_init: Handler for the #Flash::handle-init signal.
  * @handle_update: Handler for the #Flash::handle-update signal.
  * @handle_update_via_tftp: Handler for the #Flash::handle-update-via-tftp signal.
+ * @get_filename: Getter for the #Flash:filename property.
+ * @get_flasher_instance: Getter for the #Flash:flasher-instance property.
+ * @get_flasher_name: Getter for the #Flash:flasher-name property.
+ * @get_flasher_path: Getter for the #Flash:flasher-path property.
  * @download: Handler for the #Flash::download signal.
  * @updated: Handler for the #Flash::updated signal.
  *
@@ -18951,6 +20662,247 @@ flash_default_init (FlashIface *iface)
     G_TYPE_NONE,
     2, G_TYPE_STRING, G_TYPE_STRING);
 
+  /* GObject properties for D-Bus properties: */
+  /**
+   * Flash:filename:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Flash.filename">"filename"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("filename", "filename", "filename", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * Flash:flasher-path:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Flash.flasher_path">"flasher_path"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("flasher-path", "flasher_path", "flasher_path", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * Flash:flasher-name:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Flash.flasher_name">"flasher_name"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("flasher-name", "flasher_name", "flasher_name", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * Flash:flasher-instance:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Flash.flasher_instance">"flasher_instance"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("flasher-instance", "flasher_instance", "flasher_instance", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+}
+
+/**
+ * flash_get_filename: (skip)
+ * @object: A #Flash.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Flash.filename">"filename"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use flash_dup_filename() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+flash_get_filename (Flash *object)
+{
+  return FLASH_GET_IFACE (object)->get_filename (object);
+}
+
+/**
+ * flash_dup_filename: (skip)
+ * @object: A #Flash.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Flash.filename">"filename"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+flash_dup_filename (Flash *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "filename", &value, NULL);
+  return value;
+}
+
+/**
+ * flash_set_filename: (skip)
+ * @object: A #Flash.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Flash.filename">"filename"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+flash_set_filename (Flash *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "filename", value, NULL);
+}
+
+/**
+ * flash_get_flasher_path: (skip)
+ * @object: A #Flash.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Flash.flasher_path">"flasher_path"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use flash_dup_flasher_path() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+flash_get_flasher_path (Flash *object)
+{
+  return FLASH_GET_IFACE (object)->get_flasher_path (object);
+}
+
+/**
+ * flash_dup_flasher_path: (skip)
+ * @object: A #Flash.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Flash.flasher_path">"flasher_path"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+flash_dup_flasher_path (Flash *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "flasher-path", &value, NULL);
+  return value;
+}
+
+/**
+ * flash_set_flasher_path: (skip)
+ * @object: A #Flash.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Flash.flasher_path">"flasher_path"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+flash_set_flasher_path (Flash *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "flasher-path", value, NULL);
+}
+
+/**
+ * flash_get_flasher_name: (skip)
+ * @object: A #Flash.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Flash.flasher_name">"flasher_name"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use flash_dup_flasher_name() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+flash_get_flasher_name (Flash *object)
+{
+  return FLASH_GET_IFACE (object)->get_flasher_name (object);
+}
+
+/**
+ * flash_dup_flasher_name: (skip)
+ * @object: A #Flash.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Flash.flasher_name">"flasher_name"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+flash_dup_flasher_name (Flash *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "flasher-name", &value, NULL);
+  return value;
+}
+
+/**
+ * flash_set_flasher_name: (skip)
+ * @object: A #Flash.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Flash.flasher_name">"flasher_name"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+flash_set_flasher_name (Flash *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "flasher-name", value, NULL);
+}
+
+/**
+ * flash_get_flasher_instance: (skip)
+ * @object: A #Flash.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Flash.flasher_instance">"flasher_instance"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use flash_dup_flasher_instance() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+flash_get_flasher_instance (Flash *object)
+{
+  return FLASH_GET_IFACE (object)->get_flasher_instance (object);
+}
+
+/**
+ * flash_dup_flasher_instance: (skip)
+ * @object: A #Flash.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Flash.flasher_instance">"flasher_instance"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+flash_dup_flasher_instance (Flash *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "flasher-instance", &value, NULL);
+  return value;
+}
+
+/**
+ * flash_set_flasher_instance: (skip)
+ * @object: A #Flash.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Flash.flasher_instance">"flasher_instance"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+flash_set_flasher_instance (Flash *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "flasher-instance", value, NULL);
 }
 
 /**
@@ -19377,6 +21329,45 @@ flash_proxy_get_property (GObject      *object,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  info = _flash_property_info_pointers[prop_id - 1];
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
+  if (info->use_gvariant)
+    {
+      g_value_set_variant (value, variant);
+    }
+  else
+    {
+      if (variant != NULL)
+        g_dbus_gvariant_to_gvalue (variant, value);
+    }
+  if (variant != NULL)
+    g_variant_unref (variant);
+}
+
+static void
+flash_proxy_set_property_cb (GDBusProxy *proxy,
+  GAsyncResult *res,
+  gpointer      user_data)
+{
+  const _ExtendedGDBusPropertyInfo *info = user_data;
+  GError *error;
+  GVariant *_ret;
+  error = NULL;
+  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
+  if (!_ret)
+    {
+      g_warning ("Error setting property '%s' on interface org.openbmc.Flash: %s (%s, %d)",
+                 info->parent_struct.name, 
+                 error->message, g_quark_to_string (error->domain), error->code);
+      g_error_free (error);
+    }
+  else
+    {
+      g_variant_unref (_ret);
+    }
 }
 
 static void
@@ -19385,6 +21376,18 @@ flash_proxy_set_property (GObject      *object,
   const GValue *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  info = _flash_property_info_pointers[prop_id - 1];
+  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
+  g_dbus_proxy_call (G_DBUS_PROXY (object),
+    "org.freedesktop.DBus.Properties.Set",
+    g_variant_new ("(ssv)", "org.openbmc.Flash", info->parent_struct.name, variant),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    NULL, (GAsyncReadyCallback) flash_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+  g_variant_unref (variant);
 }
 
 static void
@@ -19457,6 +21460,66 @@ flash_proxy_g_properties_changed (GDBusProxy *_proxy,
     }
 }
 
+static const gchar *
+flash_proxy_get_filename (Flash *object)
+{
+  FlashProxy *proxy = FLASH_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "filename");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static const gchar *
+flash_proxy_get_flasher_path (Flash *object)
+{
+  FlashProxy *proxy = FLASH_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "flasher_path");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static const gchar *
+flash_proxy_get_flasher_name (Flash *object)
+{
+  FlashProxy *proxy = FLASH_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "flasher_name");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static const gchar *
+flash_proxy_get_flasher_instance (Flash *object)
+{
+  FlashProxy *proxy = FLASH_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "flasher_instance");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static void
 flash_proxy_init (FlashProxy *proxy)
 {
@@ -19484,6 +21547,8 @@ flash_proxy_class_init (FlashProxyClass *klass)
   proxy_class->g_signal = flash_proxy_g_signal;
   proxy_class->g_properties_changed = flash_proxy_g_properties_changed;
 
+  flash_override_properties (gobject_class, 1);
+
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
   g_type_class_add_private (klass, sizeof (FlashProxyPrivate));
 #endif
@@ -19492,6 +21557,10 @@ flash_proxy_class_init (FlashProxyClass *klass)
 static void
 flash_proxy_iface_init (FlashIface *iface)
 {
+  iface->get_filename = flash_proxy_get_filename;
+  iface->get_flasher_path = flash_proxy_get_flasher_path;
+  iface->get_flasher_name = flash_proxy_get_flasher_name;
+  iface->get_flasher_instance = flash_proxy_get_flasher_instance;
 }
 
 /**
@@ -19881,9 +21950,25 @@ out:
   return g_variant_builder_end (&builder);
 }
 
+static gboolean _flash_emit_changed (gpointer user_data);
+
 static void
 flash_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 {
+  FlashSkeleton *skeleton = FLASH_SKELETON (_skeleton);
+  gboolean emit_changed = FALSE;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    {
+      g_source_destroy (skeleton->priv->changed_properties_idle_source);
+      skeleton->priv->changed_properties_idle_source = NULL;
+      emit_changed = TRUE;
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+
+  if (emit_changed)
+    _flash_emit_changed (skeleton);
 }
 
 static void
@@ -19949,12 +22034,154 @@ static void
 flash_skeleton_finalize (GObject *object)
 {
   FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  guint n;
+  for (n = 0; n < 4; n++)
+    g_value_unset (&skeleton->priv->properties[n]);
+  g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
   if (skeleton->priv->changed_properties_idle_source != NULL)
     g_source_destroy (skeleton->priv->changed_properties_idle_source);
   g_main_context_unref (skeleton->priv->context);
   g_mutex_clear (&skeleton->priv->lock);
   G_OBJECT_CLASS (flash_skeleton_parent_class)->finalize (object);
+}
+
+static void
+flash_skeleton_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static gboolean
+_flash_emit_changed (gpointer user_data)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (user_data);
+  GList *l;
+  GVariantBuilder builder;
+  GVariantBuilder invalidated_builder;
+  guint num_changes;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
+  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
+    {
+      ChangedProperty *cp = l->data;
+      GVariant *variant;
+      const GValue *cur_value;
+
+      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
+      if (!_g_value_equal (cur_value, &cp->orig_value))
+        {
+          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
+          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
+          g_variant_unref (variant);
+          num_changes++;
+        }
+    }
+  if (num_changes > 0)
+    {
+      GList *connections, *ll;
+      GVariant *signal_variant;
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.Flash",
+                                           &builder, &invalidated_builder));
+      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+      for (ll = connections; ll != NULL; ll = ll->next)
+        {
+          GDBusConnection *connection = ll->data;
+
+          g_dbus_connection_emit_signal (connection,
+                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
+                                         "org.freedesktop.DBus.Properties",
+                                         "PropertiesChanged",
+                                         signal_variant,
+                                         NULL);
+        }
+      g_variant_unref (signal_variant);
+      g_list_free_full (connections, g_object_unref);
+    }
+  else
+    {
+      g_variant_builder_clear (&builder);
+      g_variant_builder_clear (&invalidated_builder);
+    }
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  skeleton->priv->changed_properties = NULL;
+  skeleton->priv->changed_properties_idle_source = NULL;
+  g_mutex_unlock (&skeleton->priv->lock);
+  return FALSE;
+}
+
+static void
+_flash_schedule_emit_changed (FlashSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+{
+  ChangedProperty *cp;
+  GList *l;
+  cp = NULL;
+  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
+    {
+      ChangedProperty *i_cp = l->data;
+      if (i_cp->info == info)
+        {
+          cp = i_cp;
+          break;
+        }
+    }
+  if (cp == NULL)
+    {
+      cp = g_new0 (ChangedProperty, 1);
+      cp->prop_id = prop_id;
+      cp->info = info;
+      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
+      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
+      g_value_copy (orig_value, &cp->orig_value);
+    }
+}
+
+static void
+flash_skeleton_notify (GObject      *object,
+  GParamSpec *pspec G_GNUC_UNUSED)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties != NULL &&
+      skeleton->priv->changed_properties_idle_source == NULL)
+    {
+      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
+      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _flash_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
+      g_source_unref (skeleton->priv->changed_properties_idle_source);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static void
+flash_skeleton_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_object_freeze_notify (object);
+  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
+    {
+      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
+        _flash_schedule_emit_changed (skeleton, _flash_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
+      g_object_notify_by_pspec (object, pspec);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+  g_object_thaw_notify (object);
 }
 
 static void
@@ -19968,6 +22195,55 @@ flash_skeleton_init (FlashSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
+  skeleton->priv->properties = g_new0 (GValue, 4);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[2], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[3], G_TYPE_STRING);
+}
+
+static const gchar *
+flash_skeleton_get_filename (Flash *object)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[0]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+flash_skeleton_get_flasher_path (Flash *object)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+flash_skeleton_get_flasher_name (Flash *object)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[2]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+flash_skeleton_get_flasher_instance (Flash *object)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[3]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
 }
 
 static void
@@ -19978,6 +22254,12 @@ flash_skeleton_class_init (FlashSkeletonClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = flash_skeleton_finalize;
+  gobject_class->get_property = flash_skeleton_get_property;
+  gobject_class->set_property = flash_skeleton_set_property;
+  gobject_class->notify       = flash_skeleton_notify;
+
+
+  flash_override_properties (gobject_class, 1);
 
   skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
   skeleton_class->get_info = flash_skeleton_dbus_interface_get_info;
@@ -19995,6 +22277,10 @@ flash_skeleton_iface_init (FlashIface *iface)
 {
   iface->updated = _flash_on_signal_updated;
   iface->download = _flash_on_signal_download;
+  iface->get_filename = flash_skeleton_get_filename;
+  iface->get_flasher_path = flash_skeleton_get_flasher_path;
+  iface->get_flasher_name = flash_skeleton_get_flasher_name;
+  iface->get_flasher_instance = flash_skeleton_get_flasher_instance;
 }
 
 /**
@@ -20008,6 +22294,1636 @@ Flash *
 flash_skeleton_new (void)
 {
   return FLASH (g_object_new (TYPE_FLASH_SKELETON, NULL));
+}
+
+/* ------------------------------------------------------------------------
+ * Code for interface org.openbmc.FlashControl
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * SECTION:FlashControl
+ * @title: FlashControl
+ * @short_description: Generated C code for the org.openbmc.FlashControl D-Bus interface
+ *
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link> D-Bus interface in C.
+ */
+
+/* ---- Introspection data for org.openbmc.FlashControl ---- */
+
+static const _ExtendedGDBusArgInfo _flash_control_method_info_flash_IN_ARG_type =
+{
+  {
+    -1,
+    (gchar *) "type",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _flash_control_method_info_flash_IN_ARG_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _flash_control_method_info_flash_IN_ARG_pointers[] =
+{
+  &_flash_control_method_info_flash_IN_ARG_type,
+  &_flash_control_method_info_flash_IN_ARG_filename,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _flash_control_method_info_flash =
+{
+  {
+    -1,
+    (gchar *) "flash",
+    (GDBusArgInfo **) &_flash_control_method_info_flash_IN_ARG_pointers,
+    NULL,
+    NULL
+  },
+  "handle-flash",
+  FALSE
+};
+
+static const _ExtendedGDBusMethodInfo * const _flash_control_method_info_pointers[] =
+{
+  &_flash_control_method_info_flash,
+  NULL
+};
+
+static const _ExtendedGDBusArgInfo _flash_control_signal_info_done_ARG_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _flash_control_signal_info_done_ARG_pointers[] =
+{
+  &_flash_control_signal_info_done_ARG_filename,
+  NULL
+};
+
+static const _ExtendedGDBusSignalInfo _flash_control_signal_info_done =
+{
+  {
+    -1,
+    (gchar *) "Done",
+    (GDBusArgInfo **) &_flash_control_signal_info_done_ARG_pointers,
+    NULL
+  },
+  "done"
+};
+
+static const _ExtendedGDBusArgInfo _flash_control_signal_info_error_ARG_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _flash_control_signal_info_error_ARG_pointers[] =
+{
+  &_flash_control_signal_info_error_ARG_filename,
+  NULL
+};
+
+static const _ExtendedGDBusSignalInfo _flash_control_signal_info_error =
+{
+  {
+    -1,
+    (gchar *) "Error",
+    (GDBusArgInfo **) &_flash_control_signal_info_error_ARG_pointers,
+    NULL
+  },
+  "error"
+};
+
+static const _ExtendedGDBusArgInfo _flash_control_signal_info_progress_ARG_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _flash_control_signal_info_progress_ARG_progress =
+{
+  {
+    -1,
+    (gchar *) "progress",
+    (gchar *) "y",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _flash_control_signal_info_progress_ARG_pointers[] =
+{
+  &_flash_control_signal_info_progress_ARG_filename,
+  &_flash_control_signal_info_progress_ARG_progress,
+  NULL
+};
+
+static const _ExtendedGDBusSignalInfo _flash_control_signal_info_progress =
+{
+  {
+    -1,
+    (gchar *) "Progress",
+    (GDBusArgInfo **) &_flash_control_signal_info_progress_ARG_pointers,
+    NULL
+  },
+  "progress"
+};
+
+static const _ExtendedGDBusSignalInfo * const _flash_control_signal_info_pointers[] =
+{
+  &_flash_control_signal_info_done,
+  &_flash_control_signal_info_error,
+  &_flash_control_signal_info_progress,
+  NULL
+};
+
+static const _ExtendedGDBusPropertyInfo _flash_control_property_info_filename =
+{
+  {
+    -1,
+    (gchar *) "filename",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "filename",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _flash_control_property_info_type_ =
+{
+  {
+    -1,
+    (gchar *) "type",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "type",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo * const _flash_control_property_info_pointers[] =
+{
+  &_flash_control_property_info_filename,
+  &_flash_control_property_info_type_,
+  NULL
+};
+
+static const _ExtendedGDBusInterfaceInfo _flash_control_interface_info =
+{
+  {
+    -1,
+    (gchar *) "org.openbmc.FlashControl",
+    (GDBusMethodInfo **) &_flash_control_method_info_pointers,
+    (GDBusSignalInfo **) &_flash_control_signal_info_pointers,
+    (GDBusPropertyInfo **) &_flash_control_property_info_pointers,
+    NULL
+  },
+  "flash-control",
+};
+
+
+/**
+ * flash_control_interface_info:
+ *
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link> D-Bus interface.
+ *
+ * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
+ */
+GDBusInterfaceInfo *
+flash_control_interface_info (void)
+{
+  return (GDBusInterfaceInfo *) &_flash_control_interface_info.parent_struct;
+}
+
+/**
+ * flash_control_override_properties:
+ * @klass: The class structure for a #GObject<!-- -->-derived class.
+ * @property_id_begin: The property id to assign to the first overridden property.
+ *
+ * Overrides all #GObject properties in the #FlashControl interface for a concrete class.
+ * The properties are overridden in the order they are defined.
+ *
+ * Returns: The last property id.
+ */
+guint
+flash_control_override_properties (GObjectClass *klass, guint property_id_begin)
+{
+  g_object_class_override_property (klass, property_id_begin++, "filename");
+  g_object_class_override_property (klass, property_id_begin++, "type");
+  return property_id_begin - 1;
+}
+
+
+
+/**
+ * FlashControl:
+ *
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link>.
+ */
+
+/**
+ * FlashControlIface:
+ * @parent_iface: The parent interface.
+ * @handle_flash: Handler for the #FlashControl::handle-flash signal.
+ * @get_filename: Getter for the #FlashControl:filename property.
+ * @get_type_: Getter for the #FlashControl:type property.
+ * @done: Handler for the #FlashControl::done signal.
+ * @error: Handler for the #FlashControl::error signal.
+ * @progress: Handler for the #FlashControl::progress signal.
+ *
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link>.
+ */
+
+typedef FlashControlIface FlashControlInterface;
+G_DEFINE_INTERFACE (FlashControl, flash_control, G_TYPE_OBJECT);
+
+static void
+flash_control_default_init (FlashControlIface *iface)
+{
+  /* GObject signals for incoming D-Bus method calls: */
+  /**
+   * FlashControl::handle-flash:
+   * @object: A #FlashControl.
+   * @invocation: A #GDBusMethodInvocation.
+   * @arg_type: Argument passed by remote caller.
+   * @arg_filename: Argument passed by remote caller.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-FlashControl.flash">flash()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_control_complete_flash() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-flash",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashControlIface, handle_flash),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    3,
+    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING, G_TYPE_STRING);
+
+  /* GObject signals for received D-Bus signals: */
+  /**
+   * FlashControl::done:
+   * @object: A #FlashControl.
+   * @arg_filename: Argument.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-FlashControl.Done">"Done"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("done",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashControlIface, done),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    1, G_TYPE_STRING);
+
+  /**
+   * FlashControl::error:
+   * @object: A #FlashControl.
+   * @arg_filename: Argument.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-FlashControl.Error">"Error"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("error",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashControlIface, error),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    1, G_TYPE_STRING);
+
+  /**
+   * FlashControl::progress:
+   * @object: A #FlashControl.
+   * @arg_filename: Argument.
+   * @arg_progress: Argument.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-FlashControl.Progress">"Progress"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("progress",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashControlIface, progress),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    2, G_TYPE_STRING, G_TYPE_UCHAR);
+
+  /* GObject properties for D-Bus properties: */
+  /**
+   * FlashControl:filename:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-FlashControl.filename">"filename"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("filename", "filename", "filename", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * FlashControl:type:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-FlashControl.type">"type"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("type", "type", "type", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+}
+
+/**
+ * flash_control_get_filename: (skip)
+ * @object: A #FlashControl.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-FlashControl.filename">"filename"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use flash_control_dup_filename() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+flash_control_get_filename (FlashControl *object)
+{
+  return FLASH_CONTROL_GET_IFACE (object)->get_filename (object);
+}
+
+/**
+ * flash_control_dup_filename: (skip)
+ * @object: A #FlashControl.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-FlashControl.filename">"filename"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+flash_control_dup_filename (FlashControl *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "filename", &value, NULL);
+  return value;
+}
+
+/**
+ * flash_control_set_filename: (skip)
+ * @object: A #FlashControl.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-FlashControl.filename">"filename"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+flash_control_set_filename (FlashControl *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "filename", value, NULL);
+}
+
+/**
+ * flash_control_get_type_: (skip)
+ * @object: A #FlashControl.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-FlashControl.type">"type"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use flash_control_dup_type_() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+flash_control_get_type_ (FlashControl *object)
+{
+  return FLASH_CONTROL_GET_IFACE (object)->get_type_ (object);
+}
+
+/**
+ * flash_control_dup_type_: (skip)
+ * @object: A #FlashControl.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-FlashControl.type">"type"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+flash_control_dup_type_ (FlashControl *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "type", &value, NULL);
+  return value;
+}
+
+/**
+ * flash_control_set_type_: (skip)
+ * @object: A #FlashControl.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-FlashControl.type">"type"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+flash_control_set_type_ (FlashControl *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "type", value, NULL);
+}
+
+/**
+ * flash_control_emit_done:
+ * @object: A #FlashControl.
+ * @arg_filename: Argument to pass with the signal.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-FlashControl.Done">"Done"</link> D-Bus signal.
+ */
+void
+flash_control_emit_done (
+    FlashControl *object,
+    const gchar *arg_filename)
+{
+  g_signal_emit_by_name (object, "done", arg_filename);
+}
+
+/**
+ * flash_control_emit_error:
+ * @object: A #FlashControl.
+ * @arg_filename: Argument to pass with the signal.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-FlashControl.Error">"Error"</link> D-Bus signal.
+ */
+void
+flash_control_emit_error (
+    FlashControl *object,
+    const gchar *arg_filename)
+{
+  g_signal_emit_by_name (object, "error", arg_filename);
+}
+
+/**
+ * flash_control_emit_progress:
+ * @object: A #FlashControl.
+ * @arg_filename: Argument to pass with the signal.
+ * @arg_progress: Argument to pass with the signal.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-FlashControl.Progress">"Progress"</link> D-Bus signal.
+ */
+void
+flash_control_emit_progress (
+    FlashControl *object,
+    const gchar *arg_filename,
+    guchar arg_progress)
+{
+  g_signal_emit_by_name (object, "progress", arg_filename, arg_progress);
+}
+
+/**
+ * flash_control_call_flash:
+ * @proxy: A #FlashControlProxy.
+ * @arg_type: Argument to pass with the method invocation.
+ * @arg_filename: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-FlashControl.flash">flash()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call flash_control_call_flash_finish() to get the result of the operation.
+ *
+ * See flash_control_call_flash_sync() for the synchronous, blocking version of this method.
+ */
+void
+flash_control_call_flash (
+    FlashControl *proxy,
+    const gchar *arg_type,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "flash",
+    g_variant_new ("(ss)",
+                   arg_type,
+                   arg_filename),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * flash_control_call_flash_finish:
+ * @proxy: A #FlashControlProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_control_call_flash().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with flash_control_call_flash().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_control_call_flash_finish (
+    FlashControl *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_control_call_flash_sync:
+ * @proxy: A #FlashControlProxy.
+ * @arg_type: Argument to pass with the method invocation.
+ * @arg_filename: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-FlashControl.flash">flash()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See flash_control_call_flash() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_control_call_flash_sync (
+    FlashControl *proxy,
+    const gchar *arg_type,
+    const gchar *arg_filename,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "flash",
+    g_variant_new ("(ss)",
+                   arg_type,
+                   arg_filename),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_control_complete_flash:
+ * @object: A #FlashControl.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-FlashControl.flash">flash()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+flash_control_complete_flash (
+    FlashControl *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
+}
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * FlashControlProxy:
+ *
+ * The #FlashControlProxy structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * FlashControlProxyClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #FlashControlProxy.
+ */
+
+struct _FlashControlProxyPrivate
+{
+  GData *qdata;
+};
+
+static void flash_control_proxy_iface_init (FlashControlIface *iface);
+
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (FlashControlProxy, flash_control_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (FlashControlProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_FLASH_CONTROL, flash_control_proxy_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (FlashControlProxy, flash_control_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_FLASH_CONTROL, flash_control_proxy_iface_init));
+
+#endif
+static void
+flash_control_proxy_finalize (GObject *object)
+{
+  FlashControlProxy *proxy = FLASH_CONTROL_PROXY (object);
+  g_datalist_clear (&proxy->priv->qdata);
+  G_OBJECT_CLASS (flash_control_proxy_parent_class)->finalize (object);
+}
+
+static void
+flash_control_proxy_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _flash_control_property_info_pointers[prop_id - 1];
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
+  if (info->use_gvariant)
+    {
+      g_value_set_variant (value, variant);
+    }
+  else
+    {
+      if (variant != NULL)
+        g_dbus_gvariant_to_gvalue (variant, value);
+    }
+  if (variant != NULL)
+    g_variant_unref (variant);
+}
+
+static void
+flash_control_proxy_set_property_cb (GDBusProxy *proxy,
+  GAsyncResult *res,
+  gpointer      user_data)
+{
+  const _ExtendedGDBusPropertyInfo *info = user_data;
+  GError *error;
+  GVariant *_ret;
+  error = NULL;
+  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
+  if (!_ret)
+    {
+      g_warning ("Error setting property '%s' on interface org.openbmc.FlashControl: %s (%s, %d)",
+                 info->parent_struct.name, 
+                 error->message, g_quark_to_string (error->domain), error->code);
+      g_error_free (error);
+    }
+  else
+    {
+      g_variant_unref (_ret);
+    }
+}
+
+static void
+flash_control_proxy_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _flash_control_property_info_pointers[prop_id - 1];
+  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
+  g_dbus_proxy_call (G_DBUS_PROXY (object),
+    "org.freedesktop.DBus.Properties.Set",
+    g_variant_new ("(ssv)", "org.openbmc.FlashControl", info->parent_struct.name, variant),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    NULL, (GAsyncReadyCallback) flash_control_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+  g_variant_unref (variant);
+}
+
+static void
+flash_control_proxy_g_signal (GDBusProxy *proxy,
+  const gchar *sender_name G_GNUC_UNUSED,
+  const gchar *signal_name,
+  GVariant *parameters)
+{
+  _ExtendedGDBusSignalInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint n;
+  guint signal_id;
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_flash_control_interface_info.parent_struct, signal_name);
+  if (info == NULL)
+    return;
+  num_params = g_variant_n_children (parameters);
+  paramv = g_new0 (GValue, num_params + 1);
+  g_value_init (&paramv[0], TYPE_FLASH_CONTROL);
+  g_value_set_object (&paramv[0], proxy);
+  g_variant_iter_init (&iter, parameters);
+  n = 1;
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.args[n - 1];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_FLASH_CONTROL);
+  g_signal_emitv (paramv, signal_id, 0, NULL);
+  for (n = 0; n < num_params + 1; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static void
+flash_control_proxy_g_properties_changed (GDBusProxy *_proxy,
+  GVariant *changed_properties,
+  const gchar *const *invalidated_properties)
+{
+  FlashControlProxy *proxy = FLASH_CONTROL_PROXY (_proxy);
+  guint n;
+  const gchar *key;
+  GVariantIter *iter;
+  _ExtendedGDBusPropertyInfo *info;
+  g_variant_get (changed_properties, "a{sv}", &iter);
+  while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_flash_control_interface_info.parent_struct, key);
+      g_datalist_remove_data (&proxy->priv->qdata, key);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+  g_variant_iter_free (iter);
+  for (n = 0; invalidated_properties[n] != NULL; n++)
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_flash_control_interface_info.parent_struct, invalidated_properties[n]);
+      g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+}
+
+static const gchar *
+flash_control_proxy_get_filename (FlashControl *object)
+{
+  FlashControlProxy *proxy = FLASH_CONTROL_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "filename");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static const gchar *
+flash_control_proxy_get_type_ (FlashControl *object)
+{
+  FlashControlProxy *proxy = FLASH_CONTROL_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "type");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static void
+flash_control_proxy_init (FlashControlProxy *proxy)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  proxy->priv = flash_control_proxy_get_instance_private (proxy);
+#else
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_FLASH_CONTROL_PROXY, FlashControlProxyPrivate);
+#endif
+
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), flash_control_interface_info ());
+}
+
+static void
+flash_control_proxy_class_init (FlashControlProxyClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusProxyClass *proxy_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize     = flash_control_proxy_finalize;
+  gobject_class->get_property = flash_control_proxy_get_property;
+  gobject_class->set_property = flash_control_proxy_set_property;
+
+  proxy_class = G_DBUS_PROXY_CLASS (klass);
+  proxy_class->g_signal = flash_control_proxy_g_signal;
+  proxy_class->g_properties_changed = flash_control_proxy_g_properties_changed;
+
+  flash_control_override_properties (gobject_class, 1);
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (FlashControlProxyPrivate));
+#endif
+}
+
+static void
+flash_control_proxy_iface_init (FlashControlIface *iface)
+{
+  iface->get_filename = flash_control_proxy_get_filename;
+  iface->get_type_ = flash_control_proxy_get_type_;
+}
+
+/**
+ * flash_control_proxy_new:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link>. See g_dbus_proxy_new() for more details.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call flash_control_proxy_new_finish() to get the result of the operation.
+ *
+ * See flash_control_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+flash_control_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_FLASH_CONTROL_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.FlashControl", NULL);
+}
+
+/**
+ * flash_control_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_control_proxy_new().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with flash_control_proxy_new().
+ *
+ * Returns: (transfer full) (type FlashControlProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FlashControl *
+flash_control_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return FLASH_CONTROL (ret);
+  else
+    return NULL;
+}
+
+/**
+ * flash_control_proxy_new_sync:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link>. See g_dbus_proxy_new_sync() for more details.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See flash_control_proxy_new() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type FlashControlProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FlashControl *
+flash_control_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_FLASH_CONTROL_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.FlashControl", NULL);
+  if (ret != NULL)
+    return FLASH_CONTROL (ret);
+  else
+    return NULL;
+}
+
+
+/**
+ * flash_control_proxy_new_for_bus:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Like flash_control_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call flash_control_proxy_new_for_bus_finish() to get the result of the operation.
+ *
+ * See flash_control_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+flash_control_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_FLASH_CONTROL_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.FlashControl", NULL);
+}
+
+/**
+ * flash_control_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_control_proxy_new_for_bus().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with flash_control_proxy_new_for_bus().
+ *
+ * Returns: (transfer full) (type FlashControlProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FlashControl *
+flash_control_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return FLASH_CONTROL (ret);
+  else
+    return NULL;
+}
+
+/**
+ * flash_control_proxy_new_for_bus_sync:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Like flash_control_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See flash_control_proxy_new_for_bus() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type FlashControlProxy): The constructed proxy object or %NULL if @error is set.
+ */
+FlashControl *
+flash_control_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_FLASH_CONTROL_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.FlashControl", NULL);
+  if (ret != NULL)
+    return FLASH_CONTROL (ret);
+  else
+    return NULL;
+}
+
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * FlashControlSkeleton:
+ *
+ * The #FlashControlSkeleton structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * FlashControlSkeletonClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #FlashControlSkeleton.
+ */
+
+struct _FlashControlSkeletonPrivate
+{
+  GValue *properties;
+  GList *changed_properties;
+  GSource *changed_properties_idle_source;
+  GMainContext *context;
+  GMutex lock;
+};
+
+static void
+_flash_control_skeleton_handle_method_call (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name,
+  const gchar *method_name,
+  GVariant *parameters,
+  GDBusMethodInvocation *invocation,
+  gpointer user_data)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (user_data);
+  _ExtendedGDBusMethodInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint num_extra;
+  guint n;
+  guint signal_id;
+  GValue return_value = G_VALUE_INIT;
+  info = (_ExtendedGDBusMethodInfo *) g_dbus_method_invocation_get_method_info (invocation);
+  g_assert (info != NULL);
+  num_params = g_variant_n_children (parameters);
+  num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
+  n = 0;
+  g_value_init (&paramv[n], TYPE_FLASH_CONTROL);
+  g_value_set_object (&paramv[n++], skeleton);
+  g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
+  g_value_set_object (&paramv[n++], invocation);
+  if (info->pass_fdlist)
+    {
+#ifdef G_OS_UNIX
+      g_value_init (&paramv[n], G_TYPE_UNIX_FD_LIST);
+      g_value_set_object (&paramv[n++], g_dbus_message_get_unix_fd_list (g_dbus_method_invocation_get_message (invocation)));
+#else
+      g_assert_not_reached ();
+#endif
+    }
+  g_variant_iter_init (&iter, parameters);
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.in_args[n - num_extra];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_FLASH_CONTROL);
+  g_value_init (&return_value, G_TYPE_BOOLEAN);
+  g_signal_emitv (paramv, signal_id, 0, &return_value);
+  if (!g_value_get_boolean (&return_value))
+    g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD, "Method %s is not implemented on interface %s", method_name, interface_name);
+  g_value_unset (&return_value);
+  for (n = 0; n < num_params + num_extra; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static GVariant *
+_flash_control_skeleton_handle_get_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GError **error,
+  gpointer user_data)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  GVariant *ret;
+  ret = NULL;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_flash_control_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      g_value_init (&value, pspec->value_type);
+      g_object_get_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      ret = g_dbus_gvalue_to_gvariant (&value, G_VARIANT_TYPE (info->parent_struct.signature));
+      g_value_unset (&value);
+    }
+  return ret;
+}
+
+static gboolean
+_flash_control_skeleton_handle_set_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GVariant *variant,
+  GError **error,
+  gpointer user_data)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  gboolean ret;
+  ret = FALSE;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_flash_control_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      if (info->use_gvariant)
+        g_value_set_variant (&value, variant);
+      else
+        g_dbus_gvariant_to_gvalue (variant, &value);
+      g_object_set_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      g_value_unset (&value);
+      ret = TRUE;
+    }
+  return ret;
+}
+
+static const GDBusInterfaceVTable _flash_control_skeleton_vtable =
+{
+  _flash_control_skeleton_handle_method_call,
+  _flash_control_skeleton_handle_get_property,
+  _flash_control_skeleton_handle_set_property,
+  {NULL}
+};
+
+static GDBusInterfaceInfo *
+flash_control_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return flash_control_interface_info ();
+}
+
+static GDBusInterfaceVTable *
+flash_control_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return (GDBusInterfaceVTable *) &_flash_control_skeleton_vtable;
+}
+
+static GVariant *
+flash_control_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (_skeleton);
+
+  GVariantBuilder builder;
+  guint n;
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  if (_flash_control_interface_info.parent_struct.properties == NULL)
+    goto out;
+  for (n = 0; _flash_control_interface_info.parent_struct.properties[n] != NULL; n++)
+    {
+      GDBusPropertyInfo *info = _flash_control_interface_info.parent_struct.properties[n];
+      if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
+        {
+          GVariant *value;
+          value = _flash_control_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.FlashControl", info->name, NULL, skeleton);
+          if (value != NULL)
+            {
+              g_variant_take_ref (value);
+              g_variant_builder_add (&builder, "{sv}", info->name, value);
+              g_variant_unref (value);
+            }
+        }
+    }
+out:
+  return g_variant_builder_end (&builder);
+}
+
+static gboolean _flash_control_emit_changed (gpointer user_data);
+
+static void
+flash_control_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (_skeleton);
+  gboolean emit_changed = FALSE;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    {
+      g_source_destroy (skeleton->priv->changed_properties_idle_source);
+      skeleton->priv->changed_properties_idle_source = NULL;
+      emit_changed = TRUE;
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+
+  if (emit_changed)
+    _flash_control_emit_changed (skeleton);
+}
+
+static void
+_flash_control_on_signal_done (
+    FlashControl *object,
+    const gchar *arg_filename)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("(s)",
+                   arg_filename));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.FlashControl", "Done",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void
+_flash_control_on_signal_error (
+    FlashControl *object,
+    const gchar *arg_filename)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("(s)",
+                   arg_filename));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.FlashControl", "Error",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void
+_flash_control_on_signal_progress (
+    FlashControl *object,
+    const gchar *arg_filename,
+    guchar arg_progress)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("(sy)",
+                   arg_filename,
+                   arg_progress));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.FlashControl", "Progress",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void flash_control_skeleton_iface_init (FlashControlIface *iface);
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (FlashControlSkeleton, flash_control_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (FlashControlSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_FLASH_CONTROL, flash_control_skeleton_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (FlashControlSkeleton, flash_control_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_FLASH_CONTROL, flash_control_skeleton_iface_init));
+
+#endif
+static void
+flash_control_skeleton_finalize (GObject *object)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+  guint n;
+  for (n = 0; n < 2; n++)
+    g_value_unset (&skeleton->priv->properties[n]);
+  g_free (skeleton->priv->properties);
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    g_source_destroy (skeleton->priv->changed_properties_idle_source);
+  g_main_context_unref (skeleton->priv->context);
+  g_mutex_clear (&skeleton->priv->lock);
+  G_OBJECT_CLASS (flash_control_skeleton_parent_class)->finalize (object);
+}
+
+static void
+flash_control_skeleton_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static gboolean
+_flash_control_emit_changed (gpointer user_data)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (user_data);
+  GList *l;
+  GVariantBuilder builder;
+  GVariantBuilder invalidated_builder;
+  guint num_changes;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
+  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
+    {
+      ChangedProperty *cp = l->data;
+      GVariant *variant;
+      const GValue *cur_value;
+
+      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
+      if (!_g_value_equal (cur_value, &cp->orig_value))
+        {
+          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
+          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
+          g_variant_unref (variant);
+          num_changes++;
+        }
+    }
+  if (num_changes > 0)
+    {
+      GList *connections, *ll;
+      GVariant *signal_variant;
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.FlashControl",
+                                           &builder, &invalidated_builder));
+      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+      for (ll = connections; ll != NULL; ll = ll->next)
+        {
+          GDBusConnection *connection = ll->data;
+
+          g_dbus_connection_emit_signal (connection,
+                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
+                                         "org.freedesktop.DBus.Properties",
+                                         "PropertiesChanged",
+                                         signal_variant,
+                                         NULL);
+        }
+      g_variant_unref (signal_variant);
+      g_list_free_full (connections, g_object_unref);
+    }
+  else
+    {
+      g_variant_builder_clear (&builder);
+      g_variant_builder_clear (&invalidated_builder);
+    }
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  skeleton->priv->changed_properties = NULL;
+  skeleton->priv->changed_properties_idle_source = NULL;
+  g_mutex_unlock (&skeleton->priv->lock);
+  return FALSE;
+}
+
+static void
+_flash_control_schedule_emit_changed (FlashControlSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+{
+  ChangedProperty *cp;
+  GList *l;
+  cp = NULL;
+  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
+    {
+      ChangedProperty *i_cp = l->data;
+      if (i_cp->info == info)
+        {
+          cp = i_cp;
+          break;
+        }
+    }
+  if (cp == NULL)
+    {
+      cp = g_new0 (ChangedProperty, 1);
+      cp->prop_id = prop_id;
+      cp->info = info;
+      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
+      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
+      g_value_copy (orig_value, &cp->orig_value);
+    }
+}
+
+static void
+flash_control_skeleton_notify (GObject      *object,
+  GParamSpec *pspec G_GNUC_UNUSED)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties != NULL &&
+      skeleton->priv->changed_properties_idle_source == NULL)
+    {
+      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
+      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _flash_control_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
+      g_source_unref (skeleton->priv->changed_properties_idle_source);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static void
+flash_control_skeleton_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_object_freeze_notify (object);
+  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
+    {
+      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
+        _flash_control_schedule_emit_changed (skeleton, _flash_control_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
+      g_object_notify_by_pspec (object, pspec);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+  g_object_thaw_notify (object);
+}
+
+static void
+flash_control_skeleton_init (FlashControlSkeleton *skeleton)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  skeleton->priv = flash_control_skeleton_get_instance_private (skeleton);
+#else
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_FLASH_CONTROL_SKELETON, FlashControlSkeletonPrivate);
+#endif
+
+  g_mutex_init (&skeleton->priv->lock);
+  skeleton->priv->context = g_main_context_ref_thread_default ();
+  skeleton->priv->properties = g_new0 (GValue, 2);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
+}
+
+static const gchar *
+flash_control_skeleton_get_filename (FlashControl *object)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[0]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+flash_control_skeleton_get_type_ (FlashControl *object)
+{
+  FlashControlSkeleton *skeleton = FLASH_CONTROL_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static void
+flash_control_skeleton_class_init (FlashControlSkeletonClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusInterfaceSkeletonClass *skeleton_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = flash_control_skeleton_finalize;
+  gobject_class->get_property = flash_control_skeleton_get_property;
+  gobject_class->set_property = flash_control_skeleton_set_property;
+  gobject_class->notify       = flash_control_skeleton_notify;
+
+
+  flash_control_override_properties (gobject_class, 1);
+
+  skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+  skeleton_class->get_info = flash_control_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = flash_control_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = flash_control_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = flash_control_skeleton_dbus_interface_get_vtable;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (FlashControlSkeletonPrivate));
+#endif
+}
+
+static void
+flash_control_skeleton_iface_init (FlashControlIface *iface)
+{
+  iface->done = _flash_control_on_signal_done;
+  iface->error = _flash_control_on_signal_error;
+  iface->progress = _flash_control_on_signal_progress;
+  iface->get_filename = flash_control_skeleton_get_filename;
+  iface->get_type_ = flash_control_skeleton_get_type_;
+}
+
+/**
+ * flash_control_skeleton_new:
+ *
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link>.
+ *
+ * Returns: (transfer full) (type FlashControlSkeleton): The skeleton object.
+ */
+FlashControl *
+flash_control_skeleton_new (void)
+{
+  return FLASH_CONTROL (g_object_new (TYPE_FLASH_CONTROL_SKELETON, NULL));
 }
 
 /* ------------------------------------------------------------------------
@@ -24639,6 +28555,15 @@ object_default_init (ObjectIface *iface)
   g_object_interface_install_property (iface, g_param_spec_object ("process", "process", "process", TYPE_PROCESS, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
   /**
+   * Object:shared-resource:
+   *
+   * The #SharedResource instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link>, if any.
+   *
+   * Connect to the #GObject::notify signal to get informed of property changes.
+   */
+  g_object_interface_install_property (iface, g_param_spec_object ("shared-resource", "shared-resource", "shared-resource", TYPE_SHARED_RESOURCE, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+
+  /**
    * Object:control:
    *
    * The #Control instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Control.top_of_page">org.openbmc.Control</link>, if any.
@@ -24700,6 +28625,15 @@ object_default_init (ObjectIface *iface)
    * Connect to the #GObject::notify signal to get informed of property changes.
    */
   g_object_interface_install_property (iface, g_param_spec_object ("flash", "flash", "flash", TYPE_FLASH, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+
+  /**
+   * Object:flash-control:
+   *
+   * The #FlashControl instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link>, if any.
+   *
+   * Connect to the #GObject::notify signal to get informed of property changes.
+   */
+  g_object_interface_install_property (iface, g_param_spec_object ("flash-control", "flash-control", "flash-control", TYPE_FLASH_CONTROL, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
   /**
    * Object:button:
@@ -24850,6 +28784,23 @@ Process *object_get_process (Object *object)
 }
 
 /**
+ * object_get_shared_resource:
+ * @object: A #Object.
+ *
+ * Gets the #SharedResource instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link> on @object, if any.
+ *
+ * Returns: (transfer full): A #SharedResource that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ */
+SharedResource *object_get_shared_resource (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
+  if (ret == NULL)
+    return NULL;
+  return SHARED_RESOURCE (ret);
+}
+
+/**
  * object_get_control:
  * @object: A #Object.
  *
@@ -24966,6 +28917,23 @@ Flash *object_get_flash (Object *object)
   if (ret == NULL)
     return NULL;
   return FLASH (ret);
+}
+
+/**
+ * object_get_flash_control:
+ * @object: A #Object.
+ *
+ * Gets the #FlashControl instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link> on @object, if any.
+ *
+ * Returns: (transfer full): A #FlashControl that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ */
+FlashControl *object_get_flash_control (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
+  if (ret == NULL)
+    return NULL;
+  return FLASH_CONTROL (ret);
 }
 
 /**
@@ -25161,6 +29129,26 @@ Process *object_peek_process (Object *object)
 }
 
 /**
+ * object_peek_shared_resource: (skip)
+ * @object: A #Object.
+ *
+ * Like object_get_shared_resource() but doesn't increase the reference count on the returned object.
+ *
+ * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
+ *
+ * Returns: (transfer none): A #SharedResource or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ */
+SharedResource *object_peek_shared_resource (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
+  if (ret == NULL)
+    return NULL;
+  g_object_unref (ret);
+  return SHARED_RESOURCE (ret);
+}
+
+/**
  * object_peek_control: (skip)
  * @object: A #Object.
  *
@@ -25298,6 +29286,26 @@ Flash *object_peek_flash (Object *object)
     return NULL;
   g_object_unref (ret);
   return FLASH (ret);
+}
+
+/**
+ * object_peek_flash_control: (skip)
+ * @object: A #Object.
+ *
+ * Like object_get_flash_control() but doesn't increase the reference count on the returned object.
+ *
+ * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
+ *
+ * Returns: (transfer none): A #FlashControl or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ */
+FlashControl *object_peek_flash_control (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
+  if (ret == NULL)
+    return NULL;
+  g_object_unref (ret);
+  return FLASH_CONTROL (ret);
 }
 
 /**
@@ -25463,51 +29471,61 @@ object_proxy_get_property (GObject      *gobject,
       break;
 
     case 8:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
       g_value_take_object (value, interface);
       break;
 
     case 9:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
     case 10:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
     case 11:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
     case 12:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
     case 13:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
     case 14:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
     case 15:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
     case 16:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
       g_value_take_object (value, interface);
       break;
 
     case 17:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      g_value_take_object (value, interface);
+      break;
+
+    case 18:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      g_value_take_object (value, interface);
+      break;
+
+    case 19:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
       g_value_take_object (value, interface);
       break;
@@ -25533,16 +29551,18 @@ object_proxy_class_init (ObjectProxyClass *klass)
   g_object_class_override_property (gobject_class, 5, "sensor-i2c");
   g_object_class_override_property (gobject_class, 6, "sensor-match");
   g_object_class_override_property (gobject_class, 7, "process");
-  g_object_class_override_property (gobject_class, 8, "control");
-  g_object_class_override_property (gobject_class, 9, "control-bmc");
-  g_object_class_override_property (gobject_class, 10, "control-host");
-  g_object_class_override_property (gobject_class, 11, "control-power");
-  g_object_class_override_property (gobject_class, 12, "watchdog");
-  g_object_class_override_property (gobject_class, 13, "event-log");
-  g_object_class_override_property (gobject_class, 14, "flash");
-  g_object_class_override_property (gobject_class, 15, "button");
-  g_object_class_override_property (gobject_class, 16, "led");
-  g_object_class_override_property (gobject_class, 17, "host-ipmi");
+  g_object_class_override_property (gobject_class, 8, "shared-resource");
+  g_object_class_override_property (gobject_class, 9, "control");
+  g_object_class_override_property (gobject_class, 10, "control-bmc");
+  g_object_class_override_property (gobject_class, 11, "control-host");
+  g_object_class_override_property (gobject_class, 12, "control-power");
+  g_object_class_override_property (gobject_class, 13, "watchdog");
+  g_object_class_override_property (gobject_class, 14, "event-log");
+  g_object_class_override_property (gobject_class, 15, "flash");
+  g_object_class_override_property (gobject_class, 16, "flash-control");
+  g_object_class_override_property (gobject_class, 17, "button");
+  g_object_class_override_property (gobject_class, 18, "led");
+  g_object_class_override_property (gobject_class, 19, "host-ipmi");
 }
 
 /**
@@ -25704,6 +29724,19 @@ object_skeleton_set_property (GObject      *gobject,
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
+          g_warn_if_fail (IS_SHARED_RESOURCE (interface));
+          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
+        }
+      else
+        {
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.SharedResource");
+        }
+      break;
+
+    case 9:
+      interface = g_value_get_object (value);
+      if (interface != NULL)
+        {
           g_warn_if_fail (IS_CONTROL (interface));
           g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
         }
@@ -25713,7 +29746,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 9:
+    case 10:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25726,7 +29759,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 10:
+    case 11:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25739,7 +29772,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 11:
+    case 12:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25752,7 +29785,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 12:
+    case 13:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25765,7 +29798,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 13:
+    case 14:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25778,7 +29811,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 14:
+    case 15:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25791,7 +29824,20 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 15:
+    case 16:
+      interface = g_value_get_object (value);
+      if (interface != NULL)
+        {
+          g_warn_if_fail (IS_FLASH_CONTROL (interface));
+          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
+        }
+      else
+        {
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.FlashControl");
+        }
+      break;
+
+    case 17:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25804,7 +29850,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 16:
+    case 18:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25817,7 +29863,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 17:
+    case 19:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -25883,51 +29929,61 @@ object_skeleton_get_property (GObject      *gobject,
       break;
 
     case 8:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
       g_value_take_object (value, interface);
       break;
 
     case 9:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
     case 10:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
     case 11:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
     case 12:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
     case 13:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
     case 14:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
     case 15:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
     case 16:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
       g_value_take_object (value, interface);
       break;
 
     case 17:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      g_value_take_object (value, interface);
+      break;
+
+    case 18:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      g_value_take_object (value, interface);
+      break;
+
+    case 19:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
       g_value_take_object (value, interface);
       break;
@@ -25953,16 +30009,18 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
   g_object_class_override_property (gobject_class, 5, "sensor-i2c");
   g_object_class_override_property (gobject_class, 6, "sensor-match");
   g_object_class_override_property (gobject_class, 7, "process");
-  g_object_class_override_property (gobject_class, 8, "control");
-  g_object_class_override_property (gobject_class, 9, "control-bmc");
-  g_object_class_override_property (gobject_class, 10, "control-host");
-  g_object_class_override_property (gobject_class, 11, "control-power");
-  g_object_class_override_property (gobject_class, 12, "watchdog");
-  g_object_class_override_property (gobject_class, 13, "event-log");
-  g_object_class_override_property (gobject_class, 14, "flash");
-  g_object_class_override_property (gobject_class, 15, "button");
-  g_object_class_override_property (gobject_class, 16, "led");
-  g_object_class_override_property (gobject_class, 17, "host-ipmi");
+  g_object_class_override_property (gobject_class, 8, "shared-resource");
+  g_object_class_override_property (gobject_class, 9, "control");
+  g_object_class_override_property (gobject_class, 10, "control-bmc");
+  g_object_class_override_property (gobject_class, 11, "control-host");
+  g_object_class_override_property (gobject_class, 12, "control-power");
+  g_object_class_override_property (gobject_class, 13, "watchdog");
+  g_object_class_override_property (gobject_class, 14, "event-log");
+  g_object_class_override_property (gobject_class, 15, "flash");
+  g_object_class_override_property (gobject_class, 16, "flash-control");
+  g_object_class_override_property (gobject_class, 17, "button");
+  g_object_class_override_property (gobject_class, 18, "led");
+  g_object_class_override_property (gobject_class, 19, "host-ipmi");
 }
 
 /**
@@ -26065,6 +30123,18 @@ void object_skeleton_set_process (ObjectSkeleton *object, Process *interface_)
 }
 
 /**
+ * object_skeleton_set_shared_resource:
+ * @object: A #ObjectSkeleton.
+ * @interface_: (allow-none): A #SharedResource or %NULL to clear the interface.
+ *
+ * Sets the #SharedResource instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-SharedResource.top_of_page">org.openbmc.SharedResource</link> on @object.
+ */
+void object_skeleton_set_shared_resource (ObjectSkeleton *object, SharedResource *interface_)
+{
+  g_object_set (G_OBJECT (object), "shared-resource", interface_, NULL);
+}
+
+/**
  * object_skeleton_set_control:
  * @object: A #ObjectSkeleton.
  * @interface_: (allow-none): A #Control or %NULL to clear the interface.
@@ -26146,6 +30216,18 @@ void object_skeleton_set_event_log (ObjectSkeleton *object, EventLog *interface_
 void object_skeleton_set_flash (ObjectSkeleton *object, Flash *interface_)
 {
   g_object_set (G_OBJECT (object), "flash", interface_, NULL);
+}
+
+/**
+ * object_skeleton_set_flash_control:
+ * @object: A #ObjectSkeleton.
+ * @interface_: (allow-none): A #FlashControl or %NULL to clear the interface.
+ *
+ * Sets the #FlashControl instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-FlashControl.top_of_page">org.openbmc.FlashControl</link> on @object.
+ */
+void object_skeleton_set_flash_control (ObjectSkeleton *object, FlashControl *interface_)
+{
+  g_object_set (G_OBJECT (object), "flash-control", interface_, NULL);
 }
 
 /**
@@ -26253,6 +30335,7 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorI2c", GSIZE_TO_POINTER (TYPE_SENSOR_I2C_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorMatch", GSIZE_TO_POINTER (TYPE_SENSOR_MATCH_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Process", GSIZE_TO_POINTER (TYPE_PROCESS_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SharedResource", GSIZE_TO_POINTER (TYPE_SHARED_RESOURCE_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Control", GSIZE_TO_POINTER (TYPE_CONTROL_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.control.Bmc", GSIZE_TO_POINTER (TYPE_CONTROL_BMC_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.control.Host", GSIZE_TO_POINTER (TYPE_CONTROL_HOST_PROXY));
@@ -26260,6 +30343,7 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Watchdog", GSIZE_TO_POINTER (TYPE_WATCHDOG_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.EventLog", GSIZE_TO_POINTER (TYPE_EVENT_LOG_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Flash", GSIZE_TO_POINTER (TYPE_FLASH_PROXY));
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.FlashControl", GSIZE_TO_POINTER (TYPE_FLASH_CONTROL_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Button", GSIZE_TO_POINTER (TYPE_BUTTON_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Led", GSIZE_TO_POINTER (TYPE_LED_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.HostIpmi", GSIZE_TO_POINTER (TYPE_HOST_IPMI_PROXY));

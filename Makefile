@@ -52,8 +52,8 @@ sensor_host_status: sensor_host_status_obj.o
 control_host: control_host_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/control_host_obj.o $(OFLAGS) $(CFLAGS)
 
-flash_bios:  $(OBJS2) pflash.o flash_bios_obj.o
-	$(CC) -o bin/$@.exe obj/flash_bios_obj.o $(OFLAGS)  $(OBJS3)  $(CFLAGS)
+flash_bios:  flash_bios_obj.o
+	$(CC) -o bin/$@.exe obj/flash_bios_obj.o $(OFLAGS)  $(CFLAGS)
 
 fan: fan_generic_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/fan_generic_obj.o $(OFLAGS) $(CFLAGS)
@@ -73,5 +73,8 @@ board_vpd: board_vpd_obj.o
 pcie_slot_present: pcie_slot_present_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/pcie_slot_present_obj.o obj/gpio.o $(OFLAGS) $(CFLAGS)
 
+flasher:  $(OBJS2) flasher_obj.o
+	$(CC) -o bin/$@.exe obj/flasher_obj.o $(OFLAGS)  $(OBJS3)  $(CFLAGS)
 
-all: clean setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd pcie_slot_present flash_bios
+
+all: clean setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd pcie_slot_present flash_bios flasher

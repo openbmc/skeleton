@@ -1,31 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 #include "interfaces/openbmc_intf.h"
-#include "pflash/pflash.c"
 #include "openbmc.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/flash";
 static const gchar* dbus_name        = "org.openbmc.flash.Bios";
+static const gchar* FLASHER_BIN      = "flasher.exe";
+static const gchar* DLOAD_BUS = "org.openbmc.managers.Download";
+static const gchar* DLOAD_OBJ = "/org/openbmc/managers/Download";
 
 static GDBusObjectManagerServer *manager = NULL;
 
-void update(Flash *flash, const gchar* write_file)
+int update(Flash* flash)
 {
-	printf("Flashing: %s\n",write_file);
-	// get size from file
-	struct stat stbuf;
-	uint32_t address = 0, read_size = 0, write_size = 0;
+	pid_t pid;
+	int status=-1;
+	pid = fork();
+	if (pid == 0)
+	{
+		const gchar* path = flash_get_flasher_path(flash);
+		const gchar* name = flash_get_flasher_name(flash);
+		const gchar* inst = flash_get_flasher_instance(flash);
+		const gchar* filename = flash_get_filename(flash);
 
-#ifdef __arm__
-	if (stat(write_file, &stbuf))
- 	{
- 		printf("ERROR:  Invalid flash file: %s\n",write_file);
+		status = execl(path, name, inst, filename, NULL);
 	}
-	write_size = stbuf.st_size;
-	// TODO: need to change pflash to return error instead of exit
-	erase_chip();
-	program_file(write_file, address, write_size);
-#endif
-  	flash_emit_updated(flash);
+	return status;
 }
 
 static gboolean
@@ -35,11 +37,49 @@ on_init (Flash          *f,
 {
 	flash_complete_init(f,invocation);
 
-	#ifdef __arm__
-		printf("Tuning BIOS Flash\n");
-		flash_access_setup_pnor(true, false, false);
-	#endif
+	//tune flash
+	flash_set_filename(f,"");
+	int rc = update(f);
+	if (rc==-1)
+	{
+		printf("ERROR FlashControl_0: Unable to init\n");
+	}
+	return TRUE;
+}
 
+static gboolean
+on_lock (SharedResource          *lock,
+                GDBusMethodInvocation  *invocation,
+		gchar*                  name,
+                gpointer                user_data)
+{
+	printf("Locking BIOS Flash: %s\n",name);
+	shared_resource_set_lock(lock,true);
+	shared_resource_set_name(lock,name);
+	shared_resource_complete_lock(lock,invocation);
+	return TRUE;
+}
+static gboolean
+on_is_locked (SharedResource          *lock,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+	gboolean locked = shared_resource_get_lock(lock);
+	const gchar* name = shared_resource_get_name(lock);
+	shared_resource_complete_is_locked(lock,invocation,locked,name);
+	return TRUE;
+}
+
+
+static gboolean
+on_unlock (SharedResource          *lock,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+	printf("Unlocking BIOS Flash\n");
+	shared_resource_set_lock(lock,false);
+	shared_resource_set_name(lock,"");
+	shared_resource_complete_unlock(lock,invocation);
 	return TRUE;
 }
 
@@ -50,9 +90,22 @@ on_update_via_tftp (Flash          *flash,
                 gchar*                  write_file,
                 gpointer                user_data)
 {
-	printf("Flashing BIOS from TFTP: %s,%s\n",url,write_file);
-	flash_emit_download(flash,url,write_file);
+	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+	gboolean locked = shared_resource_get_lock(lock);
 	flash_complete_update_via_tftp(flash,invocation);
+	if (locked)
+	{
+		const gchar* name = shared_resource_get_name(lock);
+		printf("BIOS Flash is locked: %s\n",name);
+	}
+	else
+	{	
+		printf("Flashing BIOS from TFTP: %s,%s\n",url,write_file);
+		shared_resource_set_lock(lock,true);
+		shared_resource_set_name(lock,dbus_object_path);
+		flash_set_filename(flash,write_file);
+		flash_emit_download(flash,url,write_file);
+	}
 	return TRUE;
 }
 
@@ -62,10 +115,28 @@ on_update (Flash          *flash,
                 gchar*                  write_file,
                 gpointer                user_data)
 {
-	printf("Flashing BIOS from file\n");
+	int rc = 0;
+	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+	gboolean locked = shared_resource_get_lock(lock);
 	flash_complete_update(flash,invocation);
-	update(flash,write_file);
-  	flash_emit_updated(flash);
+	if (locked)
+	{
+		const gchar* name = shared_resource_get_name(lock);
+		printf("BIOS Flash is locked: %s\n",name);
+	}
+	else
+	{	
+		printf("Flashing BIOS from: %s\n",write_file);
+		shared_resource_set_lock(lock,true);
+		shared_resource_set_name(lock,dbus_object_path);
+		flash_set_filename(flash,write_file);
+		rc = update(flash);
+		if (!rc)
+		{
+			shared_resource_set_lock(lock,false);
+			shared_resource_set_name(lock,"");
+		}
+	}
 	return TRUE;
 }
 
@@ -79,14 +150,87 @@ on_download_complete (GDBusConnection* connection,
                gpointer user_data) 
 {
 	Flash *flash = object_get_flash((Object*)user_data);
-	
+	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+
 	GVariantIter *iter = g_variant_iter_new(parameters);
-	GVariant* value = g_variant_iter_next_value(iter);
-	const gchar* write_file;
+	GVariant* v_fullname = g_variant_iter_next_value(iter);
 	gsize size;
-	write_file = g_variant_get_string(value,&size);
-	update(flash,write_file);
+	const gchar* fullname = g_variant_get_string(v_fullname,&size);
+	int rc;
+	flash_set_filename(flash,fullname);
+	rc = update(flash);
+	if (!rc)
+	{
+		shared_resource_set_lock(lock,false);
+		shared_resource_set_name(lock,"");
+	}
+}
+
+static void
+on_flash_progress (GDBusConnection* connection,
+               const gchar* sender_name,
+               const gchar* object_path,
+               const gchar* interface_name,
+               const gchar* signal_name,
+               GVariant* parameters,
+               gpointer user_data) 
+{
+	Flash *flash = object_get_flash((Object*)user_data);
+	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+	GVariantIter *iter = g_variant_iter_new(parameters);
+	GVariant* v_filename = g_variant_iter_next_value(iter);
+	GVariant* v_progress = g_variant_iter_next_value(iter);
 	
+	uint8_t progress = g_variant_get_byte(v_progress);
+	printf("Progress: %d\n",progress);
+}
+
+static void
+on_flash_done (GDBusConnection* connection,
+               const gchar* sender_name,
+               const gchar* object_path,
+               const gchar* interface_name,
+               const gchar* signal_name,
+               GVariant* parameters,
+               gpointer user_data) 
+{
+	Flash *flash = object_get_flash((Object*)user_data);
+	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+	printf("Flash succeeded; unlocking flash\n");
+	shared_resource_set_lock(lock,false);
+	shared_resource_set_name(lock,"");
+}
+
+static void
+on_flash_error (GDBusConnection* connection,
+               const gchar* sender_name,
+               const gchar* object_path,
+               const gchar* interface_name,
+               const gchar* signal_name,
+               GVariant* parameters,
+               gpointer user_data) 
+{
+	Flash *flash = object_get_flash((Object*)user_data);
+	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+	printf("Flash Error; unlocking flash\n");
+	shared_resource_set_lock(lock,false);
+	shared_resource_set_name(lock,"");
+}
+
+static void
+on_download_error (GDBusConnection* connection,
+               const gchar* sender_name,
+               const gchar* object_path,
+               const gchar* interface_name,
+               const gchar* signal_name,
+               GVariant* parameters,
+               gpointer user_data) 
+{
+	Flash *flash = object_get_flash((Object*)user_data);
+	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+	printf("ERROR: FlashBios:  Download error; clearing flash lock\n");
+	shared_resource_set_lock(lock,false);
+	shared_resource_set_name(lock,"");
 }
 
 static void 
@@ -95,7 +239,6 @@ on_bus_acquired (GDBusConnection *connection,
                  gpointer         user_data)
 {
 	ObjectSkeleton *object;
-//	g_print ("Acquired a message bus connection: %s\n",name);
  	cmdline *cmd = user_data;
 	if (cmd->argc < 2)
 	{
@@ -115,15 +258,64 @@ on_bus_acquired (GDBusConnection *connection,
 		object_skeleton_set_flash (object, flash);
  		g_object_unref (flash);
 
+		SharedResource* lock = shared_resource_skeleton_new ();
+		object_skeleton_set_shared_resource (object, lock);
+ 		g_object_unref (lock);
+
+		shared_resource_set_lock(lock,false);
+		shared_resource_set_name(lock,"");
+
+		int c = strlen(cmd->argv[0]);
+
+		//TODO: don't use fixed buffer
+		char buf[512];
+		memset(buf, '\0', sizeof(buf));
+		bool found = false;
+		while(c>0)
+		{
+			if (cmd->argv[0][c] == '/')
+			{
+				strncpy(buf,cmd->argv[0],c);
+				s = g_strdup_printf ("%s/%s",buf,FLASHER_BIN);
+				break;
+			}
+			c--;
+		}
+		if (c==0)
+		{
+			printf("ERROR FlashBios: Invalid Path = %s\n",cmd->argv[0]);
+		}
+		else
+		{
+			flash_set_flasher_path(flash,s);
+			flash_set_flasher_name(flash,FLASHER_BIN);
+			flash_set_flasher_instance(flash,cmd->argv[i]);
+		}
+		g_free (s);
+
+
 		//define method callbacks here
+		g_signal_connect (lock,
+                    "handle-lock",
+                    G_CALLBACK (on_lock),
+                    NULL); /* user_data */
+		g_signal_connect (lock,
+                    "handle-unlock",
+                    G_CALLBACK (on_unlock),
+                    NULL); /* user_data */
+		g_signal_connect (lock,
+                    "handle-is-locked",
+                    G_CALLBACK (on_is_locked),
+                    NULL); /* user_data */
+
 		g_signal_connect (flash,
                     "handle-update",
                     G_CALLBACK (on_update),
-                    NULL); /* user_data */
+                    object); /* user_data */
 		g_signal_connect (flash,
                     "handle-update-via-tftp",
                     G_CALLBACK (on_update_via_tftp),
-                    NULL); /* user_data */
+                    object); /* user_data */
 
 		g_signal_connect (flash,
                     "handle-init",
@@ -131,17 +323,59 @@ on_bus_acquired (GDBusConnection *connection,
                     NULL); /* user_data */
 
 		g_dbus_connection_signal_subscribe(connection,
-                                   "org.openbmc.managers.Download",
-                                   "org.openbmc.managers.Download",
-                                   "DownloadComplete",
-                                   "/org/openbmc/managers/Download",
-                                   NULL,
-                                   G_DBUS_SIGNAL_FLAGS_NONE,
+				   DLOAD_BUS, DLOAD_BUS, "DownloadComplete",
+                                   DLOAD_OBJ,NULL,G_DBUS_SIGNAL_FLAGS_NONE,
                                    (GDBusSignalCallback) on_download_complete,
                                    object,
                                    NULL );
+		g_dbus_connection_signal_subscribe(connection,
+				   DLOAD_BUS, DLOAD_BUS, "DownloadError",
+                                   DLOAD_OBJ,NULL,G_DBUS_SIGNAL_FLAGS_NONE,
+                                   (GDBusSignalCallback) on_download_error,
+                                   object,
+                                   NULL );
+
+		s = g_strdup_printf ("/org/openbmc/control/%s",cmd->argv[i]);
+		g_dbus_connection_signal_subscribe(connection,
+                                   NULL,
+                                   "org.openbmc.FlashControl",
+                                   "Done",
+                                   s,
+                                   NULL,
+                                   G_DBUS_SIGNAL_FLAGS_NONE,
+                                   (GDBusSignalCallback) on_flash_done,
+                                   object,
+                                   NULL );
+		g_free(s);
+		s = g_strdup_printf ("/org/openbmc/control/%s\0",cmd->argv[i]);
+		g_dbus_connection_signal_subscribe(connection,
+                                   NULL,
+                                   "org.openbmc.FlashControl",
+                                   "Error",
+                                   s,
+                                   NULL,
+                                   G_DBUS_SIGNAL_FLAGS_NONE,
+                                   (GDBusSignalCallback) on_flash_error,
+                                   object,
+                                   NULL );
+
+		g_free(s);
+		s = g_strdup_printf ("/org/openbmc/control/%s",cmd->argv[i]);
+		g_dbus_connection_signal_subscribe(connection,
+                                   NULL,
+                                   "org.openbmc.FlashControl",
+                                   "Progress",
+                                   s,
+                                   NULL,
+                                   G_DBUS_SIGNAL_FLAGS_NONE,
+                                   (GDBusSignalCallback) on_flash_progress,
+                                   object,
+                                   NULL );
+
+		g_free (s);
 
  
+		flash_set_filename(flash,"");
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
   		g_object_unref (object);
@@ -174,7 +408,6 @@ main (gint argc, gchar *argv[])
   cmdline cmd;
   cmd.argc = argc;
   cmd.argv = argv;
-
   guint id;
   loop = g_main_loop_new (NULL, FALSE);
 

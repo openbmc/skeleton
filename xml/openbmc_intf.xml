@@ -78,6 +78,19 @@
 	<interface name="org.openbmc.Process">
 		<method name="stop"/>
 	</interface>
+	<interface name="org.openbmc.SharedResource">
+		<method name="lock">
+			<arg name="name" type="s" direction="in"/>
+		</method>
+		<method name="unlock"/>
+		<method name="isLocked">
+			<arg name="lock" type="b" direction="out"/>
+			<arg name="name" type="s" direction="out"/>
+		</method>
+		<property name="lock" type="b" access="read"/>
+		<property name="name" type="s" access="read"/>
+	</interface>
+
 	<interface name="org.openbmc.Control">
 		<method name="init"/>
 		<property name="poll_interval" type="i" access="readwrite"/>
@@ -145,6 +158,28 @@
 			<arg name="url" type="s"/>
 			<arg name="filename" type="s"/>
 		</signal>
+		<property name="filename" type="s" access="read"/>
+		<property name="flasher_path" type="s" access="read"/>
+		<property name="flasher_name" type="s" access="read"/>
+		<property name="flasher_instance" type="s" access="read"/>
+	</interface>
+	<interface name="org.openbmc.FlashControl">
+		<method name="flash">
+			<arg name="type" type="s" direction="in"/>
+			<arg name="filename" type="s" direction="in"/>
+		</method>
+		<signal name="Done">
+			<arg name="filename" type="s"/>
+		</signal>
+		<signal name="Error">
+			<arg name="filename" type="s"/>
+		</signal>
+		<signal name="Progress">
+			<arg name="filename" type="s"/>
+			<arg name="progress" type="y"/>
+		</signal>
+		<property name="filename" type="s" access="read"/>
+		<property name="type" type="s" access="read"/>
 	</interface>
 	<interface name="org.openbmc.Button">
 		<method name="isOn">

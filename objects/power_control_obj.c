@@ -174,7 +174,6 @@ on_bus_acquired (GDBusConnection *connection,
   	manager = g_dbus_object_manager_server_new (dbus_object_path);
 	gchar *s;
   	s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[1]);
-	g_print("%s\n",s);
   	object = object_skeleton_new (s);
   	g_free (s);
 
