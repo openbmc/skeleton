@@ -1,0 +1,398 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <byteswap.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <getopt.h>
+#include <limits.h>
+#include <arpa/inet.h>
+#include <assert.h>
+
+#include <libflash/libflash.h>
+#include <libflash/libffs.h>
+#include "progress.h"
+#include "io.h"
+#include "ast.h"
+#include "sfc-ctrl.h"
+#include "interfaces/openbmc_intf.h"
+#include "includes/openbmc.h"
+
+static const gchar* dbus_object_path = "/org/openbmc/control";
+static const gchar* dbus_object_name = "Flasher_0";
+static const gchar* dbus_name        = "org.openbmc.control.Flasher";
+
+static GDBusObjectManagerServer *manager = NULL;
+
+#define __aligned(x)			__attribute__((aligned(x)))
+
+#define PFLASH_VERSION	"0.8.6"
+
+static bool must_confirm = false;
+static bool dummy_run;
+static bool need_relock;
+static bool bmc_flash;
+#ifdef __powerpc__
+static bool using_sfc;
+#endif
+
+#define FILE_BUF_SIZE	0x10000
+static uint8_t file_buf[FILE_BUF_SIZE] __aligned(0x1000);
+
+static struct spi_flash_ctrl	*fl_ctrl;
+static struct flash_chip	*fl_chip;
+static struct ffs_handle	*ffsh;
+static uint32_t			fl_total_size, fl_erase_granule;
+static const char		*fl_name;
+static int32_t			ffs_index = -1;
+
+
+static int erase_chip(void)
+{
+	int rc = 0;
+
+	printf("Erasing... (may take a while !) ");
+	fflush(stdout);
+
+	rc = flash_erase_chip(fl_chip);
+	if (rc) {
+		fprintf(stderr, "Error %d erasing chip\n", rc);
+		return(rc);
+	}
+
+	printf("done !\n");
+	return (rc);
+}
+
+static int program_file(FlashControl* flash_control, const char *file, uint32_t start, uint32_t size)
+{
+	int fd, rc;
+	ssize_t len;
+	uint32_t actual_size = 0;
+
+	fd = open(file, O_RDONLY);
+	if (fd == -1) {
+		perror("Failed to open file");
+		return(fd);
+	}
+	printf("About to program \"%s\" at 0x%08x..0x%08x !\n",
+	       file, start, size);
+
+	printf("Programming & Verifying...\n");
+	//progress_init(size >> 8);
+	unsigned int save_size = size;
+	uint8_t last_progress = 0;
+	while(size) {
+		len = read(fd, file_buf, FILE_BUF_SIZE);
+		if (len < 0) {
+			perror("Error reading file");
+			return(1);
+		}
+		if (len == 0)
+			break;
+		if (len > size)
+			len = size;
+		size -= len;
+		actual_size += len;
+		rc = flash_write(fl_chip, start, file_buf, len, true);
+		if (rc) {
+			if (rc == FLASH_ERR_VERIFY_FAILURE)
+				fprintf(stderr, "Verification failed for"
+					" chunk at 0x%08x\n", start);
+			else
+				fprintf(stderr, "Flash write error %d for"
+					" chunk at 0x%08x\n", rc, start);
+			return(rc);
+		}
+		start += len;
+		unsigned int percent = (100*actual_size/save_size);
+		uint8_t progress = (uint8_t) (percent);
+		if (progress != last_progress) {
+			flash_control_emit_progress(flash_control,file,progress);
+			last_progress = progress;
+		}
+	}
+	close(fd);
+
+	/* If this is a flash partition, adjust its size */
+	if (ffsh && ffs_index >= 0) {
+		printf("Updating actual size in partition header...\n");
+		ffs_update_act_size(ffsh, ffs_index, actual_size);
+	}
+	return(0);
+}
+
+static void do_read_file(const char *file, uint32_t start, uint32_t size)
+{
+	int fd, rc;
+	ssize_t len;
+	uint32_t done = 0;
+
+	fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 00666);
+	if (fd == -1) {
+		perror("Failed to open file");
+		exit(1);
+	}
+	printf("Reading to \"%s\" from 0x%08x..0x%08x !\n",
+	       file, start, size);
+
+	progress_init(size >> 8);
+	while(size) {
+		len = size > FILE_BUF_SIZE ? FILE_BUF_SIZE : size;
+		rc = flash_read(fl_chip, start, file_buf, len);
+		if (rc) {
+			fprintf(stderr, "Flash read error %d for"
+				" chunk at 0x%08x\n", rc, start);
+			exit(1);
+		}
+		rc = write(fd, file_buf, len);
+		if (rc < 0) {
+			perror("Error writing file");
+			exit(1);
+		}
+		start += len;
+		size -= len;
+		done += len;
+		progress_tick(done >> 8);
+	}
+	progress_end();
+	close(fd);
+}
+static void flash_access_cleanup_bmc(void)
+{
+	if (ffsh)
+		ffs_close(ffsh);
+	flash_exit(fl_chip);
+	ast_sf_close(fl_ctrl);
+	close_devs();
+}
+
+static void flash_access_setup_bmc(bool use_lpc, bool need_write)
+{
+	int rc;
+
+	/* Open and map devices */
+	open_devs(use_lpc, true);
+
+	/* Create the AST flash controller */
+	rc = ast_sf_open(AST_SF_TYPE_BMC, &fl_ctrl);
+	if (rc) {
+		fprintf(stderr, "Failed to open controller\n");
+		exit(1);
+	}
+
+	/* Open flash chip */
+	rc = flash_init(fl_ctrl, &fl_chip);
+	if (rc) {
+		fprintf(stderr, "Failed to open flash chip\n");
+		exit(1);
+	}
+
+	/* Setup cleanup function */
+	atexit(flash_access_cleanup_bmc);
+}
+
+static void flash_access_cleanup_pnor(void)
+{
+	/* Re-lock flash */
+	if (need_relock)
+		set_wrprotect(true);
+
+	if (ffsh)
+		ffs_close(ffsh);
+	flash_exit(fl_chip);
+#ifdef __powerpc__
+	if (using_sfc)
+		sfc_close(fl_ctrl);
+	else
+		ast_sf_close(fl_ctrl);
+#else
+	ast_sf_close(fl_ctrl);
+#endif
+	close_devs();
+}
+
+static void flash_access_setup_pnor(bool use_lpc, bool use_sfc, bool need_write)
+{
+	int rc;
+
+	/* Open and map devices */
+	open_devs(use_lpc, false);
+
+#ifdef __powerpc__
+	if (use_sfc) {
+		/* Create the SFC flash controller */
+		rc = sfc_open(&fl_ctrl);
+		if (rc) {
+			fprintf(stderr, "Failed to open controller\n");
+			exit(1);
+		}
+		using_sfc = true;
+	} else {
+#endif			
+		/* Create the AST flash controller */
+		rc = ast_sf_open(AST_SF_TYPE_PNOR, &fl_ctrl);
+		if (rc) {
+			fprintf(stderr, "Failed to open controller\n");
+			exit(1);
+		}
+#ifdef __powerpc__
+	}
+#endif
+
+	/* Open flash chip */
+	rc = flash_init(fl_ctrl, &fl_chip);
+	if (rc) {
+		fprintf(stderr, "Failed to open flash chip\n");
+		exit(1);
+	}
+
+	/* Unlock flash (PNOR only) */
+	if (need_write)
+		need_relock = set_wrprotect(false);
+
+	/* Setup cleanup function */
+	atexit(flash_access_cleanup_pnor);
+}
+
+int flash(FlashControl* flash_control,bool bmc_flash, char* write_file)
+{
+	bool has_sfc = false, has_ast = false, use_lpc = true;
+	bool erase = true, program = true;
+	uint32_t address = 0;
+	int rc;
+
+#ifdef __arm__
+	/* Check platform */
+	check_platform(&has_sfc, &has_ast);
+
+	/* Prepare for access */
+	if (bmc_flash) {
+		if (!has_ast) {
+			fprintf(stderr, "No BMC on this platform\n");
+			flash_control_emit_error(flash_control,write_file);
+			return;
+		}
+		flash_access_setup_bmc(use_lpc, erase || program);
+	} else {
+		if (!has_ast && !has_sfc) {
+			fprintf(stderr, "No BMC nor SFC on this platform\n");
+			flash_control_emit_error(flash_control,write_file);
+			return;
+		}
+		flash_access_setup_pnor(use_lpc, has_sfc, erase || program);
+	}
+
+	rc = flash_get_info(fl_chip, &fl_name,
+			    &fl_total_size, &fl_erase_granule);
+	if (rc) {
+		fprintf(stderr, "Error %d getting flash info\n", rc);
+		flash_control_emit_error(flash_control,write_file);
+		return;
+	}
+#endif
+	if (strcmp(write_file,"")!=0)
+	{
+		// If file specified but not size, get size from file
+		struct stat stbuf;
+		if (stat(write_file, &stbuf)) {
+			perror("Failed to get file size");
+			flash_control_emit_error(flash_control,write_file);
+			return;
+		}
+		uint32_t write_size = stbuf.st_size;
+#ifdef __arm__
+		rc = erase_chip();
+		if (rc) {
+			flash_control_emit_error(flash_control,write_file);
+			return;
+		}
+		rc = program_file(flash_control, write_file, address, write_size);
+		if (rc) {
+			flash_control_emit_error(flash_control,write_file);
+			return;
+		}
+#endif
+	
+		flash_control_emit_done(flash_control,write_file);
+		//flash_control_emit_error(flash_control,write_file);
+		printf("Flash done\n");
+	}
+	else 
+	{
+		flash_control_emit_done(flash_control,write_file);
+		printf("Flash tuned\n");
+	}
+}
+
+static void
+on_bus_acquired (GDBusConnection *connection,
+                 const gchar     *name,
+                 gpointer         user_data)
+{
+
+	cmdline *cmd = user_data;
+	if (cmd->argc < 2)
+	{
+		g_print("No objects created.  Put object name and filename on command line\n");
+		return;
+	}
+	printf("Starting flasher\n");	
+	ObjectSkeleton *object;
+  	manager = g_dbus_object_manager_server_new (dbus_object_path);
+	gchar *s;
+	s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[1]);
+
+	object = object_skeleton_new (s);
+	g_free (s);
+
+	FlashControl* flash_control = flash_control_skeleton_new ();
+	object_skeleton_set_flash_control (object, flash_control);
+	g_object_unref (flash_control);
+
+	/* Export the object (@manager takes its own reference to @object) */
+	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+	g_object_unref (object);
+
+	/* Export all objects */
+	g_dbus_object_manager_server_set_connection (manager, connection);
+	flash(flash_control,false,cmd->argv[2]);
+
+	//Object exits when done flashing	
+	g_main_loop_quit(cmd->loop);
+}
+
+int main(int argc, char *argv[])
+{
+
+  GMainLoop *loop;
+  cmdline cmd;
+  cmd.argc = argc;
+  cmd.argv = argv;
+
+  guint id;
+  loop = g_main_loop_new (NULL, FALSE);
+  cmd.loop = loop;
+
+  id = g_bus_own_name (DBUS_TYPE,
+                       dbus_name,
+                       G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
+                       G_BUS_NAME_OWNER_FLAGS_REPLACE,
+                       on_bus_acquired,
+                       NULL,
+                       NULL,
+                       &cmd,
+                       NULL);
+
+   g_main_loop_run (loop);
+  
+  g_bus_unown_name (id);
+  g_main_loop_unref (loop);
+
+	return 0;
+}
