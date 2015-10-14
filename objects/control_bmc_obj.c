@@ -16,21 +16,21 @@ static const gchar* dbus_name        = "org.openbmc.control.Bmc";
 
 //this probably should come from some global SOC config
 
-#define LPC_BASE		0x1e789000
+#define LPC_BASE		(off_t)0x1e789000
 #define LPC_HICR6		0x80
 #define LPC_HICR7		0x88
 #define LPC_HICR8		0x8c
 
-#define SPI_BASE		0x1e630000
-#define SCU_BASE                0x1e780000
-#define UART_BASE               0x1e783000
-#define COM_BASE                0x1e789000
-#define COM_BASE2               0x1e789100
-#define GPIO_BASE		0x1e6e2000
+#define SPI_BASE		(off_t)0x1e630000
+#define SCU_BASE                (off_t)0x1e780000
+#define UART_BASE               (off_t)0x1e783000
+#define COM_BASE                (off_t)0x1e789000
+#define COM_BASE2               (off_t)0x1e789100
+#define GPIO_BASE		(off_t)0x1e6e2000
 
 static GDBusObjectManagerServer *manager = NULL;
 
-void* memmap(int mem_fd,uint32_t* base)
+void* memmap(int mem_fd,off_t base)
 {
 	void* bmcreg;
 	bmcreg = mmap(NULL, getpagesize(),
