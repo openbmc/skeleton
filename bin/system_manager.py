@@ -105,6 +105,21 @@ class SystemManager(dbus.service.Object):
 			print "ERROR: bus name not found for: "+obj_path
 		r = { 'bus_name' : bus_name, 'obj_path' : obj_path }
 		return r
+
+	@dbus.service.method(DBUS_NAME,
+		in_signature='sy', out_signature='(ss)')
+	def getObjectFromByteId(self,category,key):
+		bus_name = ""
+		obj_path = ""
+		try:
+			byte = int(key)
+			obj_path = System.ID_LOOKUP[category][byte]
+			bus_name = self.bus_name_lookup[obj_path]
+		except Exception as e:
+			print "ERROR SystemManager: "+str(e)+" not found in lookup"
+
+		return [bus_name,obj_path]
+
 	
 	def start_process(self,bus_name):
 		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
@@ -150,16 +165,11 @@ class SystemManager(dbus.service.Object):
 
 	def NewBusHandler(self, bus_name, a, b):
 		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
-			start_time = time.time()
 			objects = {}
 			try:
 				Openbmc.get_objs(bus,bus_name,"",objects)
 				for instance_name in objects.keys():
 					self.bus_name_lookup[objects[instance_name]['PATH']] = bus_name
-				end_time = time.time()
-				print "Elapsed time was %g seconds" % (end_time - start_time)
-				print bus_name
-
 			except:
 				pass
 			
