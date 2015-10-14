@@ -60,9 +60,9 @@ if __name__ == '__main__':
 		intf.powerOff()
 	elif (cmd == "setsensor"):
 		intf_sys = Openbmc.getManagerInterface(bus,"System")
-		obj_info = intf_sys.getObjectFromId("SENSOR",ipmi_id)
-		obj_path = obj_info['obj_path']
-		bus_name = obj_info['bus_name']
+		obj_info = intf_sys.getObjectFromByteId("SENSOR",chr(int(ipmi_id)))
+		obj_path = obj_info[1]
+		bus_name = obj_info[0]
 		if (obj_path != "" and bus_name != ""):
 			obj = bus.get_object(bus_name,obj_path)
 			intf = dbus.Interface(obj,SENSOR_INTERFACE)
@@ -75,9 +75,10 @@ if __name__ == '__main__':
 	elif (cmd == "updatefru"):
 		d = { 'manufacturer' : data }	
 		intf_sys = Openbmc.getManagerInterface(bus,"System")
-		obj_info = intf_sys.getObjectFromId("FRU",ipmi_id)
-		obj_path = obj_info['obj_path']
-		bus_name = obj_info['bus_name']
+		c = chr(int(ipmi_id))
+		obj_info = intf_sys.getObjectFromByteId("FRU",chr(int(ipmi_id)))
+		obj_path = obj_info[1]
+		bus_name = obj_info[0]
 		if (obj_path != "" and bus_name != ""):
 			obj = bus.get_object(bus_name,obj_path)
 			intf = dbus.Interface(obj,"org.openbmc.InventoryItem")
