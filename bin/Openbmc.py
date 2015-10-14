@@ -74,10 +74,12 @@ def get_objs(bus,bus_name,path,objects):
 	tmp_path = path
 	if (path == ""):
 		tmp_path="/"
+
 	obj = bus.get_object(bus_name,tmp_path)
 	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
  	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
  	root = tree.getroot()
+
 	parent = True
 	for node in root.iter('node'):
 		for intf in node.iter('interface'):
