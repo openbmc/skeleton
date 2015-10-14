@@ -57,7 +57,14 @@ SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
 		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Slots_0' } ]
 	}
-
+SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
+		'system_state' : 'POWERING_ON',
+		'start_process' : True,
+		'monitor_process' : True,
+		'process_name' : 'sensors_virtual_p8.py',
+		'heartbeat' : 'no',
+		'instances' : [	{ 'name' : 'Dummy' } ]
+	}
 
 SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		'system_state' : 'STANDBY',
@@ -146,8 +153,8 @@ SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
 	}
 SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
 		'system_state' : 'STANDBY',
-		'start_process' : True,
-		'monitor_process' : True,
+		'start_process' : False,
+		'monitor_process' : False,
 		'process_name' : 'sensor_host_status.exe',
 		'heartbeat' : "no",
 		'instances' : [ { 'name' : 'HostStatus_0' } ]
@@ -294,8 +301,47 @@ FRU_INSTANCES = {
 		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
 		'is_fru'       : False,
 	},
-	'<inventory_root>/system/motherboard/cpu0/core1' :
-	{
+	'<inventory_root>/system/motherboard/cpu0/core1' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core2' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core3' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core4' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core5' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core6' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core7' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core8' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core9' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core10' : {
+		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
+		'is_fru'       : False,
+	},
+	'<inventory_root>/system/motherboard/cpu0/core11' : {
 		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
 		'is_fru'       : False,
 	},
@@ -335,21 +381,44 @@ FRU_INSTANCES = {
 
 ID_LOOKUP = {
 	'FRU' : {
-		'14' : '<inventory_root>/system/motherboard/dimm0',
+		0x01 : '<inventory_root>/system/motherboard/cpu0',
+		0x03 : '<inventory_root>/system/motherboard/dimm0',
+		0x04 : '<inventory_root>/system/motherboard/dimm1',
+		0x05 : '<inventory_root>/system/motherboard/dimm2',
+		0x06 : '<inventory_root>/system/motherboard/dimm3',
 	},
 	'SENSOR' : {
-		'21' : '<inventory_root>/system/motherboard/dimm0',
-		'14' : '/org/openbmc/sensors/HostStatus_0',
+		0x2f : '<inventory_root>/system/motherboard/cpu0',
+		0x22 : '<inventory_root>/system/motherboard/cpu0/core0',
+		0x23 : '<inventory_root>/system/motherboard/cpu0/core1',
+		0x24 : '<inventory_root>/system/motherboard/cpu0/core2',
+		0x25 : '<inventory_root>/system/motherboard/cpu0/core3',
+		0x26 : '<inventory_root>/system/motherboard/cpu0/core4',
+		0x27 : '<inventory_root>/system/motherboard/cpu0/core5',
+		0x28 : '<inventory_root>/system/motherboard/cpu0/core6',
+		0x29 : '<inventory_root>/system/motherboard/cpu0/core7',
+		0x2a : '<inventory_root>/system/motherboard/cpu0/core8',
+		0x2b : '<inventory_root>/system/motherboard/cpu0/core9',
+		0x2c : '<inventory_root>/system/motherboard/cpu0/core10',
+		0x2d : '<inventory_root>/system/motherboard/cpu0/core11',
+		0x1e : '<inventory_root>/system/motherboard/dimm0',
+		0x1f : '<inventory_root>/system/motherboard/dimm1',
+		0x20 : '<inventory_root>/system/motherboard/dimm2',
+		0x21 : '<inventory_root>/system/motherboard/dimm3',
+		0x09 : '/org/openbmc/sensor/virtual/BootCount',
+		0x05 : '/org/openbmc/sensor/virtual/BootProgress',
+		0x04 : '/org/openbmc/sensor/virtual/HostStatus',
+		0x08 : '/org/openbmc/sensor/virtual/OccStatus',
+		0x32 : '/org/openbmc/sensor/virtual/OperatingSystemStatus',
+		0x87 : '/org/openbmc/sensors/Power/Memory',
+		0x83 : '/org/openbmc/sensors/Power/Cpu0',
+		0x84 : '/org/openbmc/sensors/Power/Pcie',
+		0x85 : '/org/openbmc/sensors/Power/Misc',
 	},
 	'GPIO_PRESENT' : {
-		'SLOT0_RISER_PRESENT' : '<inventory_root>/system/io_board/pcie_left_slot_riser', 
-		'SLOT1_RISER_PRESENT' : '<inventory_root>/system/io_board/pcie_right_slot_riser', 
-		'SLOT2_RISER_PRESENT' : '<inventory_root>/system/io_board/pcie_x16_slot_riser',
 		'SLOT0_PRESENT' : '<inventory_root>/system/io_board/pcie_slot0', 
 		'SLOT1_PRESENT' : '<inventory_root>/system/io_board/pcie_slot1', 
 		'SLOT2_PRESENT' : '<inventory_root>/system/io_board/pcie_slot2',
-		'MEZZ0_PRESENT' : '<inventory_root>/system/io_board/pcie_mezz0', 
-		'MEZZ1_PRESENT' : '<inventory_root>/system/io_board/pcie_mezz1',
 	}
 }
 
