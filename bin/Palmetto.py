@@ -58,7 +58,7 @@ SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
 		'instances' : [	{ 'name' : 'Slots_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
-		'system_state' : 'POWERING_ON',
+		'system_state' : 'STANDBY',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensors_virtual_p8.py',
@@ -345,6 +345,11 @@ FRU_INSTANCES = {
 		'fru_type'        : Openbmc.FRU_TYPES['CORE'],
 		'is_fru'       : False,
 	},
+	'<inventory_root>/system/motherboard/centaur0' :
+	{
+		'fru_type'     : 0,
+		'is_fru'       : False,
+	},
 	'<inventory_root>/system/motherboard/dimm0' :
 	{
 		'fru_type'        : Openbmc.FRU_TYPES['DIMM'],
@@ -401,6 +406,7 @@ ID_LOOKUP = {
 		0x2b : '<inventory_root>/system/motherboard/cpu0/core9',
 		0x2c : '<inventory_root>/system/motherboard/cpu0/core10',
 		0x2d : '<inventory_root>/system/motherboard/cpu0/core11',
+		0x2e : '<inventory_root>/system/motherboard/centaur0',
 		0x1e : '<inventory_root>/system/motherboard/dimm0',
 		0x1f : '<inventory_root>/system/motherboard/dimm1',
 		0x20 : '<inventory_root>/system/motherboard/dimm2',
@@ -410,10 +416,6 @@ ID_LOOKUP = {
 		0x04 : '/org/openbmc/sensor/virtual/HostStatus',
 		0x08 : '/org/openbmc/sensor/virtual/OccStatus',
 		0x32 : '/org/openbmc/sensor/virtual/OperatingSystemStatus',
-		0x87 : '/org/openbmc/sensors/Power/Memory',
-		0x83 : '/org/openbmc/sensors/Power/Cpu0',
-		0x84 : '/org/openbmc/sensors/Power/Pcie',
-		0x85 : '/org/openbmc/sensors/Power/Misc',
 	},
 	'GPIO_PRESENT' : {
 		'SLOT0_PRESENT' : '<inventory_root>/system/io_board/pcie_slot0', 
