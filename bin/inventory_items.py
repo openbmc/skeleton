@@ -71,11 +71,17 @@ class InventoryItem(dbus.service.Object):
 			self.item[str(k)] = d.getBaseValue()
 		self.saveToCache()
 
-	@dbus.service.method("org.openbmc.SensorValue",
-		in_signature='y', out_signature='')
-	def setValue(self,data):
-		self.item['state'] = data
-		print "Update Fru State: "+str(self.item['state'])
+	@dbus.service.method("org.openbmc.InventoryItem",
+		in_signature='s', out_signature='')
+	def setPresent(self,present):
+		self.item['present'] = present
+		print "Set Present: "+str(present)
+
+	@dbus.service.method("org.openbmc.InventoryItem",
+		in_signature='s', out_signature='')
+	def setFault(self,fault):
+		self.item['fault_state'] = fault
+		print "Set Fault: "+str(fault)
 
 	def setField(self,field,value):
 		self.item[field] = value

@@ -65,7 +65,7 @@ if __name__ == '__main__':
 		bus_name = obj_info[0]
 		if (obj_path != "" and bus_name != ""):
 			obj = bus.get_object(bus_name,obj_path)
-			intf = dbus.Interface(obj,SENSOR_INTERFACE)
+			intf = dbus.Interface(obj,)
 			intf.setValue(dbus.Byte(int(data)))	
 			
 	elif (cmd == "getsensors"):
