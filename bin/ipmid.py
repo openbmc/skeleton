@@ -15,9 +15,13 @@ DBUS_NAME = 'org.openbmc.HostIpmi'
 OBJ_NAME = '/org/openbmc/HostIpmi/1'
 
 def print_packet(seq, netfn, cmd, data):
-    print 'seq:   0x%02x\nnetfn: 0x%02x\ncmd:   0x%02x\ndata:  [%s]' % (
-            seq, netfn, cmd,
-            ", ".join(['0x%02x' % x for x in data]))
+#    print 'seq:   0x%02x\nnetfn: 0x%02x\ncmd:   0x%02x\ndata:  [%s]' % (
+#            seq, netfn, cmd,
+#            ", ".join(['0x%02x' % x for x in data]))
+        new_str = ""
+        for x in data:
+                new_str += "0x%s " % (x.encode('hex'))
+        print new_str
 
 
 class Ipmid(dbus.service.Object):
@@ -31,6 +35,7 @@ class Ipmid(dbus.service.Object):
     def ReceivedMessage(self, seq, netfn, cmd, data):
         print("IPMI packet from host. Seq = 0x%x Netfn = 0x%x Cmd = 0x%x" %
               (ord(seq), ord(netfn), ord(cmd)))
+        print_packet(seq, netfn, cmd, data)
 
     @dbus.service.method(DBUS_NAME, "", "")
     def test(self):
@@ -40,6 +45,7 @@ class Ipmid(dbus.service.Object):
     def sendMessage(self, seq, netfn, cmd, data):
         print("IPMI packet sent to host. Seq = 0x%x Netfn = 0x%x Cmd = 0x%x" %
               (int(seq), int(netfn), int(cmd)))
+        #print_packet(seq, netfn, cmd, data)
 
         self.reader.write(seq, netfn, cmd, data)
 
@@ -62,12 +68,13 @@ class BtReader(object):
 
     def io_callback(self, fd, condition):
         data = os.read(self.bt, 128)
-        self.ipmi_obj.ReceivedMessage(data[2], data[1], data[3], data[4:])
+        if (len(data) > 2):
+            self.ipmi_obj.ReceivedMessage(data[2], data[1], data[3], data[4:])
         return True
 
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = dbus.SessionBus()
+    bus = dbus.SystemBus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = Ipmid(bus, OBJ_NAME)
     r = BtReader(obj)
