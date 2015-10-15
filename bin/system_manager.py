@@ -23,6 +23,9 @@ DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
 HEARTBEAT_CHECK_INTERVAL = 20000
 STATE_START_TIMEOUT = 10
+INTF_SENSOR = 'org.openbmc.SensorValue'
+INTF_ITEM = 'org.openbmc.InventoryItem'
+
 
 class SystemManager(dbus.service.Object):
 	def __init__(self,bus,name):
@@ -88,37 +91,40 @@ class SystemManager(dbus.service.Object):
 		self.current_state = state_name
 		
 	@dbus.service.method(DBUS_NAME,
-		in_signature='ss', out_signature='a{ss}')
+		in_signature='ss', out_signature='(sss)')
 	def getObjectFromId(self,category,key):
 		bus_name = ""
 		obj_path = ""
-
-		if (System.ID_LOOKUP.has_key(category)):
-			if (System.ID_LOOKUP[category].has_key(key)):
-				obj_path = System.ID_LOOKUP[category][key]
-		else:
-			print "ERROR: key not found: "+category+","+key
-
-		if (self.bus_name_lookup.has_key(obj_path)):
+		intf_name = INTF_ITEM
+		try:
+			obj_path = System.ID_LOOKUP[category][key]
 			bus_name = self.bus_name_lookup[obj_path]
-		else:
-			print "ERROR: bus name not found for: "+obj_path
-		r = { 'bus_name' : bus_name, 'obj_path' : obj_path }
-		return r
+			parts = obj_path.split('/')
+			if (parts[2] == 'sensor'):
+				intf_name = INTF_SENSOR
+		except Exception as e:
+			print "ERROR SystemManager: "+str(e)+" not found in lookup"
+
+		return [bus_name,obj_path,intf_name]
+
 
 	@dbus.service.method(DBUS_NAME,
-		in_signature='sy', out_signature='(ss)')
+		in_signature='sy', out_signature='(sss)')
 	def getObjectFromByteId(self,category,key):
 		bus_name = ""
 		obj_path = ""
+		intf_name = INTF_ITEM
 		try:
 			byte = int(key)
 			obj_path = System.ID_LOOKUP[category][byte]
 			bus_name = self.bus_name_lookup[obj_path]
+			parts = obj_path.split('/')
+			if (parts[2] == 'sensor'):
+				intf_name = INTF_SENSOR
 		except Exception as e:
 			print "ERROR SystemManager: "+str(e)+" not found in lookup"
 
-		return [bus_name,obj_path]
+		return [bus_name,obj_path,intf_name]
 
 	
 	def start_process(self,bus_name):
