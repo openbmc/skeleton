@@ -1,22 +1,25 @@
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include <stdio.h>
+#include <stdbool.h>
 #include "gpio.h"
-#define NUM_SLOTS 8
+
+#define NUM_SLOTS 4
 GPIO slots[NUM_SLOTS] = {
-	{ "SLOT0_RISER_PRESENT" },
-	{ "SLOT1_RISER_PRESENT" },
-	{ "SLOT2_RISER_PRESENT" },
+//	{ "SLOT0_RISER_PRESENT" },
+//	{ "SLOT1_RISER_PRESENT" },
+//	{ "SLOT2_RISER_PRESENT" },
 	{ "SLOT0_PRESENT" },
 	{ "SLOT1_PRESENT" },
 	{ "SLOT2_PRESENT" },
 	{ "MEZZ0_PRESENT" },
-	{ "MEZZ1_PRESENT" },
+//	{ "MEZZ1_PRESENT" },
 };
 
 typedef struct {
 	const char* bus_name;
 	const char* path;
+	const char* intf_name;
 } object_info;
 	
 
@@ -39,30 +42,16 @@ int get_object(GDBusProxy *proxy, GPIO* gpio, object_info* obj_info)
                                    NULL,
                                    &error);
 	g_assert_no_error (error);
-	const gchar* bus_name;
-	const gchar* obj_path;
-	gsize bus_name_size;
-	gsize obj_path_size;
+
 	GVariantIter *iter = g_variant_iter_new(result);
-	GVariant* dict = g_variant_iter_next_value(iter);
+	GVariant* v_result = g_variant_iter_next_value(iter);
 
-	GVariant* b = g_variant_lookup_value(dict,"bus_name",(const GVariantType *) "s");
-	bus_name = g_variant_get_string(b,&bus_name_size);
-	GVariant* o = g_variant_lookup_value(dict,"obj_path",(const GVariantType *) "s");
-	obj_path = g_variant_get_string(o,&obj_path_size);
-
-	int rc = 0;
-	if (bus_name_size ==  0 || obj_path_size == 0) {
-		g_print("ERROR: gpio %s not found in lookup\n",gpio->name);
+	g_variant_get(v_result,"(sss)",&obj_info->bus_name,&obj_info->path,&obj_info->intf_name);
+int rc=0;
+	if (strcmp(obj_info->bus_name,"") == 0) {
 		rc = 1;
-
-	} else {
-		obj_info->bus_name = bus_name;
-		obj_info->path = obj_path;
 	}
-	g_variant_unref(b);
-	g_variant_unref(o);
-	g_variant_unref(dict);
+	g_variant_unref(v_result);
 	g_variant_unref(result);
 
 	return rc;
@@ -89,7 +78,7 @@ int get_presence(GDBusConnection* connection, GPIO* gpio, uint8_t* present)
 	return rc; 
 }
 
-void update_fru_obj(GDBusConnection* connection, object_info* obj_info, uint8_t state)
+void update_fru_obj(GDBusConnection* connection, object_info* obj_info, bool present)
 {
 	GDBusProxy *proxy;
  	GError *error;
@@ -102,16 +91,16 @@ void update_fru_obj(GDBusConnection* connection, object_info* obj_info, uint8_t 
                              NULL,                      /* GDBusInterfaceInfo* */
                              obj_info->bus_name, /* name */
                              obj_info->path, /* object path */
-                             "org.openbmc.SensorValue",        /* interface name */
+                             obj_info->intf_name,        /* interface name */
                              NULL,                      /* GCancellable */
                              &error);
 	g_assert_no_error (error);
 
 	error = NULL;
-	parm = g_variant_new("(y)",state);
+	parm = g_variant_new("(b)",present);
 	
 	result = g_dbus_proxy_call_sync (proxy,
-                                   "setValue",
+                                   "setPresent",
 				   parm,
                                    G_DBUS_CALL_FLAGS_NONE,
                                    -1,
@@ -153,13 +142,15 @@ main (gint argc, gchar *argv[])
 	{
 		object_info obj_info;
 		uint8_t present;
+		bool b_present=false;
 		do {
 			rc = get_object(sys_proxy,&slots[i],&obj_info);
 			if (rc) { break; }
 			rc = get_presence(c,&slots[i],&present);
-			if (rc) { break; }
+			if (present==1) { b_present=true; }
+			//if (rc) { break; }
 			// TODO: send correct state
-			update_fru_obj(c,&obj_info,present);
+			update_fru_obj(c,&obj_info,b_present);
 		} while(0);
 	}
 
