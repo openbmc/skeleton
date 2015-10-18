@@ -14,7 +14,8 @@ System = __import__(sys.argv[1])
 import Openbmc
 
 DBUS_NAME = 'org.openbmc.managers.Sensors'
-OBJ_NAME = '/org/openbmc/managers/Sensors'
+OBJ_NAME = '/org/openbmc/sensors'
+ENUM_INTF = 'org.openbmc.Object.Enumerate'
 
 class SensorManager(dbus.service.Object):
 	def __init__(self,bus,name):
@@ -37,9 +38,9 @@ class SensorManager(dbus.service.Object):
 
 		self.sensor_cache = {}
 
-	@dbus.service.method(DBUS_NAME,
+	@dbus.service.method(ENUM_INTF,
 		in_signature='', out_signature='a{sa{sv}}')
-	def getSensors(self):
+	def enumerate(self):
 		return self.sensor_cache;
 	
 	

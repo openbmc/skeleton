@@ -25,7 +25,7 @@ HEARTBEAT_CHECK_INTERVAL = 20000
 STATE_START_TIMEOUT = 10
 INTF_SENSOR = 'org.openbmc.SensorValue'
 INTF_ITEM = 'org.openbmc.InventoryItem'
-
+INTF_CONTROL = 'org.openbmc.Control'
 
 class SystemManager(dbus.service.Object):
 	def __init__(self,bus,name):
@@ -41,7 +41,6 @@ class SystemManager(dbus.service.Object):
 		self.current_state = ""
 		self.system_states = {}
 		self.bus_name_lookup = {}
-
 		self.bin_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 
 		for bus_name in System.SYSTEM_CONFIG.keys():
@@ -57,7 +56,7 @@ class SystemManager(dbus.service.Object):
 				new_val = val.replace("<inventory_root>",System.INVENTORY_ROOT)
 				System.ID_LOOKUP[category][key] = new_val
 	
-		self.SystemStateHandler("INIT")
+		self.SystemStateHandler("BMC_INIT")
 		print "SystemManager Init Done"
 
 	def SystemStateHandler(self,state_name):
@@ -72,21 +71,30 @@ class SystemManager(dbus.service.Object):
 		if (i == STATE_START_TIMEOUT):
 			print "ERROR: Timeout waiting for state to finish: "+self.current_state
 			return					
+		
+		## clearing object started flags
+		try:
+			for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
+				System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 0
+		except:
+			pass
 
 		print "Running System State: "+state_name
 		if (self.system_states.has_key(state_name)):
 			for bus_name in self.system_states[state_name]:
 				self.start_process(bus_name)
 		
-		if (state_name == "INIT"):
+		if (state_name == "BMC_INIT"):
 			## Add poll for heartbeat
 	    		gobject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
 		
-		if (System.ENTER_STATE_CALLBACK.has_key(state_name)):
+		try:	
 			cb = System.ENTER_STATE_CALLBACK[state_name]
 			obj = bus.get_object(cb['bus_name'],cb['obj_name'])
 			method = obj.get_dbus_method(cb['method_name'],cb['interface_name'])
 			method()
+		except:
+			pass
 
 		self.current_state = state_name
 		
@@ -119,7 +127,7 @@ class SystemManager(dbus.service.Object):
 			obj_path = System.ID_LOOKUP[category][byte]
 			bus_name = self.bus_name_lookup[obj_path]
 			parts = obj_path.split('/')
-			if (parts[2] == 'sensor'):
+			if (parts[3] == 'sensor'):
 				intf_name = INTF_SENSOR
 		except Exception as e:
 			print "ERROR SystemManager: "+str(e)+" not found in lookup"
@@ -175,10 +183,14 @@ class SystemManager(dbus.service.Object):
 			try:
 				Openbmc.get_objs(bus,bus_name,"",objects)
 				for instance_name in objects.keys():
-					self.bus_name_lookup[objects[instance_name]['PATH']] = bus_name
+					obj_path = objects[instance_name]['PATH']
+					self.bus_name_lookup[obj_path] = bus_name
+					if (System.EXIT_STATE_DEPEND[self.current_state].has_key(obj_path) == True):
+						System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 1
+								
 			except:
 				pass
-			
+	
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
 				System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
 				for instance_name in objects.keys(): 
@@ -194,6 +206,28 @@ class SystemManager(dbus.service.Object):
 						intf = dbus.Interface(obj,init_intf)
 						print "Calling init method: " +obj_path+" : "+init_intf
 						intf.init()
+
+			## check if all objects are started to move to next state
+			try:
+				state = 1
+				for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
+					if (System.EXIT_STATE_DEPEND[self.current_state][obj_path] == 0):
+						state = 0
+				if (state == 1):
+					s = 0
+					for i in range(len(System.SYSTEM_STATES)):
+						if (System.SYSTEM_STATES[i] == self.current_state):
+							s = i+1
+
+					if (s == len(System.SYSTEM_STATES)):
+						print "ERROR SystemManager: No more system states"
+					else:
+						new_state_name = System.SYSTEM_STATES[s]
+						print "SystemManager Goto System State: "+new_state_name
+						self.SystemStateHandler(new_state_name)
+			except:
+				pass
+
 
 
 	@dbus.service.method(DBUS_NAME,

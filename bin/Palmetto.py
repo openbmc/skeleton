@@ -10,30 +10,51 @@ FLASH_DOWNLOAD_PATH = "/tmp"
 
 SYSTEM_NAME = "Palmetto"
 
+
+## System states
+##   state can change to next state in 2 ways:
+##   - a process emits a GotoSystemState signal with state name to goto
+##   - objects specified in EXIT_STATE_DEPEND have started
 SYSTEM_STATES = [
-	'INIT',
-	'STANDBY',
-	'POWERING_ON',
-	'POWERED_ON',
-	'BOOTING',
+	'BMC_INIT',
+	'BMC_STARTING',
+	'BMC_READY',
+	'HOST_POWERING_ON',
+	'HOST_POWERED_ON',
+	'HOST_BOOTING',
 	'HOST_UP',
-	'SHUTTING_DOWN',
-	'POWERING_DOWN'
+	'HOST_POWERED_DOWN',
 ]
 
+EXIT_STATE_DEPEND = {
+	'BMC_STARTING' : {
+		'/org/openbmc/control/chassis0': 0,
+		'/org/openbmc/control/power0' : 0,
+		'/org/openbmc/control/led/BMC_READY' : 0,
+		'/org/openbmc/control/Host_0' : 0,
+	}
+}
+
+## method will be called when state is entered
 ENTER_STATE_CALLBACK = {
-	'POWERED_ON' : { 
+	'HOST_POWERED_ON' : { 
 		'bus_name'    : 'org.openbmc.control.Host',
 		'obj_name'    : '/org/openbmc/control/Host_0',
 		'interface_name' : 'org.openbmc.control.Host',
 		'method_name' : 'boot'
+	},
+	'BMC_READY' : {
+		'bus_name'   : 'org.openbmc.control.led',
+		'obj_name'   : '/org/openbmc/control/led/BMC_READY',
+		'interface_name' : 'org.openbmc.Led',
+		'method_name' : 'setOn'
 	}
 }
 
 SYSTEM_CONFIG = {}
 
 SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
-		'system_state' : 'INIT',
+		'system_state' : 'BMC_INIT',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'control_bmc.exe',
@@ -42,7 +63,7 @@ SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'inventory_items.py',
@@ -50,7 +71,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
 		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
-		'system_state' : 'POWERED_ON',
+		'system_state' : 'HOST_POWERED_ON',
 		'start_process' : True,
 		'monitor_process' : False,
 		'process_name' : 'pcie_slot_present.exe',
@@ -58,16 +79,16 @@ SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
 		'instances' : [	{ 'name' : 'Slots_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensors_virtual_p8.py',
 		'heartbeat' : 'no',
-		'instances' : [	{ 'name' : 'Dummy' } ]
+		'instances' : [	{ 'name' : 'virtual' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensor_manager.py',
@@ -76,7 +97,7 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'host_watchdog.exe',
@@ -94,14 +115,14 @@ SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.control.Power'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'power_control.exe',
 		'heartbeat' : 'no',
 		'instances' : [	
 			{
-				'name' : 'SystemPower_0',
+				'name' : 'power0',
 				'user_label': 'Power control',
 				'properties' : { 
 					'org.openbmc.Control': {
@@ -116,7 +137,7 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensor_ambient.exe',
@@ -144,31 +165,23 @@ SYSTEM_CONFIG['org.openbmc.sensors.Temperature.Ambient'] = {
 		]
 	}
 SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'button_power.exe',
 		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'PowerButton_0' } ]
 	}
-SYSTEM_CONFIG['org.openbmc.sensors.HostStatus'] = {
-		'system_state' : 'STANDBY',
-		'start_process' : False,
-		'monitor_process' : False,
-		'process_name' : 'sensor_host_status.exe',
-		'heartbeat' : "no",
-		'instances' : [ { 'name' : 'HostStatus_0' } ]
-	}
-SYSTEM_CONFIG['org.openbmc.leds.ChassisIdentify'] = {
-		'system_state' : 'STANDBY',
+SYSTEM_CONFIG['org.openbmc.control.led'] = {
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
-		'process_name' : 'chassis_identify.exe',
+		'process_name' : 'led_controller.exe',
 		'heartbeat' : 'no',
-		'instances' : [	{ 'name' : 'ChassisIdentify_0' } ]
+		'instances' : [	{ 'name' : 'Dummy' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.flash.Bios'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'flash_bios.exe',
@@ -177,7 +190,7 @@ SYSTEM_CONFIG['org.openbmc.flash.Bios'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'download_manager.py',
@@ -186,7 +199,7 @@ SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.control.Host'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'control_host.exe',
@@ -194,17 +207,17 @@ SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		'instances' : [ { 'name' : 'Host_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'chassis_control.py',
 		'heartbeat' : 'no',
-		'instances' : [ { 'name' : 'Chassis' } ]
+		'instances' : [ { 'name' : 'chassis0' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.vpd'] = {
-		'system_state' : 'POWERING_ON',
-		'start_process' : True,
+		'system_state' : 'HOST_POWERED_ON',
+		'start_process' : False,
 		'monitor_process' : False,
 		'process_name' : 'board_vpd.exe',
 		'heartbeat' : 'no',
@@ -212,9 +225,9 @@ SYSTEM_CONFIG['org.openbmc.vpd'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
-		'system_state' : 'BOOTED',
-		'start_process' : True,
-		'monitor_process' : True,
+		'system_state' : 'BMC_STARTING',
+		'start_process' : False,
+		'monitor_process' : False,
 		'process_name' : 'sensor_occ.exe',
 		'heartbeat' : 'no',
 		'instances' : [
@@ -231,7 +244,7 @@ SYSTEM_CONFIG['org.openbmc.sensors.Occ'] = {
 	}
 
 SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
-		'system_state' : 'STANDBY',
+		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'fan.exe',
@@ -246,7 +259,7 @@ NON_CACHABLE_PROPERTIES = {
 	'state'      : True,
 	'cache'      : True
 }
-INVENTORY_ROOT = '/org/openbmc/inventory/items'
+INVENTORY_ROOT = '/org/openbmc/inventory'
 
 FRU_INSTANCES = {
 	'<inventory_root>/system' :
@@ -386,11 +399,14 @@ FRU_INSTANCES = {
 
 ID_LOOKUP = {
 	'FRU' : {
+		0x0d : '<inventory_root>/system',
 		0x01 : '<inventory_root>/system/motherboard/cpu0',
+		0x02 : '<inventory_root>/system/motherboard/centaur0',
 		0x03 : '<inventory_root>/system/motherboard/dimm0',
 		0x04 : '<inventory_root>/system/motherboard/dimm1',
 		0x05 : '<inventory_root>/system/motherboard/dimm2',
 		0x06 : '<inventory_root>/system/motherboard/dimm3',
+		0xff : '<inventory_root>/system',
 	},
 	'SENSOR' : {
 		0x2f : '<inventory_root>/system/motherboard/cpu0',
@@ -420,7 +436,6 @@ ID_LOOKUP = {
 	'GPIO_PRESENT' : {
 		'SLOT0_PRESENT' : '<inventory_root>/system/io_board/pcie_slot0', 
 		'SLOT1_PRESENT' : '<inventory_root>/system/io_board/pcie_slot1', 
-		'SLOT2_PRESENT' : '<inventory_root>/system/io_board/pcie_slot2',
 	}
 }
 
@@ -432,6 +447,7 @@ GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 449, 'direction': 'out'  }
 GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 486, 'direction': 'out'  }
 GPIO_CONFIG['PGOOD']      = { 'gpio_num': 503, 'direction': 'in'  }
 GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 365, 'direction': 'out' }
+GPIO_CONFIG['BMC_READY']   = { 'gpio_num': 365, 'direction': 'out' }
 GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 448, 'direction': 'falling' }
 GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 104, 'direction': 'in' }
 GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 105, 'direction': 'in' }

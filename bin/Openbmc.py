@@ -103,8 +103,55 @@ def get_objs(bus,bus_name,path,objects):
 			
 		parent = False
 
+class DbusProperties(dbus.service.Object):
+	def __init__(self):
+		dbus.service.Object.__init__(self)
+		self.properties = {}
 
-class DbusProperty:
+	@dbus.service.method(dbus.PROPERTIES_IFACE,
+		in_signature='ss', out_signature='v')
+	def Get(self, interface_name, property_name):
+		d = self.GetAll(interface_name)
+		try:
+			v = d[property_name]
+			return v
+		except:
+ 			raise dbus.exceptions.DBusException(
+				"org.freedesktop.UnknownPropery: "+property_name)
+
+	@dbus.service.method(dbus.PROPERTIES_IFACE,
+		in_signature='s', out_signature='a{sv}')
+	def GetAll(self, interface_name):
+		try:
+			d = self.properties[interface_name]
+			return d
+ 		except:
+ 			raise dbus.exceptions.DBusException(
+				"org.freedesktop.UnknownInterface: "+interface_name)
+
+	@dbus.service.method(dbus.PROPERTIES_IFACE,
+		in_signature='ssv')
+	def Set(self, interface_name, property_name, new_value):
+		if (self.properties.has_key(interface_name) == False):
+			self.properties[interface_name] = {}
+		try:
+			old_value = self.properties[interface_name][property_name] 
+			if (old_value != new_value):
+				self.properties[interface_name][property_name] = new_value
+				self.PropertiesChanged(interface_name,{ property_name: new_value }, [])
+				
+		except:
+        		self.properties[interface_name][property_name] = new_value
+
+	@dbus.service.signal(dbus.PROPERTIES_IFACE,
+		signature='sa{sv}as')
+	def PropertiesChanged(self, interface_name, changed_properties,
+		invalidated_properties):
+		pass
+
+
+
+class DbusVariable:
 	def __init__(self,name,value):
 		self.name = str(name)	
 		self.dbusType = str(type(value)).split("'")[1]

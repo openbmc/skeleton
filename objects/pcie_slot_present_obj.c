@@ -2,6 +2,7 @@
 #include "openbmc.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "gpio.h"
 
 #define NUM_SLOTS 4
@@ -48,7 +49,7 @@ int get_object(GDBusProxy *proxy, GPIO* gpio, object_info* obj_info)
 
 	g_variant_get(v_result,"(sss)",&obj_info->bus_name,&obj_info->path,&obj_info->intf_name);
 int rc=0;
-	if (strcmp(obj_info->bus_name,"") == 0) {
+	if (strlen(obj_info->bus_name) == 0) {
 		rc = 1;
 	}
 	g_variant_unref(v_result);
@@ -78,7 +79,7 @@ int get_presence(GDBusConnection* connection, GPIO* gpio, uint8_t* present)
 	return rc; 
 }
 
-void update_fru_obj(GDBusConnection* connection, object_info* obj_info, bool present)
+void update_fru_obj(GDBusConnection* connection, object_info* obj_info, const char* present)
 {
 	GDBusProxy *proxy;
  	GError *error;
@@ -97,7 +98,7 @@ void update_fru_obj(GDBusConnection* connection, object_info* obj_info, bool pre
 	g_assert_no_error (error);
 
 	error = NULL;
-	parm = g_variant_new("(b)",present);
+	parm = g_variant_new("(s)",present);
 	
 	result = g_dbus_proxy_call_sync (proxy,
                                    "setPresent",
@@ -142,15 +143,18 @@ main (gint argc, gchar *argv[])
 	{
 		object_info obj_info;
 		uint8_t present;
-		bool b_present=false;
+		char* chr_present;
 		do {
 			rc = get_object(sys_proxy,&slots[i],&obj_info);
 			if (rc) { break; }
 			rc = get_presence(c,&slots[i],&present);
-			if (present==1) { b_present=true; }
 			//if (rc) { break; }
 			// TODO: send correct state
-			update_fru_obj(c,&obj_info,b_present);
+			if (present == 1) {
+				update_fru_obj(c,&obj_info,"PRESENT");
+			} else {
+				update_fru_obj(c,&obj_info,"NOT PRESENT");
+			}
 		} while(0);
 	}
 

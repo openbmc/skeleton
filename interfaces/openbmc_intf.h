@@ -13,200 +13,6 @@ G_BEGIN_DECLS
 
 
 /* ------------------------------------------------------------------------ */
-/* Declarations for org.openbmc.Occ */
-
-#define TYPE_OCC (occ_get_type ())
-#define OCC(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OCC, Occ))
-#define IS_OCC(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_OCC))
-#define OCC_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_OCC, OccIface))
-
-struct _Occ;
-typedef struct _Occ Occ;
-typedef struct _OccIface OccIface;
-
-struct _OccIface
-{
-  GTypeInterface parent_iface;
-
-
-  gboolean (*handle_collect) (
-    Occ *object,
-    GDBusMethodInvocation *invocation);
-
-  gboolean (*handle_init) (
-    Occ *object,
-    GDBusMethodInvocation *invocation);
-
-  const gchar * (*get_instance_name) (Occ *object);
-
-  gint  (*get_poll_interval) (Occ *object);
-
-  const gchar * (*get_state) (Occ *object);
-
-};
-
-GType occ_get_type (void) G_GNUC_CONST;
-
-GDBusInterfaceInfo *occ_interface_info (void);
-guint occ_override_properties (GObjectClass *klass, guint property_id_begin);
-
-
-/* D-Bus method call completion functions: */
-void occ_complete_init (
-    Occ *object,
-    GDBusMethodInvocation *invocation);
-
-void occ_complete_collect (
-    Occ *object,
-    GDBusMethodInvocation *invocation);
-
-
-
-/* D-Bus method calls: */
-void occ_call_init (
-    Occ *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean occ_call_init_finish (
-    Occ *proxy,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean occ_call_init_sync (
-    Occ *proxy,
-    GCancellable *cancellable,
-    GError **error);
-
-void occ_call_collect (
-    Occ *proxy,
-    GCancellable *cancellable,
-    GAsyncReadyCallback callback,
-    gpointer user_data);
-
-gboolean occ_call_collect_finish (
-    Occ *proxy,
-    GAsyncResult *res,
-    GError **error);
-
-gboolean occ_call_collect_sync (
-    Occ *proxy,
-    GCancellable *cancellable,
-    GError **error);
-
-
-
-/* D-Bus property accessors: */
-const gchar *occ_get_state (Occ *object);
-gchar *occ_dup_state (Occ *object);
-void occ_set_state (Occ *object, const gchar *value);
-
-const gchar *occ_get_instance_name (Occ *object);
-gchar *occ_dup_instance_name (Occ *object);
-void occ_set_instance_name (Occ *object, const gchar *value);
-
-gint occ_get_poll_interval (Occ *object);
-void occ_set_poll_interval (Occ *object, gint value);
-
-
-/* ---- */
-
-#define TYPE_OCC_PROXY (occ_proxy_get_type ())
-#define OCC_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OCC_PROXY, OccProxy))
-#define OCC_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_OCC_PROXY, OccProxyClass))
-#define OCC_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_OCC_PROXY, OccProxyClass))
-#define IS_OCC_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_OCC_PROXY))
-#define IS_OCC_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_OCC_PROXY))
-
-typedef struct _OccProxy OccProxy;
-typedef struct _OccProxyClass OccProxyClass;
-typedef struct _OccProxyPrivate OccProxyPrivate;
-
-struct _OccProxy
-{
-  /*< private >*/
-  GDBusProxy parent_instance;
-  OccProxyPrivate *priv;
-};
-
-struct _OccProxyClass
-{
-  GDBusProxyClass parent_class;
-};
-
-GType occ_proxy_get_type (void) G_GNUC_CONST;
-
-void occ_proxy_new (
-    GDBusConnection     *connection,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GAsyncReadyCallback  callback,
-    gpointer             user_data);
-Occ *occ_proxy_new_finish (
-    GAsyncResult        *res,
-    GError             **error);
-Occ *occ_proxy_new_sync (
-    GDBusConnection     *connection,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GError             **error);
-
-void occ_proxy_new_for_bus (
-    GBusType             bus_type,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GAsyncReadyCallback  callback,
-    gpointer             user_data);
-Occ *occ_proxy_new_for_bus_finish (
-    GAsyncResult        *res,
-    GError             **error);
-Occ *occ_proxy_new_for_bus_sync (
-    GBusType             bus_type,
-    GDBusProxyFlags      flags,
-    const gchar         *name,
-    const gchar         *object_path,
-    GCancellable        *cancellable,
-    GError             **error);
-
-
-/* ---- */
-
-#define TYPE_OCC_SKELETON (occ_skeleton_get_type ())
-#define OCC_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OCC_SKELETON, OccSkeleton))
-#define OCC_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_OCC_SKELETON, OccSkeletonClass))
-#define OCC_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_OCC_SKELETON, OccSkeletonClass))
-#define IS_OCC_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_OCC_SKELETON))
-#define IS_OCC_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_OCC_SKELETON))
-
-typedef struct _OccSkeleton OccSkeleton;
-typedef struct _OccSkeletonClass OccSkeletonClass;
-typedef struct _OccSkeletonPrivate OccSkeletonPrivate;
-
-struct _OccSkeleton
-{
-  /*< private >*/
-  GDBusInterfaceSkeleton parent_instance;
-  OccSkeletonPrivate *priv;
-};
-
-struct _OccSkeletonClass
-{
-  GDBusInterfaceSkeletonClass parent_class;
-};
-
-GType occ_skeleton_get_type (void) G_GNUC_CONST;
-
-Occ *occ_skeleton_new (void);
-
-
-/* ------------------------------------------------------------------------ */
 /* Declarations for org.openbmc.Fan */
 
 #define TYPE_FAN (fan_get_type ())
@@ -1602,6 +1408,9 @@ struct _ControlIface
     Control *object,
     const gchar *arg_bus_name);
 
+  void (*started) (
+    Control *object);
+
 };
 
 GType control_get_type (void) G_GNUC_CONST;
@@ -1625,6 +1434,9 @@ void control_emit_heartbeat (
 void control_emit_goto_system_state (
     Control *object,
     const gchar *arg_state_name);
+
+void control_emit_started (
+    Control *object);
 
 
 
@@ -3836,7 +3648,6 @@ struct _ObjectIface
 
 GType object_get_type (void) G_GNUC_CONST;
 
-Occ *object_get_occ (Object *object);
 Fan *object_get_fan (Object *object);
 SensorValue *object_get_sensor_value (Object *object);
 SensorThreshold *object_get_sensor_threshold (Object *object);
@@ -3855,7 +3666,6 @@ FlashControl *object_get_flash_control (Object *object);
 Button *object_get_button (Object *object);
 Led *object_get_led (Object *object);
 HostIpmi *object_get_host_ipmi (Object *object);
-Occ *object_peek_occ (Object *object);
 Fan *object_peek_fan (Object *object);
 SensorValue *object_peek_sensor_value (Object *object);
 SensorThreshold *object_peek_sensor_threshold (Object *object);
@@ -3926,7 +3736,6 @@ struct _ObjectSkeletonClass
 
 GType object_skeleton_get_type (void) G_GNUC_CONST;
 ObjectSkeleton *object_skeleton_new (const gchar *object_path);
-void object_skeleton_set_occ (ObjectSkeleton *object, Occ *interface_);
 void object_skeleton_set_fan (ObjectSkeleton *object, Fan *interface_);
 void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_);
 void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThreshold *interface_);
