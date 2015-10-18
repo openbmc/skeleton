@@ -400,6 +400,7 @@ FRU_INSTANCES = {
 ID_LOOKUP = {
 	'FRU' : {
 		0x0d : '<inventory_root>/system',
+		0x34 : '<inventory_root>/system/motherboard',
 		0x01 : '<inventory_root>/system/motherboard/cpu0',
 		0x02 : '<inventory_root>/system/motherboard/centaur0',
 		0x03 : '<inventory_root>/system/motherboard/dimm0',
