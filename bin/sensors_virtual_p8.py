@@ -53,7 +53,7 @@ class VirtualSensor(SensorValue):
 		SensorValue.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 		
-HS_IFACE = 'org.openbmc.HostStatus'
+CONTROL_IFACE = 'org.openbmc.Control'
 class HostStatusSensor(SensorValue):
 	def __init__(self,bus,name):
 		SensorValue.__init__(self)
@@ -64,19 +64,37 @@ class HostStatusSensor(SensorValue):
 		in_signature='v', out_signature='')
 	def setValue(self,value):
 		SensorValue.setValue(self,value)
-		if (value == "BOOTED"):
-			self.Booted()
+		if (value == "BLAH"):
+			self.GotoSystemState("OS_BOOTED")
 			
-	@dbus.service.signal(HS_IFACE,signature='')
-	def Booted(self):
+	@dbus.service.signal(CONTROL_IFACE,signature='s')
+	def GotoSystemState(self,state):
 		pass
 		
+CONTROL_IFACE = 'org.openbmc.Control'
+class BootProgressSensor(SensorValue):
+	def __init__(self,bus,name):
+		SensorValue.__init__(self)
+		dbus.service.Object.__init__(self,bus,name)
+
+	##override setValue method
+	@dbus.service.method(SensorValue.IFACE_NAME,
+		in_signature='v', out_signature='')
+	def setValue(self,value):
+		SensorValue.setValue(self,value)
+		if (value == "FW Progress, Starting OS"):
+			self.GotoSystemState("HOST_BOOTED")
+			
+	@dbus.service.signal(CONTROL_IFACE,signature='s')
+	def GotoSystemState(self,state):
+		pass
+		
+
 
 				
 if __name__ == '__main__':
 	
 	sensors = {
-		'BootProgress' : None,
 		'OperatingSystemStatus' : None,
 		'BootCount' : None,
 		'OccStatus' : None,
@@ -88,6 +106,7 @@ if __name__ == '__main__':
 		sensors[instance]= VirtualSensor(bus,OBJ_PATH+instance)
 
 	sensors['HostStatus'] = HostStatusSensor(bus,OBJ_PATH+"HostStatus")
+	sensors['BootProgress'] = BootProgressSensor(bus,OBJ_PATH+"BootProgress")
 	mainloop = gobject.MainLoop()
    
 	## Initialize sensors 
