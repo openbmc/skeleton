@@ -216,87 +216,87 @@ INVENTORY_ROOT = '/org/openbmc/inventory'
 
 FRU_INSTANCES = {
 	'<inventory_root>/system' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['SYSTEM'],'is_fru' : True, },
+		{ 'fru_type' : 'SYSTEM','is_fru' : True, },
 
 	'<inventory_root>/system/chassis' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['SYSTEM'],'is_fru' : True, },
+		{ 'fru_type' : 'SYSTEM','is_fru' : True, },
 
 	'<inventory_root>/system/chassis/motherboard' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['MAIN_PLANAR'],'is_fru' : True, },
+		{ 'fru_type' : 'MAIN_PLANAR','is_fru' : True, },
 
 	'<inventory_root>/system/chassis/fan0' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['FAN'],'is_fru' : True, },
+		{ 'fru_type' : 'FAN','is_fru' : True, },
 	'<inventory_root>/system/chassis/fan1' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['FAN'],'is_fru' : True, },
+		{ 'fru_type' : 'FAN','is_fru' : True, },
 	'<inventory_root>/system/chassis/fan2' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['FAN'],'is_fru' : True, },
+		{ 'fru_type' : 'FAN','is_fru' : True, },
 	'<inventory_root>/system/chassis/fan3' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['FAN'],'is_fru' : True, },
+		{ 'fru_type' : 'FAN','is_fru' : True, },
 	'<inventory_root>/system/chassis/fan4' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['FAN'],'is_fru' : True, },
+		{ 'fru_type' : 'FAN','is_fru' : True, },
 
 	'<inventory_root>/system/chassis/motherboard/bmc' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['BMC'],'is_fru' : False, 
+		{ 'fru_type' : 'BMC','is_fru' : False, 
 			'manufacturer' : 'ASPEED' },
 	'<inventory_root>/system/chassis/motherboard/cpu0' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CPU'], 'is_fru' : True, },
+		{ 'fru_type' : 'CPU', 'is_fru' : True, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core0' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core1' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core2' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core3' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core4' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core5' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core6' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core7' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core8' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core9' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core10' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/cpu0/core11' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['CORE'], 'is_fru' : False, },
+		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 	
 	'<inventory_root>/system/chassis/motherboard/centaur0' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['MEMORY_BUFFER'], 'is_fru' : False, },
+		{ 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/dimm0' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['DIMM'], 'is_fru' : True,},
+		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
 
 	'<inventory_root>/system/chassis/motherboard/dimm1' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['DIMM'], 'is_fru' : True,},
+		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
 
 	'<inventory_root>/system/chassis/motherboard/dimm2' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['DIMM'], 'is_fru' : True,},
+		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
 
 	'<inventory_root>/system/chassis/motherboard/dimm3' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['DIMM'], 'is_fru' : True,},
+		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
 
 	'<inventory_root>/system/chassis/io_board/pcie_slot0' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['PCIE_CARD'], 'is_fru' : True,},
+		{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 
 	'<inventory_root>/system/chassis/io_board/pcie_slot1' :
-		{ 'fru_type' : Openbmc.FRU_TYPES['PCIE_CARD'], 'is_fru' : True,},
+		{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 
 }
 
