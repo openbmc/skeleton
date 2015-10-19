@@ -9,7 +9,7 @@ import dbus.mainloop.glib
 import Openbmc
 
 DBUS_NAME = 'org.openbmc.sensor.Power8Virtual'
-OBJ_NAME = '/org/openbmc/sensor/virtual/'
+OBJ_PATH = '/org/openbmc/sensor/virtual/'
 
 class SensorValue(Openbmc.DbusProperties):
 	IFACE_NAME = 'org.openbmc.SensorValue'
@@ -48,58 +48,55 @@ class SensorValue(Openbmc.DbusProperties):
 	def Changed(self,value,units):
 		pass
 
-
-
-
-
-class BootProgress(SensorValue):
+class VirtualSensor(SensorValue):
 	def __init__(self,bus,name):
 		SensorValue.__init__(self)
-		self.object_name = "BootProgress"
-		dbus.service.Object.__init__(self,bus,name+self.object_name)
+		dbus.service.Object.__init__(self,bus,name)
 		
-class HostStatus(SensorValue):
+HS_IFACE = 'org.openbmc.HostStatus'
+class HostStatusSensor(SensorValue):
 	def __init__(self,bus,name):
 		SensorValue.__init__(self)
-		self.object_name = "HostStatus"
-		dbus.service.Object.__init__(self,bus,name+self.object_name)
+		dbus.service.Object.__init__(self,bus,name)
 
-class OsStatus(SensorValue):
-	def __init__(self,bus,name):
-		SensorValue.__init__(self)
-		self.object_name = "OperatingSystemStatus"
-		dbus.service.Object.__init__(self,bus,name+self.object_name)
-
-class BootCount(SensorValue):
-	def __init__(self,bus,name):
-		SensorValue.__init__(self)
-		self.object_name = "BootCount"
-		dbus.service.Object.__init__(self,bus,name+self.object_name)
-
-class OccStatus(SensorValue):
-	def __init__(self,bus,name):
-		SensorValue.__init__(self)
-		self.object_name = "OccStatus"
-		dbus.service.Object.__init__(self,bus,name+self.object_name)
+	##override setValue method
+	@dbus.service.method(SensorValue.IFACE_NAME,
+		in_signature='v', out_signature='')
+	def setValue(self,value):
+		SensorValue.setValue(self,value)
+		if (value == "BOOTED"):
+			self.Booted()
+			
+	@dbus.service.signal(HS_IFACE,signature='')
+	def Booted(self):
+		pass
+		
 
 				
 if __name__ == '__main__':
-    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = Openbmc.getDBus()
-    name = dbus.service.BusName(DBUS_NAME,bus)
-    boot_progress = BootProgress(bus,OBJ_NAME)
-    host_status = HostStatus(bus,OBJ_NAME)
-    os_status = OsStatus(bus,OBJ_NAME)
-    boot_count = BootCount(bus,OBJ_NAME)
-    occ_status = OccStatus(bus,OBJ_NAME)
-    mainloop = gobject.MainLoop()
-    
-    boot_progress.setValue("INACTIVE")
-    host_status.setValue("OFF")
-    os_status.setValue("OFF")
-    boot_count.setValue(0)
-    occ_status.setValue(0)
+	
+	sensors = {
+		'BootProgress' : None,
+		'OperatingSystemStatus' : None,
+		'BootCount' : None,
+		'OccStatus' : None,
+	}
+	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+	bus = Openbmc.getDBus()
+	name = dbus.service.BusName(DBUS_NAME,bus)
+	for instance in sensors.keys():
+		sensors[instance]= VirtualSensor(bus,OBJ_PATH+instance)
 
-    print "Starting virtual sensors"
-    mainloop.run()
+	sensors['HostStatus'] = HostStatusSensor(bus,OBJ_PATH+"HostStatus")
+	mainloop = gobject.MainLoop()
+   
+	## Initialize sensors 
+	sensors['BootProgress'].setValue("INACTIVE")
+ 	sensors['HostStatus'].setValue("OFF")
+	sensors['OperatingSystemStatus'].setValue("OFF")
+	sensors['BootCount'].setValue(0)
+	sensors['OccStatus'].setValue(0)
+
+	print "Starting virtual sensors"
+	mainloop.run()
 
