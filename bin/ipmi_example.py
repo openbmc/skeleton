@@ -25,7 +25,7 @@ def getWatchdog():
 
 def getChassisControl():
 	obj =  bus.get_object('org.openbmc.control.Chassis',
-			'/org/openbmc/control/Chassis')
+			'/org/openbmc/control/chassis0')
 	intf = dbus.Interface(obj, 'org.openbmc.control.Chassis' )
 	return intf
 
@@ -76,18 +76,25 @@ if __name__ == '__main__':
 		d = { 'manufacturer' : data }	
 		intf_sys = Openbmc.getManagerInterface(bus,"System")
 		c = chr(int(ipmi_id))
-		obj_info = intf_sys.getObjectFromByteId("FRU",chr(int(ipmi_id)))
+		print c
+		obj_info = intf_sys.getObjectFromByteId("FRU",c)
+		intf_name = obj_info[2]
 		obj_path = obj_info[1]
 		bus_name = obj_info[0]
 		if (obj_path != "" and bus_name != ""):
 			obj = bus.get_object(bus_name,obj_path)
-			intf = dbus.Interface(obj,"org.openbmc.InventoryItem")
+			intf = dbus.Interface(obj,intf_name)
 			intf.update(d)	
 
 	elif (cmd == "getfrus"):
-		intf_fru = Openbmc.getManagerInterface(bus,"Inventory")
-		data = intf_fru.getItems()
+		obj = bus.get_object('org.openbmc.managers.Inventory',
+				'/org/openbmc/inventory')
+		intf_fru = dbus.Interface(obj,'org.openbmc.Object.Enumerate')
+
+		data = intf_fru.enumerate()
 		for i in data:
+			print ">>>>>>>>"
+			print i
 			for k in data[i].keys():
 				print k+" = "+str(data[i][k]) 
 	elif (cmd == "updatefwftp"):

@@ -23,7 +23,7 @@ class PropertyManager():
 		for prop_interface in properties.keys():
 			for prop in properties[prop_interface]:
 				tmp_val = dbus_properties.Get(prop_interface,prop)
-				dbus_prop = Openbmc.DbusProperty(prop,tmp_val)
+				dbus_prop = Openbmc.DbusVariable(prop,tmp_val)
 				value = properties[prop_interface][prop]
 				dbus_prop.setValue(value)
 				dbus_properties.Set(prop_interface,prop,dbus_prop.getValue())
@@ -66,7 +66,7 @@ class PropertyManager():
 			print "Caching: "+obj_path
 			all_properties = prop_intf.GetAll(interface_name)
 			for prop in all_properties.keys():
-				dbus_prop = Openbmc.DbusProperty(prop,all_properties[prop])
+				dbus_prop = Openbmc.DbusVariable(prop,all_properties[prop])
 				dbus_props.append(dbus_prop)
 		
 			try:

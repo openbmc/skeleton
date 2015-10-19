@@ -37,17 +37,14 @@ libopenbmc_intf: openbmc_intf.o
 power_control: power_control_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o $(OFLAGS) $(CFLAGS)
 
-chassis_identify: chassis_identify_obj.o gpio.o
-	$(CC) -o bin/$@.exe obj/gpio.o obj/chassis_identify_obj.o $(OFLAGS) $(CFLAGS)
+led_controller: led_controller.o gpio.o
+	$(CC) -o bin/$@.exe obj/gpio.o obj/led_controller.o $(OFLAGS) $(CFLAGS)
 
 sensor_ambient: sensor_threshold.o sensor_temperature_ambient_obj.o
 	$(CC) -o bin/$@.exe obj/sensor_threshold.o obj/sensor_temperature_ambient_obj.o $(OFLAGS) $(CFLAGS)
 
 button_power: button_power_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/button_power_obj.o obj/gpio.o $(OFLAGS) $(CFLAGS)
-
-sensor_host_status: sensor_host_status_obj.o
-	$(CC) -o bin/$@.exe obj/sensor_host_status_obj.o $(OFLAGS) $(CFLAGS)
 
 control_host: control_host_obj.o gpio.o
 	$(CC) -o bin/$@.exe obj/gpio.o obj/control_host_obj.o $(OFLAGS) $(CFLAGS)
@@ -76,5 +73,8 @@ pcie_slot_present: pcie_slot_present_obj.o gpio.o
 flasher:  $(OBJS2) flasher_obj.o
 	$(CC) -o bin/$@.exe obj/flasher_obj.o $(OFLAGS)  $(OBJS3)  $(CFLAGS)
 
+hwmon:  hwmon_intf.o
+	$(CC) -o bin/$@.exe obj/hwmon_intf.o $(OFLAGS)  $(CFLAGS)
 
-all: clean setup libopenbmc_intf power_control chassis_identify sensor_ambient button_power sensor_host_status control_host fan host_watchdog control_bmc sensor_occ board_vpd pcie_slot_present flash_bios flasher
+
+all: clean setup libopenbmc_intf power_control led_controller sensor_ambient button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher

@@ -149,6 +149,7 @@ _g_value_equal (const GValue *a, const GValue *b)
 }
 
 /* ------------------------------------------------------------------------
+<<<<<<< HEAD
  * Code for interface org.openbmc.Occ
  * ------------------------------------------------------------------------
  */
@@ -1679,6 +1680,8 @@ occ_skeleton_new (void)
 }
 
 /* ------------------------------------------------------------------------
+=======
+>>>>>>> upstream/master
  * Code for interface org.openbmc.Fan
  * ------------------------------------------------------------------------
  */
@@ -12491,10 +12494,22 @@ static const _ExtendedGDBusSignalInfo _control_signal_info_goto_system_state =
   "goto-system-state"
 };
 
+static const _ExtendedGDBusSignalInfo _control_signal_info_started =
+{
+  {
+    -1,
+    (gchar *) "Started",
+    NULL,
+    NULL
+  },
+  "started"
+};
+
 static const _ExtendedGDBusSignalInfo * const _control_signal_info_pointers[] =
 {
   &_control_signal_info_heartbeat,
   &_control_signal_info_goto_system_state,
+  &_control_signal_info_started,
   NULL
 };
 
@@ -12592,6 +12607,7 @@ control_override_properties (GObjectClass *klass, guint property_id_begin)
  * @get_poll_interval: Getter for the #Control:poll-interval property.
  * @goto_system_state: Handler for the #Control::goto-system-state signal.
  * @heartbeat: Handler for the #Control::heartbeat signal.
+ * @started: Handler for the #Control::started signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Control.top_of_page">org.openbmc.Control</link>.
  */
@@ -12663,6 +12679,24 @@ control_default_init (ControlIface *iface)
     g_cclosure_marshal_generic,
     G_TYPE_NONE,
     1, G_TYPE_STRING);
+
+  /**
+   * Control::started:
+   * @object: A #Control.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Control.Started">"Started"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("started",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (ControlIface, started),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    0);
 
   /* GObject properties for D-Bus properties: */
   /**
@@ -12775,6 +12809,19 @@ control_emit_goto_system_state (
     const gchar *arg_state_name)
 {
   g_signal_emit_by_name (object, "goto-system-state", arg_state_name);
+}
+
+/**
+ * control_emit_started:
+ * @object: A #Control.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Control.Started">"Started"</link> D-Bus signal.
+ */
+void
+control_emit_started (
+    Control *object)
+{
+  g_signal_emit_by_name (object, "started");
 }
 
 /**
@@ -13591,6 +13638,28 @@ _control_on_signal_goto_system_state (
   g_list_free_full (connections, g_object_unref);
 }
 
+static void
+_control_on_signal_started (
+    Control *object)
+{
+  ControlSkeleton *skeleton = CONTROL_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("()"));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Control", "Started",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
 static void control_skeleton_iface_init (ControlIface *iface);
 #if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
 G_DEFINE_TYPE_WITH_CODE (ControlSkeleton, control_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
@@ -13826,6 +13895,7 @@ control_skeleton_iface_init (ControlIface *iface)
 {
   iface->heartbeat = _control_on_signal_heartbeat;
   iface->goto_system_state = _control_on_signal_goto_system_state;
+  iface->started = _control_on_signal_started;
   iface->get_poll_interval = control_skeleton_get_poll_interval;
   iface->get_heatbeat = control_skeleton_get_heatbeat;
 }
@@ -28677,15 +28747,6 @@ static void
 object_default_init (ObjectIface *iface)
 {
   /**
-   * Object:occ:
-   *
-   * The #Occ instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Occ.top_of_page">org.openbmc.Occ</link>, if any.
-   *
-   * Connect to the #GObject::notify signal to get informed of property changes.
-   */
-  g_object_interface_install_property (iface, g_param_spec_object ("occ", "occ", "occ", TYPE_OCC, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
-
-  /**
    * Object:fan:
    *
    * The #Fan instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fan.top_of_page">org.openbmc.Fan</link>, if any.
@@ -28847,23 +28908,6 @@ object_default_init (ObjectIface *iface)
    */
   g_object_interface_install_property (iface, g_param_spec_object ("host-ipmi", "host-ipmi", "host-ipmi", TYPE_HOST_IPMI, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
-}
-
-/**
- * object_get_occ:
- * @object: A #Object.
- *
- * Gets the #Occ instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Occ.top_of_page">org.openbmc.Occ</link> on @object, if any.
- *
- * Returns: (transfer full): A #Occ that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
- */
-Occ *object_get_occ (Object *object)
-{
-  GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Occ");
-  if (ret == NULL)
-    return NULL;
-  return OCC (ret);
 }
 
 /**
@@ -29172,26 +29216,6 @@ HostIpmi *object_get_host_ipmi (Object *object)
   return HOST_IPMI (ret);
 }
 
-
-/**
- * object_peek_occ: (skip)
- * @object: A #Object.
- *
- * Like object_get_occ() but doesn't increase the reference count on the returned object.
- *
- * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
- *
- * Returns: (transfer none): A #Occ or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
- */
-Occ *object_peek_occ (Object *object)
-{
-  GDBusInterface *ret;
-  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Occ");
-  if (ret == NULL)
-    return NULL;
-  g_object_unref (ret);
-  return OCC (ret);
-}
 
 /**
  * object_peek_fan: (skip)
@@ -29621,96 +29645,91 @@ object_proxy_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Occ");
-      g_value_take_object (value, interface);
-      break;
-
-    case 2:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fan");
       g_value_take_object (value, interface);
       break;
 
-    case 3:
+    case 2:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
       g_value_take_object (value, interface);
       break;
 
-    case 4:
+    case 3:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
-    case 5:
+    case 4:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
 
-    case 6:
+    case 5:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
       g_value_take_object (value, interface);
       break;
 
-    case 7:
+    case 6:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
       g_value_take_object (value, interface);
       break;
 
-    case 8:
+    case 7:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
       g_value_take_object (value, interface);
       break;
 
-    case 9:
+    case 8:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
-    case 10:
+    case 9:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
-    case 11:
+    case 10:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
-    case 12:
+    case 11:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
-    case 13:
+    case 12:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
-    case 14:
+    case 13:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
-    case 15:
+    case 14:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
-    case 16:
+    case 15:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
       g_value_take_object (value, interface);
       break;
 
-    case 17:
+    case 16:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
       g_value_take_object (value, interface);
       break;
 
-    case 18:
+    case 17:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
       g_value_take_object (value, interface);
       break;
 
-    case 19:
+    case 18:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
       g_value_take_object (value, interface);
       break;
@@ -29729,25 +29748,24 @@ object_proxy_class_init (ObjectProxyClass *klass)
   gobject_class->set_property = object_proxy_set_property;
   gobject_class->get_property = object_proxy_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "occ");
-  g_object_class_override_property (gobject_class, 2, "fan");
-  g_object_class_override_property (gobject_class, 3, "sensor-value");
-  g_object_class_override_property (gobject_class, 4, "sensor-threshold");
-  g_object_class_override_property (gobject_class, 5, "sensor-i2c");
-  g_object_class_override_property (gobject_class, 6, "sensor-match");
-  g_object_class_override_property (gobject_class, 7, "process");
-  g_object_class_override_property (gobject_class, 8, "shared-resource");
-  g_object_class_override_property (gobject_class, 9, "control");
-  g_object_class_override_property (gobject_class, 10, "control-bmc");
-  g_object_class_override_property (gobject_class, 11, "control-host");
-  g_object_class_override_property (gobject_class, 12, "control-power");
-  g_object_class_override_property (gobject_class, 13, "watchdog");
-  g_object_class_override_property (gobject_class, 14, "event-log");
-  g_object_class_override_property (gobject_class, 15, "flash");
-  g_object_class_override_property (gobject_class, 16, "flash-control");
-  g_object_class_override_property (gobject_class, 17, "button");
-  g_object_class_override_property (gobject_class, 18, "led");
-  g_object_class_override_property (gobject_class, 19, "host-ipmi");
+  g_object_class_override_property (gobject_class, 1, "fan");
+  g_object_class_override_property (gobject_class, 2, "sensor-value");
+  g_object_class_override_property (gobject_class, 3, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 4, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 5, "sensor-match");
+  g_object_class_override_property (gobject_class, 6, "process");
+  g_object_class_override_property (gobject_class, 7, "shared-resource");
+  g_object_class_override_property (gobject_class, 8, "control");
+  g_object_class_override_property (gobject_class, 9, "control-bmc");
+  g_object_class_override_property (gobject_class, 10, "control-host");
+  g_object_class_override_property (gobject_class, 11, "control-power");
+  g_object_class_override_property (gobject_class, 12, "watchdog");
+  g_object_class_override_property (gobject_class, 13, "event-log");
+  g_object_class_override_property (gobject_class, 14, "flash");
+  g_object_class_override_property (gobject_class, 15, "flash-control");
+  g_object_class_override_property (gobject_class, 16, "button");
+  g_object_class_override_property (gobject_class, 17, "led");
+  g_object_class_override_property (gobject_class, 18, "host-ipmi");
 }
 
 /**
@@ -29818,19 +29836,6 @@ object_skeleton_set_property (GObject      *gobject,
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
-          g_warn_if_fail (IS_OCC (interface));
-          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
-        }
-      else
-        {
-          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.Occ");
-        }
-      break;
-
-    case 2:
-      interface = g_value_get_object (value);
-      if (interface != NULL)
-        {
           g_warn_if_fail (IS_FAN (interface));
           g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
         }
@@ -29840,7 +29845,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 3:
+    case 2:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29853,7 +29858,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 4:
+    case 3:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29866,7 +29871,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 5:
+    case 4:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29879,7 +29884,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 6:
+    case 5:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29892,7 +29897,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 7:
+    case 6:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29905,7 +29910,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 8:
+    case 7:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29918,7 +29923,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 9:
+    case 8:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29931,7 +29936,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 10:
+    case 9:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29944,7 +29949,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 11:
+    case 10:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29957,7 +29962,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 12:
+    case 11:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29970,7 +29975,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 13:
+    case 12:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29983,7 +29988,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 14:
+    case 13:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -29996,7 +30001,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 15:
+    case 14:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -30009,7 +30014,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 16:
+    case 15:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -30022,7 +30027,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 17:
+    case 16:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -30035,7 +30040,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 18:
+    case 17:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -30048,7 +30053,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 19:
+    case 18:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -30079,96 +30084,91 @@ object_skeleton_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Occ");
-      g_value_take_object (value, interface);
-      break;
-
-    case 2:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fan");
       g_value_take_object (value, interface);
       break;
 
-    case 3:
+    case 2:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
       g_value_take_object (value, interface);
       break;
 
-    case 4:
+    case 3:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
-    case 5:
+    case 4:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
 
-    case 6:
+    case 5:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
       g_value_take_object (value, interface);
       break;
 
-    case 7:
+    case 6:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
       g_value_take_object (value, interface);
       break;
 
-    case 8:
+    case 7:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
       g_value_take_object (value, interface);
       break;
 
-    case 9:
+    case 8:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
-    case 10:
+    case 9:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
-    case 11:
+    case 10:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
-    case 12:
+    case 11:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
-    case 13:
+    case 12:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
-    case 14:
+    case 13:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
-    case 15:
+    case 14:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
-    case 16:
+    case 15:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
       g_value_take_object (value, interface);
       break;
 
-    case 17:
+    case 16:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
       g_value_take_object (value, interface);
       break;
 
-    case 18:
+    case 17:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
       g_value_take_object (value, interface);
       break;
 
-    case 19:
+    case 18:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
       g_value_take_object (value, interface);
       break;
@@ -30187,25 +30187,24 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
   gobject_class->set_property = object_skeleton_set_property;
   gobject_class->get_property = object_skeleton_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "occ");
-  g_object_class_override_property (gobject_class, 2, "fan");
-  g_object_class_override_property (gobject_class, 3, "sensor-value");
-  g_object_class_override_property (gobject_class, 4, "sensor-threshold");
-  g_object_class_override_property (gobject_class, 5, "sensor-i2c");
-  g_object_class_override_property (gobject_class, 6, "sensor-match");
-  g_object_class_override_property (gobject_class, 7, "process");
-  g_object_class_override_property (gobject_class, 8, "shared-resource");
-  g_object_class_override_property (gobject_class, 9, "control");
-  g_object_class_override_property (gobject_class, 10, "control-bmc");
-  g_object_class_override_property (gobject_class, 11, "control-host");
-  g_object_class_override_property (gobject_class, 12, "control-power");
-  g_object_class_override_property (gobject_class, 13, "watchdog");
-  g_object_class_override_property (gobject_class, 14, "event-log");
-  g_object_class_override_property (gobject_class, 15, "flash");
-  g_object_class_override_property (gobject_class, 16, "flash-control");
-  g_object_class_override_property (gobject_class, 17, "button");
-  g_object_class_override_property (gobject_class, 18, "led");
-  g_object_class_override_property (gobject_class, 19, "host-ipmi");
+  g_object_class_override_property (gobject_class, 1, "fan");
+  g_object_class_override_property (gobject_class, 2, "sensor-value");
+  g_object_class_override_property (gobject_class, 3, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 4, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 5, "sensor-match");
+  g_object_class_override_property (gobject_class, 6, "process");
+  g_object_class_override_property (gobject_class, 7, "shared-resource");
+  g_object_class_override_property (gobject_class, 8, "control");
+  g_object_class_override_property (gobject_class, 9, "control-bmc");
+  g_object_class_override_property (gobject_class, 10, "control-host");
+  g_object_class_override_property (gobject_class, 11, "control-power");
+  g_object_class_override_property (gobject_class, 12, "watchdog");
+  g_object_class_override_property (gobject_class, 13, "event-log");
+  g_object_class_override_property (gobject_class, 14, "flash");
+  g_object_class_override_property (gobject_class, 15, "flash-control");
+  g_object_class_override_property (gobject_class, 16, "button");
+  g_object_class_override_property (gobject_class, 17, "led");
+  g_object_class_override_property (gobject_class, 18, "host-ipmi");
 }
 
 /**
@@ -30221,18 +30220,6 @@ object_skeleton_new (const gchar *object_path)
 {
   g_return_val_if_fail (g_variant_is_object_path (object_path), NULL);
   return OBJECT_SKELETON (g_object_new (TYPE_OBJECT_SKELETON, "g-object-path", object_path, NULL));
-}
-
-/**
- * object_skeleton_set_occ:
- * @object: A #ObjectSkeleton.
- * @interface_: (allow-none): A #Occ or %NULL to clear the interface.
- *
- * Sets the #Occ instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Occ.top_of_page">org.openbmc.Occ</link> on @object.
- */
-void object_skeleton_set_occ (ObjectSkeleton *object, Occ *interface_)
-{
-  g_object_set (G_OBJECT (object), "occ", interface_, NULL);
 }
 
 /**
@@ -30513,7 +30500,6 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
   if (g_once_init_enter (&once_init_value))
     {
       lookup_hash = g_hash_table_new (g_str_hash, g_str_equal);
-      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Occ", GSIZE_TO_POINTER (TYPE_OCC_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Fan", GSIZE_TO_POINTER (TYPE_FAN_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorValue", GSIZE_TO_POINTER (TYPE_SENSOR_VALUE_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorThreshold", GSIZE_TO_POINTER (TYPE_SENSOR_THRESHOLD_PROXY));

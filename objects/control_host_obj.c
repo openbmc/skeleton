@@ -91,7 +91,7 @@ on_boot         (ControlHost        *host,
 	gpio_close(&fsi_enable);
 	gpio_close(&cronus_sel);
 
-	control_emit_goto_system_state(control,"BOOTING");
+	control_emit_goto_system_state(control,"HOST_BOOTING");
 	
 	control_host_emit_booted(host);
 	return TRUE;

@@ -24,10 +24,10 @@ int update(Flash* flash)
 		const gchar* name = flash_get_flasher_name(flash);
 		const gchar* inst = flash_get_flasher_instance(flash);
 		const gchar* filename = flash_get_filename(flash);
-
 		status = execl(path, name, inst, filename, NULL);
+		return status;
 	}
-	return status;
+	return 0;
 }
 
 static gboolean
@@ -53,9 +53,18 @@ on_lock (SharedResource          *lock,
 		gchar*                  name,
                 gpointer                user_data)
 {
-	printf("Locking BIOS Flash: %s\n",name);
-	shared_resource_set_lock(lock,true);
-	shared_resource_set_name(lock,name);
+	gboolean locked = shared_resource_get_lock(lock);
+	if (locked)
+	{
+		const gchar* name = shared_resource_get_name(lock);
+		printf("ERROR: BIOS Flash is already locked: %s\n",name);
+	}
+	else
+	{	
+		printf("Locking BIOS Flash: %s\n",name);
+		shared_resource_set_lock(lock,true);
+		shared_resource_set_name(lock,name);
+	}
 	shared_resource_complete_lock(lock,invocation);
 	return TRUE;
 }
@@ -347,7 +356,7 @@ on_bus_acquired (GDBusConnection *connection,
                                    object,
                                    NULL );
 		g_free(s);
-		s = g_strdup_printf ("/org/openbmc/control/%s\0",cmd->argv[i]);
+		s = g_strdup_printf ("/org/openbmc/control/%s",cmd->argv[i]);
 		g_dbus_connection_signal_subscribe(connection,
                                    NULL,
                                    "org.openbmc.FlashControl",

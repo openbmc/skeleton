@@ -64,16 +64,18 @@ static gboolean poll_pgood(gpointer user_data)
  			if (gpio==0)
  			{
  				control_power_emit_power_lost(control_power);
-				control_emit_goto_system_state(control,"POWERED_OFF");
+				control_emit_goto_system_state(control,"HOST_POWERED_OFF");
  			}
  			else
  			{
  				control_power_emit_power_good(control_power);
-				control_emit_goto_system_state(control,"POWERED_ON");
+				control_emit_goto_system_state(control,"HOST_POWERED_ON");
  			}
 		}
 	} else {
 		printf("ERROR PowerControl: GPIO read error (gpio=%s,rc=%d)\n",pgood.name,rc);
+		//return false so poll won't get called anymore
+		return FALSE;
 	}
 	//pgood is not at desired state yet
 	if (gpio != control_power_get_state(control_power) &&
@@ -118,9 +120,9 @@ on_set_power_state (ControlPower          *pwr,
 		int error = 0;
 		do {
 			if (state == 1) {
-				control_emit_goto_system_state(control,"POWERING_ON");
+				control_emit_goto_system_state(control,"HOST_POWERING_ON");
 			} else {
-				control_emit_goto_system_state(control,"POWERING_OFF");
+				control_emit_goto_system_state(control,"HOST_POWERING_OFF");
 			}
 			error = gpio_open(&power_pin);
 			if (error != GPIO_OK) { break;	}

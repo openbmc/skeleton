@@ -108,7 +108,7 @@ on_init (Control          *control,
 	reg_init();
 	#endif
 	control_complete_init(control,invocation);
-	control_emit_goto_system_state(control,"STANDBY");
+	control_emit_goto_system_state(control,"BMC_STARTING");
 	
 	return TRUE;
 }

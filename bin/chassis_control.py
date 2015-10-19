@@ -10,6 +10,7 @@ import Openbmc
 
 DBUS_NAME = 'org.openbmc.control.Chassis'
 OBJ_NAME = '/org/openbmc/control/'+sys.argv[1]
+CONTROL_INTF = 'org.openbmc.Control'
 
 POWER_OFF = 0
 POWER_ON = 1
@@ -25,12 +26,12 @@ class ChassisControlObject(dbus.service.Object):
 		self.dbus_objects = {
 			'power_control' : { 
 				'bus_name' : 'org.openbmc.control.Power',
-				'object_name' : '/org/openbmc/control/SystemPower_0',
+				'object_name' : '/org/openbmc/control/power0',
 				'interface_name' : 'org.openbmc.control.Power'
 			},
 			'identify_led' : {
-				'bus_name' : 'org.openbmc.leds.ChassisIdentify',
-				'object_name' : '/org/openbmc/leds/ChassisIdentify_0',
+				'bus_name' : 'org.openbmc.control.led',
+				'object_name' : '/org/openbmc/led/IDENTIFY',
 				'interface_name' : 'org.openbmc.Led'
 			}
 		}
@@ -125,7 +126,7 @@ class ChassisControlObject(dbus.service.Object):
 	## Signal handler
 
 	def SystemStateHandler(self,state_name):
-		if (state_name == "POWERED_OFF" and self.reboot==1):
+		if (state_name == "HOST_POWERED_OFF" and self.reboot==1):
 			self.powerOn()
 				
 

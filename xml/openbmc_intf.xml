@@ -1,12 +1,4 @@
 <node>
-	<interface name="org.openbmc.Occ">
-		<method name="init"/>
-		<method name="collect"/>
-		<property name="state" type="s" access="readwrite"/>
-		<property name="instance_name" type="s" access="read"/>
-		<property name="poll_interval" type="i" access="readwrite"/>
-	</interface>
-
 	<interface name="org.openbmc.Fan">
 		<method name="setCoolingZone">
 			<arg name="cooling_zone" type="i" direction="in"/>
@@ -101,6 +93,7 @@
 		<signal name="GotoSystemState">
 			<arg name="state_name" type="s"/>
 		</signal>
+		<signal name="Started"/>
 	</interface>
 	<interface name="org.openbmc.control.Bmc">
 		<method name="place_holder"/>

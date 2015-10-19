@@ -4,12 +4,18 @@
 #include "gpio.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
-static const gchar* dbus_object_path = "/org/openbmc/leds";
-static const gchar* dbus_name        = "org.openbmc.leds.ChassisIdentify";
+static const gchar* dbus_object_path = "/org/openbmc/control/led";
+static const gchar* dbus_name        = "org.openbmc.control.led";
 
 static GDBusObjectManagerServer *manager = NULL;
 
-GPIO led_gpio = (GPIO){"IDENTIFY"};
+#define  NUM_GPIO 2
+
+GPIO led_gpio[NUM_GPIO] = { 
+	(GPIO){"IDENTIFY"},
+	(GPIO){"BMC_READY"}
+};
+
 
 static gboolean
 on_set_on       (Led          *led,
@@ -17,18 +23,19 @@ on_set_on       (Led          *led,
                 gpointer                user_data)
 {
 	printf("Turn on chassis identify led\n");
+	GPIO* mygpio = (GPIO*)user_data;
 	led_complete_set_on(led,invocation);
 	int rc = GPIO_OK;
 	do {
-		rc = gpio_open(&led_gpio);
+		rc = gpio_open(mygpio);
 		if (rc != GPIO_OK) { break; }
-		rc = gpio_write(&led_gpio,1); 
+		rc = gpio_write(mygpio,1); 
 		if (rc != GPIO_OK) { break; }
 	} while(0);
-	gpio_close(&led_gpio);
+	gpio_close(mygpio);
 	if (rc != GPIO_OK)
 	{
-		printf("ERROR ChassisIdentify: GPIO error %s (rc=%d)\n",led_gpio.name,rc);
+		printf("ERROR ledcontrol: GPIO error %s (rc=%d)\n",mygpio->name,rc);
 	}
 
 	return TRUE;
@@ -41,18 +48,19 @@ on_set_off       (Led          *led,
                 gpointer                user_data)
 {
 	g_print("Turn off chassis identify led\n");
+	GPIO* mygpio = (GPIO*)user_data;
 	led_complete_set_off(led,invocation);
 	int rc = GPIO_OK;
 	do {
-		rc = gpio_open(&led_gpio);
+		rc = gpio_open(mygpio);
 		if (rc != GPIO_OK) { break; }
-		rc = gpio_write(&led_gpio,0); 
+		rc = gpio_write(mygpio,0); 
 		if (rc != GPIO_OK) { break; }
 	} while(0);
-	gpio_close(&led_gpio);
+	gpio_close(mygpio);
 	if (rc != GPIO_OK)
 	{
-		printf("ERROR ChassisIdentify: GPIO error %s (rc=%d)\n",led_gpio.name,rc);
+		printf("ERROR ChassisIdentify: GPIO error %s (rc=%d)\n",mygpio->name,rc);
 	}
 	return TRUE;
 }
@@ -73,10 +81,10 @@ on_bus_acquired (GDBusConnection *connection,
 
 	manager = g_dbus_object_manager_server_new (dbus_object_path);
 	int i = 0;
-	for (i=1;i<cmd->argc;i++)
+	for (i=0;i<NUM_GPIO;i++)
   	{
 		gchar *s;
-		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+		s = g_strdup_printf ("%s/%s",dbus_object_path,led_gpio[i].name);
 		object = object_skeleton_new (s);
 		g_free (s);
 
@@ -88,22 +96,22 @@ on_bus_acquired (GDBusConnection *connection,
 		g_signal_connect (led,
                     "handle-set-on",
                     G_CALLBACK (on_set_on),
-                    NULL); /* user_data */
+                    &led_gpio[i]); /* user_data */
 		g_signal_connect (led,
                     "handle-set-off",
                     G_CALLBACK (on_set_off),
-                    NULL);
+                    &led_gpio[i]);
 
 		led_set_color(led,0);
-		led_set_function(led,"CHASSIS_IDENTIFY");
+		led_set_function(led,led_gpio[i].name);
  
+		gpio_init(connection,&led_gpio[i]);
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
 		g_object_unref (object);
 	}
 	/* Export all objects */
  	g_dbus_object_manager_server_set_connection (manager, connection);
-	gpio_init(connection,&led_gpio);
 
 }
 
