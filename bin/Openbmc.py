@@ -12,10 +12,12 @@ FRU_TYPES = {
 	'DIMM' : 2,
 	'MAIN_PLANAR' : 3,
 	'RISER_CARD' : 4,
-	'FAN' : 5,
-	'BMC' : 6,
-	'CORE' : 7,
-	'PCIE_CARD' : 8,
+	'DAUGHTER_CARD' : 5,
+	'FAN' : 6,
+	'BMC' : 7,
+	'CORE' : 8,
+	'PCIE_CARD' : 9,
+	'MEMORY_BUFFER' : 10,
 }
 FRU_STATES = {
 	'NORMAL'            : 0,
