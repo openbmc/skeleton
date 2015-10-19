@@ -111,11 +111,14 @@ if __name__ == '__main__':
 		for i in status:
 			print i+" = "+status[i]
 	elif (cmd == "pokewatchdog"):
-		intf = self.getWatchdog()
+		intf = getWatchdog()
 		intf.poke()
 	elif (cmd == "statewatchdog"):
-		intf = self.getWatchdog()
+		intf = getWatchdog()
 		intf.start()
+	elif (cmd == "setwatchdog"):
+		count = int(sys.argv[2])
+		intf.set(count)
 	else:
 		print "Unsupported command"
 
