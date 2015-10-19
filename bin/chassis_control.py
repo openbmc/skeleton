@@ -126,7 +126,7 @@ class ChassisControlObject(dbus.service.Object):
 	## Signal handler
 
 	def SystemStateHandler(self,state_name):
-		if (state_name == "POWERED_OFF" and self.reboot==1):
+		if (state_name == "HOST_POWERED_OFF" and self.reboot==1):
 			self.powerOn()
 				
 
