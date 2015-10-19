@@ -56,8 +56,9 @@ class SystemManager(dbus.service.Object):
 				new_val = val.replace("<inventory_root>",System.INVENTORY_ROOT)
 				System.ID_LOOKUP[category][key] = new_val
 	
-		self.SystemStateHandler("BMC_INIT")
+		self.SystemStateHandler(System.SYSTEM_STATES[0])
 		print "SystemManager Init Done"
+
 
 	def SystemStateHandler(self,state_name):
 		print "Checking previous state started..."
@@ -97,34 +98,32 @@ class SystemManager(dbus.service.Object):
 			pass
 
 		self.current_state = state_name
-		
+
+	def gotoNextState(self):
+		s = 0
+		for i in range(len(System.SYSTEM_STATES)):
+			if (System.SYSTEM_STATES[i] == self.current_state):
+				s = i+1
+	
+		if (s == len(System.SYSTEM_STATES)):
+			print "ERROR SystemManager: No more system states"
+		else:
+			new_state_name = System.SYSTEM_STATES[s]
+			print "SystemManager Goto System State: "+new_state_name
+			self.SystemStateHandler(new_state_name)
+	
+	
 	@dbus.service.method(DBUS_NAME,
-		in_signature='ss', out_signature='(sss)')
-	def getObjectFromId(self,category,key):
+		in_signature='', out_signature='s')
+	def getSystemState(self):
+		return self.current_state
+
+	def doObjectLookup(self,category,key):
 		bus_name = ""
 		obj_path = ""
 		intf_name = INTF_ITEM
 		try:
 			obj_path = System.ID_LOOKUP[category][key]
-			bus_name = self.bus_name_lookup[obj_path]
-			parts = obj_path.split('/')
-			if (parts[2] == 'sensor'):
-				intf_name = INTF_SENSOR
-		except Exception as e:
-			print "ERROR SystemManager: "+str(e)+" not found in lookup"
-
-		return [bus_name,obj_path,intf_name]
-
-
-	@dbus.service.method(DBUS_NAME,
-		in_signature='sy', out_signature='(sss)')
-	def getObjectFromByteId(self,category,key):
-		bus_name = ""
-		obj_path = ""
-		intf_name = INTF_ITEM
-		try:
-			byte = int(key)
-			obj_path = System.ID_LOOKUP[category][byte]
 			bus_name = self.bus_name_lookup[obj_path]
 			parts = obj_path.split('/')
 			if (parts[3] == 'sensor'):
@@ -134,6 +133,16 @@ class SystemManager(dbus.service.Object):
 
 		return [bus_name,obj_path,intf_name]
 
+	@dbus.service.method(DBUS_NAME,
+		in_signature='ss', out_signature='(sss)')
+	def getObjectFromId(self,category,key):
+		return self.doObjectLookup(category,key)
+
+	@dbus.service.method(DBUS_NAME,
+		in_signature='sy', out_signature='(sss)')
+	def getObjectFromByteId(self,category,key):
+		byte = int(key)
+		return self.doObjectLookup(category,byte)
 	
 	def start_process(self,bus_name):
 		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
@@ -176,7 +185,6 @@ class SystemManager(dbus.service.Object):
 					break;	
 		return r
 	
-
 	def NewBusHandler(self, bus_name, a, b):
 		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
 			objects = {}
@@ -192,7 +200,6 @@ class SystemManager(dbus.service.Object):
 				pass
 	
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
-				System.SYSTEM_CONFIG[bus_name]['heartbeat_count'] = 0
 				for instance_name in objects.keys(): 
 					obj_path = objects[instance_name]['PATH']
 					for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
@@ -213,18 +220,9 @@ class SystemManager(dbus.service.Object):
 				for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
 					if (System.EXIT_STATE_DEPEND[self.current_state][obj_path] == 0):
 						state = 0
+				## all required objects have started so go to next state
 				if (state == 1):
-					s = 0
-					for i in range(len(System.SYSTEM_STATES)):
-						if (System.SYSTEM_STATES[i] == self.current_state):
-							s = i+1
-
-					if (s == len(System.SYSTEM_STATES)):
-						print "ERROR SystemManager: No more system states"
-					else:
-						new_state_name = System.SYSTEM_STATES[s]
-						print "SystemManager Goto System State: "+new_state_name
-						self.SystemStateHandler(new_state_name)
+					self.gotoNextState()
 			except:
 				pass
 
