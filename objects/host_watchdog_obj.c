@@ -31,12 +31,24 @@ poll_watchdog(gpointer user_data)
 }
 
 static gboolean
+set_poll_interval (Watchdog  *wd,
+                GDBusMethodInvocation  *invocation,
+                guint                   interval,
+                gpointer                user_data)
+{
+    g_print("Setting watchdog poll interval to: %d\n", interval);
+    watchdog_set_poll_interval(wd, interval);
+    watchdog_complete_set(wd,invocation);
+}
+
+static gboolean
 on_start        (Watchdog  *wd,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
   	watchdog_set_watchdog(wd,1);
 	guint poll_interval = watchdog_get_poll_interval(wd);
+    g_print("Starting watchdog with poll interval: %d\n", poll_interval);
   	g_timeout_add(poll_interval, poll_watchdog, user_data);
 	watchdog_complete_start(wd,invocation);
 	return TRUE;
@@ -94,6 +106,10 @@ on_bus_acquired (GDBusConnection *connection,
                     G_CALLBACK (on_poke),
                     object); /* user_data */
 
+        g_signal_connect (wd,
+                    "handle-set",
+                    G_CALLBACK (set_poll_interval),
+                    object); /* user_data */
 
   		/* Export the object (@manager takes its own reference to @object) */
   		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));

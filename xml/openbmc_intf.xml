@@ -123,6 +123,9 @@
 		<method name="start"/>
 		<method name="poke"/>
 		<method name="stop"/>
+		<method name="set"/>
+			<arg direction="in" type="i" name="interval" />
+		</method>
 		<property name="watchdog" type="i" access="readwrite"/>
 		<property name="poll_interval" type="i" access="readwrite"/>
 		<signal name="WatchdogError"/>
