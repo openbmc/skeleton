@@ -123,7 +123,7 @@
 		<method name="start"/>
 		<method name="poke"/>
 		<method name="stop"/>
-		<method name="set"/>
+		<method name="set">
 			<arg direction="in" type="i" name="interval" />
 		</method>
 		<property name="watchdog" type="i" access="readwrite"/>
