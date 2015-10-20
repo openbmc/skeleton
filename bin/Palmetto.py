@@ -313,9 +313,14 @@ ID_LOOKUP = {
 		0xff : '<inventory_root>/system',
 	},
 	'FRU_STR' : {
-		'CHASSIS' : '<inventory_root>/system/chassis',
-		'PRODUCT' : '<inventory_root>/system',
-		'BOARD'   : '<inventory_root>/system/chassis/motherboard',
+		'PRODUCT_15' : '<inventory_root>/system',
+		'CHASSIS_2' : '<inventory_root>/system/chassis',
+		'BOARD_1'   : '<inventory_root>/system/chassis/motherboard/cpu0',
+		'BOARD_2'   : '<inventory_root>/system/chassis/motherboard/centaur0',
+		'PRODUCT_3'   : '<inventory_root>/system/chassis/motherboard/dimm0',
+		'PRODUCT_4'   : '<inventory_root>/system/chassis/motherboard/dimm1',
+		'PRODUCT_5'   : '<inventory_root>/system/chassis/motherboard/dimm2',
+		'PRODUCT_6'   : '<inventory_root>/system/chassis/motherboard/dimm3',
 	},
 	'SENSOR' : {
 		0x2f : '<inventory_root>/system/chassis/motherboard/cpu0',
