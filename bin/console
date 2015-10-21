@@ -1,0 +1,4 @@
+#! /bin/sh
+
+screen /dev/ttyS3 115200
+

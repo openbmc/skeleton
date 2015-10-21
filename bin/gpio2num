@@ -1,0 +1,18 @@
+#! /usr/bin/python
+
+import sys
+
+if (len(sys.argv) <2):
+	print "Usage: gpio2num [gpio1] [gpio2] ... [gpion]"
+	print "\tExample: gpio2num A2 B4"
+	exit(0)
+
+sys.argv.pop(0)
+for name in sys.argv:
+	c = name[0:1]
+	num = name[1:]
+	a = ord(c)-65
+	base = 480 - (int(a/4) * 32)
+	offset = a%4*8 + int(num)
+	gpio_num = base+offset
+	print name+" = " + str(gpio_num)
