@@ -20,7 +20,7 @@ static const gchar* dbus_name        = "org.openbmc.control.Bmc";
 #define LPC_HICR6		0x80
 #define LPC_HICR7		0x88
 #define LPC_HICR8		0x8c
-
+devmem 0x1e78909c 32 0x08060000
 #define SPI_BASE		(off_t)0x1e630000
 #define SCU_BASE                (off_t)0x1e780000
 #define UART_BASE               (off_t)0x1e783000
@@ -73,7 +73,7 @@ void reg_init()
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x08,0x000000c1);  //Disable Parity, 1 stop bit, 8 bits
 	bmcreg = memmap(mem_fd,COM_BASE);
-	devmem(bmcreg+0x9C,0x00000000);  //Set routing UART1 -> COM 1
+	devmem(bmcreg+0x9C,0x08060000);  //Set UART routing
 
 	bmcreg = memmap(mem_fd,SCU_BASE);
 	devmem(bmcreg+0x00,0x13008CE7);
