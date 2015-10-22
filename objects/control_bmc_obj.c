@@ -20,7 +20,6 @@ static const gchar* dbus_name        = "org.openbmc.control.Bmc";
 #define LPC_HICR6		0x80
 #define LPC_HICR7		0x88
 #define LPC_HICR8		0x8c
-devmem 0x1e78909c 32 0x08060000
 #define SPI_BASE		(off_t)0x1e630000
 #define SCU_BASE                (off_t)0x1e780000
 #define UART_BASE               (off_t)0x1e783000
