@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python -u
 
 import sys
 import uuid
@@ -149,8 +149,8 @@ class ChassisControlObject(dbus.service.Object):
 
 	def host_watchdog_signal_handler(self):
 		print "Watchdog Error, Hard Rebooting"
-		self.reboot = 1
-		self.powerOff()
+		#self.reboot = 1
+		#self.powerOff()
 		
 
 if __name__ == '__main__':

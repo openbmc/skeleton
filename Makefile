@@ -58,8 +58,8 @@ host_watchdog: host_watchdog_obj.o libopenbmc_intf
 control_bmc: control_bmc_obj.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/control_bmc_obj.o $(LDFLAGS) $(LIBS)
 
-sensor_occ: sensor_occ_obj.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/sensor_occ_obj.o $(LDFLAGS) $(LIBS)
+control_bmc_barreleye: control_bmc_barreleye.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/control_bmc_barreleye.o $(LDFLAGS) $(LIBS)
 
 board_vpd: board_vpd_obj.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/board_vpd_obj.o $(LDFLAGS) $(LIBS)
