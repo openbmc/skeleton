@@ -8,7 +8,7 @@ static const gchar* dbus_object_path = "/org/openbmc/watchdog";
 static const gchar* dbus_name        = "org.openbmc.watchdog.Host";
 
 static GDBusObjectManagerServer *manager = NULL;
-
+static guint watchdogid = 0;
 
 static gboolean
 poll_watchdog(gpointer user_data)
@@ -21,6 +21,7 @@ poll_watchdog(gpointer user_data)
 	if (count == 0)
 	{
 		//watchdog error, emit error and stop watchdog
+		watchdogid = 0;
 		watchdog_emit_watchdog_error(watchdog);
 		return FALSE;
 	}
@@ -49,7 +50,7 @@ on_start        (Watchdog  *wd,
   	watchdog_set_watchdog(wd,1);
 	guint poll_interval = watchdog_get_poll_interval(wd);
     g_print("Starting watchdog with poll interval: %d\n", poll_interval);
-  	g_timeout_add(poll_interval, poll_watchdog, user_data);
+  	watchdogid = g_timeout_add(poll_interval, poll_watchdog, user_data);
 	watchdog_complete_start(wd,invocation);
 	return TRUE;
 }
@@ -64,7 +65,22 @@ on_poke         (Watchdog  *wd,
 	return TRUE;
 }
 
+static gboolean
+on_stop         (Watchdog  *wd,
+                GDBusMethodInvocation  *invocation,
+                gpointer                user_data)
+{
+    g_print("Stopping watchdog\n");
 
+    if (watchdogid)
+    {
+        g_source_remove(watchdogid);
+        watchdogid = 0;
+    }
+
+    watchdog_complete_stop(wd,invocation);
+    return TRUE;
+}
 
 static void 
 on_bus_acquired (GDBusConnection *connection,
@@ -104,6 +120,11 @@ on_bus_acquired (GDBusConnection *connection,
  		g_signal_connect (wd,
                     "handle-poke",
                     G_CALLBACK (on_poke),
+                    object); /* user_data */
+
+        g_signal_connect (wd,
+                    "handle-stop",
+                    G_CALLBACK (on_stop),
                     object); /* user_data */
 
         g_signal_connect (wd,

@@ -120,8 +120,12 @@ if __name__ == '__main__':
 	elif (cmd == "statewatchdog"):
 		intf = getWatchdog()
 		intf.start()
+	elif (cmd == "stopwatchdog"):
+		intf = getWatchdog()
+		intf.stop()
 	elif (cmd == "setwatchdog"):
 		count = int(sys.argv[2])
+		intf = getWatchdog()
 		intf.set(count)
 	else:
 		print "Unsupported command"
