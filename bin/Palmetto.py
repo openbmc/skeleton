@@ -107,7 +107,7 @@ SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
 				'name' : 'HostWatchdog_0',
 				'properties' : { 
 					'org.openbmc.Watchdog' : {
-						'poll_interval': 3000,
+						'poll_interval': 30000,
 					}
 				}
 			}
@@ -152,13 +152,13 @@ SYSTEM_CONFIG['org.openbmc.control.led'] = {
 		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Dummy' } ]
 	}
-SYSTEM_CONFIG['org.openbmc.flash.Bios'] = {
+SYSTEM_CONFIG['org.openbmc.control.Flash'] = {
 		'system_state' : 'BMC_STARTING',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'flash_bios.exe',
 		'heartbeat' : 'no',
-		'instances' : [	{ 'name' : 'Bios_0' } ]
+		'instances' : [	{ 'name' : 'dummy' } ]
 	}
 
 SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
