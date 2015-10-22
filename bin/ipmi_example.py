@@ -58,6 +58,10 @@ if __name__ == '__main__':
 	elif (cmd == "poweroff"):
 		intf = getChassisControl()
 		intf.powerOff()
+	elif (cmd == "getid"):
+		intf = getChassisControl()
+		id = intf.getID()
+		print id
 	elif (cmd == "setsensor"):
 		intf_sys = Openbmc.getManagerInterface(bus,"System")
 		obj_info = intf_sys.getObjectFromByteId("SENSOR",chr(int(ipmi_id)))

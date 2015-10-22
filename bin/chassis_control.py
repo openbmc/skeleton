@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import uuid
 #from gi.repository import GObject
 import gobject
 import dbus
@@ -39,6 +40,9 @@ class ChassisControlObject(dbus.service.Object):
 		self.reboot = 0	
 		self.last_power_state = 0
 
+		#uuid
+		self.id = 0
+
 		bus.add_signal_receiver(self.power_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed", 
 					path="/org/openbmc/buttons/PowerButton_0" )
@@ -55,7 +59,10 @@ class ChassisControlObject(dbus.service.Object):
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='s')
 	def getID(self):
-		return id
+		if (self.id==0):
+			#calculate uuuid
+			self.id = uuid.uuid1()
+		return str(self.id)
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='')
