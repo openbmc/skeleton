@@ -144,6 +144,11 @@
 		<method name="update">
 			<arg name="filename" type="s" direction="in"/>
 		</method>
+		<method name="error">
+			<arg name="message" type="s" direction="in"/>
+		</method>
+		<method name="done"/>
+
 		<method name="updateViaTftp">
 			<arg name="url" type="s" direction="in"/>
 			<arg name="filename" type="s" direction="in"/>
@@ -158,6 +163,7 @@
 		<property name="flasher_path" type="s" access="read"/>
 		<property name="flasher_name" type="s" access="read"/>
 		<property name="flasher_instance" type="s" access="read"/>
+		<property name="status" type="s" access="read"/>
 	</interface>
 	<interface name="org.openbmc.FlashControl">
 		<method name="flash">
