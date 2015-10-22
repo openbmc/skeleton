@@ -21,7 +21,7 @@ class DownloadManagerObject(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
 		bus.add_signal_receiver(self.DownloadHandler, 
-			dbus_interface = "org.openbmc.Flash", signal_name = "Download")
+			dbus_interface = "org.openbmc.Flash", signal_name = "Download", path_keyword = "path")
 
 	@dbus.service.signal(DBUS_NAME,signature='ss')
 	def DownloadComplete(self,outfile,filename):
@@ -32,19 +32,22 @@ class DownloadManagerObject(dbus.service.Object):
 	def DownloadError(self,filename):
 		pass
 
-	def DownloadHandler(self,url,filename):
+	def DownloadHandler(self,url,filename,path = None):
 		try:
 			filename = str(filename)
 			client = tftpy.TftpClient(url, TFTP_PORT)
 			print "Downloading: "+filename+" from "+url
 			outfile = System.FLASH_DOWNLOAD_PATH+"/"+filename
 			client.download(filename,outfile)
-			self.DownloadComplete(outfile,filename)
+			obj = bus.get_object("org.openbmc.control.Flash",path)
+			intf = dbus.Interface(obj,"org.openbmc.Flash")
+			intf.update(outfile)
 					
 		except Exception as e:
 			print "ERROR DownloadManager: "+str(e)
-			self.DownloadError(filename)
-	
+			obj = bus.get_object("org.openbmc.control.Flash",path)
+			intf = dbus.Interface(obj,"org.openbmc.Flash")
+			intf.error("Download Error: "+filename)
 
 
 if __name__ == '__main__':

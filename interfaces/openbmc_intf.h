@@ -2570,6 +2570,15 @@ struct _FlashIface
 
 
 
+  gboolean (*handle_done) (
+    Flash *object,
+    GDBusMethodInvocation *invocation);
+
+  gboolean (*handle_error) (
+    Flash *object,
+    GDBusMethodInvocation *invocation,
+    const gchar *arg_message);
+
   gboolean (*handle_init) (
     Flash *object,
     GDBusMethodInvocation *invocation);
@@ -2593,6 +2602,8 @@ struct _FlashIface
 
   const gchar * (*get_flasher_path) (Flash *object);
 
+  const gchar * (*get_status) (Flash *object);
+
   void (*download) (
     Flash *object,
     const gchar *arg_url,
@@ -2611,6 +2622,14 @@ guint flash_override_properties (GObjectClass *klass, guint property_id_begin);
 
 /* D-Bus method call completion functions: */
 void flash_complete_update (
+    Flash *object,
+    GDBusMethodInvocation *invocation);
+
+void flash_complete_error (
+    Flash *object,
+    GDBusMethodInvocation *invocation);
+
+void flash_complete_done (
     Flash *object,
     GDBusMethodInvocation *invocation);
 
@@ -2651,6 +2670,40 @@ gboolean flash_call_update_finish (
 gboolean flash_call_update_sync (
     Flash *proxy,
     const gchar *arg_filename,
+    GCancellable *cancellable,
+    GError **error);
+
+void flash_call_error (
+    Flash *proxy,
+    const gchar *arg_message,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean flash_call_error_finish (
+    Flash *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean flash_call_error_sync (
+    Flash *proxy,
+    const gchar *arg_message,
+    GCancellable *cancellable,
+    GError **error);
+
+void flash_call_done (
+    Flash *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data);
+
+gboolean flash_call_done_finish (
+    Flash *proxy,
+    GAsyncResult *res,
+    GError **error);
+
+gboolean flash_call_done_sync (
+    Flash *proxy,
     GCancellable *cancellable,
     GError **error);
 
@@ -2708,6 +2761,10 @@ void flash_set_flasher_name (Flash *object, const gchar *value);
 const gchar *flash_get_flasher_instance (Flash *object);
 gchar *flash_dup_flasher_instance (Flash *object);
 void flash_set_flasher_instance (Flash *object, const gchar *value);
+
+const gchar *flash_get_status (Flash *object);
+gchar *flash_dup_status (Flash *object);
+void flash_set_status (Flash *object, const gchar *value);
 
 
 /* ---- */

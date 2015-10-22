@@ -19003,6 +19003,49 @@ static const _ExtendedGDBusMethodInfo _flash_method_info_update =
   FALSE
 };
 
+static const _ExtendedGDBusArgInfo _flash_method_info_error_IN_ARG_message =
+{
+  {
+    -1,
+    (gchar *) "message",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _flash_method_info_error_IN_ARG_pointers[] =
+{
+  &_flash_method_info_error_IN_ARG_message,
+  NULL
+};
+
+static const _ExtendedGDBusMethodInfo _flash_method_info_error =
+{
+  {
+    -1,
+    (gchar *) "error",
+    (GDBusArgInfo **) &_flash_method_info_error_IN_ARG_pointers,
+    NULL,
+    NULL
+  },
+  "handle-error",
+  FALSE
+};
+
+static const _ExtendedGDBusMethodInfo _flash_method_info_done =
+{
+  {
+    -1,
+    (gchar *) "done",
+    NULL,
+    NULL,
+    NULL
+  },
+  "handle-done",
+  FALSE
+};
+
 static const _ExtendedGDBusArgInfo _flash_method_info_update_via_tftp_IN_ARG_url =
 {
   {
@@ -19061,6 +19104,8 @@ static const _ExtendedGDBusMethodInfo _flash_method_info_init =
 static const _ExtendedGDBusMethodInfo * const _flash_method_info_pointers[] =
 {
   &_flash_method_info_update,
+  &_flash_method_info_error,
+  &_flash_method_info_done,
   &_flash_method_info_update_via_tftp,
   &_flash_method_info_init,
   NULL
@@ -19176,12 +19221,26 @@ static const _ExtendedGDBusPropertyInfo _flash_property_info_flasher_instance =
   FALSE
 };
 
+static const _ExtendedGDBusPropertyInfo _flash_property_info_status =
+{
+  {
+    -1,
+    (gchar *) "status",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "status",
+  FALSE
+};
+
 static const _ExtendedGDBusPropertyInfo * const _flash_property_info_pointers[] =
 {
   &_flash_property_info_filename,
   &_flash_property_info_flasher_path,
   &_flash_property_info_flasher_name,
   &_flash_property_info_flasher_instance,
+  &_flash_property_info_status,
   NULL
 };
 
@@ -19229,6 +19288,7 @@ flash_override_properties (GObjectClass *klass, guint property_id_begin)
   g_object_class_override_property (klass, property_id_begin++, "flasher-path");
   g_object_class_override_property (klass, property_id_begin++, "flasher-name");
   g_object_class_override_property (klass, property_id_begin++, "flasher-instance");
+  g_object_class_override_property (klass, property_id_begin++, "status");
   return property_id_begin - 1;
 }
 
@@ -19243,6 +19303,8 @@ flash_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * FlashIface:
  * @parent_iface: The parent interface.
+ * @handle_done: Handler for the #Flash::handle-done signal.
+ * @handle_error: Handler for the #Flash::handle-error signal.
  * @handle_init: Handler for the #Flash::handle-init signal.
  * @handle_update: Handler for the #Flash::handle-update signal.
  * @handle_update_via_tftp: Handler for the #Flash::handle-update-via-tftp signal.
@@ -19250,6 +19312,7 @@ flash_override_properties (GObjectClass *klass, guint property_id_begin)
  * @get_flasher_instance: Getter for the #Flash:flasher-instance property.
  * @get_flasher_name: Getter for the #Flash:flasher-name property.
  * @get_flasher_path: Getter for the #Flash:flasher-path property.
+ * @get_status: Getter for the #Flash:status property.
  * @download: Handler for the #Flash::download signal.
  * @updated: Handler for the #Flash::updated signal.
  *
@@ -19285,6 +19348,51 @@ flash_default_init (FlashIface *iface)
     G_TYPE_BOOLEAN,
     2,
     G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING);
+
+  /**
+   * Flash::handle-error:
+   * @object: A #Flash.
+   * @invocation: A #GDBusMethodInvocation.
+   * @arg_message: Argument passed by remote caller.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Flash.error">error()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_complete_error() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-error",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashIface, handle_error),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    2,
+    G_TYPE_DBUS_METHOD_INVOCATION, G_TYPE_STRING);
+
+  /**
+   * Flash::handle-done:
+   * @object: A #Flash.
+   * @invocation: A #GDBusMethodInvocation.
+   *
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Flash.done">done()</link> D-Bus method.
+   *
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call flash_complete_done() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   *
+   * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
+   */
+  g_signal_new ("handle-done",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (FlashIface, handle_done),
+    g_signal_accumulator_true_handled,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_BOOLEAN,
+    1,
+    G_TYPE_DBUS_METHOD_INVOCATION);
 
   /**
    * Flash::handle-update-via-tftp:
@@ -19408,6 +19516,15 @@ flash_default_init (FlashIface *iface)
    */
   g_object_interface_install_property (iface,
     g_param_spec_string ("flasher-instance", "flasher_instance", "flasher_instance", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * Flash:status:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Flash.status">"status"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("status", "status", "status", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -19615,6 +19732,57 @@ flash_set_flasher_instance (Flash *object, const gchar *value)
 }
 
 /**
+ * flash_get_status: (skip)
+ * @object: A #Flash.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Flash.status">"status"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use flash_dup_status() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+flash_get_status (Flash *object)
+{
+  return FLASH_GET_IFACE (object)->get_status (object);
+}
+
+/**
+ * flash_dup_status: (skip)
+ * @object: A #Flash.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Flash.status">"status"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+flash_dup_status (Flash *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "status", &value, NULL);
+  return value;
+}
+
+/**
+ * flash_set_status: (skip)
+ * @object: A #Flash.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Flash.status">"status"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+flash_set_status (Flash *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "status", value, NULL);
+}
+
+/**
  * flash_emit_updated:
  * @object: A #Flash.
  *
@@ -19729,6 +19897,196 @@ flash_call_update_sync (
     "update",
     g_variant_new ("(s)",
                    arg_filename),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_call_error:
+ * @proxy: A #FlashProxy.
+ * @arg_message: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.error">error()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call flash_call_error_finish() to get the result of the operation.
+ *
+ * See flash_call_error_sync() for the synchronous, blocking version of this method.
+ */
+void
+flash_call_error (
+    Flash *proxy,
+    const gchar *arg_message,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "error",
+    g_variant_new ("(s)",
+                   arg_message),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * flash_call_error_finish:
+ * @proxy: A #FlashProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_call_error().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with flash_call_error().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_call_error_finish (
+    Flash *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_call_error_sync:
+ * @proxy: A #FlashProxy.
+ * @arg_message: Argument to pass with the method invocation.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.error">error()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See flash_call_error() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_call_error_sync (
+    Flash *proxy,
+    const gchar *arg_message,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "error",
+    g_variant_new ("(s)",
+                   arg_message),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_call_done:
+ * @proxy: A #FlashProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.done">done()</link> D-Bus method on @proxy.
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call flash_call_done_finish() to get the result of the operation.
+ *
+ * See flash_call_done_sync() for the synchronous, blocking version of this method.
+ */
+void
+flash_call_done (
+    Flash *proxy,
+    GCancellable *cancellable,
+    GAsyncReadyCallback callback,
+    gpointer user_data)
+{
+  g_dbus_proxy_call (G_DBUS_PROXY (proxy),
+    "done",
+    g_variant_new ("()"),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    cancellable,
+    callback,
+    user_data);
+}
+
+/**
+ * flash_call_done_finish:
+ * @proxy: A #FlashProxy.
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to flash_call_done().
+ * @error: Return location for error or %NULL.
+ *
+ * Finishes an operation started with flash_call_done().
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_call_done_finish (
+    Flash *proxy,
+    GAsyncResult *res,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (proxy), res, error);
+  if (_ret == NULL)
+    goto _out;
+  g_variant_get (_ret,
+                 "()");
+  g_variant_unref (_ret);
+_out:
+  return _ret != NULL;
+}
+
+/**
+ * flash_call_done_sync:
+ * @proxy: A #FlashProxy.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL.
+ *
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Flash.done">done()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ *
+ * See flash_call_done() for the asynchronous version of this method.
+ *
+ * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ */
+gboolean
+flash_call_done_sync (
+    Flash *proxy,
+    GCancellable *cancellable,
+    GError **error)
+{
+  GVariant *_ret;
+  _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
+    "done",
+    g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
     cancellable,
@@ -19957,6 +20315,42 @@ flash_complete_update (
 }
 
 /**
+ * flash_complete_error:
+ * @object: A #Flash.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Flash.error">error()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+flash_complete_error (
+    Flash *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
+}
+
+/**
+ * flash_complete_done:
+ * @object: A #Flash.
+ * @invocation: (transfer full): A #GDBusMethodInvocation.
+ *
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Flash.done">done()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ *
+ * This method will free @invocation, you cannot use it afterwards.
+ */
+void
+flash_complete_done (
+    Flash *object,
+    GDBusMethodInvocation *invocation)
+{
+  g_dbus_method_invocation_return_value (invocation,
+    g_variant_new ("()"));
+}
+
+/**
  * flash_complete_update_via_tftp:
  * @object: A #Flash.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
@@ -20040,7 +20434,7 @@ flash_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   info = _flash_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -20087,7 +20481,7 @@ flash_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   info = _flash_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -20229,6 +20623,21 @@ flash_proxy_get_flasher_instance (Flash *object)
   return value;
 }
 
+static const gchar *
+flash_proxy_get_status (Flash *object)
+{
+  FlashProxy *proxy = FLASH_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "status");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static void
 flash_proxy_init (FlashProxy *proxy)
 {
@@ -20270,6 +20679,7 @@ flash_proxy_iface_init (FlashIface *iface)
   iface->get_flasher_path = flash_proxy_get_flasher_path;
   iface->get_flasher_name = flash_proxy_get_flasher_name;
   iface->get_flasher_instance = flash_proxy_get_flasher_instance;
+  iface->get_status = flash_proxy_get_status;
 }
 
 /**
@@ -20744,7 +21154,7 @@ flash_skeleton_finalize (GObject *object)
 {
   FlashSkeleton *skeleton = FLASH_SKELETON (object);
   guint n;
-  for (n = 0; n < 4; n++)
+  for (n = 0; n < 5; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -20762,7 +21172,7 @@ flash_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   FlashSkeleton *skeleton = FLASH_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -20879,7 +21289,7 @@ flash_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   FlashSkeleton *skeleton = FLASH_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 4);
+  g_assert (prop_id != 0 && prop_id - 1 < 5);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -20904,11 +21314,12 @@ flash_skeleton_init (FlashSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 4);
+  skeleton->priv->properties = g_new0 (GValue, 5);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_STRING);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
   g_value_init (&skeleton->priv->properties[2], G_TYPE_STRING);
   g_value_init (&skeleton->priv->properties[3], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[4], G_TYPE_STRING);
 }
 
 static const gchar *
@@ -20955,6 +21366,17 @@ flash_skeleton_get_flasher_instance (Flash *object)
   return value;
 }
 
+static const gchar *
+flash_skeleton_get_status (Flash *object)
+{
+  FlashSkeleton *skeleton = FLASH_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[4]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
 static void
 flash_skeleton_class_init (FlashSkeletonClass *klass)
 {
@@ -20990,6 +21412,7 @@ flash_skeleton_iface_init (FlashIface *iface)
   iface->get_flasher_path = flash_skeleton_get_flasher_path;
   iface->get_flasher_name = flash_skeleton_get_flasher_name;
   iface->get_flasher_instance = flash_skeleton_get_flasher_instance;
+  iface->get_status = flash_skeleton_get_status;
 }
 
 /**
