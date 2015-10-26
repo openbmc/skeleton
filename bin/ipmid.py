@@ -33,8 +33,8 @@ class Ipmid(dbus.service.Object):
 
     @dbus.service.signal(DBUS_NAME, "yyyay")
     def ReceivedMessage(self, seq, netfn, cmd, data):
-        print("IPMI packet from host. Seq = 0x%x Netfn = 0x%x Cmd = 0x%x" %
-              (ord(seq), ord(netfn), ord(cmd)))
+        #print("IPMI packet from host. Seq = 0x%x Netfn = 0x%x Cmd = 0x%x" %
+        #      (ord(seq), ord(netfn), ord(cmd)))
         print_packet(seq, netfn, cmd, data)
 
     @dbus.service.method(DBUS_NAME, "", "")
@@ -43,8 +43,8 @@ class Ipmid(dbus.service.Object):
 
     @dbus.service.method(DBUS_NAME, "yyyay", "x")
     def sendMessage(self, seq, netfn, cmd, data):
-        print("IPMI packet sent to host. Seq = 0x%x Netfn = 0x%x Cmd = 0x%x" %
-              (int(seq), int(netfn), int(cmd)))
+        #print("IPMI packet sent to host. Seq = 0x%x Netfn = 0x%x Cmd = 0x%x" %
+        #      (int(seq), int(netfn), int(cmd)))
         #print_packet(seq, netfn, cmd, data)
 
         self.reader.write(seq, netfn, cmd, data)
@@ -55,7 +55,7 @@ class BtReader(object):
     def __init__(self, ipmi_obj):
         self.ipmi_obj = ipmi_obj
         flags = os.O_NONBLOCK | os.O_RDWR
-        self.bt = os.open("/dev/bt", flags)
+        self.bt = os.open("/dev/bt-host", flags)
         glib.io_add_watch(self.bt, glib.IO_IN, self.io_callback)
         ipmi_obj.setReader(self)
 
