@@ -74,4 +74,4 @@ hwmon:  hwmon_intf.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/hwmon_intf.o $(LDFLAGS) $(LIBS)
 
 
-all: setup libopenbmc_intf power_control led_controller sensor_ambient button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher
+all: setup libopenbmc_intf power_control led_controller sensor_ambient button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher control_bmc_barreleye

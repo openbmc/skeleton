@@ -18,10 +18,10 @@ POWER_ON = 1
 
 BOOTED = 100
 
-class ChassisControlObject(dbus.service.Object):
+class ChassisControlObject(Openbmc.DbusProperties):
 	def __init__(self,bus,name):
 		self.dbus_objects = { }
-
+		Openbmc.DbusProperties.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 		## load utilized objects
 		self.dbus_objects = {
@@ -36,12 +36,12 @@ class ChassisControlObject(dbus.service.Object):
 				'interface_name' : 'org.openbmc.Led'
 			}
 		}
-		#self.power_sequence = 0
-		self.reboot = 0	
-		self.last_power_state = 0
 
 		#uuid
-		self.id = 0
+		self.Set(DBUS_NAME,"uuid",str(uuid.uuid1()))
+		self.Set(DBUS_NAME,"reboot",0)
+		self.Set(DBUS_NAME,"power_policy",0)	
+		self.Set(DBUS_NAME,"last_system_state","")	
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed", 
@@ -56,13 +56,6 @@ class ChassisControlObject(dbus.service.Object):
 		obj = bus.get_object(o['bus_name'],o['object_name'])
 		return dbus.Interface(obj,o['interface_name'])
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='', out_signature='s')
-	def getID(self):
-		if (self.id==0):
-			#calculate uuuid
-			self.id = uuid.uuid1()
-		return str(self.id)
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='')
@@ -84,7 +77,7 @@ class ChassisControlObject(dbus.service.Object):
 		in_signature='', out_signature='')
 	def powerOn(self):
 		print "Turn on power and boot"
-		self.reboot = 0
+		self.Set(DBUS_NAME,"reboot",0)
 		if (self.getPowerState()==0):
 			intf = self.getInterface('power_control')
 			intf.setPowerState(POWER_ON)
@@ -102,14 +95,16 @@ class ChassisControlObject(dbus.service.Object):
 		in_signature='', out_signature='')
 	def softPowerOff(self):
 		print "Soft off power"
-		## Somehow tell host to shutdown via ipmi
+		## TODO: Somehow tell host to shutdown via ipmi
+		## for now hard power off
+		self.powerOff()	
 		return None
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='')
 	def reboot(self):
 		print "Rebooting"
-		self.reboot=1
+		self.Set(DBUS_NAME,"reboot",1)
 		intf.softPowerOff()
 		return None
 
@@ -127,13 +122,15 @@ class ChassisControlObject(dbus.service.Object):
 	@dbus.service.method(DBUS_NAME,
 		in_signature='i', out_signature='')
 	def setPowerPolicy(self,policy):
+		self.Set(DBUS_NAME,"power_policy",policy)	
 		return None
 
 
 	## Signal handler
 
 	def SystemStateHandler(self,state_name):
-		if (state_name == "HOST_POWERED_OFF" and self.reboot==1):
+		self.Set(DBUS_NAME,"last_system_state",state_name)	
+		if (state_name == "HOST_POWERED_OFF" and self.Get(DBUS_NAME,"reboot")==1):
 			self.powerOn()
 				
 
@@ -149,8 +146,8 @@ class ChassisControlObject(dbus.service.Object):
 
 	def host_watchdog_signal_handler(self):
 		print "Watchdog Error, Hard Rebooting"
-		#self.reboot = 1
-		#self.powerOff()
+		self.Set(DBUS_NAME,"reboot",1)
+		self.powerOff()
 		
 
 if __name__ == '__main__':

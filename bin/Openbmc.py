@@ -6,27 +6,6 @@ OBJ_PREFIX = "/org/openbmc"
 GPIO_DEV = '/sys/class/gpio'
 BUS = "system"
 
-FRU_TYPES = {
-	'SYSTEM' : 0,
-	'CPU' : 1,
-	'DIMM' : 2,
-	'MAIN_PLANAR' : 3,
-	'RISER_CARD' : 4,
-	'DAUGHTER_CARD' : 5,
-	'FAN' : 6,
-	'BMC' : 7,
-	'CORE' : 8,
-	'PCIE_CARD' : 9,
-	'MEMORY_BUFFER' : 10,
-}
-FRU_STATES = {
-	'NORMAL'            : 0,
-	'RECOVERABLE_ERROR' : 1,
-	'FATAL_ERROR'       : 2,
-	'NOT_PRESENT'       : 3,
-}
-
-
 ENUMS = {
 	'org.openbmc.SensorIntegerThreshold.state' : 
 		['NOT_SET','NORMAL','LOWER_CRITICAL','LOWER_WARNING','UPPER_WARNING','UPPER_CRITICAL'],
@@ -144,6 +123,28 @@ class DbusProperties(dbus.service.Object):
 				
 		except:
         		self.properties[interface_name][property_name] = new_value
+
+	@dbus.service.method(dbus.PROPERTIES_IFACE,
+		in_signature='sa{sv}')
+	def SetAll(self, interface_name, prop_dict):
+		if (self.properties.has_key(interface_name) == False):
+			self.properties[interface_name] = {}
+
+		value_changed  = False
+		for property_name in prop_dict:
+			new_value = prop_dict[property_name]
+			try:
+				old_value = self.properties[interface_name][property_name] 
+				if (old_value != new_value):
+					self.properties[interface_name][property_name] = new_value
+					value_changed = True
+				
+			except:
+        			self.properties[interface_name][property_name] = new_value
+				value_changed = True
+		if (value_changed == True):
+			self.PropertiesChanged(interface_name, prop_dict, [])
+	
 
 	@dbus.service.signal(dbus.PROPERTIES_IFACE,
 		signature='sa{sv}as')

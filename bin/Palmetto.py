@@ -22,7 +22,7 @@ SYSTEM_STATES = [
 	'HOST_POWERING_ON',
 	'HOST_POWERED_ON',
 	'HOST_BOOTING',
-	'HOST_UP',
+	'HOST_BOOTED',
 	'HOST_POWERED_DOWN',
 ]
 
@@ -52,6 +52,15 @@ ENTER_STATE_CALLBACK = {
 }
 
 SYSTEM_CONFIG = {}
+
+SYSTEM_CONFIG['org.openbmc.managers.Property'] = {
+		'system_state' : 'BMC_INIT',
+		'start_process' : False,
+		'monitor_process' : False,
+		'process_name' : 'property_manager.py',
+		'heartbeat' : 'no',
+		'instances' : [	{ 'name' : SYSTEM_NAME } ]
+	}
 
 SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 		'system_state' : 'BMC_INIT',
@@ -205,13 +214,10 @@ SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
 		'instances' : [	{'name' : 'Fan_0' }, {'name' : 'Fan_1'}, {'name' : 'Fan_2'} ]
 	}
 
-NON_CACHABLE_PROPERTIES = {
-	'name'       : True,
-	'user_label' : True,
-	'location'   : True,
-	'state'      : True,
-	'cache'      : True
-}
+CACHED_INTERFACES = {
+		"org.openbmc.InventoryItem" : True,
+		"org.openbmc.control.Chassis" : True,
+	}
 INVENTORY_ROOT = '/org/openbmc/inventory'
 
 FRU_INSTANCES = {
@@ -310,7 +316,7 @@ ID_LOOKUP = {
 		0x04 : '<inventory_root>/system/chassis/motherboard/dimm1',
 		0x05 : '<inventory_root>/system/chassis/motherboard/dimm2',
 		0x06 : '<inventory_root>/system/chassis/motherboard/dimm3',
-		0xff : '<inventory_root>/system',
+		0x35 : '<inventory_root>/system',
 	},
 	'FRU_STR' : {
 		'PRODUCT_15' : '<inventory_root>/system',

@@ -30,7 +30,7 @@ class Inventory(dbus.service.Object):
 		if not os.path.exists(FRU_PATH):
    			os.makedirs(FRU_PATH)
 
-
+		
 		self.objects = [ ]
 
 	def addItem(self,item):
@@ -63,10 +63,8 @@ class InventoryItem(Openbmc.DbusProperties):
 		in_signature='a{sv}', out_signature='')
 	def update(self,data):
 		## translate dbus data into basic data types
-		for k in data.keys():
-			self.setField(k,data[k])
-
-		self.saveToCache()
+		self.SetAll(INTF_NAME,data)
+		#self.saveToCache()
 
 	@dbus.service.method(INTF_NAME,
 		in_signature='s', out_signature='')
@@ -135,7 +133,7 @@ if __name__ == '__main__':
     	obj = InventoryItem(bus,obj_path)
 	obj.setField('is_fru',FRUS[f]['is_fru'])
 	obj.setField('fru_type',FRUS[f]['fru_type'])
-	obj.loadFromCache();
+	#obj.loadFromCache();
 	obj_parent.addItem(obj)
 	
     print "Running Inventory Manager"

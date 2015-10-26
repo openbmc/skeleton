@@ -192,11 +192,16 @@ class SystemManager(dbus.service.Object):
 				Openbmc.get_objs(bus,bus_name,"",objects)
 				for instance_name in objects.keys():
 					obj_path = objects[instance_name]['PATH']
+					#obj = bus.get_object("org.openbmc.managers.Property",
+					#		"/org/openbmc/managers/Property")
+					#intf = dbus.Interface(obj,"org.openbmc.managers.Property")
+					#intf.loadFromCache(bus_name,obj_path)
 					self.bus_name_lookup[obj_path] = bus_name
 					if (System.EXIT_STATE_DEPEND[self.current_state].has_key(obj_path) == True):
 						System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 1
 								
-			except:
+			except Exception as e:
+				print e
 				pass
 	
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
