@@ -150,13 +150,16 @@ if (method_name == ""):
 else:
 	methd = obj.get_dbus_method(method_name,intf_name)
 	try:
-		tmp = { 'manufacturer' : sys.argv[0], 'part_num' : '3Nxxxx' }
+		## too hard to do dicts from command line
+		## hack just to test fru update function
 		if (method_name == "update"):
+			tmp = { 'manufacturer' : sys.argv[0], 'part_num' : '3Nxxxx' }
 			methd(tmp)
 		else:
 			data = methd(*sys.argv)
 			printDict("",data)
 	except Exception as e:
+		print e
 		r = introspect(bus_name,obj_path,intf_name,method_name)
 		if (r == False):
 			print "ERROR: Invalid method: "+method_name
