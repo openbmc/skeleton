@@ -123,10 +123,11 @@ class DbusProperties(dbus.service.Object):
 				
 		except:
         		self.properties[interface_name][property_name] = new_value
+			self.PropertiesChanged(interface_name,{ property_name: new_value }, [])
 
-	@dbus.service.method(dbus.PROPERTIES_IFACE,
+	@dbus.service.method("org.openbmc.Object.Properties",
 		in_signature='sa{sv}')
-	def SetAll(self, interface_name, prop_dict):
+	def SetMultiple(self, interface_name, prop_dict):
 		if (self.properties.has_key(interface_name) == False):
 			self.properties[interface_name] = {}
 
