@@ -5,7 +5,6 @@ import Openbmc
 
 HOME_PATH = './'
 CACHE_PATH = HOME_PATH+'cache/'
-FRU_PATH = CACHE_PATH+'frus/'
 FLASH_DOWNLOAD_PATH = "/tmp"
 
 SYSTEM_NAME = "Palmetto"
@@ -16,6 +15,7 @@ SYSTEM_NAME = "Palmetto"
 ##   - a process emits a GotoSystemState signal with state name to goto
 ##   - objects specified in EXIT_STATE_DEPEND have started
 SYSTEM_STATES = [
+	'BASE_APPS',
 	'BMC_INIT',
 	'BMC_STARTING',
 	'BMC_READY',
@@ -27,6 +27,9 @@ SYSTEM_STATES = [
 ]
 
 EXIT_STATE_DEPEND = {
+	'BASE_APPS' : {
+		'/org/openbmc/managers/Property': 0,
+	},
 	'BMC_STARTING' : {
 		'/org/openbmc/control/chassis0': 0,
 		'/org/openbmc/control/power0' : 0,
@@ -54,11 +57,10 @@ ENTER_STATE_CALLBACK = {
 SYSTEM_CONFIG = {}
 
 SYSTEM_CONFIG['org.openbmc.managers.Property'] = {
-		'system_state' : 'BMC_INIT',
-		'start_process' : False,
-		'monitor_process' : False,
+		'system_state' : 'BASE_APPS',
+		'start_process' : True,
+		'monitor_process' : True,
 		'process_name' : 'property_manager.py',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 
@@ -67,7 +69,6 @@ SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'control_bmc.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Bmc_0' } ]
 	}
 
@@ -76,7 +77,6 @@ SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'inventory_items.py',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
@@ -84,7 +84,6 @@ SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
 		'start_process' : True,
 		'monitor_process' : False,
 		'process_name' : 'pcie_slot_present.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Slots_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
@@ -92,7 +91,6 @@ SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensors_virtual_p8.py',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'virtual' } ]
 	}
 
@@ -101,7 +99,6 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensor_manager.py',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : SYSTEM_NAME } ]
 	}
 
@@ -110,7 +107,6 @@ SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'host_watchdog.exe',
-		'heartbeat' : 'no',
 		'instances' : [	
 			{
 				'name' : 'HostWatchdog_0',
@@ -128,7 +124,6 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'power_control.exe',
-		'heartbeat' : 'no',
 		'instances' : [	
 			{
 				'name' : 'power0',
@@ -150,7 +145,6 @@ SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'button_power.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'PowerButton_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.led'] = {
@@ -158,7 +152,6 @@ SYSTEM_CONFIG['org.openbmc.control.led'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'led_controller.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Dummy' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Flash'] = {
@@ -166,7 +159,6 @@ SYSTEM_CONFIG['org.openbmc.control.Flash'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'flash_bios.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'dummy' } ]
 	}
 
@@ -175,7 +167,6 @@ SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'download_manager.py',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 
@@ -184,7 +175,6 @@ SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'control_host.exe',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : 'Host_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
@@ -192,7 +182,6 @@ SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'chassis_control.py',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : 'chassis0' } ]
 	}
 
@@ -201,7 +190,6 @@ SYSTEM_CONFIG['org.openbmc.vpd'] = {
 		'start_process' : False,
 		'monitor_process' : False,
 		'process_name' : 'board_vpd.exe',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : 'MBVPD_0' } ]
 	}
 
@@ -210,7 +198,6 @@ SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'fan.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{'name' : 'Fan_0' }, {'name' : 'Fan_1'}, {'name' : 'Fan_2'} ]
 	}
 

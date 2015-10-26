@@ -21,16 +21,10 @@ DBUS_NAME = 'org.openbmc.managers.Inventory'
 ENUM_INTF = 'org.openbmc.Object.Enumerate'
 
 FRUS = System.FRU_INSTANCES
-FRU_PATH = System.FRU_PATH
 
 class Inventory(dbus.service.Object):
 	def __init__(self,bus,name):
-		global FRU_PATH
 		dbus.service.Object.__init__(self,bus,name)
-		if not os.path.exists(FRU_PATH):
-   			os.makedirs(FRU_PATH)
-
-		
 		self.objects = [ ]
 
 	def addItem(self,item):
@@ -47,78 +41,37 @@ class Inventory(dbus.service.Object):
 
 
 class InventoryItem(Openbmc.DbusProperties):
-	def __init__(self,bus,name):		
+	def __init__(self,bus,name,is_fru,fru_type):		
 		Openbmc.DbusProperties.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
+
 		self.name = name
-		self.cache = True
-		self.Set(INTF_NAME,'is_fru',False)
-		self.Set(INTF_NAME,'fru_type',0)
-		self.Set(INTF_NAME,'present',"INACTIVE")
-		self.Set(INTF_NAME,'fault',"NONE")
-	
+		## this will load properties from cache
+		self.Register('org.openbmc.InventoryItem')
+
+		data = {'is_fru': is_fru, 'fru_type': fru_type, 'present': 'Inactive', 'fault': 'None'}
+		self.SetMultiple(INTF_NAME,data)
 		
+	
+	@dbus.service.signal('org.openbmc.PersistantInterface',
+		signature='s')
+	def Register(self,interface):
+		pass
 		
 	@dbus.service.method(INTF_NAME,
 		in_signature='a{sv}', out_signature='')
 	def update(self,data):
-		## translate dbus data into basic data types
-		self.SetAll(INTF_NAME,data)
-		#self.saveToCache()
+		self.SetMultiple(INTF_NAME,data)
 
 	@dbus.service.method(INTF_NAME,
 		in_signature='s', out_signature='')
 	def setPresent(self,present):
-		self.setField('present',present)
+		self.Set(INTF_NAME,'present',present)
 
 	@dbus.service.method(INTF_NAME,
 		in_signature='s', out_signature='')
 	def setFault(self,fault):
-		self.setField('fault',fault)
-
-	def setField(self,field,value):
-		f = str(field)
-		d = Openbmc.DbusVariable(f,value)
-		self.Set(INTF_NAME,f,d.getBaseValue())
-
-	def isCached(self):
-		return self.cache
-
-	def getCacheFilename(self):
-		global FRU_PATH
-		name = self.name.replace('/','.')
-		filename = FRU_PATH+name[1:]+".fru"
-		return filename
-	
-	def saveToCache(self):
-		if (self.isCached() == False):
-			return
-		print "Caching: "+self.name
-		try: 
-			output = open(self.getCacheFilename(), 'wb')
-			## save properties
-			cPickle.dump(self.properties[INTF_NAME],output)
-		except Exception as e:
-			print "ERROR: "+str(e)
-		finally:
-			output.close()
-
-	def loadFromCache(self):
-		if (self.isCached() == False):
-			return;
-		## overlay with pickled data
-		filename=self.getCacheFilename()
-		if (os.path.isfile(filename)):
-			print "Loading from cache: "+filename
-			try:	
-				p = open(filename, 'rb')
-				data2 = cPickle.load(p)
-				for k in data2.keys():
-					self.setField(k,data2[k])
-			except Exception as e:
-				print "No cache file found: " +str(e)
-			finally:
-				p.close()
+		self.Set(INTF_NAME,'fault',fault)
 
 
 if __name__ == '__main__':
@@ -130,10 +83,7 @@ if __name__ == '__main__':
 
     for f in FRUS.keys():
 	obj_path=f.replace("<inventory_root>",System.INVENTORY_ROOT)
-    	obj = InventoryItem(bus,obj_path)
-	obj.setField('is_fru',FRUS[f]['is_fru'])
-	obj.setField('fru_type',FRUS[f]['fru_type'])
-	#obj.loadFromCache();
+    	obj = InventoryItem(bus,obj_path,FRUS[f]['is_fru'],FRUS[f]['fru_type'])
 	obj_parent.addItem(obj)
 	
     print "Running Inventory Manager"
