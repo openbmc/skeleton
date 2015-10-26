@@ -18,12 +18,6 @@ POWER_ON = 1
 
 BOOTED = 100
 
-def getWatchdog():
-    obj =  bus.get_object('org.openbmc.watchdog.Host',
-            '/org/openbmc/watchdog/HostWatchdog_0')
-    intf = dbus.Interface(obj, 'org.openbmc.Watchdog' )
-    return intf
-
 class ChassisControlObject(Openbmc.DbusProperties):
 	def __init__(self,bus,name):
 		self.dbus_objects = { }
@@ -40,6 +34,11 @@ class ChassisControlObject(Openbmc.DbusProperties):
 				'bus_name' : 'org.openbmc.control.led',
 				'object_name' : '/org/openbmc/led/IDENTIFY',
 				'interface_name' : 'org.openbmc.Led'
+			},
+			'watchdog' : {				
+				'bus_name' : 'org.openbmc.watchdog.Host',
+				'object_name' : '/org/openbmc/watchdog/HostWatchdog_0',
+				'interface_name' : 'org.openbmc.Watchdog'
 			}
 		}
 
@@ -87,7 +86,7 @@ class ChassisControlObject(Openbmc.DbusProperties):
 		if (self.getPowerState()==0):
 			intf = self.getInterface('power_control')
 			intf.setPowerState(POWER_ON)
-			intfwatchdog = getWatchdog()
+			intfwatchdog = self.getInterface('watchdog')
 			#Start watchdog with 30s timeout per the OpenPower Host IPMI Spec
 			#Once the host starts booting, it'll reset and refresh the timer
 			intfwatchdog.set(30000)
@@ -157,8 +156,8 @@ class ChassisControlObject(Openbmc.DbusProperties):
 
 	def host_watchdog_signal_handler(self):
 		print "Watchdog Error, Hard Rebooting"
-		self.Set(DBUS_NAME,"reboot",1)
-		self.powerOff()
+		#self.Set(DBUS_NAME,"reboot",1)
+		#self.powerOff()
 		
 
 if __name__ == '__main__':
