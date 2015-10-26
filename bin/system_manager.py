@@ -201,7 +201,6 @@ class SystemManager(dbus.service.Object):
 						System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 1
 								
 			except Exception as e:
-				print e
 				pass
 	
 			if (System.SYSTEM_CONFIG.has_key(bus_name)):
