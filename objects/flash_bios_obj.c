@@ -38,7 +38,6 @@ on_init (Flash          *f,
 	flash_complete_init(f,invocation);
 
 	//tune flash
-	printf(" >>>>>>>>>> %s\n",flash_get_flasher_instance(f));	
 	if (strcmp(flash_get_flasher_instance(f),"bios") == 0)
 	{
 		flash_set_filename(f,"");
