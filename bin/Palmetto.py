@@ -1,8 +1,5 @@
 #! /usr/bin/python
 
-import dbus
-import Openbmc
-
 HOME_PATH = './'
 CACHE_PATH = HOME_PATH+'cache/'
 FLASH_DOWNLOAD_PATH = "/tmp"
@@ -364,5 +361,15 @@ GPIO_CONFIG['SLOT1_PRESENT'] =  { 'gpio_num': 471, 'direction': 'in' }
 GPIO_CONFIG['SLOT2_PRESENT'] =  { 'gpio_num': 109, 'direction': 'in' }
 GPIO_CONFIG['MEZZ0_PRESENT'] =  { 'gpio_num': 112, 'direction': 'in' }
 GPIO_CONFIG['MEZZ1_PRESENT'] =  { 'gpio_num': 113, 'direction': 'in' }
+
+def convertGpio(name):
+	name = name.upper()
+	c = name[0:1]
+	num = name[1:]
+	a = ord(c)-65
+	base = 480 - (int(a/4) * 32)
+	offset = a%4*8 + int(num)
+	return base+offset
+
 
 
