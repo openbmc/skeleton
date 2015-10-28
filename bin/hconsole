@@ -1,5 +1,7 @@
 #! /bin/sh
 
+echo "Ctrl-a :quit to exit console.  [Enter] to continue"
+read a
 systemctl stop serial-getty@ttyS0   
 screen /dev/ttyS3 115200
 
