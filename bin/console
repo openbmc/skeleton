@@ -1,4 +1,5 @@
 #! /bin/sh
 
+systemctl stop serial-getty@ttyS0   
 screen /dev/ttyS3 115200
 
