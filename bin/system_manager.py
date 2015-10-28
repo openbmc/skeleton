@@ -7,9 +7,10 @@ import dbus
 import dbus.service
 import dbus.mainloop.glib
 import os
-import PropertyManager
 import time
 import json
+import xml.etree.ElementTree as ET
+
 import Openbmc
 
 if (len(sys.argv) < 2):
@@ -27,10 +28,37 @@ INTF_SENSOR = 'org.openbmc.SensorValue'
 INTF_ITEM = 'org.openbmc.InventoryItem'
 INTF_CONTROL = 'org.openbmc.Control'
 
+def get_objects(bus,bus_name,path,objects):
+	tmp_path = path
+	if (path == ""):
+		tmp_path="/"
+
+	obj = bus.get_object(bus_name,tmp_path)
+	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
+ 	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
+ 	root = tree.getroot()
+	parent = True
+	##print introspect_iface.Introspect()
+	for node in root.iter('node'):
+		for intf in node.iter('interface'):
+			objects[path] = True
+
+		if (node.attrib.has_key('name') == True):
+			node_name = node.attrib['name']
+			if (parent == False):
+				get_objects(bus,bus_name,path+"/"+node_name,objects)
+			else:
+				if (node_name != "" and node_name != path):
+					get_objects(bus,bus_name,node_name,objects)
+			
+		parent = False
+
+
+
+
 class SystemManager(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
-		self.property_manager = PropertyManager.PropertyManager(bus,System.CACHE_PATH)
 
 		## Signal handlers
 		bus.add_signal_receiver(self.NewBusHandler,
@@ -43,11 +71,11 @@ class SystemManager(dbus.service.Object):
 		self.bus_name_lookup = {}
 		self.bin_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 
-		for bus_name in System.SYSTEM_CONFIG.keys():
-			sys_state = System.SYSTEM_CONFIG[bus_name]['system_state']
+		for name in System.APPS.keys():
+			sys_state = System.APPS[name]['system_state']
 			if (self.system_states.has_key(sys_state) == False):
 				self.system_states[sys_state] = []
-			self.system_states[sys_state].append(bus_name)
+			self.system_states[sys_state].append(name)
 	
 		## replace symbolic path in ID_LOOKUP
 		for category in System.ID_LOOKUP:
@@ -61,18 +89,6 @@ class SystemManager(dbus.service.Object):
 
 
 	def SystemStateHandler(self,state_name):
-		print "Checking previous state started..."
-		i = 0
-		started = self.check_state_started()	
-		while(i<10 and started == False):
-			started = self.check_state_started()	
-			i=i+1
-			time.sleep(1)	
-
-		if (i == STATE_START_TIMEOUT):
-			print "ERROR: Timeout waiting for state to finish: "+self.current_state
-			return					
-		
 		## clearing object started flags
 		try:
 			for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
@@ -82,8 +98,8 @@ class SystemManager(dbus.service.Object):
 
 		print "Running System State: "+state_name
 		if (self.system_states.has_key(state_name)):
-			for bus_name in self.system_states[state_name]:
-				self.start_process(bus_name)
+			for name in self.system_states[state_name]:
+				self.start_process(name)
 		
 		if (state_name == "BMC_INIT"):
 			## Add poll for heartbeat
@@ -144,81 +160,56 @@ class SystemManager(dbus.service.Object):
 		byte = int(key)
 		return self.doObjectLookup(category,byte)
 	
-	def start_process(self,bus_name):
-		if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
-			process_name = self.bin_path+"/"+System.SYSTEM_CONFIG[bus_name]['process_name']
+	def start_process(self,name):
+		if (System.APPS[name]['start_process'] == True):
+			app = System.APPS[name]
+			process_name = self.bin_path+"/"+app['process_name']
 			cmdline = [ ]
 			cmdline.append(process_name)
-			System.SYSTEM_CONFIG[bus_name]['popen'] = None
-			for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
-				cmdline.append(instance['name'])
+			app['popen'] = None
+			if (app.has_key('args')):
+				for a in app['args']:
+					cmdline.append(a)
 			try:
-				print "Starting process: "+" ".join(cmdline)+": "+bus_name
-				System.SYSTEM_CONFIG[bus_name]['popen'] = subprocess.Popen(cmdline)
+				print "Starting process: "+" ".join(cmdline)+": "+name
+				app['popen'] = subprocess.Popen(cmdline)
 			except Exception as e:
 				## TODO: error
 				print "ERROR: starting process: "+" ".join(cmdline)
 
 	def heartbeat_check(self):
-		for bus_name in System.SYSTEM_CONFIG.keys():
-			if (System.SYSTEM_CONFIG[bus_name]['start_process'] == True and
-				System.SYSTEM_CONFIG[bus_name].has_key('popen') and
-				System.SYSTEM_CONFIG[bus_name]['monitor_process'] == True):
+		for name in System.APPS.keys():
+			app = System.APPS[name]
+			if (app['start_process'] == True and 
+				app.has_key('popen') and
+				app['monitor_process'] == True):
+
 				##   make sure process is still alive
-				p = System.SYSTEM_CONFIG[bus_name]['popen']
+				p = app['popen']
 				p.poll()
 				if (p.returncode != None):
-					print "Process for "+bus_name+" appears to be dead"
-					self.start_process(bus_name)
+					print "Process for "+name+" appears to be dead"
+					self.start_process(name)
 	
 		return True
 
-	def check_state_started(self):
-		r = True
-		if (self.current_state == ""):
-			return True
-		if (self.system_states.has_key(self.current_state)):
-			for bus_name in self.system_states[self.current_state]:
-				if (System.SYSTEM_CONFIG[bus_name].has_key('popen') == False and
-					System.SYSTEM_CONFIG[bus_name]['start_process'] == True):
-					r = False
-					break;	
-		return r
-	
 	def NewBusHandler(self, bus_name, a, b):
 		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
 			objects = {}
 			try:
-				Openbmc.get_objs(bus,bus_name,"",objects)
-				for instance_name in objects.keys():
-					obj_path = objects[instance_name]['PATH']
-					#obj = bus.get_object("org.openbmc.managers.Property",
-					#		"/org/openbmc/managers/Property")
-					#intf = dbus.Interface(obj,"org.openbmc.managers.Property")
-					#intf.loadFromCache(bus_name,obj_path)
+				get_objects(bus,bus_name,"",objects)
+				for obj_path in objects.keys():
 					self.bus_name_lookup[obj_path] = bus_name
+					print "New object: "+obj_path+" ("+bus_name+")"
 					if (System.EXIT_STATE_DEPEND[self.current_state].has_key(obj_path) == True):
 						System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 1
 								
 			except Exception as e:
+				## object probably disappeared
+				#print e
 				pass
 	
-			if (System.SYSTEM_CONFIG.has_key(bus_name)):
-				for instance_name in objects.keys(): 
-					obj_path = objects[instance_name]['PATH']
-					for instance in System.SYSTEM_CONFIG[bus_name]['instances']:
-						if (instance.has_key('properties') and instance['name'] == instance_name):
-							props = instance['properties']
-							print "Load Properties: "+obj_path
-							self.property_manager.loadProperties(bus_name,obj_path,props)
-					## If object has an init method, call it
-					for init_intf in objects[instance_name]['INIT']:
-						obj = bus.get_object(bus_name,obj_path)
-						intf = dbus.Interface(obj,init_intf)
-						print "Calling init method: " +obj_path+" : "+init_intf
-						intf.init()
-
-			## check if all objects are started to move to next state
+			## check if all required objects are started to move to next state
 			try:
 				state = 1
 				for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
@@ -236,16 +227,26 @@ class SystemManager(dbus.service.Object):
 		in_signature='s', out_signature='sis')
 	def gpioInit(self,name):
 		gpio_path = ''
-		gpio_num = 0
+		gpio_num = -1
+		r = ['',gpio_num,'']
 		if (System.GPIO_CONFIG.has_key(name) == False):
 			# TODO: Error handling
 			print "ERROR: "+name+" not found in GPIO config table"
-			return ['',0,'']
 		else:
-			gpio_num = System.GPIO_CONFIG[name]['gpio_num']
-
-		return [Openbmc.GPIO_DEV, gpio_num, System.GPIO_CONFIG[name]['direction']]
-
+			
+			gpio_num = -1
+			gpio = System.GPIO_CONFIG[name]
+			if (System.GPIO_CONFIG[name].has_key('gpio_num')):
+				gpio_num = gpio['gpio_num']
+			else:
+				if (System.GPIO_CONFIG[name].has_key('gpio_pin')):
+					gpio_num = System.convertGpio(gpio['gpio_pin'])
+				else:
+					print "ERROR: SystemManager - GPIO lookup failed for "+name
+		
+			if (gpio_num != -1):
+				r = [Openbmc.GPIO_DEV, gpio_num, gpio['direction']]
+		return r
 		
 
 if __name__ == '__main__':
