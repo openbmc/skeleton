@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 HOME_PATH = './'
-CACHE_PATH = '/var/cache/obmc'
+CACHE_PATH = '/var/cache/obmc/'
 FLASH_DOWNLOAD_PATH = "/tmp"
 GPIO_BASE = 320
 SYSTEM_NAME = "Palmetto"
@@ -32,22 +32,30 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/control/power0' : 0,
 		'/org/openbmc/control/led/BMC_READY' : 0,
 		'/org/openbmc/control/host0' : 0,
+		'/org/openbmc/control/flash/bios' : 0,
 	}
 }
 
 ## method will be called when state is entered
 ENTER_STATE_CALLBACK = {
-	'HOST_POWERED_ON' : { 
-		'bus_name'    : 'org.openbmc.control.Host',
-		'obj_name'    : '/org/openbmc/control/host0',
-		'interface_name' : 'org.openbmc.control.Host',
-		'method_name' : 'boot'
+	'HOST_POWERED_ON' : {
+		'boot' : { 
+			'bus_name'    : 'org.openbmc.control.Host',
+			'obj_name'    : '/org/openbmc/control/host0',
+			'interface_name' : 'org.openbmc.control.Host',
+		}
 	},
 	'BMC_READY' : {
-		'bus_name'   : 'org.openbmc.control.led',
-		'obj_name'   : '/org/openbmc/control/led/BMC_READY',
-		'interface_name' : 'org.openbmc.Led',
-		'method_name' : 'setOn'
+		'setOn' : {
+			'bus_name'   : 'org.openbmc.control.led',
+			'obj_name'   : '/org/openbmc/control/led/BMC_READY',
+			'interface_name' : 'org.openbmc.Led',
+		},
+		'init' : {
+			'bus_name'   : 'org.openbmc.control.Flash',
+			'obj_name'   : '/org/openbmc/control/flash/bios',
+			'interface_name' : 'org.openbmc.Flash',
+		},
 	}
 }
 
@@ -106,8 +114,8 @@ APPS = {
 	},
 	'power_button' : {
 		'system_state'    : 'BMC_STARTING',
-		'start_process'   : True,
-		'monitor_process' : True,
+		'start_process'   : False,
+		'monitor_process' : False,
 		'process_name'    : 'button_power.exe',
 	},
 	'led_control' : {
@@ -258,7 +266,7 @@ GPIO_CONFIG['CRONUS_SEL'] =   { 'gpio_pin': 'A6', 'direction': 'out'  }
 GPIO_CONFIG['PGOOD']      =   { 'gpio_pin': 'C7', 'direction': 'in'  }
 GPIO_CONFIG['IDENTIFY']   =   { 'gpio_pin': 'R4', 'direction': 'out' }
 GPIO_CONFIG['BMC_READY']   =  { 'gpio_pin': 'R4', 'direction': 'out' }
-GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_pin': 'E0', 'direction': 'falling' }
+GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_pin': 'E0', 'direction': 'both' }
 GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_pin': 'N0', 'direction': 'in' }
 GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_pin': 'N1', 'direction': 'in' }
 GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_pin': 'N2', 'direction': 'in' }
