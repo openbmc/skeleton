@@ -10,7 +10,7 @@ import dbus.mainloop.glib
 import Openbmc
 
 DBUS_NAME = 'org.openbmc.control.Chassis'
-OBJ_NAME = '/org/openbmc/control/'+sys.argv[1]
+OBJ_NAME = '/org/openbmc/control/chassis0'
 CONTROL_INTF = 'org.openbmc.Control'
 
 POWER_OFF = 0
@@ -37,7 +37,7 @@ class ChassisControlObject(Openbmc.DbusProperties):
 			},
 			'watchdog' : {				
 				'bus_name' : 'org.openbmc.watchdog.Host',
-				'object_name' : '/org/openbmc/watchdog/HostWatchdog_0',
+				'object_name' : '/org/openbmc/watchdog/host0',
 				'interface_name' : 'org.openbmc.Watchdog'
 			}
 		}
@@ -50,7 +50,7 @@ class ChassisControlObject(Openbmc.DbusProperties):
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed", 
-					path="/org/openbmc/buttons/PowerButton_0" )
+					path="/org/openbmc/buttons/power0" )
     		bus.add_signal_receiver(self.host_watchdog_signal_handler, 
 					dbus_interface = "org.openbmc.Watchdog", signal_name = "WatchdogError")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")

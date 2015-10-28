@@ -73,11 +73,6 @@ on_bus_acquired (GDBusConnection *connection,
 	ObjectSkeleton *object;
 
 	cmdline *cmd = user_data;
-	if (cmd->argc < 2)
-	{
-		g_print("No objects created.  Put object name(s) on command line\n");
-		return;
-	}	
 
 	manager = g_dbus_object_manager_server_new (dbus_object_path);
 	int i = 0;

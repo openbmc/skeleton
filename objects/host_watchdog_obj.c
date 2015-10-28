@@ -5,6 +5,7 @@
 /* ---------------------------------------------------------------------------------------------------- */
 
 static const gchar* dbus_object_path = "/org/openbmc/watchdog";
+static const gchar* instance_name = "host0";
 static const gchar* dbus_name        = "org.openbmc.watchdog.Host";
 
 static GDBusObjectManagerServer *manager = NULL;
@@ -87,20 +88,10 @@ on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
-  //	g_print ("Acquired a message bus connection: %s\n",name);
-
   	cmdline *cmd = user_data;
-	if (cmd->argc < 2)
-	{
-		g_print("No objects created.  Put object name(s) on command line\n");
-		return;
-	}	
   	manager = g_dbus_object_manager_server_new (dbus_object_path);
-  	int i=0;
-  	for (i=1;i<cmd->argc;i++)
-  	{
 		gchar *s;
- 		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
+ 		s = g_strdup_printf ("%s/%s",dbus_object_path,instance_name);
 		ObjectSkeleton *object = object_skeleton_new (s);
 		g_free (s);
 
@@ -135,7 +126,6 @@ on_bus_acquired (GDBusConnection *connection,
   		/* Export the object (@manager takes its own reference to @object) */
   		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
   		g_object_unref (object);
-	}
 
   /* Export all objects */
   g_dbus_object_manager_server_set_connection (manager, connection);

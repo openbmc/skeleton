@@ -13,6 +13,7 @@
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
+static const gchar* instance_name = "power0";
 static const gchar* dbus_name        = "org.openbmc.control.Power";
 
 //This object will use these GPIOs
@@ -145,8 +146,8 @@ on_init (Control         *control,
          gpointer                user_data)
 {
 	pgood_timeout_start = 0;
-	guint poll_interval = control_get_poll_interval(control);
-	g_timeout_add(poll_interval, poll_pgood, user_data);
+	//guint poll_interval = control_get_poll_interval(control);
+	//g_timeout_add(poll_interval, poll_pgood, user_data);
 	control_complete_init(control,invocation);
 	return TRUE;
 }
@@ -168,14 +169,14 @@ on_bus_acquired (GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
  	cmdline *cmd = user_data;
-	if (cmd->argc < 2)
+	if (cmd->argc < 3)
 	{
-		g_print("No objects created.  Put object name(s) on command line\n");
+		g_print("Usage: power_control.exe [poll interval] [timeout]\n");
 		return;
 	}	
   	manager = g_dbus_object_manager_server_new (dbus_object_path);
 	gchar *s;
-  	s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[1]);
+  	s = g_strdup_printf ("%s/%s",dbus_object_path,instance_name);
   	object = object_skeleton_new (s);
   	g_free (s);
 
@@ -230,7 +231,19 @@ on_bus_acquired (GDBusConnection *connection,
 	if (rc != GPIO_OK)
 	{
 		printf("ERROR PowerControl: GPIO setup (rc=%d)\n",rc);
-	} 
+	}
+	//start poll
+	pgood_timeout_start = 0;
+	int poll_interval = atoi(cmd->argv[1]);
+	int pgood_timeout = atoi(cmd->argv[2]);
+	if (poll_interval < 1000 || pgood_timeout <5) {
+		printf("ERROR PowerControl: poll_interval < 1000 or pgood_timeout < 5\n");
+	} else {
+		control_set_poll_interval(control,poll_interval);
+		control_power_set_pgood_timeout(control_power,pgood_timeout);
+		g_timeout_add(poll_interval, poll_pgood, object);
+	}
+ 
 }
 
 static void
