@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 HOME_PATH = './'
-CACHE_PATH = HOME_PATH+'cache/'
+CACHE_PATH = '/var/cache/obmc'
 FLASH_DOWNLOAD_PATH = "/tmp"
 GPIO_BASE = 320
 SYSTEM_NAME = "Palmetto"
@@ -31,7 +31,7 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/control/chassis0': 0,
 		'/org/openbmc/control/power0' : 0,
 		'/org/openbmc/control/led/BMC_READY' : 0,
-		'/org/openbmc/control/Host_0' : 0,
+		'/org/openbmc/control/host0' : 0,
 	}
 }
 
@@ -39,7 +39,7 @@ EXIT_STATE_DEPEND = {
 ENTER_STATE_CALLBACK = {
 	'HOST_POWERED_ON' : { 
 		'bus_name'    : 'org.openbmc.control.Host',
-		'obj_name'    : '/org/openbmc/control/Host_0',
+		'obj_name'    : '/org/openbmc/control/host0',
 		'interface_name' : 'org.openbmc.control.Host',
 		'method_name' : 'boot'
 	},
@@ -51,152 +51,104 @@ ENTER_STATE_CALLBACK = {
 	}
 }
 
-SYSTEM_CONFIG = {}
-
-SYSTEM_CONFIG['org.openbmc.managers.Property'] = {
-		'system_state' : 'BASE_APPS',
-		'start_process' : True,
+APPS = {
+	'property_manager' : {
+		'system_state'    : 'BASE_APPS',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'property_manager.py',
-		'instances' : [	{ 'name' : SYSTEM_NAME } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
-		'system_state' : 'BMC_INIT',
-		'start_process' : True,
-		'monitor_process' : True,
-		'process_name' : 'control_bmc.exe',
-		'instances' : [	{ 'name' : 'Bmc_0' } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
-		'monitor_process' : True,
-		'process_name' : 'inventory_items.py',
-		'instances' : [	{ 'name' : SYSTEM_NAME } ]
-	}
-SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
-		'system_state' : 'HOST_POWERED_ON',
-		'start_process' : True,
+		'process_name'    : 'property_manager.py',
+		'args'            : [ SYSTEM_NAME ]
+	},
+	'bmc_init' : {
+		'system_state'    : 'BMC_INIT',
+		'start_process'   : True,
 		'monitor_process' : False,
-		'process_name' : 'pcie_slot_present.exe',
-		'instances' : [	{ 'name' : 'Slots_0' } ]
-	}
-SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'control_bmc.exe',
+	},
+	'inventory' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'sensors_virtual_p8.py',
-		'instances' : [	{ 'name' : 'virtual' } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'inventory_items.py',
+		'args'            : [ SYSTEM_NAME ]
+	},
+	'pcie_present' : {
+		'system_state'    : 'HOST_POWERED_ON',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'pcie_slot_present.exe',
+	},
+	'virtual_sensors' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'sensor_manager.py',
-		'instances' : [ { 'name' : SYSTEM_NAME } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'sensors_virtual_p8.py',
+	},
+	'sensor_manager' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'host_watchdog.exe',
-		'instances' : [	
-			{
-				'name' : 'HostWatchdog_0',
-				'properties' : { 
-					'org.openbmc.Watchdog' : {
-						'poll_interval': 30000,
-					}
-				}
-			}
-		]
-	}
-
-SYSTEM_CONFIG['org.openbmc.control.Power'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'sensor_manager.py',
+		'args'            : [ SYSTEM_NAME ]
+	},
+	'host_watchdog' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'host_watchdog.exe',
+	},
+	'power_control' : {	
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name' : 'power_control.exe',
-		'instances' : [	
-			{
-				'name' : 'power0',
-				'user_label': 'Power control',
-				'properties' : { 
-					'org.openbmc.Control': {
-						'poll_interval' : 3000
-					},
-					'org.openbmc.control.Power': {
-						'pgood_timeout' : 10
-					}
-				}
-			}
-		]
-	}
-
-SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'args' : [ '3000', '10' ]
+	},
+	'power_button' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'button_power.exe',
-		'instances' : [	{ 'name' : 'PowerButton_0' } ]
-	}
-SYSTEM_CONFIG['org.openbmc.control.led'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'button_power.exe',
+	},
+	'led_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'led_controller.exe',
-		'instances' : [	{ 'name' : 'Dummy' } ]
-	}
-SYSTEM_CONFIG['org.openbmc.control.Flash'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'led_controller.exe',
+	},
+	'flash_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'flash_bios.exe',
-		'instances' : [	{ 'name' : 'dummy' } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'flash_bios.exe',
+	},
+	'download_manager' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'download_manager.py',
-		'instances' : [	{ 'name' : SYSTEM_NAME } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.control.Host'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'download_manager.py',
+		'args'            : [ SYSTEM_NAME ]
+	},
+	'host_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'control_host.exe',
-		'instances' : [ { 'name' : 'Host_0' } ]
-	}
-SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'control_host.exe',
+	},
+	'chassis_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'chassis_control.py',
-		'instances' : [ { 'name' : 'chassis0' } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.vpd'] = {
-		'system_state' : 'HOST_POWERED_ON',
-		'start_process' : False,
-		'monitor_process' : False,
-		'process_name' : 'board_vpd.exe',
-		'instances' : [ { 'name' : 'MBVPD_0' } ]
-	}
-
-SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
-		'system_state' : 'BMC_STARTING',
-		'start_process' : True,
+		'process_name'    : 'chassis_control.py',
+	},
+	'fans' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name' : 'fan.exe',
-		'instances' : [	{'name' : 'Fan_0' }, {'name' : 'Fan_1'}, {'name' : 'Fan_2'} ]
+		'process_name'    : 'fan.exe',
+		'args'            : [ 'fan0','fan1','fan2','fan3','fan4' ]
 	}
+}
 
 CACHED_INTERFACES = {
 		"org.openbmc.InventoryItem" : True,
@@ -205,88 +157,42 @@ CACHED_INTERFACES = {
 INVENTORY_ROOT = '/org/openbmc/inventory'
 
 FRU_INSTANCES = {
-	'<inventory_root>/system' :
-		{ 'fru_type' : 'SYSTEM','is_fru' : True, },
+	'<inventory_root>/system' : { 'fru_type' : 'SYSTEM','is_fru' : True, },
+	'<inventory_root>/system/chassis' : { 'fru_type' : 'SYSTEM','is_fru' : True, },
+	'<inventory_root>/system/chassis/motherboard' : { 'fru_type' : 'MAIN_PLANAR','is_fru' : True, },
 
-	'<inventory_root>/system/chassis' :
-		{ 'fru_type' : 'SYSTEM','is_fru' : True, },
+	'<inventory_root>/system/chassis/fan0' : { 'fru_type' : 'FAN','is_fru' : True, },
+	'<inventory_root>/system/chassis/fan1' : { 'fru_type' : 'FAN','is_fru' : True, },
+	'<inventory_root>/system/chassis/fan2' : { 'fru_type' : 'FAN','is_fru' : True, },
+	'<inventory_root>/system/chassis/fan3' : { 'fru_type' : 'FAN','is_fru' : True, },
+	'<inventory_root>/system/chassis/fan4' : { 'fru_type' : 'FAN','is_fru' : True, },
 
-	'<inventory_root>/system/chassis/motherboard' :
-		{ 'fru_type' : 'MAIN_PLANAR','is_fru' : True, },
-
-	'<inventory_root>/system/chassis/fan0' :
-		{ 'fru_type' : 'FAN','is_fru' : True, },
-	'<inventory_root>/system/chassis/fan1' :
-		{ 'fru_type' : 'FAN','is_fru' : True, },
-	'<inventory_root>/system/chassis/fan2' :
-		{ 'fru_type' : 'FAN','is_fru' : True, },
-	'<inventory_root>/system/chassis/fan3' :
-		{ 'fru_type' : 'FAN','is_fru' : True, },
-	'<inventory_root>/system/chassis/fan4' :
-		{ 'fru_type' : 'FAN','is_fru' : True, },
-
-	'<inventory_root>/system/chassis/motherboard/bmc' :
-		{ 'fru_type' : 'BMC','is_fru' : False, 
+	'<inventory_root>/system/chassis/motherboard/bmc' : { 'fru_type' : 'BMC','is_fru' : False, 
 			'manufacturer' : 'ASPEED' },
-	'<inventory_root>/system/chassis/motherboard/cpu0' :
-		{ 'fru_type' : 'CPU', 'is_fru' : True, },
+	'<inventory_root>/system/chassis/motherboard/cpu0' : { 'fru_type' : 'CPU', 'is_fru' : True, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core0' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core1' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core2' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core3' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core4' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core5' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core6' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core7' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core8' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core9' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core10' : { 'fru_type' : 'CORE', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/cpu0/core11' : { 'fru_type' : 'CORE', 'is_fru' : False, },
 
-	'<inventory_root>/system/chassis/motherboard/cpu0/core0' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core1' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core2' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core3' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core4' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core5' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core6' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core7' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core8' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core9' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core10' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
-
-	'<inventory_root>/system/chassis/motherboard/cpu0/core11' :
-		{ 'fru_type' : 'CORE', 'is_fru' : False, },
 	
-	'<inventory_root>/system/chassis/motherboard/centaur0' :
-		{ 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/centaur0' : { 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
 
-	'<inventory_root>/system/chassis/motherboard/dimm0' :
-		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/motherboard/dimm0' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/motherboard/dimm1' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/motherboard/dimm2' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/motherboard/dimm3' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
 
-	'<inventory_root>/system/chassis/motherboard/dimm1' :
-		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
-
-	'<inventory_root>/system/chassis/motherboard/dimm2' :
-		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
-
-	'<inventory_root>/system/chassis/motherboard/dimm3' :
-		{ 'fru_type' : 'DIMM', 'is_fru' : True,},
-
-	'<inventory_root>/system/chassis/io_board/pcie_slot0' :
-		{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
-
-	'<inventory_root>/system/chassis/io_board/pcie_slot1' :
-		{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/io_board/pcie_slot0' : { 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/io_board/pcie_slot1' : { 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 
 }
 
@@ -344,23 +250,23 @@ ID_LOOKUP = {
 }
 
 GPIO_CONFIG = {}
-GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 324, 'direction': 'out' }
-GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 325, 'direction': 'out' }
-GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 344, 'direction': 'out' }
-GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 353, 'direction': 'out'  }
-GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 326, 'direction': 'out'  }
-GPIO_CONFIG['PGOOD']      = { 'gpio_num': 343, 'direction': 'in'  }
-GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 365, 'direction': 'out' }
-GPIO_CONFIG['BMC_READY']   = { 'gpio_num': 431, 'direction': 'out' }
-GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 352, 'direction': 'falling' }
-GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 424, 'direction': 'in' }
-GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 425, 'direction': 'in' }
-GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_num': 426, 'direction': 'in' }
-GPIO_CONFIG['SLOT0_PRESENT'] =  { 'gpio_num': 427, 'direction': 'in' }
-GPIO_CONFIG['SLOT1_PRESENT'] =  { 'gpio_num': 428, 'direction': 'in' }
-GPIO_CONFIG['SLOT2_PRESENT'] =  { 'gpio_num': 429, 'direction': 'in' }
-GPIO_CONFIG['MEZZ0_PRESENT'] =  { 'gpio_num': 432, 'direction': 'in' }
-GPIO_CONFIG['MEZZ1_PRESENT'] =  { 'gpio_num': 433, 'direction': 'in' }
+GPIO_CONFIG['FSI_CLK']    =   { 'gpio_pin': 'A4', 'direction': 'out' }
+GPIO_CONFIG['FSI_DATA']   =   { 'gpio_pin': 'A5', 'direction': 'out' }
+GPIO_CONFIG['FSI_ENABLE'] =   { 'gpio_pin': 'D0', 'direction': 'out' }
+GPIO_CONFIG['POWER_PIN']  =   { 'gpio_pin': 'E1', 'direction': 'out'  }
+GPIO_CONFIG['CRONUS_SEL'] =   { 'gpio_pin': 'A6', 'direction': 'out'  }
+GPIO_CONFIG['PGOOD']      =   { 'gpio_pin': 'C7', 'direction': 'in'  }
+GPIO_CONFIG['IDENTIFY']   =   { 'gpio_pin': 'R4', 'direction': 'out' }
+GPIO_CONFIG['BMC_READY']   =  { 'gpio_pin': 'R4', 'direction': 'out' }
+GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_pin': 'E0', 'direction': 'falling' }
+GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_pin': 'N0', 'direction': 'in' }
+GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_pin': 'N1', 'direction': 'in' }
+GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_pin': 'N2', 'direction': 'in' }
+GPIO_CONFIG['SLOT0_PRESENT'] =         { 'gpio_pin': 'N3', 'direction': 'in' }
+GPIO_CONFIG['SLOT1_PRESENT'] =         { 'gpio_pin': 'N4', 'direction': 'in' }
+GPIO_CONFIG['SLOT2_PRESENT'] =         { 'gpio_pin': 'N5', 'direction': 'in' }
+GPIO_CONFIG['MEZZ0_PRESENT'] =         { 'gpio_pin': 'O0', 'direction': 'in' }
+GPIO_CONFIG['MEZZ1_PRESENT'] =         { 'gpio_pin': 'O1', 'direction': 'in' }
 
 def convertGpio(name):
 	name = name.upper()
