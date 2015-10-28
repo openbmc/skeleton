@@ -12,6 +12,7 @@
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
+static const gchar* instance_name = "bmc0";
 static const gchar* dbus_name        = "org.openbmc.control.Bmc";
 
 //this probably should come from some global SOC config
@@ -23,7 +24,6 @@ static const gchar* dbus_name        = "org.openbmc.control.Bmc";
 #define SPI_BASE		(off_t)0x1e630000
 #define SCU_BASE                (off_t)0x1e780000
 #define UART_BASE               (off_t)0x1e783000
-#define UART_BASE2              (off_t)0x1e785000
 #define COM_BASE                (off_t)0x1e789000
 #define COM_BASE2               (off_t)0x1e789100
 #define GPIO_BASE		(off_t)0x1e6e2000
@@ -72,11 +72,6 @@ void reg_init()
 	devmem(bmcreg+0x00,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x08,0x000000c1);  //Disable Parity, 1 stop bit, 8 bits
-
-	bmcreg = memmap(mem_fd,UART_BASE2);
-	devmem(bmcreg+0x0c,0x00000000);
-	devmem(bmcreg+0x2c,0x00000000);
-
 	bmcreg = memmap(mem_fd,COM_BASE);
 	devmem(bmcreg+0x9C,0x08060000);  //Set UART routing
 
@@ -103,7 +98,6 @@ void reg_init()
 	devmem(bmcreg+0x170,0x00000042);
 	devmem(bmcreg+0x174,0x00004000);
 
-
 	close(mem_fd);
 }
 
@@ -112,13 +106,25 @@ on_init (Control          *control,
          GDBusMethodInvocation  *invocation,
          gpointer                user_data)
 {
+	//#ifdef __arm__
+	//reg_init();
+	//#endif
+	control_complete_init(control,invocation);
+	//control_emit_goto_system_state(control,"BMC_STARTING");
+	
+	return TRUE;
+}
+gboolean go(gpointer user_data)
+{
+ 	cmdline *cmd = user_data;
+	Control* control = object_get_control((Object*)cmd->user_data);
 	#ifdef __arm__
 	reg_init();
 	#endif
-	control_complete_init(control,invocation);
 	control_emit_goto_system_state(control,"BMC_STARTING");
 	
-	return TRUE;
+	g_main_loop_quit(cmd->loop);
+	return FALSE;
 }
 
 static void 
@@ -128,47 +134,48 @@ on_bus_acquired (GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
  	cmdline *cmd = user_data;
-	if (cmd->argc < 2)
-	{
-		g_print("No objects created.  Put object name(s) on command line\n");
-		return;
-	}	
   	manager = g_dbus_object_manager_server_new (dbus_object_path);
-  	int i=0;
-  	for (i=1;i<cmd->argc;i++)
-  	{
-		gchar *s;
-  		s = g_strdup_printf ("%s/%s",dbus_object_path,cmd->argv[i]);
-  		object = object_skeleton_new (s);
-  		g_free (s);
 
-		ControlBmc* control_bmc = control_bmc_skeleton_new ();
-		object_skeleton_set_control_bmc (object, control_bmc);
-		g_object_unref (control_bmc);
+	gchar *s;
+	s = g_strdup_printf ("%s/%s",dbus_object_path,instance_name);
+	object = object_skeleton_new (s);
+	g_free (s);
 
-		Control* control = control_skeleton_new ();
-		object_skeleton_set_control (object, control);
-		g_object_unref (control);
+	ControlBmc* control_bmc = control_bmc_skeleton_new ();
+	object_skeleton_set_control_bmc (object, control_bmc);
+	g_object_unref (control_bmc);
 
-		//define method callbacks here
-		g_signal_connect (control,
-        	            "handle-init",
-                	    G_CALLBACK (on_init),
-                	    NULL); /* user_data */
+	Control* control = control_skeleton_new ();
+	object_skeleton_set_control (object, control);
+	g_object_unref (control);
 
-		/* Export the object (@manager takes its own reference to @object) */
-		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
-		g_object_unref (object);
-	}
+	//define method callbacks here
+	g_signal_connect (control,
+       	            "handle-init",
+               	    G_CALLBACK (on_init),
+               	    NULL); /* user_data */
+
+	/* Export the object (@manager takes its own reference to @object) */
+	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
+	g_object_unref (object);
+
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection (manager, connection);
+
+	//TODO:  This is a bad hack to wait for object to be on bus
+	//sleep(1);
+	cmd->user_data = object;
+	g_idle_add(go,cmd);
 }
+
 
 static void
 on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
+
+
 }
 
 static void
@@ -177,8 +184,6 @@ on_name_lost (GDBusConnection *connection,
               gpointer         user_data)
 {
 }
-
-
 
 
 /*----------------------------------------------------------------*/
@@ -194,6 +199,7 @@ main (gint argc, gchar *argv[])
 
   guint id;
   loop = g_main_loop_new (NULL, FALSE);
+  cmd.loop = loop;
 
   id = g_bus_own_name (DBUS_TYPE,
                        dbus_name,
