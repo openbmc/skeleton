@@ -40,7 +40,8 @@ static inline devmem(uint32_t val, uint32_t reg)
 typedef struct {
 	gint argc;
 	gchar **argv;
-	GMainLoop *loop;	
+	GMainLoop *loop;
+	gpointer user_data;	
 
 } cmdline;
 
