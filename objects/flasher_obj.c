@@ -296,13 +296,13 @@ static void flash_access_setup_pnor(bool use_lpc, bool use_sfc, bool need_write)
 	atexit(flash_access_cleanup_pnor);
 }
 
-uint8_t flash(FlashControl* flash_control,bool bmc_flash, char* write_file, char* obj_path)
+uint8_t flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char* write_file, char* obj_path)
 {
 	bool has_sfc = false, has_ast = false, use_lpc = true;
 	bool erase = true, program = true;
-	uint32_t address = 0;
+
 	int rc;
-	printf("flasher: %s, BMC = %d\n",write_file,bmc_flash);
+	printf("flasher: %s, BMC = %d, address = 0x%x\n",write_file,bmc_flash,address);
 #ifdef __arm__
 	/* Check platform */
 	check_platform(&has_sfc, &has_ast);
@@ -390,10 +390,20 @@ on_bus_acquired (GDBusConnection *connection,
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection (manager, connection);
 	bool bmc_flash = false;
+	uint32_t address = 0;
 	if (strcmp(cmd->argv[1],"bmc")==0) {
 		bmc_flash = true;
 	}
-	int rc = flash(flash_control,bmc_flash,cmd->argv[2],cmd->argv[3]);
+	if (strcmp(cmd->argv[1],"bmc_ramdisk")==0) {
+		bmc_flash = true;
+		address = 0x20300000;
+	}
+	if (strcmp(cmd->argv[1],"bmc_kernel")==0) {
+		bmc_flash = true;
+		address = 0x20080000;
+	}
+
+	int rc = flash(flash_control,bmc_flash,address,cmd->argv[2],cmd->argv[3]);
 	if (rc == FLASH_ERROR) {
 		flash_message(connection,cmd->argv[3],"error","Flash Error");
 	} else {
