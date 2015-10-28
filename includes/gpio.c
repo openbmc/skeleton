@@ -183,16 +183,17 @@ char* get_gpio_dev(GPIO* gpio)
 int gpio_open_interrupt(GPIO* gpio, GIOFunc func, gpointer user_data)
 {
 	int rc = GPIO_OK;
-	char* buf;
+	char buf[255];
 	sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
 	gpio->fd = open(buf, O_RDONLY | O_NONBLOCK );
+	gpio->irq_inited = false;
 	if (gpio->fd == -1)
 	{
 		rc = GPIO_OPEN_ERROR;
 	}
 	else
 	{
-		GIOChannel* channel = g_io_channel_unix_new( gpio->fd );
+		GIOChannel* channel = g_io_channel_unix_new( gpio->fd);
 		guint id = g_io_add_watch( channel, G_IO_PRI, func, user_data );
 	}
 	return rc;

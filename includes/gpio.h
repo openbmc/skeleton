@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <gio/gio.h>
+#include <stdbool.h>
 
 typedef struct {
   gchar* name;
@@ -10,6 +11,7 @@ typedef struct {
   uint16_t num;
   gchar* direction;
   int fd;
+  bool irq_inited;
 } GPIO;
 
 
