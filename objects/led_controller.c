@@ -22,14 +22,14 @@ on_set_on       (Led          *led,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-	printf("Turn on chassis identify led\n");
 	GPIO* mygpio = (GPIO*)user_data;
+	g_print("Turn on LED: %s\n",mygpio->name);
 	led_complete_set_on(led,invocation);
 	int rc = GPIO_OK;
 	do {
 		rc = gpio_open(mygpio);
 		if (rc != GPIO_OK) { break; }
-		rc = gpio_write(mygpio,1); 
+		rc = gpio_write(mygpio,0); 
 		if (rc != GPIO_OK) { break; }
 	} while(0);
 	gpio_close(mygpio);
@@ -47,14 +47,14 @@ on_set_off       (Led          *led,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-	g_print("Turn off chassis identify led\n");
 	GPIO* mygpio = (GPIO*)user_data;
+	g_print("Turn off LED: %s\n",mygpio->name);
 	led_complete_set_off(led,invocation);
 	int rc = GPIO_OK;
 	do {
 		rc = gpio_open(mygpio);
 		if (rc != GPIO_OK) { break; }
-		rc = gpio_write(mygpio,0); 
+		rc = gpio_write(mygpio,1); 
 		if (rc != GPIO_OK) { break; }
 	} while(0);
 	gpio_close(mygpio);
