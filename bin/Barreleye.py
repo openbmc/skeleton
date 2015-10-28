@@ -1,11 +1,7 @@
 #! /usr/bin/python
 
-import dbus
-import Openbmc
-
 HOME_PATH = './'
 CACHE_PATH = HOME_PATH+'cache/'
-FRU_PATH = CACHE_PATH+'frus/'
 FLASH_DOWNLOAD_PATH = "/tmp"
 
 SYSTEM_NAME = "Barreleye"
@@ -16,6 +12,7 @@ SYSTEM_NAME = "Barreleye"
 ##   - a process emits a GotoSystemState signal with state name to goto
 ##   - objects specified in EXIT_STATE_DEPEND have started
 SYSTEM_STATES = [
+	'BASE_APPS',
 	'BMC_INIT',
 	'BMC_STARTING',
 	'BMC_READY',
@@ -27,6 +24,9 @@ SYSTEM_STATES = [
 ]
 
 EXIT_STATE_DEPEND = {
+	'BASE_APPS' : {
+		'/org/openbmc/managers/Property': 0,
+	},
 	'BMC_STARTING' : {
 		'/org/openbmc/control/chassis0': 0,
 		'/org/openbmc/control/power0' : 0,
@@ -53,12 +53,19 @@ ENTER_STATE_CALLBACK = {
 
 SYSTEM_CONFIG = {}
 
+SYSTEM_CONFIG['org.openbmc.managers.Property'] = {
+		'system_state' : 'BASE_APPS',
+		'start_process' : True,
+		'monitor_process' : True,
+		'process_name' : 'property_manager.py',
+		'instances' : [	{ 'name' : SYSTEM_NAME } ]
+	}
+
 SYSTEM_CONFIG['org.openbmc.control.Bmc'] = {
 		'system_state' : 'BMC_INIT',
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'control_bmc_barreleye.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Bmc_0' } ]
 	}
 
@@ -67,7 +74,6 @@ SYSTEM_CONFIG['org.openbmc.managers.Inventory'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'inventory_items.py',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
@@ -75,7 +81,6 @@ SYSTEM_CONFIG['org.openbmc.control.PciePresent'] = {
 		'start_process' : True,
 		'monitor_process' : False,
 		'process_name' : 'pcie_slot_present.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Slots_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
@@ -83,7 +88,6 @@ SYSTEM_CONFIG['org.openbmc.sensor.Power8Virtual'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensors_virtual_p8.py',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'virtual' } ]
 	}
 
@@ -92,7 +96,6 @@ SYSTEM_CONFIG['org.openbmc.managers.Sensors'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'sensor_manager.py',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : SYSTEM_NAME } ]
 	}
 
@@ -101,7 +104,6 @@ SYSTEM_CONFIG['org.openbmc.watchdog.Host'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'host_watchdog.exe',
-		'heartbeat' : 'no',
 		'instances' : [	
 			{
 				'name' : 'HostWatchdog_0',
@@ -119,7 +121,6 @@ SYSTEM_CONFIG['org.openbmc.control.Power'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'power_control.exe',
-		'heartbeat' : 'no',
 		'instances' : [	
 			{
 				'name' : 'power0',
@@ -141,7 +142,6 @@ SYSTEM_CONFIG['org.openbmc.buttons.Power'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'button_power.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'PowerButton_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.led'] = {
@@ -149,7 +149,6 @@ SYSTEM_CONFIG['org.openbmc.control.led'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'led_controller.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'Dummy' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Flash'] = {
@@ -157,7 +156,6 @@ SYSTEM_CONFIG['org.openbmc.control.Flash'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'flash_bios.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : 'dummy' } ]
 	}
 
@@ -166,7 +164,6 @@ SYSTEM_CONFIG['org.openbmc.manager.Download'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'download_manager.py',
-		'heartbeat' : 'no',
 		'instances' : [	{ 'name' : SYSTEM_NAME } ]
 	}
 
@@ -175,7 +172,6 @@ SYSTEM_CONFIG['org.openbmc.control.Host'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'control_host.exe',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : 'Host_0' } ]
 	}
 SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
@@ -183,7 +179,6 @@ SYSTEM_CONFIG['org.openbmc.control.Chassis'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'chassis_control.py',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : 'chassis0' } ]
 	}
 
@@ -192,7 +187,6 @@ SYSTEM_CONFIG['org.openbmc.vpd'] = {
 		'start_process' : False,
 		'monitor_process' : False,
 		'process_name' : 'board_vpd.exe',
-		'heartbeat' : 'no',
 		'instances' : [ { 'name' : 'MBVPD_0' } ]
 	}
 
@@ -201,17 +195,13 @@ SYSTEM_CONFIG['org.openbmc.sensors.Fan'] = {
 		'start_process' : True,
 		'monitor_process' : True,
 		'process_name' : 'fan.exe',
-		'heartbeat' : 'no',
 		'instances' : [	{'name' : 'Fan_0' }, {'name' : 'Fan_1'}, {'name' : 'Fan_2'} ]
 	}
 
-NON_CACHABLE_PROPERTIES = {
-	'name'       : True,
-	'user_label' : True,
-	'location'   : True,
-	'state'      : True,
-	'cache'      : True
-}
+CACHED_INTERFACES = {
+		"org.openbmc.InventoryItem" : True,
+		"org.openbmc.control.Chassis" : True,
+	}
 INVENTORY_ROOT = '/org/openbmc/inventory'
 
 FRU_INSTANCES = {
@@ -313,6 +303,7 @@ FRU_INSTANCES = {
 
 
 
+
 ID_LOOKUP = {
 	'FRU' : {
 		0x0d : '<inventory_root>/system/chassis',
@@ -323,7 +314,7 @@ ID_LOOKUP = {
 		0x04 : '<inventory_root>/system/chassis/motherboard/dimm1',
 		0x05 : '<inventory_root>/system/chassis/motherboard/dimm2',
 		0x06 : '<inventory_root>/system/chassis/motherboard/dimm3',
-		0xff : '<inventory_root>/system',
+		0x35 : '<inventory_root>/system',
 	},
 	'FRU_STR' : {
 		'PRODUCT_15' : '<inventory_root>/system',
@@ -367,22 +358,33 @@ ID_LOOKUP = {
 }
 
 GPIO_CONFIG = {}
-GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 484, 'direction': 'out' }
-GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 485, 'direction': 'out' }
-GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 504, 'direction': 'out' }
-GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 449, 'direction': 'out'  }
-GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 486, 'direction': 'out'  }
-GPIO_CONFIG['PGOOD']      = { 'gpio_num': 503, 'direction': 'in'  }
-GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 474, 'direction': 'out' }
-GPIO_CONFIG['BMC_READY']   = { 'gpio_num': 474, 'direction': 'out' }
-GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 448, 'direction': 'falling' }
-GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 392, 'direction': 'in' }
-GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 393, 'direction': 'in' }
-GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_num': 394, 'direction': 'in' }
-GPIO_CONFIG['SLOT0_PRESENT'] =  { 'gpio_num': 395, 'direction': 'in' }
-GPIO_CONFIG['SLOT1_PRESENT'] =  { 'gpio_num': 396, 'direction': 'in' }
-GPIO_CONFIG['SLOT2_PRESENT'] =  { 'gpio_num': 397, 'direction': 'in' }
-GPIO_CONFIG['MEZZ0_PRESENT'] =  { 'gpio_num': 400, 'direction': 'in' }
-GPIO_CONFIG['MEZZ1_PRESENT'] =  { 'gpio_num': 401, 'direction': 'in' }
+GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 324, 'direction': 'out' }
+GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 325, 'direction': 'out' }
+GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 344, 'direction': 'out' }
+GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 353, 'direction': 'out'  }
+GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 326, 'direction': 'out'  }
+GPIO_CONFIG['PGOOD']      = { 'gpio_num': 343, 'direction': 'in'  }
+GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 365, 'direction': 'out' }
+GPIO_CONFIG['BMC_READY']   = { 'gpio_num': 431, 'direction': 'out' }
+GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 352, 'direction': 'falling' }
+GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 424, 'direction': 'in' }
+GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 425, 'direction': 'in' }
+GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_num': 426, 'direction': 'in' }
+GPIO_CONFIG['SLOT0_PRESENT'] =  { 'gpio_num': 427, 'direction': 'in' }
+GPIO_CONFIG['SLOT1_PRESENT'] =  { 'gpio_num': 428, 'direction': 'in' }
+GPIO_CONFIG['SLOT2_PRESENT'] =  { 'gpio_num': 429, 'direction': 'in' }
+GPIO_CONFIG['MEZZ0_PRESENT'] =  { 'gpio_num': 432, 'direction': 'in' }
+GPIO_CONFIG['MEZZ1_PRESENT'] =  { 'gpio_num': 433, 'direction': 'in' }
+
+def convertGpio(name):
+	name = name.upper()
+	c = name[0:1]
+	offset = int(name[1:])
+	a = ord(c)-65
+	base = a*8+GPIO_BASE
+	return base+offset
+
+
+
 
 

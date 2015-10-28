@@ -3,7 +3,7 @@
 HOME_PATH = './'
 CACHE_PATH = HOME_PATH+'cache/'
 FLASH_DOWNLOAD_PATH = "/tmp"
-
+GPIO_BASE = 320
 SYSTEM_NAME = "Palmetto"
 
 
@@ -344,31 +344,30 @@ ID_LOOKUP = {
 }
 
 GPIO_CONFIG = {}
-GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 484, 'direction': 'out' }
-GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 485, 'direction': 'out' }
-GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 504, 'direction': 'out' }
-GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 449, 'direction': 'out'  }
-GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 486, 'direction': 'out'  }
-GPIO_CONFIG['PGOOD']      = { 'gpio_num': 503, 'direction': 'in'  }
+GPIO_CONFIG['FSI_CLK']    = { 'gpio_num': 324, 'direction': 'out' }
+GPIO_CONFIG['FSI_DATA']   = { 'gpio_num': 325, 'direction': 'out' }
+GPIO_CONFIG['FSI_ENABLE'] = { 'gpio_num': 344, 'direction': 'out' }
+GPIO_CONFIG['POWER_PIN']  = { 'gpio_num': 353, 'direction': 'out'  }
+GPIO_CONFIG['CRONUS_SEL'] = { 'gpio_num': 326, 'direction': 'out'  }
+GPIO_CONFIG['PGOOD']      = { 'gpio_num': 343, 'direction': 'in'  }
 GPIO_CONFIG['IDENTIFY']   = { 'gpio_num': 365, 'direction': 'out' }
-GPIO_CONFIG['BMC_READY']   = { 'gpio_num': 365, 'direction': 'out' }
-GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 448, 'direction': 'falling' }
-GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 104, 'direction': 'in' }
-GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 105, 'direction': 'in' }
-GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_num': 106, 'direction': 'in' }
-GPIO_CONFIG['SLOT0_PRESENT'] =  { 'gpio_num': 470, 'direction': 'in' }
-GPIO_CONFIG['SLOT1_PRESENT'] =  { 'gpio_num': 471, 'direction': 'in' }
-GPIO_CONFIG['SLOT2_PRESENT'] =  { 'gpio_num': 109, 'direction': 'in' }
-GPIO_CONFIG['MEZZ0_PRESENT'] =  { 'gpio_num': 112, 'direction': 'in' }
-GPIO_CONFIG['MEZZ1_PRESENT'] =  { 'gpio_num': 113, 'direction': 'in' }
+GPIO_CONFIG['BMC_READY']   = { 'gpio_num': 431, 'direction': 'out' }
+GPIO_CONFIG['POWER_BUTTON'] =  { 'gpio_num': 352, 'direction': 'falling' }
+GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_num': 424, 'direction': 'in' }
+GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_num': 425, 'direction': 'in' }
+GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_num': 426, 'direction': 'in' }
+GPIO_CONFIG['SLOT0_PRESENT'] =  { 'gpio_num': 427, 'direction': 'in' }
+GPIO_CONFIG['SLOT1_PRESENT'] =  { 'gpio_num': 428, 'direction': 'in' }
+GPIO_CONFIG['SLOT2_PRESENT'] =  { 'gpio_num': 429, 'direction': 'in' }
+GPIO_CONFIG['MEZZ0_PRESENT'] =  { 'gpio_num': 432, 'direction': 'in' }
+GPIO_CONFIG['MEZZ1_PRESENT'] =  { 'gpio_num': 433, 'direction': 'in' }
 
 def convertGpio(name):
 	name = name.upper()
 	c = name[0:1]
-	num = name[1:]
+	offset = int(name[1:])
 	a = ord(c)-65
-	base = 480 - (int(a/4) * 32)
-	offset = a%4*8 + int(num)
+	base = a*8+GPIO_BASE
 	return base+offset
 
 
