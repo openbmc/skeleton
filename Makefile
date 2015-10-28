@@ -37,9 +37,6 @@ power_control: power_control_obj.o gpio.o libopenbmc_intf
 led_controller: led_controller.o gpio.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/gpio.o obj/led_controller.o $(LDFLAGS) $(LIBS)
 
-sensor_ambient: sensor_threshold.o sensor_temperature_ambient_obj.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/sensor_threshold.o obj/sensor_temperature_ambient_obj.o $(LDFLAGS) $(LIBS)
-
 button_power: button_power_obj.o gpio.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/button_power_obj.o obj/gpio.o $(LDFLAGS) $(LIBS)
 
@@ -74,4 +71,4 @@ hwmon:  hwmon_intf.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/hwmon_intf.o $(LDFLAGS) $(LIBS)
 
 
-all: setup libopenbmc_intf power_control led_controller sensor_ambient button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher control_bmc_barreleye
+all: setup libopenbmc_intf power_control led_controller button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher control_bmc_barreleye
