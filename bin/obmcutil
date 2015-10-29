@@ -52,7 +52,7 @@ dbus_objects = {
 	},
 	'identify_led' : {
 		'bus_name' : 'org.openbmc.control.led',
-		'object_name' : '/org/openbmc/led/IDENTIFY',
+		'object_name' : '/org/openbmc/control/led/IDENTIFY',
 		'interface_name' : 'org.openbmc.Led'
 	},	
 	'chassis' : { 
