@@ -8,6 +8,7 @@ import dbus.service
 import dbus.mainloop.glib
 import cPickle
 import json
+import PropertyCacher
 
 if (len(sys.argv) < 2):
 	print "Usage:  inventory_items.py [system name]"
@@ -46,22 +47,20 @@ class InventoryItem(Openbmc.DbusProperties):
 		dbus.service.Object.__init__(self,bus,name)
 
 		self.name = name
-		## this will load properties from cache
-		self.Register('org.openbmc.InventoryItem')
 
+		## this will load properties from cache
+		PropertyCacher.load(name,INTF_NAME,self.properties)
 		data = {'is_fru': is_fru, 'fru_type': fru_type, 'present': 'Inactive', 'fault': 'None'}
 		self.SetMultiple(INTF_NAME,data)
+
 		
-	
-	@dbus.service.signal('org.openbmc.PersistantInterface',
-		signature='s')
-	def Register(self,interface):
-		pass
+		
 		
 	@dbus.service.method(INTF_NAME,
 		in_signature='a{sv}', out_signature='')
 	def update(self,data):
 		self.SetMultiple(INTF_NAME,data)
+		PropertyCacher.save(self.name,INTF_NAME,self.properties)
 
 	@dbus.service.method(INTF_NAME,
 		in_signature='s', out_signature='')

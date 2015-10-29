@@ -56,11 +56,6 @@ class PropertyManager(dbus.service.Object):
 		filename = System.CACHE_PATH+name[1:]+"@"+intf_name+".props"
 		return filename
 
-	def getCacheFilenames(self,obj_path):
-		name = obj_path.replace('/','.')
-		path = System.CACHE_PATH+name[1:]+"\@*"
-		return glob.glob(path)
-	
 	def saveToCache(self, bus_name, object_path, interface_name):
 		print "Caching: "+object_path
 		try:
