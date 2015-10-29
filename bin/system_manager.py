@@ -107,9 +107,10 @@ class SystemManager(dbus.service.Object):
 		
 		try:	
 			cb = System.ENTER_STATE_CALLBACK[state_name]
-			obj = bus.get_object(cb['bus_name'],cb['obj_name'])
-			method = obj.get_dbus_method(cb['method_name'],cb['interface_name'])
-			method()
+			for methd in cb.keys():
+				obj = bus.get_object(cb[methd]['bus_name'],cb[methd]['obj_name'])
+				method = obj.get_dbus_method(methd,cb[methd]['interface_name'])
+				method()
 		except:
 			pass
 
