@@ -49,7 +49,7 @@ on_init (Flash          *f,
 		}
 		//TODO: have to tune flash twice
 		sleep(1);
-		int rc = update(f,obj_path);
+		update(f,obj_path);
 	}
 	return TRUE;
 }
