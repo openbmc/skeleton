@@ -53,6 +53,7 @@ static int32_t			ffs_index = -1;
 
 static uint8_t FLASH_OK = 0;
 static uint8_t FLASH_ERROR = 1;
+static struct blocklevel_device *bl;
 
 static int erase_chip(void)
 {
@@ -70,6 +71,7 @@ static int erase_chip(void)
 	printf("done !\n");
 	return (rc);
 }
+
 
 void flash_message(GDBusConnection* connection,char* obj_path,char* method, char* error_msg)
 {
