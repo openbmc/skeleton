@@ -47,6 +47,9 @@ on_init (Flash          *f,
 		{
 			printf("ERROR FlashControl: Unable to init\n");
 		}
+		//TODO: have to tune flash twice
+		sleep(1);
+		int rc = update(f,obj_path);
 	}
 	return TRUE;
 }
