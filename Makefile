@@ -5,7 +5,7 @@ OBJS	+= objects/pflash/arm_io.o
 OBJS2   = progress.o ast-sf-ctrl.o libflash.o libffs.o arm_io.o
 OBJS3   = obj/progress.o obj/ast-sf-ctrl.o obj/libflash.o obj/libffs.o obj/arm_io.o
 INCLUDES=$(shell pkg-config --cflags gio-unix-2.0 glib-2.0) -Iincludes -Iobjects/pflash -I.
-LIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Lbin -lopenbmc_intf
+LIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Llib -lopenbmc_intf
 
 %.o: interfaces/%.c 
 	$(CC) -c -fPIC -o obj/$@ $< $(CFLAGS) $(INCLUDES)
@@ -22,14 +22,16 @@ LIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Lbin -lopenbmc_intf
 %.o: objects/pflash/libflash/%.c
 	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
+all: setup libopenbmc_intf power_control led_controller button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher control_bmc_barreleye
+
 setup: 
-	mkdir -p obj
+	mkdir -p obj lib
 
 clean:  
-	rm -rf obj
+	rm -rf obj lib bin/*.exe
 
 libopenbmc_intf: openbmc_intf.o
-	$(CC) -shared -o bin/$@.so obj/openbmc_intf.o $(LDFLAGS)
+	$(CC) -shared -o lib/$@.so obj/openbmc_intf.o $(LDFLAGS)
 
 power_control: power_control_obj.o gpio.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o $(LDFLAGS) $(LIBS)
@@ -71,4 +73,3 @@ hwmon:  hwmon_intf.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/hwmon_intf.o $(LDFLAGS) $(LIBS)
 
 
-all: setup libopenbmc_intf power_control led_controller button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher control_bmc_barreleye
