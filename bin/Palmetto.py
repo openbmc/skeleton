@@ -25,7 +25,7 @@ SYSTEM_STATES = [
 
 EXIT_STATE_DEPEND = {
 	'BASE_APPS' : {
-		'/org/openbmc/managers/Property': 0,
+		'/org/openbmc/sensors': 0,
 	},
 	'BMC_STARTING' : {
 		'/org/openbmc/control/chassis0': 0,
@@ -62,8 +62,8 @@ ENTER_STATE_CALLBACK = {
 APPS = {
 	'property_manager' : {
 		'system_state'    : 'BASE_APPS',
-		'start_process'   : True,
-		'monitor_process' : True,
+		'start_process'   : False,
+		'monitor_process' : False,
 		'process_name'    : 'property_manager.py',
 		'args'            : [ SYSTEM_NAME ]
 	},
@@ -93,7 +93,7 @@ APPS = {
 		'process_name'    : 'sensors_virtual_p8.py',
 	},
 	'sensor_manager' : {
-		'system_state'    : 'BMC_STARTING',
+		'system_state'    : 'BASE_APPS',
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'sensor_manager.py',
