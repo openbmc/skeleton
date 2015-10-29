@@ -120,8 +120,8 @@ gboolean go(gpointer user_data)
 	reg_init();
 	#endif
 	control_emit_goto_system_state(control,"BMC_STARTING");
-	
-	g_main_loop_quit(cmd->loop);
+
+	//g_main_loop_quit(cmd->loop);
 	return FALSE;
 }
 
