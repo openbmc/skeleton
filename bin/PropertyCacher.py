@@ -1,5 +1,6 @@
 import os
 import cPickle
+import json
 import Openbmc
 
 CACHE_PATH = '/var/cache/obmc/'
@@ -12,19 +13,21 @@ def getCacheFilename(obj_path, iface_name):
 def save(obj_path, iface_name, properties):
 	print "Caching: "+obj_path
 	try:
-		output = open(getCacheFilename(obj_path, iface_name), 'wb')
-		## save properties
-		dbus_props = {}
+		
+		filename = getCacheFilename(obj_path, iface_name)
+		output = open(filename, 'wb')
+		try:
+			## use json module to convert dbus datatypes
+			props = json.dumps(properties[iface_name])
+			prop_obj = json.loads(props)
+			cPickle.dump(prop_obj,output)
+		except Exception as e:
+			print "ERROR: "+str(e)
+		finally:
+			output.close()
+	except:
+		print "ERROR opening cache file: "+filename
 
-		for p in properties[iface_name].keys():
-			dbus_prop = Openbmc.DbusVariable(p,properties[iface_name][p])
-			dbus_props[str(p)] = dbus_prop.getBaseValue()
-
-		cPickle.dump(dbus_props,output)
-	except Exception as e:
-		print "ERROR: "+str(e)
-	finally:
-		output.close()
 
 def load(obj_path, iface_name, properties):
 	## overlay with pickled data
