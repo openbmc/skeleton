@@ -49,11 +49,16 @@ class ChassisControlObject(Openbmc.DbusProperties):
 		self.Set(DBUS_NAME,"last_system_state","")	
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
-					dbus_interface = "org.openbmc.Button", signal_name = "ButtonPressed", 
+					dbus_interface = "org.openbmc.Button", signal_name = "Released", 
 					path="/org/openbmc/buttons/power0" )
+		bus.add_signal_receiver(self.reset_button_signal_handler, 
+					dbus_interface = "org.openbmc.Button", signal_name = "Pressed_Long", 
+					path="/org/openbmc/buttons/power0" )
+
     		bus.add_signal_receiver(self.host_watchdog_signal_handler, 
 					dbus_interface = "org.openbmc.Watchdog", signal_name = "WatchdogError")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
+		self.ObjectAdded(name,CONTROL_INTF)
 
 
 	def getInterface(self,name):
@@ -114,8 +119,11 @@ class ChassisControlObject(Openbmc.DbusProperties):
 		in_signature='', out_signature='')
 	def reboot(self):
 		print "Rebooting"
-		self.Set(DBUS_NAME,"reboot",1)
-		intf.softPowerOff()
+		if state == POWER_OFF:
+			self.powerOn();
+		else:
+			self.Set(DBUS_NAME,"reboot",1)
+			intf.softPowerOff()
 		return None
 
 	@dbus.service.method(DBUS_NAME,
@@ -151,9 +159,10 @@ class ChassisControlObject(Openbmc.DbusProperties):
 			self.powerOn()
 		elif state == POWER_ON:
 			self.powerOff();
-		
-		# TODO: handle long press and reset
 
+	def reset_button_signal_handler(self):
+		self.reboot();
+		
 	def host_watchdog_signal_handler(self):
 		print "Watchdog Error, Hard Rebooting"
 		#self.Set(DBUS_NAME,"reboot",1)

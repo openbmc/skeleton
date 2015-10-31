@@ -17,7 +17,7 @@ DBUS_NAME = 'org.openbmc.managers.Sensors'
 OBJ_NAME = '/org/openbmc/sensors'
 ENUM_INTF = 'org.openbmc.Object.Enumerate'
 
-class SensorManager(dbus.service.Object):
+class SensorManager(Openbmc.DbusProperties):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
 		bus.add_signal_receiver(self.SensorChangedHandler,
@@ -37,6 +37,8 @@ class SensorManager(dbus.service.Object):
 					signal_name = 'Critical', path_keyword='path')
 
 		self.sensor_cache = {}
+		self.ObjectAdded(name,DBUS_NAME);
+		self.ObjectAdded(name,ENUM_INTF);
 
 	@dbus.service.method(ENUM_INTF,
 		in_signature='', out_signature='a{sa{sv}}')

@@ -8,9 +8,7 @@ import dbus.service
 import dbus.mainloop.glib
 import os
 import time
-import json
-import xml.etree.ElementTree as ET
-
+import PropertyCacher
 import Openbmc
 
 if (len(sys.argv) < 2):
@@ -28,42 +26,13 @@ INTF_SENSOR = 'org.openbmc.SensorValue'
 INTF_ITEM = 'org.openbmc.InventoryItem'
 INTF_CONTROL = 'org.openbmc.Control'
 
-def get_objects(bus,bus_name,path,objects):
-	tmp_path = path
-	if (path == ""):
-		tmp_path="/"
-
-	obj = bus.get_object(bus_name,tmp_path)
-	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
- 	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
- 	root = tree.getroot()
-	parent = True
-	##print introspect_iface.Introspect()
-	for node in root.iter('node'):
-		for intf in node.iter('interface'):
-			objects[path] = True
-
-		if (node.attrib.has_key('name') == True):
-			node_name = node.attrib['name']
-			if (parent == False):
-				get_objects(bus,bus_name,path+"/"+node_name,objects)
-			else:
-				if (node_name != "" and node_name != path):
-					get_objects(bus,bus_name,node_name,objects)
-			
-		parent = False
-
-
-
 
 class SystemManager(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
 
-		## Signal handlers
-		bus.add_signal_receiver(self.NewBusHandler,
-					dbus_interface = 'org.freedesktop.DBus', 
-					signal_name = "NameOwnerChanged")
+		bus.add_signal_receiver(self.NewObjectHandler,
+			signal_name = "ObjectAdded", sender_keyword = 'bus_name')
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 
 		self.current_state = ""
@@ -85,6 +54,11 @@ class SystemManager(dbus.service.Object):
 				System.ID_LOOKUP[category][key] = new_val
 	
 		self.SystemStateHandler(System.SYSTEM_STATES[0])
+
+		if not os.path.exists(PropertyCacher.CACHE_PATH):
+			print "Creating cache directory: "+PropertyCacher.CACHE_PATH
+   			os.makedirs(PropertyCacher.CACHE_PATH)
+
 		print "SystemManager Init Done"
 
 
@@ -194,34 +168,26 @@ class SystemManager(dbus.service.Object):
 	
 		return True
 
-	def NewBusHandler(self, bus_name, a, b):
-		if (len(b) > 0 and bus_name.find(Openbmc.BUS_PREFIX) == 0):
-			objects = {}
-			try:
-				get_objects(bus,bus_name,"",objects)
-				for obj_path in objects.keys():
-					self.bus_name_lookup[obj_path] = bus_name
-					print "New object: "+obj_path+" ("+bus_name+")"
-					if (System.EXIT_STATE_DEPEND[self.current_state].has_key(obj_path) == True):
-						System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 1
-								
-			except Exception as e:
-				## object probably disappeared
-				#print e
-				pass
-	
+	def NewObjectHandler(self,obj_path, interface_name, bus_name = None):
+		if (self.bus_name_lookup.has_key(obj_path)):
+			if (self.bus_name_lookup[obj_path] == bus_name):
+				return
+		self.bus_name_lookup[obj_path] = bus_name
+		print "New object: "+obj_path+" ("+bus_name+")"
+		try:
+			if (System.EXIT_STATE_DEPEND[self.current_state].has_key(obj_path) == True):
+				System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 1
 			## check if all required objects are started to move to next state
-			try:
-				state = 1
-				for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
-					if (System.EXIT_STATE_DEPEND[self.current_state][obj_path] == 0):
-						state = 0
-				## all required objects have started so go to next state
-				if (state == 1):
-					self.gotoNextState()
-			except:
-				pass
-
+			state = 1
+			for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
+				if (System.EXIT_STATE_DEPEND[self.current_state][obj_path] == 0):
+					state = 0
+			## all required objects have started so go to next state
+			if (state == 1):
+				print "All required objects started for "+self.current_state
+				self.gotoNextState()
+		except:
+			pass
 
 
 	@dbus.service.method(DBUS_NAME,

@@ -23,10 +23,11 @@ ENUM_INTF = 'org.openbmc.Object.Enumerate'
 
 FRUS = System.FRU_INSTANCES
 
-class Inventory(dbus.service.Object):
+class Inventory(Openbmc.DbusProperties):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
 		self.objects = [ ]
+		self.ObjectAdded(name,ENUM_INTF)		
 
 	def addItem(self,item):
 		self.objects.append(item)
@@ -47,13 +48,13 @@ class InventoryItem(Openbmc.DbusProperties):
 		dbus.service.Object.__init__(self,bus,name)
 
 		self.name = name
-
+		
 		## this will load properties from cache
 		PropertyCacher.load(name,INTF_NAME,self.properties)
 		data = {'is_fru': is_fru, 'fru_type': fru_type, 'present': 'Inactive', 'fault': 'None'}
 		self.SetMultiple(INTF_NAME,data)
-
-		
+		self.ObjectAdded(name,INTF_NAME)		
+		self.ObjectAdded(name,INTF_NAME)		
 		
 		
 	@dbus.service.method(INTF_NAME,

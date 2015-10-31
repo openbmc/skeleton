@@ -3,6 +3,7 @@
 #include <string.h>
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
+#include "object_mapper.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control/flash";
@@ -307,6 +308,10 @@ on_bus_acquired (GDBusConnection *connection,
 		object_skeleton_set_shared_resource (object, lock);
  		g_object_unref (lock);
 
+		ObjectMapper* mapper = object_mapper_skeleton_new ();
+		object_skeleton_set_object_mapper (object, mapper);
+		g_object_unref (mapper);
+
 		shared_resource_set_lock(lock,false);
 		shared_resource_set_name(lock,"");
 
@@ -378,6 +383,7 @@ on_bus_acquired (GDBusConnection *connection,
 	g_free(flasher_file);
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection (manager, connection);
+	emit_object_added((GDBusObjectManager*)manager); 
 }
 
 static void

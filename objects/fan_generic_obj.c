@@ -1,6 +1,6 @@
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
-
+#include "object_mapper.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 
@@ -66,6 +66,10 @@ on_bus_acquired (GDBusConnection *connection,
   		object_skeleton_set_fan (object, fan);
   		g_object_unref (fan);
 		
+		ObjectMapper* mapper = object_mapper_skeleton_new ();
+		object_skeleton_set_object_mapper (object, mapper);
+		g_object_unref (mapper);
+	
   		//define method callbacks here
   		g_signal_connect (fan,
                     "handle-get-speed",
@@ -85,6 +89,7 @@ on_bus_acquired (GDBusConnection *connection,
 
   /* Export all objects */
   g_dbus_object_manager_server_set_connection (manager, connection);
+  emit_object_added((GDBusObjectManager*)manager); 
 }
 
 static void

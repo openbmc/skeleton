@@ -10,6 +10,7 @@
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "gpio.h"
+#include "object_mapper.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
@@ -19,6 +20,9 @@ static const gchar* dbus_name        = "org.openbmc.control.Power";
 //This object will use these GPIOs
 GPIO power_pin    = (GPIO){ "POWER_PIN" };
 GPIO pgood        = (GPIO){ "PGOOD" };
+GPIO usb_reset    = (GPIO){ "USB_RESET" };
+GPIO pcie_reset   = (GPIO){ "PCIE_RESET" };
+
 
 static GDBusObjectManagerServer *manager = NULL;
 
@@ -66,11 +70,26 @@ static gboolean poll_pgood(gpointer user_data)
  			{
  				control_power_emit_power_lost(control_power);
 				control_emit_goto_system_state(control,"HOST_POWERED_OFF");
+				rc = gpio_open(&pcie_reset);
+				rc = gpio_write(&pcie_reset,0);
+				gpio_close(&pcie_reset);
+
+				rc = gpio_open(&usb_reset);
+				rc = gpio_write(&usb_reset,0);
+				gpio_close(&usb_reset);		
+
  			}
  			else
  			{
  				control_power_emit_power_good(control_power);
 				control_emit_goto_system_state(control,"HOST_POWERED_ON");
+				rc = gpio_open(&pcie_reset);
+				rc = gpio_write(&pcie_reset,1);
+				gpio_close(&pcie_reset);
+
+				rc = gpio_open(&usb_reset);
+				rc = gpio_write(&usb_reset,1);
+				gpio_close(&usb_reset);		
  			}
 		}
 	} else {
@@ -188,6 +207,10 @@ on_bus_acquired (GDBusConnection *connection,
 	object_skeleton_set_control (object, control);
 	g_object_unref (control);
 
+	ObjectMapper* mapper = object_mapper_skeleton_new ();
+	object_skeleton_set_object_mapper (object, mapper);
+	g_object_unref (mapper);
+
 	//define method callbacks here
 	g_signal_connect (control_power,
        	            "handle-set-power-state",
@@ -219,6 +242,11 @@ on_bus_acquired (GDBusConnection *connection,
 		if (rc != GPIO_OK) { break; }
 		rc = gpio_init(connection,&pgood);
 		if (rc != GPIO_OK) { break; }
+		rc = gpio_init(connection,&pcie_reset);
+		if (rc != GPIO_OK) { break; }
+		rc = gpio_init(connection,&usb_reset);
+		if (rc != GPIO_OK) { break; }
+
 		uint8_t gpio;
 		rc = gpio_open(&pgood);
 		if (rc != GPIO_OK) { break; }
@@ -227,6 +255,7 @@ on_bus_acquired (GDBusConnection *connection,
 		gpio_close(&pgood);	
 		control_power_set_pgood(control_power,gpio);
 		printf("Pgood state: %d\n",gpio);
+
 	} while(0);
 	if (rc != GPIO_OK)
 	{
@@ -243,7 +272,7 @@ on_bus_acquired (GDBusConnection *connection,
 		control_power_set_pgood_timeout(control_power,pgood_timeout);
 		g_timeout_add(poll_interval, poll_pgood, object);
 	}
- 
+	emit_object_added((GDBusObjectManager*)manager);  
 }
 
 static void
