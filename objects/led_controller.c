@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "openbmc.h"
 #include "gpio.h"
+#include "object_mapper.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control/led";
@@ -31,15 +32,15 @@ on_set_on       (Led          *led,
 		if (rc != GPIO_OK) { break; }
 		rc = gpio_write(mygpio,0); 
 		if (rc != GPIO_OK) { break; }
+		led_set_state(led,"on");
+		
 	} while(0);
 	gpio_close(mygpio);
 	if (rc != GPIO_OK)
 	{
-		printf("ERROR ledcontrol: GPIO error %s (rc=%d)\n",mygpio->name,rc);
+		g_print("ERROR ledcontrol: GPIO error %s (rc=%d)\n",mygpio->name,rc);
 	}
-
 	return TRUE;
-
 }
 
 static gboolean
@@ -56,13 +57,36 @@ on_set_off       (Led          *led,
 		if (rc != GPIO_OK) { break; }
 		rc = gpio_write(mygpio,1); 
 		if (rc != GPIO_OK) { break; }
+		led_set_state(led,"off");
 	} while(0);
 	gpio_close(mygpio);
 	if (rc != GPIO_OK)
 	{
-		printf("ERROR ChassisIdentify: GPIO error %s (rc=%d)\n",mygpio->name,rc);
+		g_print("ERROR led controller: GPIO error %s (rc=%d)\n",mygpio->name,rc);
 	}
 	return TRUE;
+}
+
+void init_led(Led* led, GPIO* mygpio)
+{
+	int rc = GPIO_OK;
+	do {
+		uint8_t val;
+		rc = gpio_open(mygpio);
+		if (rc != GPIO_OK) { break; }
+		rc = gpio_read(mygpio,&val);
+		if (rc != GPIO_OK) { break; }
+		if (val == 0) {
+			led_set_state(led,"on");
+		} else {
+			led_set_state(led,"off");
+		}
+	} while(0);
+	gpio_close(mygpio);
+	if (rc != GPIO_OK) {
+		g_print("ERROR led controller: GPIO error %s (rc=%d)\n",
+			mygpio->name,rc);
+	}
 }
 
 static void 
@@ -87,6 +111,10 @@ on_bus_acquired (GDBusConnection *connection,
 		object_skeleton_set_led (object, led);
 		g_object_unref (led);
 
+		ObjectMapper* mapper = object_mapper_skeleton_new ();
+		object_skeleton_set_object_mapper (object, mapper);
+		g_object_unref (mapper);
+
 		//define method callbacks
 		g_signal_connect (led,
                     "handle-set-on",
@@ -101,13 +129,14 @@ on_bus_acquired (GDBusConnection *connection,
 		led_set_function(led,led_gpio[i].name);
  
 		gpio_init(connection,&led_gpio[i]);
+		init_led(led, &led_gpio[i]);
 		/* Export the object (@manager takes its own reference to @object) */
 		g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
 		g_object_unref (object);
 	}
 	/* Export all objects */
  	g_dbus_object_manager_server_set_connection (manager, connection);
-
+	emit_object_added((GDBusObjectManager*)manager); 
 }
 
 static void
