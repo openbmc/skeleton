@@ -149,6 +149,828 @@ _g_value_equal (const GValue *a, const GValue *b)
 }
 
 /* ------------------------------------------------------------------------
+ * Code for interface org.openbmc.Object.Mapper
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * SECTION:ObjectMapper
+ * @title: ObjectMapper
+ * @short_description: Generated C code for the org.openbmc.Object.Mapper D-Bus interface
+ *
+ * This section contains code for working with the <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link> D-Bus interface in C.
+ */
+
+/* ---- Introspection data for org.openbmc.Object.Mapper ---- */
+
+static const _ExtendedGDBusArgInfo _object_mapper_signal_info_object_added_ARG_object_path =
+{
+  {
+    -1,
+    (gchar *) "object_path",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo _object_mapper_signal_info_object_added_ARG_interface_name =
+{
+  {
+    -1,
+    (gchar *) "interface_name",
+    (gchar *) "s",
+    NULL
+  },
+  FALSE
+};
+
+static const _ExtendedGDBusArgInfo * const _object_mapper_signal_info_object_added_ARG_pointers[] =
+{
+  &_object_mapper_signal_info_object_added_ARG_object_path,
+  &_object_mapper_signal_info_object_added_ARG_interface_name,
+  NULL
+};
+
+static const _ExtendedGDBusSignalInfo _object_mapper_signal_info_object_added =
+{
+  {
+    -1,
+    (gchar *) "ObjectAdded",
+    (GDBusArgInfo **) &_object_mapper_signal_info_object_added_ARG_pointers,
+    NULL
+  },
+  "object-added"
+};
+
+static const _ExtendedGDBusSignalInfo * const _object_mapper_signal_info_pointers[] =
+{
+  &_object_mapper_signal_info_object_added,
+  NULL
+};
+
+static const _ExtendedGDBusInterfaceInfo _object_mapper_interface_info =
+{
+  {
+    -1,
+    (gchar *) "org.openbmc.Object.Mapper",
+    NULL,
+    (GDBusSignalInfo **) &_object_mapper_signal_info_pointers,
+    NULL,
+    NULL
+  },
+  "object-mapper",
+};
+
+
+/**
+ * object_mapper_interface_info:
+ *
+ * Gets a machine-readable description of the <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link> D-Bus interface.
+ *
+ * Returns: (transfer none): A #GDBusInterfaceInfo. Do not free.
+ */
+GDBusInterfaceInfo *
+object_mapper_interface_info (void)
+{
+  return (GDBusInterfaceInfo *) &_object_mapper_interface_info.parent_struct;
+}
+
+/**
+ * object_mapper_override_properties:
+ * @klass: The class structure for a #GObject<!-- -->-derived class.
+ * @property_id_begin: The property id to assign to the first overridden property.
+ *
+ * Overrides all #GObject properties in the #ObjectMapper interface for a concrete class.
+ * The properties are overridden in the order they are defined.
+ *
+ * Returns: The last property id.
+ */
+guint
+object_mapper_override_properties (GObjectClass *klass, guint property_id_begin)
+{
+  return property_id_begin - 1;
+}
+
+
+
+/**
+ * ObjectMapper:
+ *
+ * Abstract interface type for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link>.
+ */
+
+/**
+ * ObjectMapperIface:
+ * @parent_iface: The parent interface.
+ * @object_added: Handler for the #ObjectMapper::object-added signal.
+ *
+ * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link>.
+ */
+
+typedef ObjectMapperIface ObjectMapperInterface;
+G_DEFINE_INTERFACE (ObjectMapper, object_mapper, G_TYPE_OBJECT);
+
+static void
+object_mapper_default_init (ObjectMapperIface *iface)
+{
+  /* GObject signals for received D-Bus signals: */
+  /**
+   * ObjectMapper::object-added:
+   * @object: A #ObjectMapper.
+   * @arg_object_path: Argument.
+   * @arg_interface_name: Argument.
+   *
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Object-Mapper.ObjectAdded">"ObjectAdded"</link> is received.
+   *
+   * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
+   */
+  g_signal_new ("object-added",
+    G_TYPE_FROM_INTERFACE (iface),
+    G_SIGNAL_RUN_LAST,
+    G_STRUCT_OFFSET (ObjectMapperIface, object_added),
+    NULL,
+    NULL,
+    g_cclosure_marshal_generic,
+    G_TYPE_NONE,
+    2, G_TYPE_STRING, G_TYPE_STRING);
+
+}
+
+/**
+ * object_mapper_emit_object_added:
+ * @object: A #ObjectMapper.
+ * @arg_object_path: Argument to pass with the signal.
+ * @arg_interface_name: Argument to pass with the signal.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Object-Mapper.ObjectAdded">"ObjectAdded"</link> D-Bus signal.
+ */
+void
+object_mapper_emit_object_added (
+    ObjectMapper *object,
+    const gchar *arg_object_path,
+    const gchar *arg_interface_name)
+{
+  g_signal_emit_by_name (object, "object-added", arg_object_path, arg_interface_name);
+}
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * ObjectMapperProxy:
+ *
+ * The #ObjectMapperProxy structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * ObjectMapperProxyClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #ObjectMapperProxy.
+ */
+
+struct _ObjectMapperProxyPrivate
+{
+  GData *qdata;
+};
+
+static void object_mapper_proxy_iface_init (ObjectMapperIface *iface);
+
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (ObjectMapperProxy, object_mapper_proxy, G_TYPE_DBUS_PROXY,
+                         G_ADD_PRIVATE (ObjectMapperProxy)
+                         G_IMPLEMENT_INTERFACE (TYPE_OBJECT_MAPPER, object_mapper_proxy_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (ObjectMapperProxy, object_mapper_proxy, G_TYPE_DBUS_PROXY,
+                         G_IMPLEMENT_INTERFACE (TYPE_OBJECT_MAPPER, object_mapper_proxy_iface_init));
+
+#endif
+static void
+object_mapper_proxy_finalize (GObject *object)
+{
+  ObjectMapperProxy *proxy = OBJECT_MAPPER_PROXY (object);
+  g_datalist_clear (&proxy->priv->qdata);
+  G_OBJECT_CLASS (object_mapper_proxy_parent_class)->finalize (object);
+}
+
+static void
+object_mapper_proxy_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+}
+
+static void
+object_mapper_proxy_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+}
+
+static void
+object_mapper_proxy_g_signal (GDBusProxy *proxy,
+  const gchar *sender_name G_GNUC_UNUSED,
+  const gchar *signal_name,
+  GVariant *parameters)
+{
+  _ExtendedGDBusSignalInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint n;
+  guint signal_id;
+  info = (_ExtendedGDBusSignalInfo *) g_dbus_interface_info_lookup_signal ((GDBusInterfaceInfo *) &_object_mapper_interface_info.parent_struct, signal_name);
+  if (info == NULL)
+    return;
+  num_params = g_variant_n_children (parameters);
+  paramv = g_new0 (GValue, num_params + 1);
+  g_value_init (&paramv[0], TYPE_OBJECT_MAPPER);
+  g_value_set_object (&paramv[0], proxy);
+  g_variant_iter_init (&iter, parameters);
+  n = 1;
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.args[n - 1];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_OBJECT_MAPPER);
+  g_signal_emitv (paramv, signal_id, 0, NULL);
+  for (n = 0; n < num_params + 1; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static void
+object_mapper_proxy_g_properties_changed (GDBusProxy *_proxy,
+  GVariant *changed_properties,
+  const gchar *const *invalidated_properties)
+{
+  ObjectMapperProxy *proxy = OBJECT_MAPPER_PROXY (_proxy);
+  guint n;
+  const gchar *key;
+  GVariantIter *iter;
+  _ExtendedGDBusPropertyInfo *info;
+  g_variant_get (changed_properties, "a{sv}", &iter);
+  while (g_variant_iter_next (iter, "{&sv}", &key, NULL))
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_object_mapper_interface_info.parent_struct, key);
+      g_datalist_remove_data (&proxy->priv->qdata, key);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+  g_variant_iter_free (iter);
+  for (n = 0; invalidated_properties[n] != NULL; n++)
+    {
+      info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_object_mapper_interface_info.parent_struct, invalidated_properties[n]);
+      g_datalist_remove_data (&proxy->priv->qdata, invalidated_properties[n]);
+      if (info != NULL)
+        g_object_notify (G_OBJECT (proxy), info->hyphen_name);
+    }
+}
+
+static void
+object_mapper_proxy_init (ObjectMapperProxy *proxy)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  proxy->priv = object_mapper_proxy_get_instance_private (proxy);
+#else
+  proxy->priv = G_TYPE_INSTANCE_GET_PRIVATE (proxy, TYPE_OBJECT_MAPPER_PROXY, ObjectMapperProxyPrivate);
+#endif
+
+  g_dbus_proxy_set_interface_info (G_DBUS_PROXY (proxy), object_mapper_interface_info ());
+}
+
+static void
+object_mapper_proxy_class_init (ObjectMapperProxyClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusProxyClass *proxy_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize     = object_mapper_proxy_finalize;
+  gobject_class->get_property = object_mapper_proxy_get_property;
+  gobject_class->set_property = object_mapper_proxy_set_property;
+
+  proxy_class = G_DBUS_PROXY_CLASS (klass);
+  proxy_class->g_signal = object_mapper_proxy_g_signal;
+  proxy_class->g_properties_changed = object_mapper_proxy_g_properties_changed;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (ObjectMapperProxyPrivate));
+#endif
+}
+
+static void
+object_mapper_proxy_iface_init (ObjectMapperIface *iface)
+{
+}
+
+/**
+ * object_mapper_proxy_new:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Asynchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link>. See g_dbus_proxy_new() for more details.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call object_mapper_proxy_new_finish() to get the result of the operation.
+ *
+ * See object_mapper_proxy_new_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+object_mapper_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_OBJECT_MAPPER_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.Object.Mapper", NULL);
+}
+
+/**
+ * object_mapper_proxy_new_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to object_mapper_proxy_new().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with object_mapper_proxy_new().
+ *
+ * Returns: (transfer full) (type ObjectMapperProxy): The constructed proxy object or %NULL if @error is set.
+ */
+ObjectMapper *
+object_mapper_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return OBJECT_MAPPER (ret);
+  else
+    return NULL;
+}
+
+/**
+ * object_mapper_proxy_new_sync:
+ * @connection: A #GDBusConnection.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: (allow-none): A bus name (well-known or unique) or %NULL if @connection is not a message bus connection.
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Synchronously creates a proxy for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link>. See g_dbus_proxy_new_sync() for more details.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See object_mapper_proxy_new() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type ObjectMapperProxy): The constructed proxy object or %NULL if @error is set.
+ */
+ObjectMapper *
+object_mapper_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_OBJECT_MAPPER_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-connection", connection, "g-object-path", object_path, "g-interface-name", "org.openbmc.Object.Mapper", NULL);
+  if (ret != NULL)
+    return OBJECT_MAPPER (ret);
+  else
+    return NULL;
+}
+
+
+/**
+ * object_mapper_proxy_new_for_bus:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: A #GAsyncReadyCallback to call when the request is satisfied.
+ * @user_data: User data to pass to @callback.
+ *
+ * Like object_mapper_proxy_new() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
+ * You can then call object_mapper_proxy_new_for_bus_finish() to get the result of the operation.
+ *
+ * See object_mapper_proxy_new_for_bus_sync() for the synchronous, blocking version of this constructor.
+ */
+void
+object_mapper_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data)
+{
+  g_async_initable_new_async (TYPE_OBJECT_MAPPER_PROXY, G_PRIORITY_DEFAULT, cancellable, callback, user_data, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.Object.Mapper", NULL);
+}
+
+/**
+ * object_mapper_proxy_new_for_bus_finish:
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to object_mapper_proxy_new_for_bus().
+ * @error: Return location for error or %NULL
+ *
+ * Finishes an operation started with object_mapper_proxy_new_for_bus().
+ *
+ * Returns: (transfer full) (type ObjectMapperProxy): The constructed proxy object or %NULL if @error is set.
+ */
+ObjectMapper *
+object_mapper_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error)
+{
+  GObject *ret;
+  GObject *source_object;
+  source_object = g_async_result_get_source_object (res);
+  ret = g_async_initable_new_finish (G_ASYNC_INITABLE (source_object), res, error);
+  g_object_unref (source_object);
+  if (ret != NULL)
+    return OBJECT_MAPPER (ret);
+  else
+    return NULL;
+}
+
+/**
+ * object_mapper_proxy_new_for_bus_sync:
+ * @bus_type: A #GBusType.
+ * @flags: Flags from the #GDBusProxyFlags enumeration.
+ * @name: A bus name (well-known or unique).
+ * @object_path: An object path.
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @error: Return location for error or %NULL
+ *
+ * Like object_mapper_proxy_new_sync() but takes a #GBusType instead of a #GDBusConnection.
+ *
+ * The calling thread is blocked until a reply is received.
+ *
+ * See object_mapper_proxy_new_for_bus() for the asynchronous version of this constructor.
+ *
+ * Returns: (transfer full) (type ObjectMapperProxy): The constructed proxy object or %NULL if @error is set.
+ */
+ObjectMapper *
+object_mapper_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error)
+{
+  GInitable *ret;
+  ret = g_initable_new (TYPE_OBJECT_MAPPER_PROXY, cancellable, error, "g-flags", flags, "g-name", name, "g-bus-type", bus_type, "g-object-path", object_path, "g-interface-name", "org.openbmc.Object.Mapper", NULL);
+  if (ret != NULL)
+    return OBJECT_MAPPER (ret);
+  else
+    return NULL;
+}
+
+
+/* ------------------------------------------------------------------------ */
+
+/**
+ * ObjectMapperSkeleton:
+ *
+ * The #ObjectMapperSkeleton structure contains only private data and should only be accessed using the provided API.
+ */
+
+/**
+ * ObjectMapperSkeletonClass:
+ * @parent_class: The parent class.
+ *
+ * Class structure for #ObjectMapperSkeleton.
+ */
+
+struct _ObjectMapperSkeletonPrivate
+{
+  GValue *properties;
+  GList *changed_properties;
+  GSource *changed_properties_idle_source;
+  GMainContext *context;
+  GMutex lock;
+};
+
+static void
+_object_mapper_skeleton_handle_method_call (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name,
+  const gchar *method_name,
+  GVariant *parameters,
+  GDBusMethodInvocation *invocation,
+  gpointer user_data)
+{
+  ObjectMapperSkeleton *skeleton = OBJECT_MAPPER_SKELETON (user_data);
+  _ExtendedGDBusMethodInfo *info;
+  GVariantIter iter;
+  GVariant *child;
+  GValue *paramv;
+  guint num_params;
+  guint num_extra;
+  guint n;
+  guint signal_id;
+  GValue return_value = G_VALUE_INIT;
+  info = (_ExtendedGDBusMethodInfo *) g_dbus_method_invocation_get_method_info (invocation);
+  g_assert (info != NULL);
+  num_params = g_variant_n_children (parameters);
+  num_extra = info->pass_fdlist ? 3 : 2;  paramv = g_new0 (GValue, num_params + num_extra);
+  n = 0;
+  g_value_init (&paramv[n], TYPE_OBJECT_MAPPER);
+  g_value_set_object (&paramv[n++], skeleton);
+  g_value_init (&paramv[n], G_TYPE_DBUS_METHOD_INVOCATION);
+  g_value_set_object (&paramv[n++], invocation);
+  if (info->pass_fdlist)
+    {
+#ifdef G_OS_UNIX
+      g_value_init (&paramv[n], G_TYPE_UNIX_FD_LIST);
+      g_value_set_object (&paramv[n++], g_dbus_message_get_unix_fd_list (g_dbus_method_invocation_get_message (invocation)));
+#else
+      g_assert_not_reached ();
+#endif
+    }
+  g_variant_iter_init (&iter, parameters);
+  while ((child = g_variant_iter_next_value (&iter)) != NULL)
+    {
+      _ExtendedGDBusArgInfo *arg_info = (_ExtendedGDBusArgInfo *) info->parent_struct.in_args[n - num_extra];
+      if (arg_info->use_gvariant)
+        {
+          g_value_init (&paramv[n], G_TYPE_VARIANT);
+          g_value_set_variant (&paramv[n], child);
+          n++;
+        }
+      else
+        g_dbus_gvariant_to_gvalue (child, &paramv[n++]);
+      g_variant_unref (child);
+    }
+  signal_id = g_signal_lookup (info->signal_name, TYPE_OBJECT_MAPPER);
+  g_value_init (&return_value, G_TYPE_BOOLEAN);
+  g_signal_emitv (paramv, signal_id, 0, &return_value);
+  if (!g_value_get_boolean (&return_value))
+    g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD, "Method %s is not implemented on interface %s", method_name, interface_name);
+  g_value_unset (&return_value);
+  for (n = 0; n < num_params + num_extra; n++)
+    g_value_unset (&paramv[n]);
+  g_free (paramv);
+}
+
+static GVariant *
+_object_mapper_skeleton_handle_get_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GError **error,
+  gpointer user_data)
+{
+  ObjectMapperSkeleton *skeleton = OBJECT_MAPPER_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  GVariant *ret;
+  ret = NULL;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_object_mapper_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      g_value_init (&value, pspec->value_type);
+      g_object_get_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      ret = g_dbus_gvalue_to_gvariant (&value, G_VARIANT_TYPE (info->parent_struct.signature));
+      g_value_unset (&value);
+    }
+  return ret;
+}
+
+static gboolean
+_object_mapper_skeleton_handle_set_property (
+  GDBusConnection *connection G_GNUC_UNUSED,
+  const gchar *sender G_GNUC_UNUSED,
+  const gchar *object_path G_GNUC_UNUSED,
+  const gchar *interface_name G_GNUC_UNUSED,
+  const gchar *property_name,
+  GVariant *variant,
+  GError **error,
+  gpointer user_data)
+{
+  ObjectMapperSkeleton *skeleton = OBJECT_MAPPER_SKELETON (user_data);
+  GValue value = G_VALUE_INIT;
+  GParamSpec *pspec;
+  _ExtendedGDBusPropertyInfo *info;
+  gboolean ret;
+  ret = FALSE;
+  info = (_ExtendedGDBusPropertyInfo *) g_dbus_interface_info_lookup_property ((GDBusInterfaceInfo *) &_object_mapper_interface_info.parent_struct, property_name);
+  g_assert (info != NULL);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (skeleton), info->hyphen_name);
+  if (pspec == NULL)
+    {
+      g_set_error (error, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS, "No property with name %s", property_name);
+    }
+  else
+    {
+      if (info->use_gvariant)
+        g_value_set_variant (&value, variant);
+      else
+        g_dbus_gvariant_to_gvalue (variant, &value);
+      g_object_set_property (G_OBJECT (skeleton), info->hyphen_name, &value);
+      g_value_unset (&value);
+      ret = TRUE;
+    }
+  return ret;
+}
+
+static const GDBusInterfaceVTable _object_mapper_skeleton_vtable =
+{
+  _object_mapper_skeleton_handle_method_call,
+  _object_mapper_skeleton_handle_get_property,
+  _object_mapper_skeleton_handle_set_property,
+  {NULL}
+};
+
+static GDBusInterfaceInfo *
+object_mapper_skeleton_dbus_interface_get_info (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return object_mapper_interface_info ();
+}
+
+static GDBusInterfaceVTable *
+object_mapper_skeleton_dbus_interface_get_vtable (GDBusInterfaceSkeleton *skeleton G_GNUC_UNUSED)
+{
+  return (GDBusInterfaceVTable *) &_object_mapper_skeleton_vtable;
+}
+
+static GVariant *
+object_mapper_skeleton_dbus_interface_get_properties (GDBusInterfaceSkeleton *_skeleton)
+{
+  ObjectMapperSkeleton *skeleton = OBJECT_MAPPER_SKELETON (_skeleton);
+
+  GVariantBuilder builder;
+  guint n;
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  if (_object_mapper_interface_info.parent_struct.properties == NULL)
+    goto out;
+  for (n = 0; _object_mapper_interface_info.parent_struct.properties[n] != NULL; n++)
+    {
+      GDBusPropertyInfo *info = _object_mapper_interface_info.parent_struct.properties[n];
+      if (info->flags & G_DBUS_PROPERTY_INFO_FLAGS_READABLE)
+        {
+          GVariant *value;
+          value = _object_mapper_skeleton_handle_get_property (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)), NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Object.Mapper", info->name, NULL, skeleton);
+          if (value != NULL)
+            {
+              g_variant_take_ref (value);
+              g_variant_builder_add (&builder, "{sv}", info->name, value);
+              g_variant_unref (value);
+            }
+        }
+    }
+out:
+  return g_variant_builder_end (&builder);
+}
+
+static void
+object_mapper_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
+{
+}
+
+static void
+_object_mapper_on_signal_object_added (
+    ObjectMapper *object,
+    const gchar *arg_object_path,
+    const gchar *arg_interface_name)
+{
+  ObjectMapperSkeleton *skeleton = OBJECT_MAPPER_SKELETON (object);
+
+  GList      *connections, *l;
+  GVariant   *signal_variant;
+  connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+
+  signal_variant = g_variant_ref_sink (g_variant_new ("(ss)",
+                   arg_object_path,
+                   arg_interface_name));
+  for (l = connections; l != NULL; l = l->next)
+    {
+      GDBusConnection *connection = l->data;
+      g_dbus_connection_emit_signal (connection,
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Object.Mapper", "ObjectAdded",
+        signal_variant, NULL);
+    }
+  g_variant_unref (signal_variant);
+  g_list_free_full (connections, g_object_unref);
+}
+
+static void object_mapper_skeleton_iface_init (ObjectMapperIface *iface);
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+G_DEFINE_TYPE_WITH_CODE (ObjectMapperSkeleton, object_mapper_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_ADD_PRIVATE (ObjectMapperSkeleton)
+                         G_IMPLEMENT_INTERFACE (TYPE_OBJECT_MAPPER, object_mapper_skeleton_iface_init));
+
+#else
+G_DEFINE_TYPE_WITH_CODE (ObjectMapperSkeleton, object_mapper_skeleton, G_TYPE_DBUS_INTERFACE_SKELETON,
+                         G_IMPLEMENT_INTERFACE (TYPE_OBJECT_MAPPER, object_mapper_skeleton_iface_init));
+
+#endif
+static void
+object_mapper_skeleton_finalize (GObject *object)
+{
+  ObjectMapperSkeleton *skeleton = OBJECT_MAPPER_SKELETON (object);
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    g_source_destroy (skeleton->priv->changed_properties_idle_source);
+  g_main_context_unref (skeleton->priv->context);
+  g_mutex_clear (&skeleton->priv->lock);
+  G_OBJECT_CLASS (object_mapper_skeleton_parent_class)->finalize (object);
+}
+
+static void
+object_mapper_skeleton_init (ObjectMapperSkeleton *skeleton)
+{
+#if GLIB_VERSION_MAX_ALLOWED >= GLIB_VERSION_2_38
+  skeleton->priv = object_mapper_skeleton_get_instance_private (skeleton);
+#else
+  skeleton->priv = G_TYPE_INSTANCE_GET_PRIVATE (skeleton, TYPE_OBJECT_MAPPER_SKELETON, ObjectMapperSkeletonPrivate);
+#endif
+
+  g_mutex_init (&skeleton->priv->lock);
+  skeleton->priv->context = g_main_context_ref_thread_default ();
+}
+
+static void
+object_mapper_skeleton_class_init (ObjectMapperSkeletonClass *klass)
+{
+  GObjectClass *gobject_class;
+  GDBusInterfaceSkeletonClass *skeleton_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = object_mapper_skeleton_finalize;
+
+  skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+  skeleton_class->get_info = object_mapper_skeleton_dbus_interface_get_info;
+  skeleton_class->get_properties = object_mapper_skeleton_dbus_interface_get_properties;
+  skeleton_class->flush = object_mapper_skeleton_dbus_interface_flush;
+  skeleton_class->get_vtable = object_mapper_skeleton_dbus_interface_get_vtable;
+
+#if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
+  g_type_class_add_private (klass, sizeof (ObjectMapperSkeletonPrivate));
+#endif
+}
+
+static void
+object_mapper_skeleton_iface_init (ObjectMapperIface *iface)
+{
+  iface->object_added = _object_mapper_on_signal_object_added;
+}
+
+/**
+ * object_mapper_skeleton_new:
+ *
+ * Creates a skeleton object for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link>.
+ *
+ * Returns: (transfer full) (type ObjectMapperSkeleton): The skeleton object.
+ */
+ObjectMapper *
+object_mapper_skeleton_new (void)
+{
+  return OBJECT_MAPPER (g_object_new (TYPE_OBJECT_MAPPER_SKELETON, NULL));
+}
+
+/* ------------------------------------------------------------------------
  * Code for interface org.openbmc.Fan
  * ------------------------------------------------------------------------
  */
@@ -13315,6 +14137,39 @@ static const _ExtendedGDBusSignalInfo * const _control_host_signal_info_pointers
   NULL
 };
 
+static const _ExtendedGDBusPropertyInfo _control_host_property_info_debug_mode =
+{
+  {
+    -1,
+    (gchar *) "debug_mode",
+    (gchar *) "i",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "debug-mode",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo _control_host_property_info_flash_side =
+{
+  {
+    -1,
+    (gchar *) "flash_side",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE | G_DBUS_PROPERTY_INFO_FLAGS_WRITABLE,
+    NULL
+  },
+  "flash-side",
+  FALSE
+};
+
+static const _ExtendedGDBusPropertyInfo * const _control_host_property_info_pointers[] =
+{
+  &_control_host_property_info_debug_mode,
+  &_control_host_property_info_flash_side,
+  NULL
+};
+
 static const _ExtendedGDBusInterfaceInfo _control_host_interface_info =
 {
   {
@@ -13322,7 +14177,7 @@ static const _ExtendedGDBusInterfaceInfo _control_host_interface_info =
     (gchar *) "org.openbmc.control.Host",
     (GDBusMethodInfo **) &_control_host_method_info_pointers,
     (GDBusSignalInfo **) &_control_host_signal_info_pointers,
-    NULL,
+    (GDBusPropertyInfo **) &_control_host_property_info_pointers,
     NULL
   },
   "control-host",
@@ -13355,6 +14210,8 @@ control_host_interface_info (void)
 guint
 control_host_override_properties (GObjectClass *klass, guint property_id_begin)
 {
+  g_object_class_override_property (klass, property_id_begin++, "debug-mode");
+  g_object_class_override_property (klass, property_id_begin++, "flash-side");
   return property_id_begin - 1;
 }
 
@@ -13372,6 +14229,8 @@ control_host_override_properties (GObjectClass *klass, guint property_id_begin)
  * @handle_boot: Handler for the #ControlHost::handle-boot signal.
  * @handle_reboot: Handler for the #ControlHost::handle-reboot signal.
  * @handle_shutdown: Handler for the #ControlHost::handle-shutdown signal.
+ * @get_debug_mode: Getter for the #ControlHost:debug-mode property.
+ * @get_flash_side: Getter for the #ControlHost:flash-side property.
  * @booted: Handler for the #ControlHost::booted signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Host.top_of_page">org.openbmc.control.Host</link>.
@@ -13469,6 +14328,107 @@ control_host_default_init (ControlHostIface *iface)
     G_TYPE_NONE,
     0);
 
+  /* GObject properties for D-Bus properties: */
+  /**
+   * ControlHost:debug-mode:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-control-Host.debug_mode">"debug_mode"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_int ("debug-mode", "debug_mode", "debug_mode", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * ControlHost:flash-side:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-control-Host.flash_side">"flash_side"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is both readable and writable, it is meaningful to both read from it and write to it on both the service- and client-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("flash-side", "flash_side", "flash_side", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+}
+
+/**
+ * control_host_get_debug_mode: (skip)
+ * @object: A #ControlHost.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-control-Host.debug_mode">"debug_mode"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
+ */
+gint 
+control_host_get_debug_mode (ControlHost *object)
+{
+  return CONTROL_HOST_GET_IFACE (object)->get_debug_mode (object);
+}
+
+/**
+ * control_host_set_debug_mode: (skip)
+ * @object: A #ControlHost.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-control-Host.debug_mode">"debug_mode"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+control_host_set_debug_mode (ControlHost *object, gint value)
+{
+  g_object_set (G_OBJECT (object), "debug-mode", value, NULL);
+}
+
+/**
+ * control_host_get_flash_side: (skip)
+ * @object: A #ControlHost.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-control-Host.flash_side">"flash_side"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use control_host_dup_flash_side() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+control_host_get_flash_side (ControlHost *object)
+{
+  return CONTROL_HOST_GET_IFACE (object)->get_flash_side (object);
+}
+
+/**
+ * control_host_dup_flash_side: (skip)
+ * @object: A #ControlHost.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-control-Host.flash_side">"flash_side"</link> D-Bus property.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+control_host_dup_flash_side (ControlHost *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "flash-side", &value, NULL);
+  return value;
+}
+
+/**
+ * control_host_set_flash_side: (skip)
+ * @object: A #ControlHost.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-control-Host.flash_side">"flash_side"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is both readable and writable, it is meaningful to use this function on both the client- and service-side.
+ */
+void
+control_host_set_flash_side (ControlHost *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "flash-side", value, NULL);
 }
 
 /**
@@ -13860,6 +14820,45 @@ control_host_proxy_get_property (GObject      *object,
   GValue       *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _control_host_property_info_pointers[prop_id - 1];
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
+  if (info->use_gvariant)
+    {
+      g_value_set_variant (value, variant);
+    }
+  else
+    {
+      if (variant != NULL)
+        g_dbus_gvariant_to_gvalue (variant, value);
+    }
+  if (variant != NULL)
+    g_variant_unref (variant);
+}
+
+static void
+control_host_proxy_set_property_cb (GDBusProxy *proxy,
+  GAsyncResult *res,
+  gpointer      user_data)
+{
+  const _ExtendedGDBusPropertyInfo *info = user_data;
+  GError *error;
+  GVariant *_ret;
+  error = NULL;
+  _ret = g_dbus_proxy_call_finish (proxy, res, &error);
+  if (!_ret)
+    {
+      g_warning ("Error setting property '%s' on interface org.openbmc.control.Host: %s (%s, %d)",
+                 info->parent_struct.name, 
+                 error->message, g_quark_to_string (error->domain), error->code);
+      g_error_free (error);
+    }
+  else
+    {
+      g_variant_unref (_ret);
+    }
 }
 
 static void
@@ -13868,6 +14867,18 @@ control_host_proxy_set_property (GObject      *object,
   const GValue *value,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
+  const _ExtendedGDBusPropertyInfo *info;
+  GVariant *variant;
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  info = _control_host_property_info_pointers[prop_id - 1];
+  variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
+  g_dbus_proxy_call (G_DBUS_PROXY (object),
+    "org.freedesktop.DBus.Properties.Set",
+    g_variant_new ("(ssv)", "org.openbmc.control.Host", info->parent_struct.name, variant),
+    G_DBUS_CALL_FLAGS_NONE,
+    -1,
+    NULL, (GAsyncReadyCallback) control_host_proxy_set_property_cb, (GDBusPropertyInfo *) &info->parent_struct);
+  g_variant_unref (variant);
 }
 
 static void
@@ -13940,6 +14951,36 @@ control_host_proxy_g_properties_changed (GDBusProxy *_proxy,
     }
 }
 
+static gint 
+control_host_proxy_get_debug_mode (ControlHost *object)
+{
+  ControlHostProxy *proxy = CONTROL_HOST_PROXY (object);
+  GVariant *variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "debug_mode");
+  if (variant != NULL)
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
+static const gchar *
+control_host_proxy_get_flash_side (ControlHost *object)
+{
+  ControlHostProxy *proxy = CONTROL_HOST_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "flash_side");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static void
 control_host_proxy_init (ControlHostProxy *proxy)
 {
@@ -13967,6 +15008,8 @@ control_host_proxy_class_init (ControlHostProxyClass *klass)
   proxy_class->g_signal = control_host_proxy_g_signal;
   proxy_class->g_properties_changed = control_host_proxy_g_properties_changed;
 
+  control_host_override_properties (gobject_class, 1);
+
 #if GLIB_VERSION_MAX_ALLOWED < GLIB_VERSION_2_38
   g_type_class_add_private (klass, sizeof (ControlHostProxyPrivate));
 #endif
@@ -13975,6 +15018,8 @@ control_host_proxy_class_init (ControlHostProxyClass *klass)
 static void
 control_host_proxy_iface_init (ControlHostIface *iface)
 {
+  iface->get_debug_mode = control_host_proxy_get_debug_mode;
+  iface->get_flash_side = control_host_proxy_get_flash_side;
 }
 
 /**
@@ -14364,9 +15409,25 @@ out:
   return g_variant_builder_end (&builder);
 }
 
+static gboolean _control_host_emit_changed (gpointer user_data);
+
 static void
 control_host_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 {
+  ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (_skeleton);
+  gboolean emit_changed = FALSE;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties_idle_source != NULL)
+    {
+      g_source_destroy (skeleton->priv->changed_properties_idle_source);
+      skeleton->priv->changed_properties_idle_source = NULL;
+      emit_changed = TRUE;
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+
+  if (emit_changed)
+    _control_host_emit_changed (skeleton);
 }
 
 static void
@@ -14406,12 +15467,154 @@ static void
 control_host_skeleton_finalize (GObject *object)
 {
   ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (object);
+  guint n;
+  for (n = 0; n < 2; n++)
+    g_value_unset (&skeleton->priv->properties[n]);
+  g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
   if (skeleton->priv->changed_properties_idle_source != NULL)
     g_source_destroy (skeleton->priv->changed_properties_idle_source);
   g_main_context_unref (skeleton->priv->context);
   g_mutex_clear (&skeleton->priv->lock);
   G_OBJECT_CLASS (control_host_skeleton_parent_class)->finalize (object);
+}
+
+static void
+control_host_skeleton_get_property (GObject      *object,
+  guint         prop_id,
+  GValue       *value,
+  GParamSpec   *pspec G_GNUC_UNUSED)
+{
+  ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static gboolean
+_control_host_emit_changed (gpointer user_data)
+{
+  ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (user_data);
+  GList *l;
+  GVariantBuilder builder;
+  GVariantBuilder invalidated_builder;
+  guint num_changes;
+
+  g_mutex_lock (&skeleton->priv->lock);
+  g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{sv}"));
+  g_variant_builder_init (&invalidated_builder, G_VARIANT_TYPE ("as"));
+  for (l = skeleton->priv->changed_properties, num_changes = 0; l != NULL; l = l->next)
+    {
+      ChangedProperty *cp = l->data;
+      GVariant *variant;
+      const GValue *cur_value;
+
+      cur_value = &skeleton->priv->properties[cp->prop_id - 1];
+      if (!_g_value_equal (cur_value, &cp->orig_value))
+        {
+          variant = g_dbus_gvalue_to_gvariant (cur_value, G_VARIANT_TYPE (cp->info->parent_struct.signature));
+          g_variant_builder_add (&builder, "{sv}", cp->info->parent_struct.name, variant);
+          g_variant_unref (variant);
+          num_changes++;
+        }
+    }
+  if (num_changes > 0)
+    {
+      GList *connections, *ll;
+      GVariant *signal_variant;
+      signal_variant = g_variant_ref_sink (g_variant_new ("(sa{sv}as)", "org.openbmc.control.Host",
+                                           &builder, &invalidated_builder));
+      connections = g_dbus_interface_skeleton_get_connections (G_DBUS_INTERFACE_SKELETON (skeleton));
+      for (ll = connections; ll != NULL; ll = ll->next)
+        {
+          GDBusConnection *connection = ll->data;
+
+          g_dbus_connection_emit_signal (connection,
+                                         NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)),
+                                         "org.freedesktop.DBus.Properties",
+                                         "PropertiesChanged",
+                                         signal_variant,
+                                         NULL);
+        }
+      g_variant_unref (signal_variant);
+      g_list_free_full (connections, g_object_unref);
+    }
+  else
+    {
+      g_variant_builder_clear (&builder);
+      g_variant_builder_clear (&invalidated_builder);
+    }
+  g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
+  skeleton->priv->changed_properties = NULL;
+  skeleton->priv->changed_properties_idle_source = NULL;
+  g_mutex_unlock (&skeleton->priv->lock);
+  return FALSE;
+}
+
+static void
+_control_host_schedule_emit_changed (ControlHostSkeleton *skeleton, const _ExtendedGDBusPropertyInfo *info, guint prop_id, const GValue *orig_value)
+{
+  ChangedProperty *cp;
+  GList *l;
+  cp = NULL;
+  for (l = skeleton->priv->changed_properties; l != NULL; l = l->next)
+    {
+      ChangedProperty *i_cp = l->data;
+      if (i_cp->info == info)
+        {
+          cp = i_cp;
+          break;
+        }
+    }
+  if (cp == NULL)
+    {
+      cp = g_new0 (ChangedProperty, 1);
+      cp->prop_id = prop_id;
+      cp->info = info;
+      skeleton->priv->changed_properties = g_list_prepend (skeleton->priv->changed_properties, cp);
+      g_value_init (&cp->orig_value, G_VALUE_TYPE (orig_value));
+      g_value_copy (orig_value, &cp->orig_value);
+    }
+}
+
+static void
+control_host_skeleton_notify (GObject      *object,
+  GParamSpec *pspec G_GNUC_UNUSED)
+{
+  ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (object);
+  g_mutex_lock (&skeleton->priv->lock);
+  if (skeleton->priv->changed_properties != NULL &&
+      skeleton->priv->changed_properties_idle_source == NULL)
+    {
+      skeleton->priv->changed_properties_idle_source = g_idle_source_new ();
+      g_source_set_priority (skeleton->priv->changed_properties_idle_source, G_PRIORITY_DEFAULT);
+      g_source_set_callback (skeleton->priv->changed_properties_idle_source, _control_host_emit_changed, g_object_ref (skeleton), (GDestroyNotify) g_object_unref);
+      g_source_attach (skeleton->priv->changed_properties_idle_source, skeleton->priv->context);
+      g_source_unref (skeleton->priv->changed_properties_idle_source);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+}
+
+static void
+control_host_skeleton_set_property (GObject      *object,
+  guint         prop_id,
+  const GValue *value,
+  GParamSpec   *pspec)
+{
+  ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (object);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_mutex_lock (&skeleton->priv->lock);
+  g_object_freeze_notify (object);
+  if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
+    {
+      if (g_dbus_interface_skeleton_get_connection (G_DBUS_INTERFACE_SKELETON (skeleton)) != NULL)
+        _control_host_schedule_emit_changed (skeleton, _control_host_property_info_pointers[prop_id - 1], prop_id, &skeleton->priv->properties[prop_id - 1]);
+      g_value_copy (value, &skeleton->priv->properties[prop_id - 1]);
+      g_object_notify_by_pspec (object, pspec);
+    }
+  g_mutex_unlock (&skeleton->priv->lock);
+  g_object_thaw_notify (object);
 }
 
 static void
@@ -14425,6 +15628,31 @@ control_host_skeleton_init (ControlHostSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
+  skeleton->priv->properties = g_new0 (GValue, 2);
+  g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
+}
+
+static gint 
+control_host_skeleton_get_debug_mode (ControlHost *object)
+{
+  ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (object);
+  gint value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_int (&(skeleton->priv->properties[0]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+control_host_skeleton_get_flash_side (ControlHost *object)
+{
+  ControlHostSkeleton *skeleton = CONTROL_HOST_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
 }
 
 static void
@@ -14435,6 +15663,12 @@ control_host_skeleton_class_init (ControlHostSkeletonClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = control_host_skeleton_finalize;
+  gobject_class->get_property = control_host_skeleton_get_property;
+  gobject_class->set_property = control_host_skeleton_set_property;
+  gobject_class->notify       = control_host_skeleton_notify;
+
+
+  control_host_override_properties (gobject_class, 1);
 
   skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
   skeleton_class->get_info = control_host_skeleton_dbus_interface_get_info;
@@ -14451,6 +15685,8 @@ static void
 control_host_skeleton_iface_init (ControlHostIface *iface)
 {
   iface->booted = _control_host_on_signal_booted;
+  iface->get_debug_mode = control_host_skeleton_get_debug_mode;
+  iface->get_flash_side = control_host_skeleton_get_flash_side;
 }
 
 /**
@@ -23103,78 +24339,78 @@ static const _ExtendedGDBusMethodInfo _button_method_info_is_on =
   FALSE
 };
 
-static const _ExtendedGDBusMethodInfo _button_method_info_sim_button_press =
+static const _ExtendedGDBusMethodInfo _button_method_info_sim_press =
 {
   {
     -1,
-    (gchar *) "simButtonPress",
+    (gchar *) "simPress",
     NULL,
     NULL,
     NULL
   },
-  "handle-sim-button-press",
+  "handle-sim-press",
   FALSE
 };
 
-static const _ExtendedGDBusMethodInfo _button_method_info_sim_button_long_press =
+static const _ExtendedGDBusMethodInfo _button_method_info_sim_long_press =
 {
   {
     -1,
-    (gchar *) "simButtonLongPress",
+    (gchar *) "simLongPress",
     NULL,
     NULL,
     NULL
   },
-  "handle-sim-button-long-press",
+  "handle-sim-long-press",
   FALSE
 };
 
 static const _ExtendedGDBusMethodInfo * const _button_method_info_pointers[] =
 {
   &_button_method_info_is_on,
-  &_button_method_info_sim_button_press,
-  &_button_method_info_sim_button_long_press,
+  &_button_method_info_sim_press,
+  &_button_method_info_sim_long_press,
   NULL
 };
 
-static const _ExtendedGDBusSignalInfo _button_signal_info_button_release =
+static const _ExtendedGDBusSignalInfo _button_signal_info_released =
 {
   {
     -1,
-    (gchar *) "ButtonRelease",
+    (gchar *) "Released",
     NULL,
     NULL
   },
-  "button-release"
+  "released"
 };
 
-static const _ExtendedGDBusSignalInfo _button_signal_info_button_pressed =
+static const _ExtendedGDBusSignalInfo _button_signal_info_pressed =
 {
   {
     -1,
-    (gchar *) "ButtonPressed",
+    (gchar *) "Pressed",
     NULL,
     NULL
   },
-  "button-pressed"
+  "pressed"
 };
 
-static const _ExtendedGDBusSignalInfo _button_signal_info_button_pressed_long =
+static const _ExtendedGDBusSignalInfo _button_signal_info_pressed_long =
 {
   {
     -1,
-    (gchar *) "ButtonPressedLong",
+    (gchar *) "PressedLong",
     NULL,
     NULL
   },
-  "button-pressed-long"
+  "pressed-long"
 };
 
 static const _ExtendedGDBusSignalInfo * const _button_signal_info_pointers[] =
 {
-  &_button_signal_info_button_release,
-  &_button_signal_info_button_pressed,
-  &_button_signal_info_button_pressed_long,
+  &_button_signal_info_released,
+  &_button_signal_info_pressed,
+  &_button_signal_info_pressed_long,
   NULL
 };
 
@@ -23191,9 +24427,23 @@ static const _ExtendedGDBusPropertyInfo _button_property_info_state =
   FALSE
 };
 
+static const _ExtendedGDBusPropertyInfo _button_property_info_timer =
+{
+  {
+    -1,
+    (gchar *) "timer",
+    (gchar *) "t",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "timer",
+  FALSE
+};
+
 static const _ExtendedGDBusPropertyInfo * const _button_property_info_pointers[] =
 {
   &_button_property_info_state,
+  &_button_property_info_timer,
   NULL
 };
 
@@ -23238,6 +24488,7 @@ guint
 button_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "state");
+  g_object_class_override_property (klass, property_id_begin++, "timer");
   return property_id_begin - 1;
 }
 
@@ -23253,12 +24504,13 @@ button_override_properties (GObjectClass *klass, guint property_id_begin)
  * ButtonIface:
  * @parent_iface: The parent interface.
  * @handle_is_on: Handler for the #Button::handle-is-on signal.
- * @handle_sim_button_long_press: Handler for the #Button::handle-sim-button-long-press signal.
- * @handle_sim_button_press: Handler for the #Button::handle-sim-button-press signal.
+ * @handle_sim_long_press: Handler for the #Button::handle-sim-long-press signal.
+ * @handle_sim_press: Handler for the #Button::handle-sim-press signal.
  * @get_state: Getter for the #Button:state property.
- * @button_pressed: Handler for the #Button::button-pressed signal.
- * @button_pressed_long: Handler for the #Button::button-pressed-long signal.
- * @button_release: Handler for the #Button::button-release signal.
+ * @get_timer: Getter for the #Button:timer property.
+ * @pressed: Handler for the #Button::pressed signal.
+ * @pressed_long: Handler for the #Button::pressed-long signal.
+ * @released: Handler for the #Button::released signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Button.top_of_page">org.openbmc.Button</link>.
  */
@@ -23293,20 +24545,20 @@ button_default_init (ButtonIface *iface)
     G_TYPE_DBUS_METHOD_INVOCATION);
 
   /**
-   * Button::handle-sim-button-press:
+   * Button::handle-sim-press:
    * @object: A #Button.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Button.simButtonPress">simButtonPress()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Button.simPress">simPress()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call button_complete_sim_button_press() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call button_complete_sim_press() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
-  g_signal_new ("handle-sim-button-press",
+  g_signal_new ("handle-sim-press",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (ButtonIface, handle_sim_button_press),
+    G_STRUCT_OFFSET (ButtonIface, handle_sim_press),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -23315,20 +24567,20 @@ button_default_init (ButtonIface *iface)
     G_TYPE_DBUS_METHOD_INVOCATION);
 
   /**
-   * Button::handle-sim-button-long-press:
+   * Button::handle-sim-long-press:
    * @object: A #Button.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Button.simButtonLongPress">simButtonLongPress()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-Button.simLongPress">simLongPress()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call button_complete_sim_button_long_press() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call button_complete_sim_long_press() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
-  g_signal_new ("handle-sim-button-long-press",
+  g_signal_new ("handle-sim-long-press",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (ButtonIface, handle_sim_button_long_press),
+    G_STRUCT_OFFSET (ButtonIface, handle_sim_long_press),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -23338,17 +24590,17 @@ button_default_init (ButtonIface *iface)
 
   /* GObject signals for received D-Bus signals: */
   /**
-   * Button::button-release:
+   * Button::released:
    * @object: A #Button.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Button.ButtonRelease">"ButtonRelease"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Button.Released">"Released"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
-  g_signal_new ("button-release",
+  g_signal_new ("released",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (ButtonIface, button_release),
+    G_STRUCT_OFFSET (ButtonIface, released),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -23356,17 +24608,17 @@ button_default_init (ButtonIface *iface)
     0);
 
   /**
-   * Button::button-pressed:
+   * Button::pressed:
    * @object: A #Button.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Button.ButtonPressed">"ButtonPressed"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Button.Pressed">"Pressed"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
-  g_signal_new ("button-pressed",
+  g_signal_new ("pressed",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (ButtonIface, button_pressed),
+    G_STRUCT_OFFSET (ButtonIface, pressed),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -23374,17 +24626,17 @@ button_default_init (ButtonIface *iface)
     0);
 
   /**
-   * Button::button-pressed-long:
+   * Button::pressed-long:
    * @object: A #Button.
    *
-   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Button.ButtonPressedLong">"ButtonPressedLong"</link> is received.
+   * On the client-side, this signal is emitted whenever the D-Bus signal <link linkend="gdbus-signal-org-openbmc-Button.PressedLong">"PressedLong"</link> is received.
    *
    * On the service-side, this signal can be used with e.g. g_signal_emit_by_name() to make the object emit the D-Bus signal.
    */
-  g_signal_new ("button-pressed-long",
+  g_signal_new ("pressed-long",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (ButtonIface, button_pressed_long),
+    G_STRUCT_OFFSET (ButtonIface, pressed_long),
     NULL,
     NULL,
     g_cclosure_marshal_generic,
@@ -23401,6 +24653,15 @@ button_default_init (ButtonIface *iface)
    */
   g_object_interface_install_property (iface,
     g_param_spec_boolean ("state", "state", "state", FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * Button:timer:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Button.timer">"timer"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_uint64 ("timer", "timer", "timer", 0, G_MAXUINT64, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -23435,42 +24696,73 @@ button_set_state (Button *object, gboolean value)
 }
 
 /**
- * button_emit_button_release:
+ * button_get_timer: (skip)
  * @object: A #Button.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-Button.ButtonRelease">"ButtonRelease"</link> D-Bus signal.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Button.timer">"timer"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: The property value.
  */
-void
-button_emit_button_release (
-    Button *object)
+guint64 
+button_get_timer (Button *object)
 {
-  g_signal_emit_by_name (object, "button-release");
+  return BUTTON_GET_IFACE (object)->get_timer (object);
 }
 
 /**
- * button_emit_button_pressed:
+ * button_set_timer: (skip)
  * @object: A #Button.
+ * @value: The value to set.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-Button.ButtonPressed">"ButtonPressed"</link> D-Bus signal.
+ * Sets the <link linkend="gdbus-property-org-openbmc-Button.timer">"timer"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-button_emit_button_pressed (
-    Button *object)
+button_set_timer (Button *object, guint64 value)
 {
-  g_signal_emit_by_name (object, "button-pressed");
+  g_object_set (G_OBJECT (object), "timer", value, NULL);
 }
 
 /**
- * button_emit_button_pressed_long:
+ * button_emit_released:
  * @object: A #Button.
  *
- * Emits the <link linkend="gdbus-signal-org-openbmc-Button.ButtonPressedLong">"ButtonPressedLong"</link> D-Bus signal.
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Button.Released">"Released"</link> D-Bus signal.
  */
 void
-button_emit_button_pressed_long (
+button_emit_released (
     Button *object)
 {
-  g_signal_emit_by_name (object, "button-pressed-long");
+  g_signal_emit_by_name (object, "released");
+}
+
+/**
+ * button_emit_pressed:
+ * @object: A #Button.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Button.Pressed">"Pressed"</link> D-Bus signal.
+ */
+void
+button_emit_pressed (
+    Button *object)
+{
+  g_signal_emit_by_name (object, "pressed");
+}
+
+/**
+ * button_emit_pressed_long:
+ * @object: A #Button.
+ *
+ * Emits the <link linkend="gdbus-signal-org-openbmc-Button.PressedLong">"PressedLong"</link> D-Bus signal.
+ */
+void
+button_emit_pressed_long (
+    Button *object)
+{
+  g_signal_emit_by_name (object, "pressed-long");
 }
 
 /**
@@ -23572,27 +24864,27 @@ _out:
 }
 
 /**
- * button_call_sim_button_press:
+ * button_call_sim_press:
  * @proxy: A #ButtonProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simButtonPress">simButtonPress()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simPress">simPress()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call button_call_sim_button_press_finish() to get the result of the operation.
+ * You can then call button_call_sim_press_finish() to get the result of the operation.
  *
- * See button_call_sim_button_press_sync() for the synchronous, blocking version of this method.
+ * See button_call_sim_press_sync() for the synchronous, blocking version of this method.
  */
 void
-button_call_sim_button_press (
+button_call_sim_press (
     Button *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "simButtonPress",
+    "simPress",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -23602,17 +24894,17 @@ button_call_sim_button_press (
 }
 
 /**
- * button_call_sim_button_press_finish:
+ * button_call_sim_press_finish:
  * @proxy: A #ButtonProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to button_call_sim_button_press().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to button_call_sim_press().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with button_call_sim_button_press().
+ * Finishes an operation started with button_call_sim_press().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-button_call_sim_button_press_finish (
+button_call_sim_press_finish (
     Button *proxy,
     GAsyncResult *res,
     GError **error)
@@ -23629,26 +24921,26 @@ _out:
 }
 
 /**
- * button_call_sim_button_press_sync:
+ * button_call_sim_press_sync:
  * @proxy: A #ButtonProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simButtonPress">simButtonPress()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simPress">simPress()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See button_call_sim_button_press() for the asynchronous version of this method.
+ * See button_call_sim_press() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-button_call_sim_button_press_sync (
+button_call_sim_press_sync (
     Button *proxy,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "simButtonPress",
+    "simPress",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -23664,27 +24956,27 @@ _out:
 }
 
 /**
- * button_call_sim_button_long_press:
+ * button_call_sim_long_press:
  * @proxy: A #ButtonProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simButtonLongPress">simButtonLongPress()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simLongPress">simLongPress()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call button_call_sim_button_long_press_finish() to get the result of the operation.
+ * You can then call button_call_sim_long_press_finish() to get the result of the operation.
  *
- * See button_call_sim_button_long_press_sync() for the synchronous, blocking version of this method.
+ * See button_call_sim_long_press_sync() for the synchronous, blocking version of this method.
  */
 void
-button_call_sim_button_long_press (
+button_call_sim_long_press (
     Button *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "simButtonLongPress",
+    "simLongPress",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -23694,17 +24986,17 @@ button_call_sim_button_long_press (
 }
 
 /**
- * button_call_sim_button_long_press_finish:
+ * button_call_sim_long_press_finish:
  * @proxy: A #ButtonProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to button_call_sim_button_long_press().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to button_call_sim_long_press().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with button_call_sim_button_long_press().
+ * Finishes an operation started with button_call_sim_long_press().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-button_call_sim_button_long_press_finish (
+button_call_sim_long_press_finish (
     Button *proxy,
     GAsyncResult *res,
     GError **error)
@@ -23721,26 +25013,26 @@ _out:
 }
 
 /**
- * button_call_sim_button_long_press_sync:
+ * button_call_sim_long_press_sync:
  * @proxy: A #ButtonProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simButtonLongPress">simButtonLongPress()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-Button.simLongPress">simLongPress()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See button_call_sim_button_long_press() for the asynchronous version of this method.
+ * See button_call_sim_long_press() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-button_call_sim_button_long_press_sync (
+button_call_sim_long_press_sync (
     Button *proxy,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "simButtonLongPress",
+    "simLongPress",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -23777,16 +25069,16 @@ button_complete_is_on (
 }
 
 /**
- * button_complete_sim_button_press:
+ * button_complete_sim_press:
  * @object: A #Button.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Button.simButtonPress">simButtonPress()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Button.simPress">simPress()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-button_complete_sim_button_press (
+button_complete_sim_press (
     Button *object,
     GDBusMethodInvocation *invocation)
 {
@@ -23795,16 +25087,16 @@ button_complete_sim_button_press (
 }
 
 /**
- * button_complete_sim_button_long_press:
+ * button_complete_sim_long_press:
  * @object: A #Button.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Button.simButtonLongPress">simButtonLongPress()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-Button.simLongPress">simLongPress()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-button_complete_sim_button_long_press (
+button_complete_sim_long_press (
     Button *object,
     GDBusMethodInvocation *invocation)
 {
@@ -23860,7 +25152,7 @@ button_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
   info = _button_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -23907,7 +25199,7 @@ button_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
   info = _button_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -24004,6 +25296,21 @@ button_proxy_get_state (Button *object)
   return value;
 }
 
+static guint64 
+button_proxy_get_timer (Button *object)
+{
+  ButtonProxy *proxy = BUTTON_PROXY (object);
+  GVariant *variant;
+  guint64 value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "timer");
+  if (variant != NULL)
+    {
+      value = g_variant_get_uint64 (variant);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static void
 button_proxy_init (ButtonProxy *proxy)
 {
@@ -24042,6 +25349,7 @@ static void
 button_proxy_iface_init (ButtonIface *iface)
 {
   iface->get_state = button_proxy_get_state;
+  iface->get_timer = button_proxy_get_timer;
 }
 
 /**
@@ -24453,7 +25761,7 @@ button_skeleton_dbus_interface_flush (GDBusInterfaceSkeleton *_skeleton)
 }
 
 static void
-_button_on_signal_button_release (
+_button_on_signal_released (
     Button *object)
 {
   ButtonSkeleton *skeleton = BUTTON_SKELETON (object);
@@ -24467,7 +25775,7 @@ _button_on_signal_button_release (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Button", "ButtonRelease",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Button", "Released",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -24475,7 +25783,7 @@ _button_on_signal_button_release (
 }
 
 static void
-_button_on_signal_button_pressed (
+_button_on_signal_pressed (
     Button *object)
 {
   ButtonSkeleton *skeleton = BUTTON_SKELETON (object);
@@ -24489,7 +25797,7 @@ _button_on_signal_button_pressed (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Button", "ButtonPressed",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Button", "Pressed",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -24497,7 +25805,7 @@ _button_on_signal_button_pressed (
 }
 
 static void
-_button_on_signal_button_pressed_long (
+_button_on_signal_pressed_long (
     Button *object)
 {
   ButtonSkeleton *skeleton = BUTTON_SKELETON (object);
@@ -24511,7 +25819,7 @@ _button_on_signal_button_pressed_long (
     {
       GDBusConnection *connection = l->data;
       g_dbus_connection_emit_signal (connection,
-        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Button", "ButtonPressedLong",
+        NULL, g_dbus_interface_skeleton_get_object_path (G_DBUS_INTERFACE_SKELETON (skeleton)), "org.openbmc.Button", "PressedLong",
         signal_variant, NULL);
     }
   g_variant_unref (signal_variant);
@@ -24534,7 +25842,7 @@ button_skeleton_finalize (GObject *object)
 {
   ButtonSkeleton *skeleton = BUTTON_SKELETON (object);
   guint n;
-  for (n = 0; n < 1; n++)
+  for (n = 0; n < 2; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -24552,7 +25860,7 @@ button_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   ButtonSkeleton *skeleton = BUTTON_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -24669,7 +25977,7 @@ button_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   ButtonSkeleton *skeleton = BUTTON_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 1);
+  g_assert (prop_id != 0 && prop_id - 1 < 2);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -24694,8 +26002,9 @@ button_skeleton_init (ButtonSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 1);
+  skeleton->priv->properties = g_new0 (GValue, 2);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_BOOLEAN);
+  g_value_init (&skeleton->priv->properties[1], G_TYPE_UINT64);
 }
 
 static gboolean 
@@ -24705,6 +26014,17 @@ button_skeleton_get_state (Button *object)
   gboolean value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_boolean (&(skeleton->priv->properties[0]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static guint64 
+button_skeleton_get_timer (Button *object)
+{
+  ButtonSkeleton *skeleton = BUTTON_SKELETON (object);
+  guint64 value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_uint64 (&(skeleton->priv->properties[1]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -24738,10 +26058,11 @@ button_skeleton_class_init (ButtonSkeletonClass *klass)
 static void
 button_skeleton_iface_init (ButtonIface *iface)
 {
-  iface->button_release = _button_on_signal_button_release;
-  iface->button_pressed = _button_on_signal_button_pressed;
-  iface->button_pressed_long = _button_on_signal_button_pressed_long;
+  iface->released = _button_on_signal_released;
+  iface->pressed = _button_on_signal_pressed;
+  iface->pressed_long = _button_on_signal_pressed_long;
   iface->get_state = button_skeleton_get_state;
+  iface->get_timer = button_skeleton_get_timer;
 }
 
 /**
@@ -24859,10 +26180,24 @@ static const _ExtendedGDBusPropertyInfo _led_property_info_function =
   FALSE
 };
 
+static const _ExtendedGDBusPropertyInfo _led_property_info_state =
+{
+  {
+    -1,
+    (gchar *) "state",
+    (gchar *) "s",
+    G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
+    NULL
+  },
+  "state",
+  FALSE
+};
+
 static const _ExtendedGDBusPropertyInfo * const _led_property_info_pointers[] =
 {
   &_led_property_info_color,
   &_led_property_info_function,
+  &_led_property_info_state,
   NULL
 };
 
@@ -24908,6 +26243,7 @@ led_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "color");
   g_object_class_override_property (klass, property_id_begin++, "function");
+  g_object_class_override_property (klass, property_id_begin++, "state");
   return property_id_begin - 1;
 }
 
@@ -24928,6 +26264,7 @@ led_override_properties (GObjectClass *klass, guint property_id_begin)
  * @handle_set_on: Handler for the #Led::handle-set-on signal.
  * @get_color: Getter for the #Led:color property.
  * @get_function: Getter for the #Led:function property.
+ * @get_state: Getter for the #Led:state property.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Led.top_of_page">org.openbmc.Led</link>.
  */
@@ -25046,6 +26383,15 @@ led_default_init (LedIface *iface)
    */
   g_object_interface_install_property (iface,
     g_param_spec_string ("function", "function", "function", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * Led:state:
+   *
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Led.state">"state"</link>.
+   *
+   * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
+   */
+  g_object_interface_install_property (iface,
+    g_param_spec_string ("state", "state", "state", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -25128,6 +26474,57 @@ void
 led_set_function (Led *object, const gchar *value)
 {
   g_object_set (G_OBJECT (object), "function", value, NULL);
+}
+
+/**
+ * led_get_state: (skip)
+ * @object: A #Led.
+ *
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Led.state">"state"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use led_dup_state() if on another thread.</warning>
+ *
+ * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ */
+const gchar *
+led_get_state (Led *object)
+{
+  return LED_GET_IFACE (object)->get_state (object);
+}
+
+/**
+ * led_dup_state: (skip)
+ * @object: A #Led.
+ *
+ * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Led.state">"state"</link> D-Bus property.
+ *
+ * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
+ *
+ * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_free().
+ */
+gchar *
+led_dup_state (Led *object)
+{
+  gchar *value;
+  g_object_get (G_OBJECT (object), "state", &value, NULL);
+  return value;
+}
+
+/**
+ * led_set_state: (skip)
+ * @object: A #Led.
+ * @value: The value to set.
+ *
+ * Sets the <link linkend="gdbus-property-org-openbmc-Led.state">"state"</link> D-Bus property to @value.
+ *
+ * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
+ */
+void
+led_set_state (Led *object, const gchar *value)
+{
+  g_object_set (G_OBJECT (object), "state", value, NULL);
 }
 
 /**
@@ -25618,7 +27015,7 @@ led_proxy_get_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _led_property_info_pointers[prop_id - 1];
   variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (object), info->parent_struct.name);
   if (info->use_gvariant)
@@ -25665,7 +27062,7 @@ led_proxy_set_property (GObject      *object,
 {
   const _ExtendedGDBusPropertyInfo *info;
   GVariant *variant;
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   info = _led_property_info_pointers[prop_id - 1];
   variant = g_dbus_gvalue_to_gvariant (value, G_VARIANT_TYPE (info->parent_struct.signature));
   g_dbus_proxy_call (G_DBUS_PROXY (object),
@@ -25777,6 +27174,21 @@ led_proxy_get_function (Led *object)
   return value;
 }
 
+static const gchar *
+led_proxy_get_state (Led *object)
+{
+  LedProxy *proxy = LED_PROXY (object);
+  GVariant *variant;
+  const gchar *value = NULL;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "state");
+  if (variant != NULL)
+    {
+      value = g_variant_get_string (variant, NULL);
+      g_variant_unref (variant);
+    }
+  return value;
+}
+
 static void
 led_proxy_init (LedProxy *proxy)
 {
@@ -25816,6 +27228,7 @@ led_proxy_iface_init (LedIface *iface)
 {
   iface->get_color = led_proxy_get_color;
   iface->get_function = led_proxy_get_function;
+  iface->get_state = led_proxy_get_state;
 }
 
 /**
@@ -26242,7 +27655,7 @@ led_skeleton_finalize (GObject *object)
 {
   LedSkeleton *skeleton = LED_SKELETON (object);
   guint n;
-  for (n = 0; n < 2; n++)
+  for (n = 0; n < 3; n++)
     g_value_unset (&skeleton->priv->properties[n]);
   g_free (skeleton->priv->properties);
   g_list_free_full (skeleton->priv->changed_properties, (GDestroyNotify) _changed_property_free);
@@ -26260,7 +27673,7 @@ led_skeleton_get_property (GObject      *object,
   GParamSpec   *pspec G_GNUC_UNUSED)
 {
   LedSkeleton *skeleton = LED_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_value_copy (&skeleton->priv->properties[prop_id - 1], value);
   g_mutex_unlock (&skeleton->priv->lock);
@@ -26377,7 +27790,7 @@ led_skeleton_set_property (GObject      *object,
   GParamSpec   *pspec)
 {
   LedSkeleton *skeleton = LED_SKELETON (object);
-  g_assert (prop_id != 0 && prop_id - 1 < 2);
+  g_assert (prop_id != 0 && prop_id - 1 < 3);
   g_mutex_lock (&skeleton->priv->lock);
   g_object_freeze_notify (object);
   if (!_g_value_equal (value, &skeleton->priv->properties[prop_id - 1]))
@@ -26402,9 +27815,10 @@ led_skeleton_init (LedSkeleton *skeleton)
 
   g_mutex_init (&skeleton->priv->lock);
   skeleton->priv->context = g_main_context_ref_thread_default ();
-  skeleton->priv->properties = g_new0 (GValue, 2);
+  skeleton->priv->properties = g_new0 (GValue, 3);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
+  g_value_init (&skeleton->priv->properties[2], G_TYPE_STRING);
 }
 
 static gint 
@@ -26425,6 +27839,17 @@ led_skeleton_get_function (Led *object)
   const gchar *value;
   g_mutex_lock (&skeleton->priv->lock);
   value = g_value_get_string (&(skeleton->priv->properties[1]));
+  g_mutex_unlock (&skeleton->priv->lock);
+  return value;
+}
+
+static const gchar *
+led_skeleton_get_state (Led *object)
+{
+  LedSkeleton *skeleton = LED_SKELETON (object);
+  const gchar *value;
+  g_mutex_lock (&skeleton->priv->lock);
+  value = g_value_get_string (&(skeleton->priv->properties[2]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -26460,6 +27885,7 @@ led_skeleton_iface_init (LedIface *iface)
 {
   iface->get_color = led_skeleton_get_color;
   iface->get_function = led_skeleton_get_function;
+  iface->get_state = led_skeleton_get_state;
 }
 
 /**
@@ -27624,6 +29050,15 @@ static void
 object_default_init (ObjectIface *iface)
 {
   /**
+   * Object:object-mapper:
+   *
+   * The #ObjectMapper instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link>, if any.
+   *
+   * Connect to the #GObject::notify signal to get informed of property changes.
+   */
+  g_object_interface_install_property (iface, g_param_spec_object ("object-mapper", "object-mapper", "object-mapper", TYPE_OBJECT_MAPPER, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
+
+  /**
    * Object:fan:
    *
    * The #Fan instance corresponding to the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Fan.top_of_page">org.openbmc.Fan</link>, if any.
@@ -27785,6 +29220,23 @@ object_default_init (ObjectIface *iface)
    */
   g_object_interface_install_property (iface, g_param_spec_object ("host-ipmi", "host-ipmi", "host-ipmi", TYPE_HOST_IPMI, G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS));
 
+}
+
+/**
+ * object_get_object_mapper:
+ * @object: A #Object.
+ *
+ * Gets the #ObjectMapper instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link> on @object, if any.
+ *
+ * Returns: (transfer full): A #ObjectMapper that must be freed with g_object_unref() or %NULL if @object does not implement the interface.
+ */
+ObjectMapper *object_get_object_mapper (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Object.Mapper");
+  if (ret == NULL)
+    return NULL;
+  return OBJECT_MAPPER (ret);
 }
 
 /**
@@ -28093,6 +29545,26 @@ HostIpmi *object_get_host_ipmi (Object *object)
   return HOST_IPMI (ret);
 }
 
+
+/**
+ * object_peek_object_mapper: (skip)
+ * @object: A #Object.
+ *
+ * Like object_get_object_mapper() but doesn't increase the reference count on the returned object.
+ *
+ * <warning>It is not safe to use the returned object if you are on another thread than the one where the #GDBusObjectManagerClient or #GDBusObjectManagerServer for @object is running.</warning>
+ *
+ * Returns: (transfer none): A #ObjectMapper or %NULL if @object does not implement the interface. Do not free the returned object, it is owned by @object.
+ */
+ObjectMapper *object_peek_object_mapper (Object *object)
+{
+  GDBusInterface *ret;
+  ret = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Object.Mapper");
+  if (ret == NULL)
+    return NULL;
+  g_object_unref (ret);
+  return OBJECT_MAPPER (ret);
+}
 
 /**
  * object_peek_fan: (skip)
@@ -28522,91 +29994,96 @@ object_proxy_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fan");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Object.Mapper");
       g_value_take_object (value, interface);
       break;
 
     case 2:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fan");
       g_value_take_object (value, interface);
       break;
 
     case 3:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
       g_value_take_object (value, interface);
       break;
 
     case 4:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
     case 5:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
 
     case 6:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
       g_value_take_object (value, interface);
       break;
 
     case 7:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
       g_value_take_object (value, interface);
       break;
 
     case 8:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
       g_value_take_object (value, interface);
       break;
 
     case 9:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
     case 10:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
     case 11:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
     case 12:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
     case 13:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
     case 14:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
     case 15:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
     case 16:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
       g_value_take_object (value, interface);
       break;
 
     case 17:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
       g_value_take_object (value, interface);
       break;
 
     case 18:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      g_value_take_object (value, interface);
+      break;
+
+    case 19:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
       g_value_take_object (value, interface);
       break;
@@ -28625,24 +30102,25 @@ object_proxy_class_init (ObjectProxyClass *klass)
   gobject_class->set_property = object_proxy_set_property;
   gobject_class->get_property = object_proxy_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "fan");
-  g_object_class_override_property (gobject_class, 2, "sensor-value");
-  g_object_class_override_property (gobject_class, 3, "sensor-threshold");
-  g_object_class_override_property (gobject_class, 4, "sensor-i2c");
-  g_object_class_override_property (gobject_class, 5, "sensor-match");
-  g_object_class_override_property (gobject_class, 6, "process");
-  g_object_class_override_property (gobject_class, 7, "shared-resource");
-  g_object_class_override_property (gobject_class, 8, "control");
-  g_object_class_override_property (gobject_class, 9, "control-bmc");
-  g_object_class_override_property (gobject_class, 10, "control-host");
-  g_object_class_override_property (gobject_class, 11, "control-power");
-  g_object_class_override_property (gobject_class, 12, "watchdog");
-  g_object_class_override_property (gobject_class, 13, "event-log");
-  g_object_class_override_property (gobject_class, 14, "flash");
-  g_object_class_override_property (gobject_class, 15, "flash-control");
-  g_object_class_override_property (gobject_class, 16, "button");
-  g_object_class_override_property (gobject_class, 17, "led");
-  g_object_class_override_property (gobject_class, 18, "host-ipmi");
+  g_object_class_override_property (gobject_class, 1, "object-mapper");
+  g_object_class_override_property (gobject_class, 2, "fan");
+  g_object_class_override_property (gobject_class, 3, "sensor-value");
+  g_object_class_override_property (gobject_class, 4, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 5, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 6, "sensor-match");
+  g_object_class_override_property (gobject_class, 7, "process");
+  g_object_class_override_property (gobject_class, 8, "shared-resource");
+  g_object_class_override_property (gobject_class, 9, "control");
+  g_object_class_override_property (gobject_class, 10, "control-bmc");
+  g_object_class_override_property (gobject_class, 11, "control-host");
+  g_object_class_override_property (gobject_class, 12, "control-power");
+  g_object_class_override_property (gobject_class, 13, "watchdog");
+  g_object_class_override_property (gobject_class, 14, "event-log");
+  g_object_class_override_property (gobject_class, 15, "flash");
+  g_object_class_override_property (gobject_class, 16, "flash-control");
+  g_object_class_override_property (gobject_class, 17, "button");
+  g_object_class_override_property (gobject_class, 18, "led");
+  g_object_class_override_property (gobject_class, 19, "host-ipmi");
 }
 
 /**
@@ -28713,6 +30191,19 @@ object_skeleton_set_property (GObject      *gobject,
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
+          g_warn_if_fail (IS_OBJECT_MAPPER (interface));
+          g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
+        }
+      else
+        {
+          g_dbus_object_skeleton_remove_interface_by_name (G_DBUS_OBJECT_SKELETON (object), "org.openbmc.Object.Mapper");
+        }
+      break;
+
+    case 2:
+      interface = g_value_get_object (value);
+      if (interface != NULL)
+        {
           g_warn_if_fail (IS_FAN (interface));
           g_dbus_object_skeleton_add_interface (G_DBUS_OBJECT_SKELETON (object), interface);
         }
@@ -28722,7 +30213,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 2:
+    case 3:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28735,7 +30226,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 3:
+    case 4:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28748,7 +30239,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 4:
+    case 5:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28761,7 +30252,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 5:
+    case 6:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28774,7 +30265,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 6:
+    case 7:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28787,7 +30278,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 7:
+    case 8:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28800,7 +30291,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 8:
+    case 9:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28813,7 +30304,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 9:
+    case 10:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28826,7 +30317,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 10:
+    case 11:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28839,7 +30330,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 11:
+    case 12:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28852,7 +30343,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 12:
+    case 13:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28865,7 +30356,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 13:
+    case 14:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28878,7 +30369,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 14:
+    case 15:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28891,7 +30382,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 15:
+    case 16:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28904,7 +30395,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 16:
+    case 17:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28917,7 +30408,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 17:
+    case 18:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28930,7 +30421,7 @@ object_skeleton_set_property (GObject      *gobject,
         }
       break;
 
-    case 18:
+    case 19:
       interface = g_value_get_object (value);
       if (interface != NULL)
         {
@@ -28961,91 +30452,96 @@ object_skeleton_get_property (GObject      *gobject,
   switch (prop_id)
     {
     case 1:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fan");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Object.Mapper");
       g_value_take_object (value, interface);
       break;
 
     case 2:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Fan");
       g_value_take_object (value, interface);
       break;
 
     case 3:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorValue");
       g_value_take_object (value, interface);
       break;
 
     case 4:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorThreshold");
       g_value_take_object (value, interface);
       break;
 
     case 5:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorI2c");
       g_value_take_object (value, interface);
       break;
 
     case 6:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SensorMatch");
       g_value_take_object (value, interface);
       break;
 
     case 7:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Process");
       g_value_take_object (value, interface);
       break;
 
     case 8:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.SharedResource");
       g_value_take_object (value, interface);
       break;
 
     case 9:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Control");
       g_value_take_object (value, interface);
       break;
 
     case 10:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Bmc");
       g_value_take_object (value, interface);
       break;
 
     case 11:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Host");
       g_value_take_object (value, interface);
       break;
 
     case 12:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.control.Power");
       g_value_take_object (value, interface);
       break;
 
     case 13:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Watchdog");
       g_value_take_object (value, interface);
       break;
 
     case 14:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.EventLog");
       g_value_take_object (value, interface);
       break;
 
     case 15:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Flash");
       g_value_take_object (value, interface);
       break;
 
     case 16:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.FlashControl");
       g_value_take_object (value, interface);
       break;
 
     case 17:
-      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Button");
       g_value_take_object (value, interface);
       break;
 
     case 18:
+      interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.Led");
+      g_value_take_object (value, interface);
+      break;
+
+    case 19:
       interface = g_dbus_object_get_interface (G_DBUS_OBJECT (object), "org.openbmc.HostIpmi");
       g_value_take_object (value, interface);
       break;
@@ -29064,24 +30560,25 @@ object_skeleton_class_init (ObjectSkeletonClass *klass)
   gobject_class->set_property = object_skeleton_set_property;
   gobject_class->get_property = object_skeleton_get_property;
 
-  g_object_class_override_property (gobject_class, 1, "fan");
-  g_object_class_override_property (gobject_class, 2, "sensor-value");
-  g_object_class_override_property (gobject_class, 3, "sensor-threshold");
-  g_object_class_override_property (gobject_class, 4, "sensor-i2c");
-  g_object_class_override_property (gobject_class, 5, "sensor-match");
-  g_object_class_override_property (gobject_class, 6, "process");
-  g_object_class_override_property (gobject_class, 7, "shared-resource");
-  g_object_class_override_property (gobject_class, 8, "control");
-  g_object_class_override_property (gobject_class, 9, "control-bmc");
-  g_object_class_override_property (gobject_class, 10, "control-host");
-  g_object_class_override_property (gobject_class, 11, "control-power");
-  g_object_class_override_property (gobject_class, 12, "watchdog");
-  g_object_class_override_property (gobject_class, 13, "event-log");
-  g_object_class_override_property (gobject_class, 14, "flash");
-  g_object_class_override_property (gobject_class, 15, "flash-control");
-  g_object_class_override_property (gobject_class, 16, "button");
-  g_object_class_override_property (gobject_class, 17, "led");
-  g_object_class_override_property (gobject_class, 18, "host-ipmi");
+  g_object_class_override_property (gobject_class, 1, "object-mapper");
+  g_object_class_override_property (gobject_class, 2, "fan");
+  g_object_class_override_property (gobject_class, 3, "sensor-value");
+  g_object_class_override_property (gobject_class, 4, "sensor-threshold");
+  g_object_class_override_property (gobject_class, 5, "sensor-i2c");
+  g_object_class_override_property (gobject_class, 6, "sensor-match");
+  g_object_class_override_property (gobject_class, 7, "process");
+  g_object_class_override_property (gobject_class, 8, "shared-resource");
+  g_object_class_override_property (gobject_class, 9, "control");
+  g_object_class_override_property (gobject_class, 10, "control-bmc");
+  g_object_class_override_property (gobject_class, 11, "control-host");
+  g_object_class_override_property (gobject_class, 12, "control-power");
+  g_object_class_override_property (gobject_class, 13, "watchdog");
+  g_object_class_override_property (gobject_class, 14, "event-log");
+  g_object_class_override_property (gobject_class, 15, "flash");
+  g_object_class_override_property (gobject_class, 16, "flash-control");
+  g_object_class_override_property (gobject_class, 17, "button");
+  g_object_class_override_property (gobject_class, 18, "led");
+  g_object_class_override_property (gobject_class, 19, "host-ipmi");
 }
 
 /**
@@ -29097,6 +30594,18 @@ object_skeleton_new (const gchar *object_path)
 {
   g_return_val_if_fail (g_variant_is_object_path (object_path), NULL);
   return OBJECT_SKELETON (g_object_new (TYPE_OBJECT_SKELETON, "g-object-path", object_path, NULL));
+}
+
+/**
+ * object_skeleton_set_object_mapper:
+ * @object: A #ObjectSkeleton.
+ * @interface_: (allow-none): A #ObjectMapper or %NULL to clear the interface.
+ *
+ * Sets the #ObjectMapper instance for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Object-Mapper.top_of_page">org.openbmc.Object.Mapper</link> on @object.
+ */
+void object_skeleton_set_object_mapper (ObjectSkeleton *object, ObjectMapper *interface_)
+{
+  g_object_set (G_OBJECT (object), "object-mapper", interface_, NULL);
 }
 
 /**
@@ -29377,6 +30886,7 @@ object_manager_client_get_proxy_type (GDBusObjectManagerClient *manager G_GNUC_U
   if (g_once_init_enter (&once_init_value))
     {
       lookup_hash = g_hash_table_new (g_str_hash, g_str_equal);
+      g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Object.Mapper", GSIZE_TO_POINTER (TYPE_OBJECT_MAPPER_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.Fan", GSIZE_TO_POINTER (TYPE_FAN_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorValue", GSIZE_TO_POINTER (TYPE_SENSOR_VALUE_PROXY));
       g_hash_table_insert (lookup_hash, (gpointer) "org.openbmc.SensorThreshold", GSIZE_TO_POINTER (TYPE_SENSOR_THRESHOLD_PROXY));

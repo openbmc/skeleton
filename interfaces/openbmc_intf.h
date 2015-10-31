@@ -13,6 +13,139 @@ G_BEGIN_DECLS
 
 
 /* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.Object.Mapper */
+
+#define TYPE_OBJECT_MAPPER (object_mapper_get_type ())
+#define OBJECT_MAPPER(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OBJECT_MAPPER, ObjectMapper))
+#define IS_OBJECT_MAPPER(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_OBJECT_MAPPER))
+#define OBJECT_MAPPER_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_OBJECT_MAPPER, ObjectMapperIface))
+
+struct _ObjectMapper;
+typedef struct _ObjectMapper ObjectMapper;
+typedef struct _ObjectMapperIface ObjectMapperIface;
+
+struct _ObjectMapperIface
+{
+  GTypeInterface parent_iface;
+
+  void (*object_added) (
+    ObjectMapper *object,
+    const gchar *arg_object_path,
+    const gchar *arg_interface_name);
+
+};
+
+GType object_mapper_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *object_mapper_interface_info (void);
+guint object_mapper_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus signal emissions functions: */
+void object_mapper_emit_object_added (
+    ObjectMapper *object,
+    const gchar *arg_object_path,
+    const gchar *arg_interface_name);
+
+
+
+/* ---- */
+
+#define TYPE_OBJECT_MAPPER_PROXY (object_mapper_proxy_get_type ())
+#define OBJECT_MAPPER_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OBJECT_MAPPER_PROXY, ObjectMapperProxy))
+#define OBJECT_MAPPER_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_OBJECT_MAPPER_PROXY, ObjectMapperProxyClass))
+#define OBJECT_MAPPER_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_OBJECT_MAPPER_PROXY, ObjectMapperProxyClass))
+#define IS_OBJECT_MAPPER_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_OBJECT_MAPPER_PROXY))
+#define IS_OBJECT_MAPPER_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_OBJECT_MAPPER_PROXY))
+
+typedef struct _ObjectMapperProxy ObjectMapperProxy;
+typedef struct _ObjectMapperProxyClass ObjectMapperProxyClass;
+typedef struct _ObjectMapperProxyPrivate ObjectMapperProxyPrivate;
+
+struct _ObjectMapperProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  ObjectMapperProxyPrivate *priv;
+};
+
+struct _ObjectMapperProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType object_mapper_proxy_get_type (void) G_GNUC_CONST;
+
+void object_mapper_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+ObjectMapper *object_mapper_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+ObjectMapper *object_mapper_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void object_mapper_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+ObjectMapper *object_mapper_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+ObjectMapper *object_mapper_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_OBJECT_MAPPER_SKELETON (object_mapper_skeleton_get_type ())
+#define OBJECT_MAPPER_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_OBJECT_MAPPER_SKELETON, ObjectMapperSkeleton))
+#define OBJECT_MAPPER_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_OBJECT_MAPPER_SKELETON, ObjectMapperSkeletonClass))
+#define OBJECT_MAPPER_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_OBJECT_MAPPER_SKELETON, ObjectMapperSkeletonClass))
+#define IS_OBJECT_MAPPER_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_OBJECT_MAPPER_SKELETON))
+#define IS_OBJECT_MAPPER_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_OBJECT_MAPPER_SKELETON))
+
+typedef struct _ObjectMapperSkeleton ObjectMapperSkeleton;
+typedef struct _ObjectMapperSkeletonClass ObjectMapperSkeletonClass;
+typedef struct _ObjectMapperSkeletonPrivate ObjectMapperSkeletonPrivate;
+
+struct _ObjectMapperSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  ObjectMapperSkeletonPrivate *priv;
+};
+
+struct _ObjectMapperSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType object_mapper_skeleton_get_type (void) G_GNUC_CONST;
+
+ObjectMapper *object_mapper_skeleton_new (void);
+
+
+/* ------------------------------------------------------------------------ */
 /* Declarations for org.openbmc.Fan */
 
 #define TYPE_FAN (fan_get_type ())
@@ -1730,6 +1863,7 @@ struct _ControlHostIface
   GTypeInterface parent_iface;
 
 
+
   gboolean (*handle_boot) (
     ControlHost *object,
     GDBusMethodInvocation *invocation);
@@ -1741,6 +1875,10 @@ struct _ControlHostIface
   gboolean (*handle_shutdown) (
     ControlHost *object,
     GDBusMethodInvocation *invocation);
+
+  gint  (*get_debug_mode) (ControlHost *object);
+
+  const gchar * (*get_flash_side) (ControlHost *object);
 
   void (*booted) (
     ControlHost *object);
@@ -1823,6 +1961,15 @@ gboolean control_host_call_reboot_sync (
     GCancellable *cancellable,
     GError **error);
 
+
+
+/* D-Bus property accessors: */
+gint control_host_get_debug_mode (ControlHost *object);
+void control_host_set_debug_mode (ControlHost *object, gint value);
+
+const gchar *control_host_get_flash_side (ControlHost *object);
+gchar *control_host_dup_flash_side (ControlHost *object);
+void control_host_set_flash_side (ControlHost *object, const gchar *value);
 
 
 /* ---- */
@@ -3086,23 +3233,25 @@ struct _ButtonIface
     Button *object,
     GDBusMethodInvocation *invocation);
 
-  gboolean (*handle_sim_button_long_press) (
+  gboolean (*handle_sim_long_press) (
     Button *object,
     GDBusMethodInvocation *invocation);
 
-  gboolean (*handle_sim_button_press) (
+  gboolean (*handle_sim_press) (
     Button *object,
     GDBusMethodInvocation *invocation);
 
   gboolean  (*get_state) (Button *object);
 
-  void (*button_pressed) (
+  guint64  (*get_timer) (Button *object);
+
+  void (*pressed) (
     Button *object);
 
-  void (*button_pressed_long) (
+  void (*pressed_long) (
     Button *object);
 
-  void (*button_release) (
+  void (*released) (
     Button *object);
 
 };
@@ -3119,24 +3268,24 @@ void button_complete_is_on (
     GDBusMethodInvocation *invocation,
     gboolean state);
 
-void button_complete_sim_button_press (
+void button_complete_sim_press (
     Button *object,
     GDBusMethodInvocation *invocation);
 
-void button_complete_sim_button_long_press (
+void button_complete_sim_long_press (
     Button *object,
     GDBusMethodInvocation *invocation);
 
 
 
 /* D-Bus signal emissions functions: */
-void button_emit_button_release (
+void button_emit_released (
     Button *object);
 
-void button_emit_button_pressed (
+void button_emit_pressed (
     Button *object);
 
-void button_emit_button_pressed_long (
+void button_emit_pressed_long (
     Button *object);
 
 
@@ -3160,34 +3309,34 @@ gboolean button_call_is_on_sync (
     GCancellable *cancellable,
     GError **error);
 
-void button_call_sim_button_press (
+void button_call_sim_press (
     Button *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean button_call_sim_button_press_finish (
+gboolean button_call_sim_press_finish (
     Button *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean button_call_sim_button_press_sync (
+gboolean button_call_sim_press_sync (
     Button *proxy,
     GCancellable *cancellable,
     GError **error);
 
-void button_call_sim_button_long_press (
+void button_call_sim_long_press (
     Button *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean button_call_sim_button_long_press_finish (
+gboolean button_call_sim_long_press_finish (
     Button *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean button_call_sim_button_long_press_sync (
+gboolean button_call_sim_long_press_sync (
     Button *proxy,
     GCancellable *cancellable,
     GError **error);
@@ -3197,6 +3346,9 @@ gboolean button_call_sim_button_long_press_sync (
 /* D-Bus property accessors: */
 gboolean button_get_state (Button *object);
 void button_set_state (Button *object, gboolean value);
+
+guint64 button_get_timer (Button *object);
+void button_set_timer (Button *object, guint64 value);
 
 
 /* ---- */
@@ -3332,6 +3484,8 @@ struct _LedIface
 
   const gchar * (*get_function) (Led *object);
 
+  const gchar * (*get_state) (Led *object);
+
 };
 
 GType led_get_type (void) G_GNUC_CONST;
@@ -3433,6 +3587,10 @@ void led_set_color (Led *object, gint value);
 const gchar *led_get_function (Led *object);
 gchar *led_dup_function (Led *object);
 void led_set_function (Led *object, const gchar *value);
+
+const gchar *led_get_state (Led *object);
+gchar *led_dup_state (Led *object);
+void led_set_state (Led *object, const gchar *value);
 
 
 /* ---- */
@@ -3732,6 +3890,7 @@ struct _ObjectIface
 
 GType object_get_type (void) G_GNUC_CONST;
 
+ObjectMapper *object_get_object_mapper (Object *object);
 Fan *object_get_fan (Object *object);
 SensorValue *object_get_sensor_value (Object *object);
 SensorThreshold *object_get_sensor_threshold (Object *object);
@@ -3750,6 +3909,7 @@ FlashControl *object_get_flash_control (Object *object);
 Button *object_get_button (Object *object);
 Led *object_get_led (Object *object);
 HostIpmi *object_get_host_ipmi (Object *object);
+ObjectMapper *object_peek_object_mapper (Object *object);
 Fan *object_peek_fan (Object *object);
 SensorValue *object_peek_sensor_value (Object *object);
 SensorThreshold *object_peek_sensor_threshold (Object *object);
@@ -3820,6 +3980,7 @@ struct _ObjectSkeletonClass
 
 GType object_skeleton_get_type (void) G_GNUC_CONST;
 ObjectSkeleton *object_skeleton_new (const gchar *object_path);
+void object_skeleton_set_object_mapper (ObjectSkeleton *object, ObjectMapper *interface_);
 void object_skeleton_set_fan (ObjectSkeleton *object, Fan *interface_);
 void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_);
 void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThreshold *interface_);

@@ -1,4 +1,10 @@
 <node>
+	<interface name="org.openbmc.Object.Mapper">
+		<signal name="ObjectAdded">
+			<arg name="object_path" type="s"/>
+			<arg name="interface_name" type="s"/>
+		</signal>
+	</interface>
 	<interface name="org.openbmc.Fan">
 		<method name="setCoolingZone">
 			<arg name="cooling_zone" type="i" direction="in"/>
@@ -102,6 +108,8 @@
 		<method name="boot"/>
 		<method name="shutdown"/>
 		<method name="reboot"/>
+		<property name="debug_mode" type="i" access="readwrite"/>
+		<property name="flash_side" type="s" access="readwrite"/>
 		<signal name="Booted"/>
 	</interface>
 	<interface name="org.openbmc.control.Power">
@@ -187,13 +195,15 @@
 		<method name="isOn">
 			<arg name="state" type="b" direction="out"/>
 		</method>
-		<method name="simButtonPress"/>
-		<method name="simButtonLongPress"/>
+		<method name="simPress"/>
+		<method name="simLongPress"/>
 	
                 <property name="state" type="b" access="read"/>
-		<signal name="ButtonRelease"/>
-		<signal name="ButtonPressed"/>
-		<signal name="ButtonPressedLong"/>
+		<signal name="Released"/>
+		<signal name="Pressed"/>
+		<signal name="PressedLong"/>
+
+		<property name="timer" type="t" access="read"/>
 	</interface>
 	<interface name="org.openbmc.Led">
 		<method name="setOn"/>
@@ -203,6 +213,7 @@
 		
                 <property name="color" type="i" access="read"/>
 		<property name="function" type="s" access="read"/>
+		<property name="state" type="s" access="read"/>
 	</interface>
 	<interface name="org.openbmc.HostIpmi">
 		<signal name="ReceivedMessage">
