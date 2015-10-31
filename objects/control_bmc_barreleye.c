@@ -57,7 +57,7 @@ void reg_init()
 
 	bmcreg = memmap(mem_fd,LPC_BASE);
 	devmem(bmcreg+LPC_HICR6,0x00000500); //Enable LPC FWH cycles, Enable LPC to AHB bridge
-	devmem(bmcreg+LPC_HICR7,0x30000E00); //32M PNOR
+	devmem(bmcreg+LPC_HICR7,0x30000C00); //32M PNOR
 	devmem(bmcreg+LPC_HICR8,0xFC0003FF);
 
 	//flash controller
