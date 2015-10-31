@@ -502,7 +502,7 @@ static void print_help(const char *pname)
 	printf("\t\tThis message.\n\n");
 }
 
-int pflash_main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	const char *pname = argv[0];
 	uint32_t address = 0, read_size = 0, write_size = 0;
