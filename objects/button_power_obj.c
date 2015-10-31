@@ -2,12 +2,13 @@
 #include "interfaces/openbmc_intf.h"
 #include "gpio.h"
 #include "openbmc.h"
+#include "object_mapper.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/buttons";
 static const gchar* instance_name = "power0";
 static const gchar* dbus_name        = "org.openbmc.buttons.Power";
-
+static const int LONG_PRESS_SECONDS = 3;
 static GDBusObjectManagerServer *manager = NULL;
 
 //This object will use these GPIOs
@@ -29,8 +30,8 @@ on_button_press       (Button          *btn,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
-	button_emit_button_pressed(btn);
-	button_complete_sim_button_press(btn,invocation);
+	button_emit_pressed(btn);
+	button_complete_sim_press(btn,invocation);
 	return TRUE;
 }
 static gboolean
@@ -50,24 +51,32 @@ on_button_interrupt( GIOChannel *channel,
                                             &error );
 	printf("%s\n",buf);
 	
+	time_t current_time = time(NULL);
 	if (gpio_button.irq_inited)
 	{
 		Button* button = object_get_button((Object*)user_data);
 		if (buf[0] == '0')
 		{
 			printf("Power Button pressed\n");
-			button_emit_button_pressed(button);
+			button_emit_pressed(button);
+			button_set_timer(button,(long)current_time);
 		}
 		else
 		{
-			printf("Power Button released\n");
+			long press_time = current_time-button_get_timer(button);
+			printf("Power Button released, held for %ld seconds\n",press_time);
+			if (press_time > LONG_PRESS_SECONDS)
+			{
+				button_emit_pressed_long(button);
+			} else {
+				button_emit_released(button);
+			}
 		}
 	} 
 	else { gpio_button.irq_inited = true; }
 
 	return TRUE;
 }
-
 static void 
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
@@ -86,6 +95,10 @@ on_bus_acquired (GDBusConnection *connection,
 	Button* button = button_skeleton_new ();
 	object_skeleton_set_button (object, button);
 	g_object_unref (button);
+
+	ObjectMapper* mapper = object_mapper_skeleton_new ();
+	object_skeleton_set_object_mapper (object, mapper);
+	g_object_unref (mapper);
 
 	//define method callbacks
 	g_signal_connect (button,
@@ -116,8 +129,8 @@ on_bus_acquired (GDBusConnection *connection,
 	if (rc != GPIO_OK)
 	{
 		printf("ERROR PowerButton: GPIO setup (rc=%d)\n",rc);
-	} 
-
+	}
+	emit_object_added((GDBusObjectManager*)manager); 
 }
 
 static void
