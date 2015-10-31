@@ -60,13 +60,6 @@ ENTER_STATE_CALLBACK = {
 }
 
 APPS = {
-	'property_manager' : {
-		'system_state'    : 'BASE_APPS',
-		'start_process'   : False,
-		'monitor_process' : False,
-		'process_name'    : 'property_manager.py',
-		'args'            : [ SYSTEM_NAME ]
-	},
 	'bmc_init' : {
 		'system_state'    : 'BMC_INIT',
 		'start_process'   : True,
@@ -324,6 +317,8 @@ GPIO_CONFIG['PGOOD']      =   { 'gpio_pin': 'C7', 'direction': 'in'  }
 GPIO_CONFIG['IDENTIFY']   =   { 'gpio_pin': 'R5', 'direction': 'out' }
 GPIO_CONFIG['BMC_READY']   =  { 'gpio_pin': 'H2', 'direction': 'out' }
 GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_pin': 'E0', 'direction': 'both' }
+GPIO_CONFIG['PCIE_RESET']   = { 'gpio_pin': 'B5', 'direction': 'out' }
+GPIO_CONFIG['USB_RESET']    = { 'gpio_pin': 'B6', 'direction': 'out' }
 GPIO_CONFIG['SLOT0_RISER_PRESENT'] =   { 'gpio_pin': 'N0', 'direction': 'in' }
 GPIO_CONFIG['SLOT1_RISER_PRESENT'] =   { 'gpio_pin': 'N1', 'direction': 'in' }
 GPIO_CONFIG['SLOT2_RISER_PRESENT'] =   { 'gpio_pin': 'N2', 'direction': 'in' }
