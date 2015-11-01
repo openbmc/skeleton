@@ -141,13 +141,16 @@ class SystemManager(dbus.service.Object):
 			process_name = self.bin_path+"/"+app['process_name']
 			cmdline = [ ]
 			cmdline.append(process_name)
-			app['popen'] = None
 			if (app.has_key('args')):
 				for a in app['args']:
 					cmdline.append(a)
 			try:
 				print "Starting process: "+" ".join(cmdline)+": "+name
-				app['popen'] = subprocess.Popen(cmdline)
+				if (app['monitor_process'] == True):
+					app['popen'] = subprocess.Popen(cmdline)
+				else:
+					subprocess.Popen(cmdline)
+					
 			except Exception as e:
 				## TODO: error
 				print "ERROR: starting process: "+" ".join(cmdline)
@@ -155,10 +158,7 @@ class SystemManager(dbus.service.Object):
 	def heartbeat_check(self):
 		for name in System.APPS.keys():
 			app = System.APPS[name]
-			if (app['start_process'] == True and 
-				app.has_key('popen') and
-				app['monitor_process'] == True):
-
+			if (app['start_process'] == True and app.has_key('popen')):
 				##   make sure process is still alive
 				p = app['popen']
 				p.poll()
