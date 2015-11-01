@@ -60,6 +60,12 @@ ENTER_STATE_CALLBACK = {
 }
 
 APPS = {
+	'startup_hacks' : {
+		'system_state'    : 'BASE_APPS',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'startup_hacks.sh',
+	},
 	'bmc_init' : {
 		'system_state'    : 'BMC_INIT',
 		'start_process'   : True,
