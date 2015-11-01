@@ -370,6 +370,7 @@ on_bus_acquired (GDBusConnection *connection,
 	if (cmd->argc < 4)
 	{
 		g_print("flasher [flash name] [filename] [source object]\n");
+		g_main_loop_quit(cmd->loop);
 		return;
 	}
 	printf("Starting flasher: %s,%s,%s,\n",cmd->argv[1],cmd->argv[2],cmd->argv[3]);	
