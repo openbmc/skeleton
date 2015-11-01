@@ -14,6 +14,16 @@ static const gchar* DLOAD_OBJ = "/org/openbmc/managers/Download";
 
 static GDBusObjectManagerServer *manager = NULL;
 
+void catch_child(int sig_num)
+{
+    /* when we get here, we know there's a zombie child waiting */
+    int child_status;
+
+    wait(&child_status);
+    printf("flasher exited.\n");
+}
+
+
 int update(Flash* flash, const char* obj_path)
 {
 	pid_t pid;
@@ -412,6 +422,7 @@ main (gint argc, gchar *argv[])
   guint id;
   loop = g_main_loop_new (NULL, FALSE);
 
+  signal(SIGCHLD, catch_child);
   id = g_bus_own_name (DBUS_TYPE,
                        dbus_name,
                        G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
