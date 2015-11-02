@@ -365,10 +365,6 @@ uint8_t flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char
 	else 
 	{
 		printf("Flash tuned\n");
-		//tune twice
-		if (!bmc_flash) {
-			flash_access_setup_pnor(use_lpc, has_sfc, erase || program);
-		}
 	}
 	return FLASH_OK;
 }
