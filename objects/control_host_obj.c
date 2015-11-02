@@ -208,7 +208,7 @@ on_bus_acquired (GDBusConnection *connection,
                  NULL); /* user_data */
 
 	control_host_set_debug_mode(control_host,0);
-	control_host_set_flash_side(control_host,"primary");
+	control_host_set_flash_side(control_host,"golden");
 
 	/* Export the object (@manager takes its own reference to @object) */
 	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
