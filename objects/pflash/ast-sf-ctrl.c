@@ -319,7 +319,6 @@ static int ast_sf_optimize_reads(struct ast_sf_ctrl *ct, struct flash_info *info
 	ct->ctl_read_val = save_read_val & 0xfffff0ff;
 
 	/* Check if calibration data is suitable */
-/*
 	if (!ast_calib_data_usable(golden_buf, CALIBRATE_BUF_SIZE)) {
 		FL_INF("AST: Calibration area too uniform, "
 		       "using low speed\n");
@@ -327,7 +326,7 @@ static int ast_sf_optimize_reads(struct ast_sf_ctrl *ct, struct flash_info *info
 		free(test_buf);
 		return 0;
 	}
-*/
+
 	/* Now we iterate the HCLK dividers until we find our breaking point */
 	for (i = 5; i > 0; i--) {
 		uint32_t tv, freq;
