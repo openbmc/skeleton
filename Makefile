@@ -22,7 +22,7 @@ LIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Llib -lopenbmc_intf
 %.o: objects/pflash/libflash/%.c
 	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
-all: setup libopenbmc_intf power_control led_controller button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher control_bmc_barreleye pflash
+all: setup libopenbmc_intf power_control led_controller button_power control_host fan host_watchdog control_bmc board_vpd pcie_slot_present flash_bios flasher control_bmc_barreleye pflash hwmons
 
 setup: 
 	mkdir -p obj lib
@@ -71,4 +71,7 @@ flasher:  $(OBJS2) flasher_obj.o libopenbmc_intf
 
 pflash:  $(OBJS2) pflash.o
 	$(CC) -o bin/$@ obj/pflash.o $(OBJS3) $(LDFLAGS)
+
+hwmons: hwmons.o object_mapper.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/hwmons.o obj/object_mapper.o  $(LDFLAGS) $(LIBS)
 

@@ -5,6 +5,10 @@
 			<arg name="interface_name" type="s"/>
 		</signal>
 	</interface>
+	<interface name="org.openbmc.Hwmon">
+		<property name="poll_interval" type="i" access="read"/>
+		<property name="sysfs_path" type="s" access="read"/>
+	</interface>
 	<interface name="org.openbmc.Fan">
 		<method name="setCoolingZone">
 			<arg name="cooling_zone" type="i" direction="in"/>
