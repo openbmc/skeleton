@@ -18,15 +18,18 @@ typedef struct {
   int fd;
 } HWMON;
 
-#define  NUM_HWMONS 2
+#define  NUM_HWMONS 7
 
-//HWMON hwmons[NUM_HWMONS] = { 
-//	(HWMON){"/sys/class/hwmon/lm75/temp1_input","temperature/ambient"},
-//	(HWMON){"/sys/class/hwmon/nct9704/pwm1_input","speed/fan1"},
-//};
+// TODO: Don't hardcode
+//Hardcoded for barreleye
 HWMON hwmons[NUM_HWMONS] = { 
-	(HWMON){"/home/njames/hwmon/lm75/temp1_input"},
-	(HWMON){"/home/njames/hwmon/fans/pwm1_input" },
+	(HWMON){"/sys/class/hwmon/hwmon0/temp1_input","temperature/ambient",3000},
+	(HWMON){"/sys/class/hwmon/hwmon1/pwm1","speed/fan0",30000},
+	(HWMON){"/sys/class/hwmon/hwmon1/pwm2","speed/fan1",30000},
+	(HWMON){"/sys/class/hwmon/hwmon1/pwm3","speed/fan2",30000},
+	(HWMON){"/sys/class/hwmon/hwmon2/pwm1","speed/fan3",30000},
+	(HWMON){"/sys/class/hwmon/hwmon2/pwm2","speed/fan4",30000},
+	(HWMON){"/sys/class/hwmon/hwmon2/pwm3","speed/fan5",30000},
 };
 
 // Gets the gpio device path from gpio manager object
@@ -89,6 +92,8 @@ static gboolean poll_hwmon(gpointer user_data)
 			sensor_value_set_value(sensor,v);
 		}
 		close(fd);
+	} else {
+		g_print("ERROR - hwmons: File %s doesn't exist\n",filename);
 	}
 
 	return TRUE;
@@ -134,7 +139,7 @@ on_bus_acquired (GDBusConnection *connection,
 	int i = 0;
 	for (i=0;i<NUM_HWMONS;i++)
   	{
-		hwmon_init(connection,&hwmons[i]);
+		//hwmon_init(connection,&hwmons[i]);
 
 		gchar *s;
 		s = g_strdup_printf ("%s/%s",dbus_object_path,hwmons[i].name);
