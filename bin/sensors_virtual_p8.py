@@ -53,6 +53,8 @@ class VirtualSensor(SensorValue):
 	def __init__(self,bus,name):
 		SensorValue.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
+		self.ObjectAdded(name,SensorValue.IFACE_NAME)
+
 		
 CONTROL_IFACE = 'org.openbmc.Control'
 class HostStatusSensor(SensorValue):
