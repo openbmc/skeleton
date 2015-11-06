@@ -113,8 +113,8 @@ APPS = {
 	},
 	'power_button' : {
 		'system_state'    : 'BMC_STARTING',
-		'start_process'   : False,
-		'monitor_process' : False,
+		'start_process'   : True,
+		'monitor_process' : True,
 		'process_name'    : 'button_power.exe',
 	},
 	'led_control' : {
