@@ -58,9 +58,9 @@ on_init (Flash          *f,
 		{
 			printf("ERROR FlashControl: Unable to init\n");
 		}
-		//TODO: have to tune flash twice
-		sleep(1);
-		update(f,obj_path);
+		sleep(3);
+		rc = update(f,obj_path);
+		
 	}
 	return TRUE;
 }
@@ -422,7 +422,7 @@ main (gint argc, gchar *argv[])
   guint id;
   loop = g_main_loop_new (NULL, FALSE);
 
-  signal(SIGCHLD, catch_child);
+  //signal(SIGCHLD, catch_child);
   id = g_bus_own_name (DBUS_TYPE,
                        dbus_name,
                        G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
