@@ -146,6 +146,145 @@ ObjectMapper *object_mapper_skeleton_new (void);
 
 
 /* ------------------------------------------------------------------------ */
+/* Declarations for org.openbmc.Hwmon */
+
+#define TYPE_HWMON (hwmon_get_type ())
+#define HWMON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_HWMON, Hwmon))
+#define IS_HWMON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_HWMON))
+#define HWMON_GET_IFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), TYPE_HWMON, HwmonIface))
+
+struct _Hwmon;
+typedef struct _Hwmon Hwmon;
+typedef struct _HwmonIface HwmonIface;
+
+struct _HwmonIface
+{
+  GTypeInterface parent_iface;
+
+  gint  (*get_poll_interval) (Hwmon *object);
+
+  const gchar * (*get_sysfs_path) (Hwmon *object);
+
+  GVariant * (*get_value) (Hwmon *object);
+
+};
+
+GType hwmon_get_type (void) G_GNUC_CONST;
+
+GDBusInterfaceInfo *hwmon_interface_info (void);
+guint hwmon_override_properties (GObjectClass *klass, guint property_id_begin);
+
+
+/* D-Bus property accessors: */
+gint hwmon_get_poll_interval (Hwmon *object);
+void hwmon_set_poll_interval (Hwmon *object, gint value);
+
+const gchar *hwmon_get_sysfs_path (Hwmon *object);
+gchar *hwmon_dup_sysfs_path (Hwmon *object);
+void hwmon_set_sysfs_path (Hwmon *object, const gchar *value);
+
+GVariant *hwmon_get_value (Hwmon *object);
+GVariant *hwmon_dup_value (Hwmon *object);
+void hwmon_set_value (Hwmon *object, GVariant *value);
+
+
+/* ---- */
+
+#define TYPE_HWMON_PROXY (hwmon_proxy_get_type ())
+#define HWMON_PROXY(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_HWMON_PROXY, HwmonProxy))
+#define HWMON_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_HWMON_PROXY, HwmonProxyClass))
+#define HWMON_PROXY_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_HWMON_PROXY, HwmonProxyClass))
+#define IS_HWMON_PROXY(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_HWMON_PROXY))
+#define IS_HWMON_PROXY_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_HWMON_PROXY))
+
+typedef struct _HwmonProxy HwmonProxy;
+typedef struct _HwmonProxyClass HwmonProxyClass;
+typedef struct _HwmonProxyPrivate HwmonProxyPrivate;
+
+struct _HwmonProxy
+{
+  /*< private >*/
+  GDBusProxy parent_instance;
+  HwmonProxyPrivate *priv;
+};
+
+struct _HwmonProxyClass
+{
+  GDBusProxyClass parent_class;
+};
+
+GType hwmon_proxy_get_type (void) G_GNUC_CONST;
+
+void hwmon_proxy_new (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+Hwmon *hwmon_proxy_new_finish (
+    GAsyncResult        *res,
+    GError             **error);
+Hwmon *hwmon_proxy_new_sync (
+    GDBusConnection     *connection,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+void hwmon_proxy_new_for_bus (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GAsyncReadyCallback  callback,
+    gpointer             user_data);
+Hwmon *hwmon_proxy_new_for_bus_finish (
+    GAsyncResult        *res,
+    GError             **error);
+Hwmon *hwmon_proxy_new_for_bus_sync (
+    GBusType             bus_type,
+    GDBusProxyFlags      flags,
+    const gchar         *name,
+    const gchar         *object_path,
+    GCancellable        *cancellable,
+    GError             **error);
+
+
+/* ---- */
+
+#define TYPE_HWMON_SKELETON (hwmon_skeleton_get_type ())
+#define HWMON_SKELETON(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_HWMON_SKELETON, HwmonSkeleton))
+#define HWMON_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), TYPE_HWMON_SKELETON, HwmonSkeletonClass))
+#define HWMON_SKELETON_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_HWMON_SKELETON, HwmonSkeletonClass))
+#define IS_HWMON_SKELETON(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_HWMON_SKELETON))
+#define IS_HWMON_SKELETON_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_HWMON_SKELETON))
+
+typedef struct _HwmonSkeleton HwmonSkeleton;
+typedef struct _HwmonSkeletonClass HwmonSkeletonClass;
+typedef struct _HwmonSkeletonPrivate HwmonSkeletonPrivate;
+
+struct _HwmonSkeleton
+{
+  /*< private >*/
+  GDBusInterfaceSkeleton parent_instance;
+  HwmonSkeletonPrivate *priv;
+};
+
+struct _HwmonSkeletonClass
+{
+  GDBusInterfaceSkeletonClass parent_class;
+};
+
+GType hwmon_skeleton_get_type (void) G_GNUC_CONST;
+
+Hwmon *hwmon_skeleton_new (void);
+
+
+/* ------------------------------------------------------------------------ */
 /* Declarations for org.openbmc.Fan */
 
 #define TYPE_FAN (fan_get_type ())
@@ -3891,6 +4030,7 @@ struct _ObjectIface
 GType object_get_type (void) G_GNUC_CONST;
 
 ObjectMapper *object_get_object_mapper (Object *object);
+Hwmon *object_get_hwmon (Object *object);
 Fan *object_get_fan (Object *object);
 SensorValue *object_get_sensor_value (Object *object);
 SensorThreshold *object_get_sensor_threshold (Object *object);
@@ -3910,6 +4050,7 @@ Button *object_get_button (Object *object);
 Led *object_get_led (Object *object);
 HostIpmi *object_get_host_ipmi (Object *object);
 ObjectMapper *object_peek_object_mapper (Object *object);
+Hwmon *object_peek_hwmon (Object *object);
 Fan *object_peek_fan (Object *object);
 SensorValue *object_peek_sensor_value (Object *object);
 SensorThreshold *object_peek_sensor_threshold (Object *object);
@@ -3981,6 +4122,7 @@ struct _ObjectSkeletonClass
 GType object_skeleton_get_type (void) G_GNUC_CONST;
 ObjectSkeleton *object_skeleton_new (const gchar *object_path);
 void object_skeleton_set_object_mapper (ObjectSkeleton *object, ObjectMapper *interface_);
+void object_skeleton_set_hwmon (ObjectSkeleton *object, Hwmon *interface_);
 void object_skeleton_set_fan (ObjectSkeleton *object, Fan *interface_);
 void object_skeleton_set_sensor_value (ObjectSkeleton *object, SensorValue *interface_);
 void object_skeleton_set_sensor_threshold (ObjectSkeleton *object, SensorThreshold *interface_);

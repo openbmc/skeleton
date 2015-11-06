@@ -214,6 +214,22 @@ class SystemManager(dbus.service.Object):
 			if (gpio_num != -1):
 				r = [Openbmc.GPIO_DEV, gpio_num, gpio['direction']]
 		return r
+
+	@dbus.service.method(DBUS_NAME,
+		in_signature='s', out_signature='si')
+	def hwmonInit(self,name):
+		dbus_suffix = ""
+		poll_interval = 0
+		r = ['',0]
+		if (System.HWMON_CONFIG.has_key(name) == False):
+			# TODO: Error handling
+			print "ERROR: "+name+" not found in HWMON config table"
+		else:
+			
+			hwmon = System.HWMON_CONFIG[name]
+			print hwmon
+			r = [hwmon['dbus_suffix'], hwmon['poll_interval']]
+		return r
 		
 
 if __name__ == '__main__':

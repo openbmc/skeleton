@@ -148,12 +148,11 @@ APPS = {
 		'monitor_process' : True,
 		'process_name'    : 'chassis_control.py',
 	},
-	'fans' : {
+	'hwmon_barreleye' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name'    : 'fan.exe',
-		'args'            : [ 'fan0','fan1','fan2','fan3','fan4' ]
+		'process_name'    : 'hwmons_barreleye.exe',
 	}
 }
 
