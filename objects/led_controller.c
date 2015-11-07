@@ -10,11 +10,12 @@ static const gchar* dbus_name        = "org.openbmc.control.led";
 
 static GDBusObjectManagerServer *manager = NULL;
 
-#define  NUM_GPIO 2
+#define  NUM_GPIO 3
 
 GPIO led_gpio[NUM_GPIO] = { 
 	(GPIO){"IDENTIFY"},
-	(GPIO){"BMC_READY"}
+	(GPIO){"BMC_READY"},
+	(GPIO){"BEEP"}
 };
 
 
@@ -67,21 +68,30 @@ on_set_off       (Led          *led,
 	return TRUE;
 }
 
+int tmp=0;
 void init_led(Led* led, GPIO* mygpio)
 {
 	int rc = GPIO_OK;
+	int i=5;
+	tmp++;
 	do {
 		uint8_t val;
 		rc = gpio_open(mygpio);
 		if (rc != GPIO_OK) { break; }
 		rc = gpio_read(mygpio,&val);
 		if (rc != GPIO_OK) { break; }
+		led_set_state(led,"off");
 		if (val == 0) {
 			led_set_state(led,"on");
 		} else {
 			led_set_state(led,"off");
 		}
-	} while(0);
+	i--;
+	} while(i!=0);
+	
+if(tmp==3)
+	led_set_state(led,"off");
+
 	gpio_close(mygpio);
 	if (rc != GPIO_OK) {
 		g_print("ERROR led controller: GPIO error %s (rc=%d)\n",
