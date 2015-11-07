@@ -68,13 +68,14 @@ on_set_off       (Led          *led,
 	return TRUE;
 }
 
-int tmp=0;
+//int tmp=0;
 void init_led(Led* led, GPIO* mygpio)
 {
 	int rc = GPIO_OK;
 	int i=5;
-	tmp++;
+//	tmp++;
 	do {
+		sleep(2);
 		uint8_t val;
 		rc = gpio_open(mygpio);
 		if (rc != GPIO_OK) { break; }
@@ -89,8 +90,8 @@ void init_led(Led* led, GPIO* mygpio)
 	i--;
 	} while(i!=0);
 	
-if(tmp==3)
-	led_set_state(led,"off");
+//if(tmp==3)
+//	led_set_state(led,"off");
 
 	gpio_close(mygpio);
 	if (rc != GPIO_OK) {
