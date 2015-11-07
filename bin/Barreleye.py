@@ -6,6 +6,11 @@ FLASH_DOWNLOAD_PATH = "/tmp"
 GPIO_BASE = 320
 SYSTEM_NAME = "Barreleye"
 
+import sys
+import gobject
+import dbus
+import dbus.service
+import dbus.mainloop.glib
 
 ## System states
 ##   state can change to next state in 2 ways:
@@ -422,6 +427,15 @@ GPIO_CONFIG['SLOT1_PRESENT'] =         { 'gpio_pin': 'N4', 'direction': 'in' }
 GPIO_CONFIG['SLOT2_PRESENT'] =         { 'gpio_pin': 'N5', 'direction': 'in' }
 GPIO_CONFIG['MEZZ0_PRESENT'] =         { 'gpio_pin': 'O0', 'direction': 'in' }
 GPIO_CONFIG['MEZZ1_PRESENT'] =         { 'gpio_pin': 'O1', 'direction': 'in' }
+
+
+bus = dbus.SystemBus()
+
+for i in range(1,6):
+ print i
+ obj = bus.get_object("org.openbmc,sensors,hwmon","/org/openbmc/sensors/speed/fan"+str(i))
+ intf = dbus.Interface (obj,"org.openbmc.SensorValue")
+ intf.setValue(dbus.UInt32(255))
 
 def convertGpio(name):
 	name = name.upper()
