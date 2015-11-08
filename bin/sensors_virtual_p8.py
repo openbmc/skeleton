@@ -13,9 +13,10 @@ OBJ_PATH = '/org/openbmc/sensor/virtual/'
 
 class SensorValue(Openbmc.DbusProperties):
 	IFACE_NAME = 'org.openbmc.SensorValue'
-	def __init__(self):
+	def __init__(self,bus,name):
 		Openbmc.DbusProperties.__init__(self)
 		self.Set(SensorValue.IFACE_NAME,'units',"")
+		dbus.service.Object.__init__(self,bus,name)
 		self.ObjectAdded(name,SensorValue.IFACE_NAME)
 		
 	@dbus.service.method(IFACE_NAME,
@@ -51,16 +52,13 @@ class SensorValue(Openbmc.DbusProperties):
 
 class VirtualSensor(SensorValue):
 	def __init__(self,bus,name):
-		SensorValue.__init__(self)
-		dbus.service.Object.__init__(self,bus,name)
-		self.ObjectAdded(name,SensorValue.IFACE_NAME)
+		SensorValue.__init__(self,bus,name)
 
 		
 CONTROL_IFACE = 'org.openbmc.Control'
-class HostStatusSensor(SensorValue):
+class HostStatusSensor(VirtualSensor):
 	def __init__(self,bus,name):
-		SensorValue.__init__(self)
-		dbus.service.Object.__init__(self,bus,name)
+		VirtualSensor.__init__(self,bus,name)
 
 	##override setValue method
 	@dbus.service.method(SensorValue.IFACE_NAME,
@@ -75,10 +73,9 @@ class HostStatusSensor(SensorValue):
 		pass
 		
 CONTROL_IFACE = 'org.openbmc.Control'
-class BootProgressSensor(SensorValue):
+class BootProgressSensor(VirtualSensor):
 	def __init__(self,bus,name):
-		SensorValue.__init__(self)
-		dbus.service.Object.__init__(self,bus,name)
+		VirtualSensor.__init__(self,bus,name)
 
 	##override setValue method
 	@dbus.service.method(SensorValue.IFACE_NAME,
