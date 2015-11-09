@@ -5,16 +5,16 @@
 #include <string.h>
 #include "gpio.h"
 
-#define NUM_SLOTS 4
+#define NUM_SLOTS 8
 GPIO slots[NUM_SLOTS] = {
-//	{ "SLOT0_RISER_PRESENT" },
-//	{ "SLOT1_RISER_PRESENT" },
-//	{ "SLOT2_RISER_PRESENT" },
+	{ "SLOT0_RISER_PRESENT" },
+	{ "SLOT1_RISER_PRESENT" },
+	{ "SLOT2_RISER_PRESENT" },
 	{ "SLOT0_PRESENT" },
 	{ "SLOT1_PRESENT" },
 	{ "SLOT2_PRESENT" },
 	{ "MEZZ0_PRESENT" },
-//	{ "MEZZ1_PRESENT" },
+	{ "MEZZ1_PRESENT" },
 };
 
 typedef struct {
