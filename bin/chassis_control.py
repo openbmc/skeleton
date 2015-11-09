@@ -52,7 +52,7 @@ class ChassisControlObject(Openbmc.DbusProperties):
 					dbus_interface = "org.openbmc.Button", signal_name = "Released", 
 					path="/org/openbmc/buttons/power0" )
 		bus.add_signal_receiver(self.reset_button_signal_handler, 
-					dbus_interface = "org.openbmc.Button", signal_name = "Pressed_Long", 
+					dbus_interface = "org.openbmc.Button", signal_name = "PressedLong", 
 					path="/org/openbmc/buttons/power0" )
 
     		bus.add_signal_receiver(self.host_watchdog_signal_handler, 
