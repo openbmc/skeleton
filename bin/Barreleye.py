@@ -64,7 +64,7 @@ APPS = {
 		'system_state'    : 'BASE_APPS',
 		'start_process'   : True,
 		'monitor_process' : False,
-		'process_name'    : 'startup_hacks.sh',
+		'process_name'    : 'startup_barreleye.sh',
 	},
 	'bmc_init' : {
 		'system_state'    : 'BMC_INIT',
