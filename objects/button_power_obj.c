@@ -106,7 +106,7 @@ on_bus_acquired (GDBusConnection *connection,
                    G_CALLBACK (on_is_on),
                    NULL); /* user_data */
 	g_signal_connect (button,
-                    "handle-sim-button-press",
+                    "handle-sim-press",
                     G_CALLBACK (on_button_press),
                     NULL); /* user_data */
 
