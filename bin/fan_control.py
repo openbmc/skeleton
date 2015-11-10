@@ -14,12 +14,12 @@ IFACE_NAME = 'org.openbmc.control.Fans'
 
 FAN_BUS = 'org.openbmc.sensors.hwmon'
 FAN_OBJS = [
+	'/org/openbmc/sensors/speed/fan0',
 	'/org/openbmc/sensors/speed/fan1',
 	'/org/openbmc/sensors/speed/fan2',
 	'/org/openbmc/sensors/speed/fan3',
 	'/org/openbmc/sensors/speed/fan4',
 	'/org/openbmc/sensors/speed/fan5',
-	'/org/openbmc/sensors/speed/fan6',
 ]
 FAN_IFACE = 'org.openbmc.SensorValue'
 

@@ -26,7 +26,7 @@ SYSTEM_STATES = [
 EXIT_STATE_DEPEND = {
 	'BASE_APPS' : {
 		'/org/openbmc/sensors': 0,
-		'/org/openbmc/sensors/speed/fan6': 0,
+		'/org/openbmc/sensors/speed/fan5': 0,
 	},
 	'BMC_STARTING' : {
 		'/org/openbmc/control/chassis0': 0,
@@ -68,7 +68,7 @@ ENTER_STATE_CALLBACK = {
 APPS = {
 	'startup_hacks' : {
 		'system_state'    : 'BASE_APPS',
-		'start_process'   : True,
+		'start_process'   : False,
 		'monitor_process' : False,
 		'process_name'    : 'startup_barreleye.sh',
 	},
@@ -162,8 +162,8 @@ APPS = {
 	},
 	'hwmon_barreleye' : {
 		'system_state'    : 'BASE_APPS',
-		'start_process'   : True,
-		'monitor_process' : True,
+		'start_process'   : False,
+		'monitor_process' : False,
 		'process_name'    : 'hwmons_barreleye.exe',
 	}
 }

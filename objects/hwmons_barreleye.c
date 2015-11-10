@@ -87,7 +87,7 @@ static gboolean poll_hwmon(gpointer user_data)
 			g_print("ERROR: Unable to read value: %s\n",filename);
 		} else {
 			guint32 value = atoi(buf);
-			g_print("%s = %d\n",filename,value);
+			//g_print("%s = %d\n",filename,value);
 			GVariant* v = NEW_VARIANT_U(value);
 			sensor_value_set_value(sensor,v);
 		}
