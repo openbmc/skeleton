@@ -26,6 +26,7 @@ SYSTEM_STATES = [
 EXIT_STATE_DEPEND = {
 	'BASE_APPS' : {
 		'/org/openbmc/sensors': 0,
+		'/org/openbmc/sensors/speed/fan6': 0,
 	},
 	'BMC_STARTING' : {
 		'/org/openbmc/control/chassis0': 0,
@@ -43,6 +44,11 @@ ENTER_STATE_CALLBACK = {
 			'bus_name'    : 'org.openbmc.control.Host',
 			'obj_name'    : '/org/openbmc/control/host0',
 			'interface_name' : 'org.openbmc.control.Host',
+		},
+		'setMax' : {
+			'bus_name'    : 'org.openbmc.control.Fans',
+			'obj_name'    : '/org/openbmc/control/fans',
+			'interface_name' : 'org.openbmc.control.Fans',
 		}
 	},
 	'BMC_READY' : {
@@ -84,6 +90,12 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : False,
 		'process_name'    : 'pcie_slot_present.exe',
+	},
+	'fan_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'fan_control.py',
 	},
 	'virtual_sensors' : {
 		'system_state'    : 'BMC_STARTING',
@@ -149,7 +161,7 @@ APPS = {
 		'process_name'    : 'chassis_control.py',
 	},
 	'hwmon_barreleye' : {
-		'system_state'    : 'BMC_STARTING',
+		'system_state'    : 'BASE_APPS',
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'hwmons_barreleye.exe',
