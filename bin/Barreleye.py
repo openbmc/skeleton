@@ -26,7 +26,6 @@ SYSTEM_STATES = [
 EXIT_STATE_DEPEND = {
 	'BASE_APPS' : {
 		'/org/openbmc/sensors': 0,
-		'/org/openbmc/sensors/speed/fan5': 0,
 	},
 	'BMC_STARTING' : {
 		'/org/openbmc/control/chassis0': 0,
@@ -34,6 +33,7 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/control/led/BMC_READY' : 0,
 		'/org/openbmc/control/host0' : 0,
 		'/org/openbmc/control/flash/bios' : 0,
+		'/org/openbmc/sensors/speed/fan5': 0,
 	}
 }
 
@@ -70,7 +70,7 @@ APPS = {
 		'system_state'    : 'BASE_APPS',
 		'start_process'   : False,
 		'monitor_process' : False,
-		'process_name'    : 'startup_barreleye.sh',
+		'process_name'    : 'startup_hacks.sh',
 	},
 	'bmc_init' : {
 		'system_state'    : 'BMC_INIT',
