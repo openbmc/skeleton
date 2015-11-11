@@ -107,16 +107,20 @@ int init_i2c_driver(int i2c_bus, const char* device, int address,bool delete)
 	char dev[255];
 	g_print("Initing: device = %s, address = %02x\n",device,address);
 	if (!delete) {
-		sprintf(dev,"%s/%d/new_device",i2c_dev,i2c_bus);
+		sprintf(dev,"%s/i2c-%d/new_device",i2c_dev,i2c_bus);
 	} else {
-		sprintf(dev,"%s/%d/delete_device",i2c_dev,i2c_bus);
+		sprintf(dev,"%s/i2c-%d/delete_device",i2c_dev,i2c_bus);
 	}
 	int fd = open(dev, O_WRONLY);
 	if (fd == -1) {
 		g_print("ERROR control_bmc: Unable to open device %s\n",dev);
 		return 1;
 	}
-	sprintf(dev,"%s %02x",device,address);
+	if (!delete) {
+		sprintf(dev,"%s 0x%02x",device,address);
+	} else {
+		sprintf(dev,"0x%02x",address);
+	}
 	int rc = write(fd,dev,strlen(dev));
 	close(fd);
 	if (rc != strlen(dev)) {
