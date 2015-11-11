@@ -14,6 +14,7 @@
 static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* instance_name = "bmc0";
 static const gchar* dbus_name        = "org.openbmc.control.Bmc";
+static const gchar* i2c_dev = "/sys/bus/i2c/devices";
 
 //this probably should come from some global SOC config
 
@@ -101,6 +102,28 @@ void reg_init()
 	close(mem_fd);
 }
 
+int init_i2c_driver(int i2c_bus, const char* device, int address,bool delete)
+{
+	char dev[255];
+	if (!delete) {
+		sprintf(dev,"%s/%d/new_device",i2c_dev,i2c_bus);
+	} else {
+		sprintf(dev,"%s/%d/delete_device",i2c_dev,i2c_bus);
+	}
+	int fd = open(dev, O_WRONLY);
+	if (fd == -1) {
+		return 1;
+	}
+	sprintf(dev,"%s %02x",device,address);
+	int rc = write(fd,dev,strlen(dev));
+	close(fd);
+	if (rc != strlen(dev)) {
+		return 2;
+	}
+	return 0;
+}
+
+
 static gboolean
 on_init (Control          *control,
          GDBusMethodInvocation  *invocation,
@@ -120,6 +143,14 @@ gboolean go(gpointer user_data)
 	Control* control = object_get_control((Object*)cmd->user_data);
 	#ifdef __arm__
 	reg_init();
+	init_i2c_driver(6,"nct7904",0x2d,false);
+	init_i2c_driver(6,"nct7904",0x2d,true);
+	init_i2c_driver(6,"nct7904",0x2d,false);
+
+	init_i2c_driver(6,"nct7904",0x2e,false);
+	init_i2c_driver(6,"nct7904",0x2e,true);
+	init_i2c_driver(6,"nct7904",0x2e,false);
+
 	#endif
 	control_emit_goto_system_state(control,"BMC_STARTING");
 	
