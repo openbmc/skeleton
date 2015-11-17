@@ -12,9 +12,11 @@ static const gchar* dbus_name        = "org.openbmc.sensors.hwmon";
 static GDBusObjectManagerServer *manager = NULL;
 
 typedef struct {
-  gchar* filename;
-  gchar* name;
+  const gchar* filename;
+  const gchar* name;
   int poll_interval;
+  const gchar* units;
+  int scale;
   int fd;
 } HWMON;
 
@@ -23,13 +25,13 @@ typedef struct {
 // TODO: Don't hardcode
 //Hardcoded for barreleye
 HWMON hwmons[NUM_HWMONS] = { 
-	(HWMON){"/sys/class/hwmon/hwmon0/temp1_input","temperature/ambient",3000},
-	(HWMON){"/sys/class/hwmon/hwmon1/pwm1","speed/fan0",30000},
-	(HWMON){"/sys/class/hwmon/hwmon1/pwm2","speed/fan1",30000},
-	(HWMON){"/sys/class/hwmon/hwmon1/pwm3","speed/fan2",30000},
-	(HWMON){"/sys/class/hwmon/hwmon2/pwm1","speed/fan3",30000},
-	(HWMON){"/sys/class/hwmon/hwmon2/pwm2","speed/fan4",30000},
-	(HWMON){"/sys/class/hwmon/hwmon2/pwm3","speed/fan5",30000},
+	(HWMON){"/sys/class/hwmon/hwmon0/temp1_input","temperature/ambient",3000,"C",1000},
+	(HWMON){"/sys/class/hwmon/hwmon1/pwm1","speed/fan0",30000,"",1},
+	(HWMON){"/sys/class/hwmon/hwmon1/pwm2","speed/fan1",30000,"",1},
+	(HWMON){"/sys/class/hwmon/hwmon1/pwm3","speed/fan2",30000,"",1},
+	(HWMON){"/sys/class/hwmon/hwmon2/pwm1","speed/fan3",30000,"",1},
+	(HWMON){"/sys/class/hwmon/hwmon2/pwm2","speed/fan4",30000,"",1},
+	(HWMON){"/sys/class/hwmon/hwmon2/pwm3","speed/fan5",30000,"",1},
 };
 
 // Gets the gpio device path from gpio manager object
@@ -86,10 +88,33 @@ static gboolean poll_hwmon(gpointer user_data)
 		{
 			g_print("ERROR: Unable to read value: %s\n",filename);
 		} else {
-			guint32 value = atoi(buf);
-			//g_print("%s = %d\n",filename,value);
+			guint32 scale = hwmon_get_scale(hwmon);
+			if (scale == 0)
+			{
+				g_print("ERROR: Invalid scale value of 0\n");
+				scale = 1;
+				
+			}
+			guint32 value = atoi(buf)/scale;
 			GVariant* v = NEW_VARIANT_U(value);
-			sensor_value_set_value(sensor,v);
+			GVariant* old_value = sensor_value_get_value(sensor);
+			bool do_set = false;
+			if (old_value == NULL)
+			{
+				do_set = true;
+			}
+			else
+			{
+				if (GET_VARIANT_U(old_value) != value) { do_set = true; }
+			}
+			if (do_set)
+			{
+				g_print("Sensor changed: %s,%d\n",filename,value);
+				GVariant* v = NEW_VARIANT_U(value);
+				const gchar* units = sensor_value_get_units(sensor);
+				sensor_value_set_value(sensor,v);
+				sensor_value_emit_changed(sensor,v,units);
+			}
 		}
 		close(fd);
 	} else {
@@ -139,8 +164,6 @@ on_bus_acquired (GDBusConnection *connection,
 	int i = 0;
 	for (i=0;i<NUM_HWMONS;i++)
   	{
-		//hwmon_init(connection,&hwmons[i]);
-
 		gchar *s;
 		s = g_strdup_printf ("%s/%s",dbus_object_path,hwmons[i].name);
 		object = object_skeleton_new (s);
@@ -159,6 +182,8 @@ on_bus_acquired (GDBusConnection *connection,
 		g_object_unref (mapper);
 
 		hwmon_set_sysfs_path(hwmon,hwmons[i].filename);
+		hwmon_set_scale(hwmon,hwmons[i].scale);
+		sensor_value_set_units(sensor,hwmons[i].units);
 
 		//define method callbacks here
 		g_signal_connect (sensor,
