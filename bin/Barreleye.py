@@ -15,6 +15,7 @@ SYSTEM_STATES = [
 	'BASE_APPS',
 	'BMC_INIT',
 	'BMC_STARTING',
+	'BMC_STARTING2',
 	'BMC_READY',
 	'HOST_POWERING_ON',
 	'HOST_POWERED_ON',
@@ -34,7 +35,10 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/control/host0' : 0,
 		'/org/openbmc/control/flash/bios' : 0,
 		'/org/openbmc/sensors/speed/fan5': 0,
-	}
+	},
+	'BMC_STARTING2' : {
+		'/org/openbmc/control/fans' : 0,	
+	},
 }
 
 ## method will be called when state is entered
@@ -68,7 +72,7 @@ ENTER_STATE_CALLBACK = {
 APPS = {
 	'startup_hacks' : {
 		'system_state'    : 'BASE_APPS',
-		'start_process'   : False,
+		'start_process'   : True,
 		'monitor_process' : False,
 		'process_name'    : 'startup_hacks.sh',
 	},
@@ -92,7 +96,7 @@ APPS = {
 		'process_name'    : 'pcie_slot_present.exe',
 	},
 	'fan_control' : {
-		'system_state'    : 'BMC_STARTING',
+		'system_state'    : 'BMC_STARTING2',
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'fan_control.py',
@@ -161,9 +165,9 @@ APPS = {
 		'process_name'    : 'chassis_control.py',
 	},
 	'hwmon_barreleye' : {
-		'system_state'    : 'BASE_APPS',
-		'start_process'   : False,
-		'monitor_process' : False,
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
 		'process_name'    : 'hwmons_barreleye.exe',
 	}
 }
@@ -266,6 +270,7 @@ FRU_INSTANCES = {
 	'<inventory_root>/system/chassis/io_board/pcie_slot1_riser' : { 'fru_type' : 'PCIE_RISER', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_slot0' : { 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_slot1' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/io_board/pcie_slot2' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_mezz0' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_mezz1' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 
@@ -367,6 +372,7 @@ ID_LOOKUP = {
 		'PRODUCT_43'   : '<inventory_root>/system/chassis/motherboard/dimm31',
 	},
 	'SENSOR' : {
+                0x35 : '<inventory_root>/system',
                 0x34 : '<inventory_root>/system/chassis/motherboard',
 		0x0c : '<inventory_root>/system/chassis/motherboard/cpu0',
                 0x0e : '<inventory_root>/system/chassis/motherboard/cpu1',
@@ -441,14 +447,14 @@ ID_LOOKUP = {
 		0x32 : '/org/openbmc/sensor/virtual/OperatingSystemStatus',
 	},
 	'GPIO_PRESENT' : {
-		'SLOT0_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_riser_slot0', 
-		'SLOT1_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_riser_slot1', 
-		'SLOT2_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_riser_slot2', 
+		'SLOT0_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot0_riser', 
+		'SLOT1_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot1_riser', 
+		'SLOT2_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot2_riser', 
 		'SLOT0_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot0', 
 		'SLOT1_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot1', 
 		'SLOT2_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot2', 
-		'MEZZ0_PRESENT' : '<inventory_root>/system/chassis/io_board/mezz0', 
-		'MEZZ1_PRESENT' : '<inventory_root>/system/chassis/io_board/mezz1', 
+		'MEZZ0_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_mezz0', 
+		'MEZZ1_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_mezz1', 
 	}
 }
 
