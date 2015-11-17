@@ -35,8 +35,10 @@ class FanControl(Openbmc.DbusProperties):
 		for fan in FAN_OBJS:
 			print "Initializing fan: "+fan
 			obj = bus.get_object(FAN_BUS,fan)
-			fan_intf.append(dbus.Interface(obj,FAN_IFACE))
-				
+			self.fan_intf.append(dbus.Interface(obj,FAN_IFACE))
+			
+	@dbus.service.method(DBUS_NAME,
+		in_signature='', out_signature='')
 	def setMax(self):
 		print "Setting fans to max"
 		for intf in self.fan_intf:
