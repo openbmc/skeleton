@@ -73,8 +73,8 @@ void reg_init()
 	devmem(bmcreg+0x00,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x08,0x000000c1);  //Disable Parity, 1 stop bit, 8 bits
-	bmcreg = memmap(mem_fd,COM_BASE);
-	devmem(bmcreg+0x9C,0x08060000);  //Set UART routing
+	//bmcreg = memmap(mem_fd,COM_BASE);
+	//devmem(bmcreg+0x9C,0x08060000);  //Set UART routing
 
 	bmcreg = memmap(mem_fd,SCU_BASE);
 	devmem(bmcreg+0x00,0x9f82fce7);
