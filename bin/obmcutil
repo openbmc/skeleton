@@ -9,14 +9,23 @@ import dbus.mainloop.glib
 import xml.etree.ElementTree as ET
 import json
 
-def isDict(data):
-	if (str(type(data)) == "<type \'dict\'>"):
-		return True
-	return False
-		
+
+def fix_byte(it,key,parent):   
+    if (isinstance(it,dbus.Array)):
+        for i in range(0,len(it)): 
+            traverse_it(it[i],i,it)
+    elif (isinstance(it, dict)):   
+        for key in it.keys():      
+            traverse_it(it[key],key,it)
+    elif (isinstance(it,dbus.Byte)):   
+        if (key != None):              
+                parent[key] = int(it)  
+    else:                              
+        pass                           
+                     
 
 def printDict(name,data):
-	if (isDict(data)):
+    	if (isinstance(data, dict)):   
 		print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 		print name
 		for p in data:
@@ -163,6 +172,7 @@ else:
 			methd(tmp)
 		else:
 			data = methd(*sys.argv)
+			fix_byte(data)		
 			pydata = json.loads(json.dumps(data))
 			printDict("",pydata)
 	except Exception as e:
