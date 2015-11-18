@@ -119,11 +119,11 @@ class ChassisControlObject(Openbmc.DbusProperties):
 		in_signature='', out_signature='')
 	def reboot(self):
 		print "Rebooting"
-		if state == POWER_OFF:
+		if self.getPowerState() == POWER_OFF:
 			self.powerOn();
 		else:
 			self.Set(DBUS_NAME,"reboot",1)
-			intf.softPowerOff()
+			self.softPowerOff()
 		return None
 
 	@dbus.service.method(DBUS_NAME,
