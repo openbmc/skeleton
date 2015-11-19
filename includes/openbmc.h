@@ -24,6 +24,11 @@ static inline void devmem(void* addr, uint32_t val)
         asm volatile("" : : : "memory");
         *(volatile uint32_t *)addr = val;
 }
+static inline uint32_t devmem_read(void* addr)
+{
+        asm volatile("" : : : "memory");
+	return *(volatile uint32_t *)addr;
+}
 //static inline devmem(uint32_t reg, uint32_t val)
 //{
 //	printf("devmem 0x%08x = 0x%08x\n",reg,val);
@@ -33,8 +38,12 @@ static inline void devmem(void* addr, uint32_t val)
 #else
 static inline devmem(uint32_t val, uint32_t reg)
 {
-
 }
+static inline uint32_t devmem_read(void* addr)
+{
+	return 0;
+}
+
 #endif
 
 typedef struct {

@@ -73,13 +73,19 @@ void reg_init()
 	devmem(bmcreg+0x00,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x08,0x000000c1);  //Disable Parity, 1 stop bit, 8 bits
-	//bmcreg = memmap(mem_fd,COM_BASE);
-	//devmem(bmcreg+0x9C,0x08060000);  //Set UART routing
+	bmcreg = memmap(mem_fd,COM_BASE);
+	devmem(bmcreg+0x9C,0x00000000);  //Set UART routing
 
 	bmcreg = memmap(mem_fd,SCU_BASE);
-	devmem(bmcreg+0x00,0x9f82fce7);
+	devmem(bmcreg+0x00,0x9e82fce7);
+	//devmem(bmcreg+0x00,0x9f82fce7); // B2?
 	devmem(bmcreg+0x04,0x0370e677);
-	devmem(bmcreg+0x20,0xcfc8f7ff);
+	
+	// do not modify state of power pin, otherwise 
+	// if this is a reboot, host will shutdown
+	uint32_t reg_20 = devmem_read(bmcreg+0x20);
+	reg_20 = reg_20 & 0x00000002;	
+	devmem(bmcreg+0x20,0xcfc8f7fd | reg_20);
 	devmem(bmcreg+0x24,0xc738f20a);
 	devmem(bmcreg+0x80,0x0031ffaf);
 
@@ -150,6 +156,7 @@ gboolean go(gpointer user_data)
 	Control* control = object_get_control((Object*)cmd->user_data);
 	#ifdef __arm__
 	reg_init();
+
 	init_i2c_driver(6,"nct7904",0x2d,false);
 	init_i2c_driver(6,"nct7904",0x2d,true);
 	init_i2c_driver(6,"nct7904",0x2d,false);

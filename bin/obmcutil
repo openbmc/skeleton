@@ -13,10 +13,10 @@ import json
 def fix_byte(it,key,parent):   
     if (isinstance(it,dbus.Array)):
         for i in range(0,len(it)): 
-            traverse_it(it[i],i,it)
+            fix_byte(it[i],i,it)
     elif (isinstance(it, dict)):   
         for key in it.keys():      
-            traverse_it(it[key],key,it)
+            fix_byte(it[key],key,it)
     elif (isinstance(it,dbus.Byte)):   
         if (key != None):              
                 parent[key] = int(it)  
@@ -28,7 +28,7 @@ def printDict(name,data):
     	if (isinstance(data, dict)):   
 		print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 		print name
-		for p in data:
+		for p in sorted(data.keys()):
 			printDict(p,data[p])
 	else:
 		print name+" = "+str(data)
@@ -82,7 +82,7 @@ dbus_objects = {
 		'interface_name' : 'org.openbmc.control.Chassis',
 		'method' : 'powerOff',
 	},
-	'getsystemstate' : { 
+	'state' : { 
 		'bus_name' : 'org.openbmc.managers.System',
 		'object_name' : '/org/openbmc/managers/System',
 		'interface_name' : 'org.openbmc.managers.System',
@@ -93,15 +93,26 @@ dbus_objects = {
 		'object_name' : '/org/openbmc/sensor/virtual/BootProgress',
 		'interface_name' : 'org.openbmc.SensorValue'
 	},
-	'updatebios' : {
+	'biosupdate' : {
 		'bus_name' : 'org.openbmc.control.Flash',
 		'object_name' : '/org/openbmc/control/flash/bios',
 		'interface_name' : 'org.openbmc.Flash',
 		'method' : 'updateViaTftp',
 	},
-	'bios' : {
+	'biosflash' : {
 		'bus_name' : 'org.openbmc.control.Flash',
 		'object_name' : '/org/openbmc/control/flash/bios',
+		'interface_name' : 'org.openbmc.Flash',
+	},
+	'bmcupdate' : {
+		'bus_name' : 'org.openbmc.control.Flash',
+		'object_name' : '/org/openbmc/control/flash/bmc',
+		'interface_name' : 'org.openbmc.Flash',
+		'method' : 'updateViaTftp',
+	},
+	'bmcflash' : {
+		'bus_name' : 'org.openbmc.control.Flash',
+		'object_name' : '/org/openbmc/control/flash/bmc',
 		'interface_name' : 'org.openbmc.Flash',
 	},
 	'getinventory' : {
@@ -116,23 +127,16 @@ dbus_objects = {
 		'interface_name' : 'org.openbmc.Object.Enumerate',
 		'method' : 'enumerate'
 	},
-	'inventorytest' : {
-		'bus_name' : 'org.openbmc.managers.Inventory',
-		'object_name' : '/org/openbmc/inventory/system/chassis/motherboard/cpu0',
-		'interface_name' : 'org.openbmc.InventoryItem',
-		'method' : 'update'
-	},
-
 }
 
 bus = dbus.SystemBus()
 
 
-if (len(sys.argv) == 1):
+if (len(sys.argv) == 1 or sys.argv[1] == "-h"):
 	print "Usage: obmcutil [command] [[method] [*args]]"
 	print "\tIf [method] is blank, then all properties are printed\n"
 	print "Available commands:"
-	for name in dbus_objects:
+	for name in sorted(dbus_objects.keys()):
 		m = ""
 		if (dbus_objects[name].has_key('method') == True):
 			m=" ("+dbus_objects[name]['interface_name']+"->"+dbus_objects[name]['method']+")"
@@ -165,16 +169,10 @@ if (method_name == ""):
 else:
 	methd = obj.get_dbus_method(method_name,intf_name)
 	try:
-		## too hard to do dicts from command line
-		## hack just to test fru update function
-		if (method_name == "update"):
-			tmp = { 'manufacturer' : sys.argv[0], 'part_num' : '3Nxxxx' }
-			methd(tmp)
-		else:
-			data = methd(*sys.argv)
-			fix_byte(data)		
-			pydata = json.loads(json.dumps(data))
-			printDict("",pydata)
+		data = methd(*sys.argv)
+		fix_byte(data,None,None)		
+		pydata = json.loads(json.dumps(data))
+		printDict("",pydata)
 	except Exception as e:
 		print e
 		r = introspect(bus_name,obj_path,intf_name,method_name)
