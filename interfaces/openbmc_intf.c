@@ -1011,16 +1011,16 @@ static const _ExtendedGDBusPropertyInfo _hwmon_property_info_sysfs_path =
   FALSE
 };
 
-static const _ExtendedGDBusPropertyInfo _hwmon_property_info_value =
+static const _ExtendedGDBusPropertyInfo _hwmon_property_info_scale =
 {
   {
     -1,
-    (gchar *) "value",
-    (gchar *) "v",
+    (gchar *) "scale",
+    (gchar *) "i",
     G_DBUS_PROPERTY_INFO_FLAGS_READABLE,
     NULL
   },
-  "value",
+  "scale",
   FALSE
 };
 
@@ -1028,7 +1028,7 @@ static const _ExtendedGDBusPropertyInfo * const _hwmon_property_info_pointers[] 
 {
   &_hwmon_property_info_poll_interval,
   &_hwmon_property_info_sysfs_path,
-  &_hwmon_property_info_value,
+  &_hwmon_property_info_scale,
   NULL
 };
 
@@ -1074,7 +1074,7 @@ hwmon_override_properties (GObjectClass *klass, guint property_id_begin)
 {
   g_object_class_override_property (klass, property_id_begin++, "poll-interval");
   g_object_class_override_property (klass, property_id_begin++, "sysfs-path");
-  g_object_class_override_property (klass, property_id_begin++, "value");
+  g_object_class_override_property (klass, property_id_begin++, "scale");
   return property_id_begin - 1;
 }
 
@@ -1090,8 +1090,8 @@ hwmon_override_properties (GObjectClass *klass, guint property_id_begin)
  * HwmonIface:
  * @parent_iface: The parent interface.
  * @get_poll_interval: Getter for the #Hwmon:poll-interval property.
+ * @get_scale: Getter for the #Hwmon:scale property.
  * @get_sysfs_path: Getter for the #Hwmon:sysfs-path property.
- * @get_value: Getter for the #Hwmon:value property.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-Hwmon.top_of_page">org.openbmc.Hwmon</link>.
  */
@@ -1122,14 +1122,14 @@ hwmon_default_init (HwmonIface *iface)
   g_object_interface_install_property (iface,
     g_param_spec_string ("sysfs-path", "sysfs_path", "sysfs_path", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * Hwmon:value:
+   * Hwmon:scale:
    *
-   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Hwmon.value">"value"</link>.
+   * Represents the D-Bus property <link linkend="gdbus-property-org-openbmc-Hwmon.scale">"scale"</link>.
    *
    * Since the D-Bus property for this #GObject property is readable but not writable, it is meaningful to read from it on both the client- and service-side. It is only meaningful, however, to write to it on the service-side.
    */
   g_object_interface_install_property (iface,
-    g_param_spec_variant ("value", "value", "value", G_VARIANT_TYPE ("v"), NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+    g_param_spec_int ("scale", "scale", "scale", G_MININT32, G_MAXINT32, 0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 /**
@@ -1215,54 +1215,34 @@ hwmon_set_sysfs_path (Hwmon *object, const gchar *value)
 }
 
 /**
- * hwmon_get_value: (skip)
+ * hwmon_get_scale: (skip)
  * @object: A #Hwmon.
  *
- * Gets the value of the <link linkend="gdbus-property-org-openbmc-Hwmon.value">"value"</link> D-Bus property.
+ * Gets the value of the <link linkend="gdbus-property-org-openbmc-Hwmon.scale">"scale"</link> D-Bus property.
  *
  * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
  *
- * <warning>The returned value is only valid until the property changes so on the client-side it is only safe to use this function on the thread where @object was constructed. Use hwmon_dup_value() if on another thread.</warning>
- *
- * Returns: (transfer none): The property value or %NULL if the property is not set. Do not free the returned value, it belongs to @object.
+ * Returns: The property value.
  */
-GVariant *
-hwmon_get_value (Hwmon *object)
+gint 
+hwmon_get_scale (Hwmon *object)
 {
-  return HWMON_GET_IFACE (object)->get_value (object);
+  return HWMON_GET_IFACE (object)->get_scale (object);
 }
 
 /**
- * hwmon_dup_value: (skip)
- * @object: A #Hwmon.
- *
- * Gets a copy of the <link linkend="gdbus-property-org-openbmc-Hwmon.value">"value"</link> D-Bus property.
- *
- * Since this D-Bus property is readable, it is meaningful to use this function on both the client- and service-side.
- *
- * Returns: (transfer full): The property value or %NULL if the property is not set. The returned value should be freed with g_variant_unref().
- */
-GVariant *
-hwmon_dup_value (Hwmon *object)
-{
-  GVariant *value;
-  g_object_get (G_OBJECT (object), "value", &value, NULL);
-  return value;
-}
-
-/**
- * hwmon_set_value: (skip)
+ * hwmon_set_scale: (skip)
  * @object: A #Hwmon.
  * @value: The value to set.
  *
- * Sets the <link linkend="gdbus-property-org-openbmc-Hwmon.value">"value"</link> D-Bus property to @value.
+ * Sets the <link linkend="gdbus-property-org-openbmc-Hwmon.scale">"scale"</link> D-Bus property to @value.
  *
  * Since this D-Bus property is not writable, it is only meaningful to use this function on the service-side.
  */
 void
-hwmon_set_value (Hwmon *object, GVariant *value)
+hwmon_set_scale (Hwmon *object, gint value)
 {
-  g_object_set (G_OBJECT (object), "value", value, NULL);
+  g_object_set (G_OBJECT (object), "scale", value, NULL);
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1472,16 +1452,18 @@ hwmon_proxy_get_sysfs_path (Hwmon *object)
   return value;
 }
 
-static GVariant *
-hwmon_proxy_get_value (Hwmon *object)
+static gint 
+hwmon_proxy_get_scale (Hwmon *object)
 {
   HwmonProxy *proxy = HWMON_PROXY (object);
   GVariant *variant;
-  GVariant *value = NULL;
-  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "value");
-  value = variant;
+  gint value = 0;
+  variant = g_dbus_proxy_get_cached_property (G_DBUS_PROXY (proxy), "scale");
   if (variant != NULL)
-    g_variant_unref (variant);
+    {
+      value = g_variant_get_int32 (variant);
+      g_variant_unref (variant);
+    }
   return value;
 }
 
@@ -1524,7 +1506,7 @@ hwmon_proxy_iface_init (HwmonIface *iface)
 {
   iface->get_poll_interval = hwmon_proxy_get_poll_interval;
   iface->get_sysfs_path = hwmon_proxy_get_sysfs_path;
-  iface->get_value = hwmon_proxy_get_value;
+  iface->get_scale = hwmon_proxy_get_scale;
 }
 
 /**
@@ -2114,7 +2096,7 @@ hwmon_skeleton_init (HwmonSkeleton *skeleton)
   skeleton->priv->properties = g_new0 (GValue, 3);
   g_value_init (&skeleton->priv->properties[0], G_TYPE_INT);
   g_value_init (&skeleton->priv->properties[1], G_TYPE_STRING);
-  g_value_init (&skeleton->priv->properties[2], G_TYPE_VARIANT);
+  g_value_init (&skeleton->priv->properties[2], G_TYPE_INT);
 }
 
 static gint 
@@ -2139,13 +2121,13 @@ hwmon_skeleton_get_sysfs_path (Hwmon *object)
   return value;
 }
 
-static GVariant *
-hwmon_skeleton_get_value (Hwmon *object)
+static gint 
+hwmon_skeleton_get_scale (Hwmon *object)
 {
   HwmonSkeleton *skeleton = HWMON_SKELETON (object);
-  GVariant *value;
+  gint value;
   g_mutex_lock (&skeleton->priv->lock);
-  value = g_value_get_variant (&(skeleton->priv->properties[2]));
+  value = g_value_get_int (&(skeleton->priv->properties[2]));
   g_mutex_unlock (&skeleton->priv->lock);
   return value;
 }
@@ -2181,7 +2163,7 @@ hwmon_skeleton_iface_init (HwmonIface *iface)
 {
   iface->get_poll_interval = hwmon_skeleton_get_poll_interval;
   iface->get_sysfs_path = hwmon_skeleton_get_sysfs_path;
-  iface->get_value = hwmon_skeleton_get_value;
+  iface->get_scale = hwmon_skeleton_get_scale;
 }
 
 /**

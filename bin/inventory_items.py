@@ -51,9 +51,8 @@ class InventoryItem(Openbmc.DbusProperties):
 		
 		## this will load properties from cache
 		PropertyCacher.load(name,INTF_NAME,self.properties)
-		data = {'is_fru': is_fru, 'fru_type': fru_type, 'present': 'Inactive', 'fault': 'None'}
+		data = {'is_fru': is_fru, 'fru_type': fru_type, 'present': 'Inactive', 'fault': 'None', 'version': 'None' }
 		self.SetMultiple(INTF_NAME,data)
-		self.ObjectAdded(name,INTF_NAME)		
 		self.ObjectAdded(name,INTF_NAME)		
 		
 		
@@ -74,6 +73,17 @@ class InventoryItem(Openbmc.DbusProperties):
 		self.Set(INTF_NAME,'fault',fault)
 
 
+def getVersion():
+	version = "Error"
+	with open('/etc/os-release', 'r') as f:
+		for line in f:
+			p = line.rstrip('\n')
+			parts = line.rstrip('\n').split('=')
+			if (parts[0] == "BUILD_ID"):
+				version = parts[1]
+	return version
+
+
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = Openbmc.getDBus()
@@ -85,7 +95,13 @@ if __name__ == '__main__':
 	obj_path=f.replace("<inventory_root>",System.INVENTORY_ROOT)
     	obj = InventoryItem(bus,obj_path,FRUS[f]['is_fru'],FRUS[f]['fru_type'])
 	obj_parent.addItem(obj)
-	
+
+    	## TODO:  this is a hack to update bmc inventory item with version
+    	## should be done by flash object
+	if (FRUS[f]['fru_type'] == "BMC"):
+		version = getVersion()
+		obj.update({'version': version})
+
     print "Running Inventory Manager"
     mainloop.run()
 

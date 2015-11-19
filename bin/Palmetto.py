@@ -81,7 +81,7 @@ APPS = {
 	},
 	'pcie_present' : {
 		'system_state'    : 'HOST_POWERED_ON',
-		'start_process'   : True,
+		'start_process'   : False,
 		'monitor_process' : False,
 		'process_name'    : 'pcie_slot_present.exe',
 	},

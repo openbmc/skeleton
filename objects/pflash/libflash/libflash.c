@@ -13,6 +13,7 @@ static const struct flash_info flash_info[] = {
                                 FL_ERASE_BULK | FL_MICRON_BUGS,
                                                           "Micron N25Qx512Ax"   },
 	{ 0x55aa55, 0x00100000, FL_ERASE_ALL | FL_CAN_4B, "TEST_FLASH" },
+
 };
 
 struct flash_chip {

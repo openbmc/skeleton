@@ -1,21 +1,31 @@
 #!/usr/bin/python
 
 import sys
-import subprocess
+#import subprocess
 import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
 import xml.etree.ElementTree as ET
+import json
 
-def isDict(data):
-	if (str(type(data)) == "<type \'dbus.Dictionary\'>"):
-		return True
-	return False
-		
+
+def fix_byte(it,key,parent):   
+    if (isinstance(it,dbus.Array)):
+        for i in range(0,len(it)): 
+            traverse_it(it[i],i,it)
+    elif (isinstance(it, dict)):   
+        for key in it.keys():      
+            traverse_it(it[key],key,it)
+    elif (isinstance(it,dbus.Byte)):   
+        if (key != None):              
+                parent[key] = int(it)  
+    else:                              
+        pass                           
+                     
 
 def printDict(name,data):
-	if (isDict(data)):
+    	if (isinstance(data, dict)):   
 		print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 		print name
 		for p in data:
@@ -89,6 +99,11 @@ dbus_objects = {
 		'interface_name' : 'org.openbmc.Flash',
 		'method' : 'updateViaTftp',
 	},
+	'bios' : {
+		'bus_name' : 'org.openbmc.control.Flash',
+		'object_name' : '/org/openbmc/control/flash/bios',
+		'interface_name' : 'org.openbmc.Flash',
+	},
 	'getinventory' : {
 		'bus_name' : 'org.openbmc.managers.Inventory',
 		'object_name' : '/org/openbmc/inventory',
@@ -157,7 +172,9 @@ else:
 			methd(tmp)
 		else:
 			data = methd(*sys.argv)
-			printDict("",data)
+			fix_byte(data)		
+			pydata = json.loads(json.dumps(data))
+			printDict("",pydata)
 	except Exception as e:
 		print e
 		r = introspect(bus_name,obj_path,intf_name,method_name)

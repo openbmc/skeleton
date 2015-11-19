@@ -14,6 +14,7 @@ SYSTEM_STATES = [
 	'BASE_APPS',
 	'BMC_INIT',
 	'BMC_STARTING',
+	'BMC_STARTING2',
 	'BMC_READY',
 	'HOST_POWERING_ON',
 	'HOST_POWERED_ON',
@@ -32,7 +33,11 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/control/led/BMC_READY' : 0,
 		'/org/openbmc/control/host0' : 0,
 		'/org/openbmc/control/flash/bios' : 0,
-	}
+		'/org/openbmc/sensors/speed/fan5': 0,
+	},
+	'BMC_STARTING2' : {
+		'/org/openbmc/control/fans' : 0,	
+	},
 }
 
 ## method will be called when state is entered
@@ -42,6 +47,11 @@ ENTER_STATE_CALLBACK = {
 			'bus_name'    : 'org.openbmc.control.Host',
 			'obj_name'    : '/org/openbmc/control/host0',
 			'interface_name' : 'org.openbmc.control.Host',
+		},
+		'setMax' : {
+			'bus_name'    : 'org.openbmc.control.Fans',
+			'obj_name'    : '/org/openbmc/control/fans',
+			'interface_name' : 'org.openbmc.control.Fans',
 		}
 	},
 	'BMC_READY' : {
@@ -88,6 +98,12 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : False,
 		'process_name'    : 'pcie_slot_present.exe',
+	},
+	'fan_control' : {
+		'system_state'    : 'BMC_STARTING2',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'fan_control.py',
 	},
 	'virtual_sensors' : {
 		'system_state'    : 'BMC_STARTING',
@@ -258,6 +274,7 @@ FRU_INSTANCES = {
 	'<inventory_root>/system/chassis/io_board/pcie_slot1_riser' : { 'fru_type' : 'PCIE_RISER', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_slot0' : { 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_slot1' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
+	'<inventory_root>/system/chassis/io_board/pcie_slot2' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_mezz0' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_mezz1' :	{ 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 
@@ -266,6 +283,7 @@ FRU_INSTANCES = {
 ID_LOOKUP = {
 	'FRU' : {
 		0x03 : '<inventory_root>/system/chassis/motherboard',
+		0x40 : '<inventory_root>/system/chassis/io_board',
 		0x01 : '<inventory_root>/system/chassis/motherboard/cpu0',
                 0x02 : '<inventory_root>/system/chassis/motherboard/cpu1',
 		0x04 : '<inventory_root>/system/chassis/motherboard/centaur0',
@@ -312,15 +330,53 @@ ID_LOOKUP = {
 	},
 	'FRU_STR' : {
 		'PRODUCT_15' : '<inventory_root>/system',
-		'CHASSIS_2' : '<inventory_root>/system/chassis',
-		'BOARD_1'   : '<inventory_root>/system/chassis/motherboard/cpu0',
-		'BOARD_2'   : '<inventory_root>/system/chassis/motherboard/centaur0',
-		'PRODUCT_3'   : '<inventory_root>/system/chassis/motherboard/dimm0',
-		'PRODUCT_4'   : '<inventory_root>/system/chassis/motherboard/dimm1',
-		'PRODUCT_5'   : '<inventory_root>/system/chassis/motherboard/dimm2',
-		'PRODUCT_6'   : '<inventory_root>/system/chassis/motherboard/dimm3',
+		'CHASSIS_2'  : '<inventory_root>/system/chassis',
+		'BOARD_64'   : '<inventory_root>/system/chassis/io_board',
+		'BOARD_1'    : '<inventory_root>/system/chassis/motherboard/cpu0',
+		'BOARD_2'    : '<inventory_root>/system/chassis/motherboard/cpu1',
+		'BOARD_4'    : '<inventory_root>/system/chassis/motherboard/centaur0',
+		'BOARD_5'    : '<inventory_root>/system/chassis/motherboard/centaur1',
+		'BOARD_6'    : '<inventory_root>/system/chassis/motherboard/centaur2',
+		'BOARD_7'    : '<inventory_root>/system/chassis/motherboard/centaur3',
+		'BOARD_8'    : '<inventory_root>/system/chassis/motherboard/centaur4',
+		'BOARD_9'    : '<inventory_root>/system/chassis/motherboard/centaur5',
+		'BOARD_10'   : '<inventory_root>/system/chassis/motherboard/centaur6',
+		'BOARD_11'   : '<inventory_root>/system/chassis/motherboard/centaur7',
+		'PRODUCT_12'   : '<inventory_root>/system/chassis/motherboard/dimm0',
+		'PRODUCT_13'   : '<inventory_root>/system/chassis/motherboard/dimm1',
+		'PRODUCT_14'   : '<inventory_root>/system/chassis/motherboard/dimm2',
+		'PRODUCT_15'   : '<inventory_root>/system/chassis/motherboard/dimm3',
+		'PRODUCT_16'   : '<inventory_root>/system/chassis/motherboard/dimm4',
+		'PRODUCT_17'   : '<inventory_root>/system/chassis/motherboard/dimm5',
+		'PRODUCT_18'   : '<inventory_root>/system/chassis/motherboard/dimm6',
+		'PRODUCT_19'   : '<inventory_root>/system/chassis/motherboard/dimm7',
+		'PRODUCT_20'   : '<inventory_root>/system/chassis/motherboard/dimm8',
+		'PRODUCT_21'   : '<inventory_root>/system/chassis/motherboard/dimm9',
+		'PRODUCT_22'   : '<inventory_root>/system/chassis/motherboard/dimm10',
+		'PRODUCT_23'   : '<inventory_root>/system/chassis/motherboard/dimm11',
+		'PRODUCT_24'   : '<inventory_root>/system/chassis/motherboard/dimm12',
+		'PRODUCT_25'   : '<inventory_root>/system/chassis/motherboard/dimm13',
+		'PRODUCT_26'   : '<inventory_root>/system/chassis/motherboard/dimm14',
+		'PRODUCT_27'   : '<inventory_root>/system/chassis/motherboard/dimm15',
+		'PRODUCT_28'   : '<inventory_root>/system/chassis/motherboard/dimm16',
+		'PRODUCT_29'   : '<inventory_root>/system/chassis/motherboard/dimm17',
+		'PRODUCT_30'   : '<inventory_root>/system/chassis/motherboard/dimm18',
+		'PRODUCT_31'   : '<inventory_root>/system/chassis/motherboard/dimm19',
+		'PRODUCT_32'   : '<inventory_root>/system/chassis/motherboard/dimm20',
+		'PRODUCT_33'   : '<inventory_root>/system/chassis/motherboard/dimm21',
+		'PRODUCT_34'   : '<inventory_root>/system/chassis/motherboard/dimm22',
+		'PRODUCT_35'   : '<inventory_root>/system/chassis/motherboard/dimm23',
+		'PRODUCT_36'   : '<inventory_root>/system/chassis/motherboard/dimm24',
+		'PRODUCT_37'   : '<inventory_root>/system/chassis/motherboard/dimm25',
+		'PRODUCT_38'   : '<inventory_root>/system/chassis/motherboard/dimm26',
+		'PRODUCT_39'   : '<inventory_root>/system/chassis/motherboard/dimm27',
+		'PRODUCT_40'   : '<inventory_root>/system/chassis/motherboard/dimm28',
+		'PRODUCT_41'   : '<inventory_root>/system/chassis/motherboard/dimm29',
+		'PRODUCT_42'   : '<inventory_root>/system/chassis/motherboard/dimm30',
+		'PRODUCT_43'   : '<inventory_root>/system/chassis/motherboard/dimm31',
 	},
 	'SENSOR' : {
+                0x35 : '<inventory_root>/system',
                 0x34 : '<inventory_root>/system/chassis/motherboard',
 		0x0c : '<inventory_root>/system/chassis/motherboard/cpu0',
                 0x0e : '<inventory_root>/system/chassis/motherboard/cpu1',
@@ -395,8 +451,14 @@ ID_LOOKUP = {
 		0x32 : '/org/openbmc/sensor/virtual/OperatingSystemStatus',
 	},
 	'GPIO_PRESENT' : {
+		'SLOT0_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot0_riser', 
+		'SLOT1_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot1_riser', 
+		'SLOT2_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot2_riser', 
 		'SLOT0_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot0', 
 		'SLOT1_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot1', 
+		'SLOT2_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot2', 
+		'MEZZ0_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_mezz0', 
+		'MEZZ1_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_mezz1', 
 	}
 }
 

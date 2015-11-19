@@ -14,6 +14,7 @@
 static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* instance_name = "bmc0";
 static const gchar* dbus_name        = "org.openbmc.control.Bmc";
+static const gchar* i2c_dev = "/sys/bus/i2c/devices";
 
 //this probably should come from some global SOC config
 
@@ -72,8 +73,8 @@ void reg_init()
 	devmem(bmcreg+0x00,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x08,0x000000c1);  //Disable Parity, 1 stop bit, 8 bits
-	bmcreg = memmap(mem_fd,COM_BASE);
-	devmem(bmcreg+0x9C,0x08060000);  //Set UART routing
+	//bmcreg = memmap(mem_fd,COM_BASE);
+	//devmem(bmcreg+0x9C,0x08060000);  //Set UART routing
 
 	bmcreg = memmap(mem_fd,SCU_BASE);
 	devmem(bmcreg+0x00,0x9f82fce7);
@@ -101,6 +102,35 @@ void reg_init()
 	close(mem_fd);
 }
 
+int init_i2c_driver(int i2c_bus, const char* device, int address,bool delete)
+{
+	char dev[255];
+	g_print("Initing: device = %s, address = %02x\n",device,address);
+	if (!delete) {
+		sprintf(dev,"%s/i2c-%d/new_device",i2c_dev,i2c_bus);
+	} else {
+		sprintf(dev,"%s/i2c-%d/delete_device",i2c_dev,i2c_bus);
+	}
+	int fd = open(dev, O_WRONLY);
+	if (fd == -1) {
+		g_print("ERROR control_bmc: Unable to open device %s\n",dev);
+		return 1;
+	}
+	if (!delete) {
+		sprintf(dev,"%s 0x%02x",device,address);
+	} else {
+		sprintf(dev,"0x%02x",address);
+	}
+	int rc = write(fd,dev,strlen(dev));
+	close(fd);
+	if (rc != strlen(dev)) {
+		g_print("ERROR control_bmc: Unable to write %s\n",dev);
+		return 2;
+	}
+	return 0;
+}
+
+
 static gboolean
 on_init (Control          *control,
          GDBusMethodInvocation  *invocation,
@@ -120,6 +150,14 @@ gboolean go(gpointer user_data)
 	Control* control = object_get_control((Object*)cmd->user_data);
 	#ifdef __arm__
 	reg_init();
+	init_i2c_driver(6,"nct7904",0x2d,false);
+	init_i2c_driver(6,"nct7904",0x2d,true);
+	init_i2c_driver(6,"nct7904",0x2d,false);
+
+	init_i2c_driver(6,"nct7904",0x2e,false);
+	init_i2c_driver(6,"nct7904",0x2e,true);
+	init_i2c_driver(6,"nct7904",0x2e,false);
+
 	#endif
 	control_emit_goto_system_state(control,"BMC_STARTING");
 	

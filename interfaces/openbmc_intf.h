@@ -163,9 +163,9 @@ struct _HwmonIface
 
   gint  (*get_poll_interval) (Hwmon *object);
 
-  const gchar * (*get_sysfs_path) (Hwmon *object);
+  gint  (*get_scale) (Hwmon *object);
 
-  GVariant * (*get_value) (Hwmon *object);
+  const gchar * (*get_sysfs_path) (Hwmon *object);
 
 };
 
@@ -183,9 +183,8 @@ const gchar *hwmon_get_sysfs_path (Hwmon *object);
 gchar *hwmon_dup_sysfs_path (Hwmon *object);
 void hwmon_set_sysfs_path (Hwmon *object, const gchar *value);
 
-GVariant *hwmon_get_value (Hwmon *object);
-GVariant *hwmon_dup_value (Hwmon *object);
-void hwmon_set_value (Hwmon *object, GVariant *value);
+gint hwmon_get_scale (Hwmon *object);
+void hwmon_set_scale (Hwmon *object, gint value);
 
 
 /* ---- */

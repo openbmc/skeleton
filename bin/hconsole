@@ -1,6 +1,9 @@
 #! /bin/sh
 
-echo "Ctrl-a :quit to exit console.  [Enter] to continue"
+echo "Ctrl-a k  to exit console"
+echo "A session log is created in current directory"
+echo "[Enter] to continue"
 read a
-screen /dev/ttyS3 115200
-
+devmem 0x1e78909c 32 0x08060000
+screen -U -L /dev/ttyS3 115200
+devmem 0x1e78909c 32 0x00000000

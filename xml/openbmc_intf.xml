@@ -8,6 +8,7 @@
 	<interface name="org.openbmc.Hwmon">
 		<property name="poll_interval" type="i" access="read"/>
 		<property name="sysfs_path" type="s" access="read"/>
+		<property name="scale" type="i" access="read"/>
 	</interface>
 	<interface name="org.openbmc.Fan">
 		<method name="setCoolingZone">
