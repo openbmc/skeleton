@@ -157,13 +157,13 @@ gboolean go(gpointer user_data)
 	#ifdef __arm__
 	reg_init();
 
-	init_i2c_driver(6,"nct7904",0x2d,false);
-	init_i2c_driver(6,"nct7904",0x2d,true);
-	init_i2c_driver(6,"nct7904",0x2d,false);
+	//init_i2c_driver(6,"nct7904",0x2d,false);
+	//init_i2c_driver(6,"nct7904",0x2d,true);
+	//init_i2c_driver(6,"nct7904",0x2d,false);
 
-	init_i2c_driver(6,"nct7904",0x2e,false);
-	init_i2c_driver(6,"nct7904",0x2e,true);
-	init_i2c_driver(6,"nct7904",0x2e,false);
+	//init_i2c_driver(6,"nct7904",0x2e,false);
+	//init_i2c_driver(6,"nct7904",0x2e,true);
+	//init_i2c_driver(6,"nct7904",0x2e,false);
 
 	#endif
 	control_emit_goto_system_state(control,"BMC_STARTING");
