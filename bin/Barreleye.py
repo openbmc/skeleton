@@ -29,7 +29,6 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/sensors': 0,
 	},
 	'BMC_STARTING' : {
-		'/org/openbmc/control/chassis0': 0,
 		'/org/openbmc/control/power0' : 0,
 		'/org/openbmc/control/led/BMC_READY' : 0,
 		'/org/openbmc/control/host0' : 0,
@@ -38,6 +37,7 @@ EXIT_STATE_DEPEND = {
 	},
 	'BMC_STARTING2' : {
 		'/org/openbmc/control/fans' : 0,	
+		'/org/openbmc/control/chassis0': 0,
 	},
 }
 
@@ -159,7 +159,7 @@ APPS = {
 		'process_name'    : 'control_host.exe',
 	},
 	'chassis_control' : {
-		'system_state'    : 'BMC_STARTING',
+		'system_state'    : 'BMC_STARTING2',
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'chassis_control.py',
