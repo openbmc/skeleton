@@ -33,46 +33,17 @@ HWMON hwmons[NUM_HWMONS] = {
 	(HWMON){"/sys/class/hwmon/hwmon2/pwm2","speed/fan4",30000,"",1},
 	(HWMON){"/sys/class/hwmon/hwmon2/pwm3","speed/fan5",30000,"",1},
 };
-
-// Gets the gpio device path from gpio manager object
-int hwmon_init(GDBusConnection *connection, HWMON* hwmon)
+bool is_hwmon_valid(HWMON* hwmon)
 {
-	int rc = GPIO_OK;
-	GDBusProxy *proxy;
-	GError *error;
-	GVariant *result;
-
-	error = NULL;
-	g_assert_no_error (error);
-	error = NULL;
-
-	proxy = g_dbus_proxy_new_sync (connection,
-                                 G_DBUS_PROXY_FLAGS_NONE,
-                                 NULL,                      /* GDBusInterfaceInfo */
-                                 "org.openbmc.managers.System", /* name */
-                                 "/org/openbmc/managers/System", /* object path */
-                                 "org.openbmc.managers.System",        /* interface */
-                                 NULL, /* GCancellable */
-                                 &error);
-	if (error != NULL) {
-		return 1;
+	int fd = open(hwmon->filename, O_RDONLY);
+	if (fd == -1)
+	{
+		g_print("ERROR hwmon is not valid: %s\n",hwmon->filename);
+		return false;
 	}
-
-	result = g_dbus_proxy_call_sync (proxy,
-                                   "hwmonInit",
-                                   g_variant_new ("(s)", hwmon->filename),
-                                   G_DBUS_CALL_FLAGS_NONE,
-                                   -1,
-                                   NULL,
-                                   &error);
-  
-	if (error != NULL) {
-		return 1;
-	}
-	g_assert (result != NULL);
-	g_variant_get (result, "(&si)", &hwmon->name,&hwmon->poll_interval);
-	g_print("HWMON Lookup:  %s = %s,%d\n",hwmon->filename,hwmon->name,hwmon->poll_interval);
-}	
+	close(fd);
+	return true;
+}
 
 static gboolean poll_hwmon(gpointer user_data)
 {
@@ -164,6 +135,7 @@ on_bus_acquired (GDBusConnection *connection,
 	int i = 0;
 	for (i=0;i<NUM_HWMONS;i++)
   	{
+		if (!is_hwmon_valid(&hwmons[i])) { continue; }
 		gchar *s;
 		s = g_strdup_printf ("%s/%s",dbus_object_path,hwmons[i].name);
 		object = object_skeleton_new (s);
