@@ -327,7 +327,9 @@ ID_LOOKUP = {
 	'FRU_STR' : {
 		'PRODUCT_15' : '<inventory_root>/system',
 		'CHASSIS_2'  : '<inventory_root>/system/chassis',
-		'BOARD_64'   : '<inventory_root>/system/chassis/io_board',
+		'PRODUCT_100': '<inventory_root>/system',
+		'CHASSIS_100': '<inventory_root>/system/chassis',
+		'BOARD_100'  : '<inventory_root>/system/chassis/io_board',
 		'BOARD_1'    : '<inventory_root>/system/chassis/motherboard/cpu0',
 		'BOARD_2'    : '<inventory_root>/system/chassis/motherboard/cpu1',
 		'BOARD_4'    : '<inventory_root>/system/chassis/motherboard/centaur0',
