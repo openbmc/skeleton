@@ -27,15 +27,16 @@ INTF_ITEM = 'org.openbmc.InventoryItem'
 INTF_CONTROL = 'org.openbmc.Control'
 
 
-class SystemManager(dbus.service.Object):
-	def __init__(self,bus,name):
-		dbus.service.Object.__init__(self,bus,name)
+class SystemManager(Openbmc.DbusProperties):
+	def __init__(self,bus,obj_name):
+		Openbmc.DbusProperties.__init__(self)
+		dbus.service.Object.__init__(self,bus,obj_name)
 
 		bus.add_signal_receiver(self.NewObjectHandler,
 			signal_name = "ObjectAdded", sender_keyword = 'bus_name')
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 
-		self.current_state = ""
+		self.Set(DBUS_NAME,"current_state","")
 		self.system_states = {}
 		self.bus_name_lookup = {}
 		self.bin_path = os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -59,14 +60,16 @@ class SystemManager(dbus.service.Object):
 			print "Creating cache directory: "+PropertyCacher.CACHE_PATH
    			os.makedirs(PropertyCacher.CACHE_PATH)
 
+		self.ObjectAdded(obj_name,DBUS_NAME)
 		print "SystemManager Init Done"
 
 
 	def SystemStateHandler(self,state_name):
 		## clearing object started flags
+		current_state = self.Get(DBUS_NAME,"current_state")
 		try:
-			for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
-				System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 0
+			for obj_path in System.EXIT_STATE_DEPEND[current_state]:
+				System.EXIT_STATE_DEPEND[current_state][obj_path] = 0
 		except:
 			pass
 
@@ -88,12 +91,13 @@ class SystemManager(dbus.service.Object):
 		except:
 			pass
 
-		self.current_state = state_name
+		self.Set(DBUS_NAME,"current_state",state_name)
 
 	def gotoNextState(self):
 		s = 0
+		current_state = self.Get(DBUS_NAME,"current_state")
 		for i in range(len(System.SYSTEM_STATES)):
-			if (System.SYSTEM_STATES[i] == self.current_state):
+			if (System.SYSTEM_STATES[i] == current_state):
 				s = i+1
 	
 		if (s == len(System.SYSTEM_STATES)):
@@ -107,7 +111,7 @@ class SystemManager(dbus.service.Object):
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='s')
 	def getSystemState(self):
-		return self.current_state
+		return self.Get(DBUS_NAME,"current_state")
 
 	def doObjectLookup(self,category,key):
 		bus_name = ""
@@ -169,22 +173,23 @@ class SystemManager(dbus.service.Object):
 		return True
 
 	def NewObjectHandler(self,obj_path, interface_name, bus_name = None):
+		current_state = self.Get(DBUS_NAME,"current_state")
 		if (self.bus_name_lookup.has_key(obj_path)):
 			if (self.bus_name_lookup[obj_path] == bus_name):
 				return
 		self.bus_name_lookup[obj_path] = bus_name
 		print "New object: "+obj_path+" ("+bus_name+")"
 		try:
-			if (System.EXIT_STATE_DEPEND[self.current_state].has_key(obj_path) == True):
-				System.EXIT_STATE_DEPEND[self.current_state][obj_path] = 1
+			if (System.EXIT_STATE_DEPEND[current_state].has_key(obj_path) == True):
+				System.EXIT_STATE_DEPEND[current_state][obj_path] = 1
 			## check if all required objects are started to move to next state
 			state = 1
-			for obj_path in System.EXIT_STATE_DEPEND[self.current_state]:
-				if (System.EXIT_STATE_DEPEND[self.current_state][obj_path] == 0):
+			for obj_path in System.EXIT_STATE_DEPEND[current_state]:
+				if (System.EXIT_STATE_DEPEND[current_state][obj_path] == 0):
 					state = 0
 			## all required objects have started so go to next state
 			if (state == 1):
-				print "All required objects started for "+self.current_state
+				print "All required objects started for "+current_state
 				self.gotoNextState()
 		except:
 			pass

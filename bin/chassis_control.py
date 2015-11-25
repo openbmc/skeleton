@@ -39,7 +39,12 @@ class ChassisControlObject(Openbmc.DbusProperties):
 				'bus_name' : 'org.openbmc.watchdog.Host',
 				'object_name' : '/org/openbmc/watchdog/host0',
 				'interface_name' : 'org.openbmc.Watchdog'
-			}
+			},
+			'host_services' : {
+				'bus_name' : 'org.openbmc.HostServices',
+				'object_name' : '/org/openbmc/HostServices',
+				'interface_name' : 'org.openbmc.HostServices'
+			},
 		}
 
 		#uuid
@@ -110,9 +115,9 @@ class ChassisControlObject(Openbmc.DbusProperties):
 		in_signature='', out_signature='')
 	def softPowerOff(self):
 		print "Soft off power"
-		## TODO: Somehow tell host to shutdown via ipmi
-		## for now hard power off
-		self.powerOff()	
+		intf = self.getInterface('host_services')
+		## host services will call power off when ready
+		intf.SoftPowerOff()
 		return None
 
 	@dbus.service.method(DBUS_NAME,

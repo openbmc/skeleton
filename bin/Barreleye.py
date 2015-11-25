@@ -34,6 +34,7 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/control/host0' : 0,
 		'/org/openbmc/control/flash/bios' : 0,
 		'/org/openbmc/sensors/speed/fan5': 0,
+		'/org/openbmc/inventory/system/chassis/io_board' : 0,
 	},
 	'BMC_STARTING2' : {
 		'/org/openbmc/control/fans' : 0,	
@@ -163,6 +164,13 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'chassis_control.py',
+	},
+	'board_vpd' : {
+		'system_state'    : 'BMC_STARTING2',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'phosphor-read-eeprom',
+		'args'            : ['--eeprom','/sys/devices/platform/ahb/ahb:apb/1e78a000.i2c/1e78a040.i2c-bus/i2c-0/0-0050/eeprom','--fruid','64'],
 	},
 	'hwmon_barreleye' : {
 		'system_state'    : 'BMC_STARTING',
