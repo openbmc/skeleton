@@ -254,6 +254,7 @@ on_bus_acquired (GDBusConnection *connection,
 		if (rc != GPIO_OK) { break; }
 		gpio_close(&pgood);	
 		control_power_set_pgood(control_power,gpio);
+		control_power_set_state(control_power,gpio);
 		printf("Pgood state: %d\n",gpio);
 
 	} while(0);
