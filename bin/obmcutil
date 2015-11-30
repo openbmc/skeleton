@@ -127,6 +127,17 @@ dbus_objects = {
 		'interface_name' : 'org.openbmc.Object.Enumerate',
 		'method' : 'enumerate'
 	},
+	'host' : {
+		'bus_name' : 'org.openbmc.control.Host',
+		'object_name' : '/org/openbmc/control/host0',
+		'interface_name' : 'org.openbmc.control.Host',
+	},
+	'setdebugmode' : {
+		'bus_name' : 'org.openbmc.control.Host',
+		'object_name' : '/org/openbmc/control/host0',
+		'interface_name' : 'org.openbmc.control.Host',
+		'property' : 'debug_mode'
+	},
 }
 
 bus = dbus.SystemBus()
@@ -140,16 +151,22 @@ if (len(sys.argv) == 1 or sys.argv[1] == "-h"):
 		m = ""
 		if (dbus_objects[name].has_key('method') == True):
 			m=" ("+dbus_objects[name]['interface_name']+"->"+dbus_objects[name]['method']+")"
+		elif (dbus_objects[name].has_key('property') == True):
+			m=" ("+dbus_objects[name]['interface_name']+"->"+dbus_objects[name]['property']+")"
+
 		print "\t"+name+m
 	exit(0)
 
 method_name = ""
+property_name = ""
 
 sys.argv.pop(0)
 objinfo = dbus_objects[sys.argv.pop(0)]
 
 if (objinfo.has_key('method')):
 	method_name = objinfo['method']
+elif (objinfo.has_key('property')):
+	property_name = objinfo['property']
 elif (len(sys.argv)>0):
 	## if command line args left and method not specified
 	## then next arg must be method name
@@ -160,17 +177,11 @@ obj_path = objinfo['object_name']
 intf_name = objinfo['interface_name']
 obj = bus.get_object(bus_name,obj_path)
 
-if (method_name == ""):
-	intf = dbus.Interface(obj,"org.freedesktop.DBus.Properties")
-	props = intf.GetAll(intf_name)	
-	for p in props:
-		print p+" = "+str(props[p])
-	
-else:
+if (method_name != ""):
 	methd = obj.get_dbus_method(method_name,intf_name)
 	try:
 		data = methd(*sys.argv)
-		fix_byte(data,None,None)		
+		fix_byte(data,None,None)	
 		pydata = json.loads(json.dumps(data))
 		printDict("",pydata)
 	except Exception as e:
@@ -180,6 +191,15 @@ else:
 			print "ERROR: Invalid method: "+method_name
 		else:
 			print "ERROR: Incorrect arguments passed to method"
-			
+elif (property_name != ""):
+	intf = dbus.Interface(obj,"org.freedesktop.DBus.Properties")
+	property_value = eval(sys.argv.pop(0))
+	intf.Set(intf_name,property_name,property_value)
+else:
+	intf = dbus.Interface(obj,"org.freedesktop.DBus.Properties")
+	props = intf.GetAll(intf_name)	
+	for p in props:
+		print p+" = "+str(props[p])
+	
 		
 
