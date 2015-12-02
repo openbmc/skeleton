@@ -93,7 +93,6 @@ void reg_init()
 	//GPIO
 	bmcreg = memmap(mem_fd,GPIO_BASE);
 	devmem(bmcreg+0x84,0x00fff0c0);  //Enable UART1
-	devmem(bmcreg+0x70,0x120CE406);
 	devmem(bmcreg+0x80,0xCB000000);
 	devmem(bmcreg+0x88,0x01C000FF);
 	devmem(bmcreg+0x8c,0xC1C000FF);
@@ -142,11 +141,7 @@ on_init (Control          *control,
          GDBusMethodInvocation  *invocation,
          gpointer                user_data)
 {
-	//#ifdef __arm__
-	//reg_init();
-	//#endif
 	control_complete_init(control,invocation);
-	//control_emit_goto_system_state(control,"BMC_STARTING");
 	
 	return TRUE;
 }
@@ -156,19 +151,9 @@ gboolean go(gpointer user_data)
 	Control* control = object_get_control((Object*)cmd->user_data);
 	#ifdef __arm__
 	reg_init();
-
-	//init_i2c_driver(6,"nct7904",0x2d,false);
-	//init_i2c_driver(6,"nct7904",0x2d,true);
-	//init_i2c_driver(6,"nct7904",0x2d,false);
-
-	//init_i2c_driver(6,"nct7904",0x2e,false);
-	//init_i2c_driver(6,"nct7904",0x2e,true);
-	//init_i2c_driver(6,"nct7904",0x2e,false);
-
 	#endif
 	control_emit_goto_system_state(control,"BMC_STARTING");
 	
-	//g_main_loop_quit(cmd->loop);
 	return FALSE;
 }
 
