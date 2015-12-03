@@ -72,10 +72,16 @@ class HostStatusSensor(VirtualSensor):
 	def GotoSystemState(self,state):
 		pass
 		
-CONTROL_IFACE = 'org.openbmc.Control'
 class BootProgressSensor(VirtualSensor):
 	def __init__(self,bus,name):
 		VirtualSensor.__init__(self,bus,name)
+		self.setValue("Off")
+		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
+
+	def SystemStateHandler(self,state):
+		if (state == "HOST_POWERED_OFF"):
+			self.setValue("Off")
+
 
 	##override setValue method
 	@dbus.service.method(SensorValue.IFACE_NAME,
@@ -89,15 +95,33 @@ class BootProgressSensor(VirtualSensor):
 	def GotoSystemState(self,state):
 		pass
 		
+class OccActiveSensor(VirtualSensor):
+	def __init__(self,bus,name):
+		VirtualSensor.__init__(self,bus,name)
+		self.setValue("Disabled")
+		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 
+	def SystemStateHandler(self,state):
+		if (state == "HOST_POWERED_OFF"):
+			self.setValue("Disabled")
+			
 
+	##override setValue method
+	@dbus.service.method(SensorValue.IFACE_NAME,
+		in_signature='v', out_signature='')
+	def setValue(self,value):
+		SensorValue.setValue(self,value)
+			
+	@dbus.service.signal(CONTROL_IFACE,signature='s')
+	def GotoSystemState(self,state):
+		pass
+		
 				
 if __name__ == '__main__':
 	
 	sensors = {
 		'OperatingSystemStatus' : None,
 		'BootCount' : None,
-		'OccStatus' : None,
 	}
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 	bus = Openbmc.getDBus()
@@ -107,14 +131,13 @@ if __name__ == '__main__':
 
 	sensors['HostStatus'] = HostStatusSensor(bus,OBJ_PATH+"HostStatus")
 	sensors['BootProgress'] = BootProgressSensor(bus,OBJ_PATH+"BootProgress")
+	sensors['OccStatus'] = OccActiveSensor(bus,OBJ_PATH+"OccStatus")
 	mainloop = gobject.MainLoop()
    
 	## Initialize sensors 
-	sensors['BootProgress'].setValue("INACTIVE")
  	sensors['HostStatus'].setValue("OFF")
 	sensors['OperatingSystemStatus'].setValue("OFF")
 	sensors['BootCount'].setValue(0)
-	sensors['OccStatus'].setValue(0)
 
 	print "Starting virtual sensors"
 	mainloop.run()
