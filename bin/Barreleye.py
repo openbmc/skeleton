@@ -21,7 +21,7 @@ SYSTEM_STATES = [
 	'HOST_POWERED_ON',
 	'HOST_BOOTING',
 	'HOST_BOOTED',
-	'HOST_POWERED_DOWN',
+	'HOST_POWERED_OFF',
 ]
 
 EXIT_STATE_DEPEND = {
@@ -172,11 +172,12 @@ APPS = {
 		'process_name'    : 'phosphor-read-eeprom',
 		'args'            : ['--eeprom','/sys/devices/platform/ahb/ahb:apb/1e78a000.i2c/1e78a040.i2c-bus/i2c-0/0-0050/eeprom','--fruid','64'],
 	},
-	'hwmon_barreleye' : {
+	'hwmon' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name'    : 'hwmons_barreleye.exe',
+		'process_name'    : 'sensors_hwmon.py',
+		'args'            : [ SYSTEM_NAME ]
 	}
 }
 
@@ -498,4 +499,67 @@ def convertGpio(name):
 	return base+offset
 
 
+HWMON_CONFIG = {
+	'0-004a' :  { 
+		'temp1_input' : { 'object_path' : 'temperature/ambient','poll_interval' : 3000,'scale' : 1000,'units' : 'C' },
+	},
+	'6-002d' : {
+		'pwm1' : { 'object_path' : 'speed/fan0','poll_interval' : 10000,'scale' : 1,'units' : '' },
+		'pwm2' : { 'object_path' : 'speed/fan1','poll_interval' : 10000,'scale' : 1,'units' : '' },
+		'pwm3' : { 'object_path' : 'speed/fan2','poll_interval' : 10000,'scale' : 1,'units' : '' },
+	},
+	'6-002e' : {
+		'pwm1' : { 'object_path' : 'speed/fan3','poll_interval' : 10000,'scale' : 1,'units' : '' },
+		'pwm2' : { 'object_path' : 'speed/fan4','poll_interval' : 10000,'scale' : 1,'units' : '' },
+		'pwm3' : { 'object_path' : 'speed/fan5','poll_interval' : 10000,'scale' : 1,'units' : '' },
+	},
+	'3-0050' : {
+		'temp1_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp2_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp3_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp4_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp5_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp6_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp7_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp8_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp9_input' :  { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp10_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp11_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp12_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp13_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp14_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp15_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp16_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp17_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp18_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp19_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp20_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp21_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp22_input' : { 'object_path' : 'temperature/cpu0/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+	},
+	'3-0051' : {
+		'temp1_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp2_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp3_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp4_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp5_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp6_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp7_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp8_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp9_input' :  { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp10_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp11_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp12_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp13_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp14_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp15_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp16_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp17_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp18_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp19_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp20_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp21_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+		'temp22_input' : { 'object_path' : 'temperature/cpu1/<label>','poll_interval' : 1000,'scale' : 1000,'units' : 'C' },
+	},
+}
 
