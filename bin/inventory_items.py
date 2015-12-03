@@ -43,15 +43,21 @@ class Inventory(Openbmc.DbusProperties):
 
 
 class InventoryItem(Openbmc.DbusProperties):
-	def __init__(self,bus,name,is_fru,fru_type):		
+	def __init__(self,bus,name,data):		
 		Openbmc.DbusProperties.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 
 		self.name = name
 		
 		## this will load properties from cache
-		PropertyCacher.load(name,INTF_NAME,self.properties)
-		data = {'is_fru': is_fru, 'fru_type': fru_type, 'present': 'Inactive', 'fault': 'None', 'version': 'None' }
+		# PropertyCacher.load(name,INTF_NAME,self.properties)
+		if (data.has_key('present') == False):
+			data['present'] = 'False'
+		if (data.has_key('fault') == False):
+			data['fault'] = 'False'
+		if (data.has_key('version') == False):
+			data['version'] = ''
+
 		self.SetMultiple(INTF_NAME,data)
 		self.ObjectAdded(name,INTF_NAME)		
 		
@@ -92,8 +98,9 @@ if __name__ == '__main__':
     obj_parent = Inventory(bus, '/org/openbmc/inventory')
 
     for f in FRUS.keys():
+	print f
 	obj_path=f.replace("<inventory_root>",System.INVENTORY_ROOT)
-    	obj = InventoryItem(bus,obj_path,FRUS[f]['is_fru'],FRUS[f]['fru_type'])
+    	obj = InventoryItem(bus,obj_path,FRUS[f])
 	obj_parent.addItem(obj)
 
     	## TODO:  this is a hack to update bmc inventory item with version
