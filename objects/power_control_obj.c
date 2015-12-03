@@ -35,7 +35,6 @@ static gboolean poll_pgood(gpointer user_data)
 	Control* control = object_get_control((Object*)user_data);
 
 	//send the heartbeat
-	control_emit_heartbeat(control,dbus_name);
 	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
 
 	guint poll_int = control_get_poll_interval(control);
