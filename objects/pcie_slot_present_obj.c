@@ -151,9 +151,9 @@ main (gint argc, gchar *argv[])
 			//if (rc) { break; }
 			// TODO: send correct state
 			if (present == 0) {
-				update_fru_obj(c,&obj_info,"PRESENT");
+				update_fru_obj(c,&obj_info,"True");
 			} else {
-				update_fru_obj(c,&obj_info,"NOT PRESENT");
+				update_fru_obj(c,&obj_info,"False");
 			}
 		} while(0);
 	}
