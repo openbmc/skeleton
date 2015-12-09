@@ -18,28 +18,15 @@ import Openbmc
 
 
 INTF_NAME = 'org.openbmc.InventoryItem'
-DBUS_NAME = 'org.openbmc.managers.Inventory'
-ENUM_INTF = 'org.openbmc.Object.Enumerate'
-
+DBUS_NAME = 'org.openbmc.Inventory'
 FRUS = System.FRU_INSTANCES
 
-class Inventory(Openbmc.DbusProperties):
+class Inventory(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 	def __init__(self,bus,name):
+		Openbmc.DbusProperties.__init__(self)
+		Openbmc.DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
-		self.objects = [ ]
-		self.ObjectAdded(name,ENUM_INTF)		
-
-	def addItem(self,item):
-		self.objects.append(item)
-
-	@dbus.service.method(ENUM_INTF,
-		in_signature='', out_signature='a{sa{sv}}')
-	def enumerate(self):
-		tmp_obj = {}
-		for item in self.objects:
-			tmp_obj[str(item.name)]=item.GetAll(INTF_NAME)
-		return tmp_obj
-			
+		self.InterfacesAdded(name,self.properties)
 
 
 class InventoryItem(Openbmc.DbusProperties):
@@ -59,7 +46,6 @@ class InventoryItem(Openbmc.DbusProperties):
 			data['version'] = ''
 
 		self.SetMultiple(INTF_NAME,data)
-		self.ObjectAdded(name,INTF_NAME)		
 		
 		
 	@dbus.service.method(INTF_NAME,
@@ -98,10 +84,9 @@ if __name__ == '__main__':
     obj_parent = Inventory(bus, '/org/openbmc/inventory')
 
     for f in FRUS.keys():
-	print f
 	obj_path=f.replace("<inventory_root>",System.INVENTORY_ROOT)
     	obj = InventoryItem(bus,obj_path,FRUS[f])
-	obj_parent.addItem(obj)
+	obj_parent.add(obj_path,obj)
 
     	## TODO:  this is a hack to update bmc inventory item with version
     	## should be done by flash object

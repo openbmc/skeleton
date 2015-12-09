@@ -18,10 +18,11 @@ POWER_ON = 1
 
 BOOTED = 100
 
-class ChassisControlObject(Openbmc.DbusProperties):
+class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 	def __init__(self,bus,name):
 		self.dbus_objects = { }
 		Openbmc.DbusProperties.__init__(self)
+		Openbmc.DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 		## load utilized objects
 		self.dbus_objects = {
@@ -51,7 +52,7 @@ class ChassisControlObject(Openbmc.DbusProperties):
 		self.Set(DBUS_NAME,"uuid",str(uuid.uuid1()))
 		self.Set(DBUS_NAME,"reboot",0)
 		self.Set(DBUS_NAME,"power_policy",0)	
-		self.Set(DBUS_NAME,"last_system_state","")	
+		self.Set(DBUS_NAME,"last_system_state","")
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "Released", 
@@ -63,7 +64,7 @@ class ChassisControlObject(Openbmc.DbusProperties):
     		bus.add_signal_receiver(self.host_watchdog_signal_handler, 
 					dbus_interface = "org.openbmc.Watchdog", signal_name = "WatchdogError")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
-		self.ObjectAdded(name,CONTROL_INTF)
+		self.InterfacesAdded(name,self.properties)
 
 
 	def getInterface(self,name):

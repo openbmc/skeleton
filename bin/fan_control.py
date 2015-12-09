@@ -12,7 +12,7 @@ DBUS_NAME = 'org.openbmc.control.Fans'
 OBJ_PATH = '/org/openbmc/control/fans'
 IFACE_NAME = 'org.openbmc.control.Fans'
 
-FAN_BUS = 'org.openbmc.sensors.hwmon'
+FAN_BUS = 'org.openbmc.Sensors'
 FAN_OBJS = [
 	'/org/openbmc/sensors/speed/fan0',
 	'/org/openbmc/sensors/speed/fan1',
@@ -23,11 +23,11 @@ FAN_OBJS = [
 ]
 FAN_IFACE = 'org.openbmc.SensorValue'
 
-class FanControl(Openbmc.DbusProperties):
+class FanControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 	def __init__(self,bus,name):
 		Openbmc.DbusProperties.__init__(self)
+		Openbmc.DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
-		self.ObjectAdded(name,IFACE_NAME)
 		self.Set(IFACE_NAME,"floor",250)
 		self.Set(IFACE_NAME,"ceiling",255)
 		self.fan_intf = []
@@ -36,6 +36,7 @@ class FanControl(Openbmc.DbusProperties):
 			print "Initializing fan: "+fan
 			obj = bus.get_object(FAN_BUS,fan)
 			self.fan_intf.append(dbus.Interface(obj,FAN_IFACE))
+		self.InterfacesAdded(name,self.properties)
 			
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='')

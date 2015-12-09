@@ -27,9 +27,10 @@ INTF_ITEM = 'org.openbmc.InventoryItem'
 INTF_CONTROL = 'org.openbmc.Control'
 
 
-class SystemManager(Openbmc.DbusProperties):
+class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 	def __init__(self,bus,obj_name):
 		Openbmc.DbusProperties.__init__(self)
+		Openbmc.DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,obj_name)
 
 		bus.add_signal_receiver(self.NewObjectHandler,
@@ -60,7 +61,7 @@ class SystemManager(Openbmc.DbusProperties):
 			print "Creating cache directory: "+PropertyCacher.CACHE_PATH
    			os.makedirs(PropertyCacher.CACHE_PATH)
 
-		self.ObjectAdded(obj_name,DBUS_NAME)
+		self.InterfacesAdded(obj_name,self.properties)
 		print "SystemManager Init Done"
 
 
@@ -121,7 +122,7 @@ class SystemManager(Openbmc.DbusProperties):
 			obj_path = System.ID_LOOKUP[category][key]
 			bus_name = self.bus_name_lookup[obj_path]
 			parts = obj_path.split('/')
-			if (parts[3] == 'sensor'):
+			if (parts[3] == 'sensors'):
 				intf_name = INTF_SENSOR
 		except Exception as e:
 			print "ERROR SystemManager: "+str(e)+" not found in lookup"
