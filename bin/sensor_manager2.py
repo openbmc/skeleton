@@ -52,8 +52,8 @@ if __name__ == '__main__':
 	## these don't need to be in seperate process
 	## TODO: this should not be hardcoded
 
-	obj_path = OBJ_PATH+"/host/HostStatus"
-	root_sensor.add(obj_path,Sensors.HostStatusSensor(bus,obj_path))
+	obj_path = OBJ_PATH+"/host/PowerCap"
+	root_sensor.add(obj_path,Sensors.PowerCap(bus,obj_path))
 	obj_path = OBJ_PATH+"/host/BootProgress"
 	root_sensor.add(obj_path,Sensors.BootProgressSensor(bus,obj_path))
 	obj_path = OBJ_PATH+"/host/OccStatus"

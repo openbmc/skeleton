@@ -106,13 +106,13 @@ APPS = {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name'    : 'sensors_virtual_p8.py',
+		'process_name'    : 'sensor_manager2.py',
 	},
 	'sensor_manager' : {
 		'system_state'    : 'BASE_APPS',
 		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name'    : 'sensor_manager.py',
+		'process_name'    : 'sensor_manager2.py',
 		'args'            : [ SYSTEM_NAME ]
 	},
 	'host_watchdog' : {
@@ -394,8 +394,6 @@ ID_LOOKUP = {
 		'PRODUCT_43'   : '<inventory_root>/system/chassis/motherboard/dimm31',
 	},
 	'SENSOR' : {
-                0x35 : '<inventory_root>/system',
-		0x33 : '<inventory_root>/system/powercap',
 		0x35 : '<inventory_root>/system/systemevent',
 		0x36 : '<inventory_root>/system/powerlimit',
                 0x34 : '<inventory_root>/system/chassis/motherboard',
@@ -470,11 +468,12 @@ ID_LOOKUP = {
                 0x2d : '<inventory_root>/system/chassis/motherboard/dimm29',
                 0x2e : '<inventory_root>/system/chassis/motherboard/dimm30',
                 0x2f : '<inventory_root>/system/chassis/motherboard/dimm31',	
-		0x09 : '/org/openbmc/sensor/virtual/BootCount',
-		0x05 : '/org/openbmc/sensor/virtual/BootProgress',
-		0x04 : '/org/openbmc/sensor/virtual/HostStatus',
-		0x08 : '/org/openbmc/sensor/virtual/OccStatus',
-		0x32 : '/org/openbmc/sensor/virtual/OperatingSystemStatus',
+		0x09 : '/org/openbmc/sensors/host/BootCount',
+		0x05 : '/org/openbmc/sensors/host/BootProgress',
+		0x04 : '/org/openbmc/sensors/host/HostStatus',
+		0x08 : '/org/openbmc/sensors/host/OccStatus',
+		0x32 : '/org/openbmc/sensors/host/OperatingSystemStatus',
+		0x33 : '/org/openbmc/sensors/host/powercap',
 	},
 	'GPIO_PRESENT' : {
 		'SLOT0_RISER_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot0_riser', 

@@ -120,20 +120,11 @@ class HwmonSensor(SensorValue,SensorThresholds):
 			return [False,0]
 		
 CONTROL_IFACE = 'org.openbmc.Control'
-class HostStatusSensor(VirtualSensor):
+class PowerCap(VirtualSensor):
 	def __init__(self,bus,name):
 		VirtualSensor.__init__(self,bus,name)
-		self.setValue("Off")
+		self.setValue(100)
 
-	##override setValue method
-	@dbus.service.method(SensorValue.IFACE_NAME,
-		in_signature='v', out_signature='')
-	def setValue(self,value):
-		SensorValue.setValue(self,value)
-			
-	@dbus.service.signal(CONTROL_IFACE,signature='s')
-	def GotoSystemState(self,state):
-		pass
 		
 class BootProgressSensor(VirtualSensor):
 	def __init__(self,bus,name):
@@ -192,7 +183,7 @@ class OccStatusSensor(VirtualSensor):
 class BootCountSensor(VirtualSensor):
 	def __init__(self,bus,name):
 		VirtualSensor.__init__(self,bus,name)
-		self.setValue(0)
+		self.setValue(2)
 
 class OperatingSystemStatusSensor(VirtualSensor):
 	def __init__(self,bus,name):
