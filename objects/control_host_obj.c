@@ -225,6 +225,7 @@ on_bus_acquired (GDBusConnection *connection,
 	gpio_init(connection,&fsi_clk);
 	gpio_init(connection,&fsi_enable);
 	gpio_init(connection,&cronus_sel);
+	gpio_init(connection,&Throttle);
 	emit_object_added((GDBusObjectManager*)manager); 	
 }
 

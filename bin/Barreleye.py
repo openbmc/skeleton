@@ -54,24 +54,38 @@ ENTER_STATE_CALLBACK = {
 			'bus_name'    : 'org.openbmc.control.Fans',
 			'obj_name'    : '/org/openbmc/control/fans',
 			'interface_name' : 'org.openbmc.control.Fans',
-		}
-	},
-	'BMC_READY' : {
+		},
 		'setOn' : {
 			'bus_name'   : 'org.openbmc.control.led',
 			'obj_name'   : '/org/openbmc/control/led/BMC_READY',
 			'interface_name' : 'org.openbmc.Led',
-		},
+		}
+	},
+	'HOST_POWERED_OFF' : {
+		'setOff' : {
+			'bus_name'   : 'org.openbmc.control.led',
+			'obj_name'   : '/org/openbmc/control/led/BMC_READY',
+			'interface_name' : 'org.openbmc.Led',
+		}
+
+	},
+	'BMC_READY' : {
 		'setOn' : {
 			'bus_name'   : 'org.openbmc.control.led',
 			'obj_name'   : '/org/openbmc/control/led/BEEP',
 			'interface_name' : 'org.openbmc.Led',
 		},
+		'setBlinkSlow' : {
+			'bus_name'   : 'org.openbmc.control.led',
+			'obj_name'   : '/org/openbmc/control/led/HEART_BEAT',
+			'interface_name' : 'org.openbmc.Led',
+		},
+
 		'init' : {
 			'bus_name'   : 'org.openbmc.control.Flash',
 			'obj_name'   : '/org/openbmc/control/flash/bios',
 			'interface_name' : 'org.openbmc.Flash',
-		},
+		}
 	}
 }
 
