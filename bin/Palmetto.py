@@ -89,13 +89,14 @@ APPS = {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name'    : 'sensors_virtual_p8.py',
+		'process_name'    : 'hwmon.py',
+		'args'            : [ SYSTEM_NAME ]
 	},
 	'sensor_manager' : {
 		'system_state'    : 'BASE_APPS',
 		'start_process'   : True,
 		'monitor_process' : True,
-		'process_name'    : 'sensor_manager.py',
+		'process_name'    : 'sensor_manager2.py',
 		'args'            : [ SYSTEM_NAME ]
 	},
 	'host_watchdog' : {
@@ -201,6 +202,11 @@ FRU_INSTANCES = {
 	'<inventory_root>/system/chassis/io_board/pcie_slot0' : { 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/io_board/pcie_slot1' : { 'fru_type' : 'PCIE_CARD', 'is_fru' : True,},
 
+	'<inventory_root>/system/systemevent'                  : { 'fru_type' : 'SYSTEM_EVENT', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/refclock' : { 'fru_type' : 'MAIN_PLANAR', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/pcieclock': { 'fru_type' : 'MAIN_PLANAR', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/todclock' : { 'fru_type' : 'MAIN_PLANAR', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/apss'     : { 'fru_type' : 'MAIN_PLANAR', 'is_fru' : False, },
 }
 
 ID_LOOKUP = {
@@ -220,12 +226,19 @@ ID_LOOKUP = {
 		'CHASSIS_2' : '<inventory_root>/system/chassis',
 		'BOARD_1'   : '<inventory_root>/system/chassis/motherboard/cpu0',
 		'BOARD_2'   : '<inventory_root>/system/chassis/motherboard/centaur0',
+		'BOARD_14'   : '<inventory_root>/system/chassis/motherboard',
 		'PRODUCT_3'   : '<inventory_root>/system/chassis/motherboard/dimm0',
 		'PRODUCT_4'   : '<inventory_root>/system/chassis/motherboard/dimm1',
 		'PRODUCT_5'   : '<inventory_root>/system/chassis/motherboard/dimm2',
 		'PRODUCT_6'   : '<inventory_root>/system/chassis/motherboard/dimm3',
 	},
 	'SENSOR' : {
+		0x34 : '<inventory_root>/system/chassis/motherboard',
+		0x35 : '<inventory_root>/system/systemevent',
+		0x37 : '<inventory_root>/system/chassis/motherboard/refclock',
+		0x38 : '<inventory_root>/system/chassis/motherboard/pcieclock',
+		0x39 : '<inventory_root>/system/chassis/motherboard/todclock',
+		0x3A : '<inventory_root>/system/chassis/motherboard/apss',
 		0x2f : '<inventory_root>/system/chassis/motherboard/cpu0',
 		0x22 : '<inventory_root>/system/chassis/motherboard/cpu0/core0',
 		0x23 : '<inventory_root>/system/chassis/motherboard/cpu0/core1',
@@ -244,15 +257,15 @@ ID_LOOKUP = {
 		0x1f : '<inventory_root>/system/chassis/motherboard/dimm1',
 		0x20 : '<inventory_root>/system/chassis/motherboard/dimm2',
 		0x21 : '<inventory_root>/system/chassis/motherboard/dimm3',
-		0x09 : '/org/openbmc/sensor/virtual/BootCount',
-		0x05 : '/org/openbmc/sensor/virtual/BootProgress',
-		0x04 : '/org/openbmc/sensor/virtual/HostStatus',
-		0x08 : '/org/openbmc/sensor/virtual/OccStatus',
-		0x32 : '/org/openbmc/sensor/virtual/OperatingSystemStatus',
+		0x09 : '/org/openbmc/sensors/host/BootCount',
+		0x05 : '/org/openbmc/sensors/host/BootProgress',
+		0x08 : '/org/openbmc/sensors/host/OccStatus',
+		0x32 : '/org/openbmc/sensors/host/OperatingSystemStatus',
+		0x33 : '/org/openbmc/sensors/host/PowerCap',
 	},
 	'GPIO_PRESENT' : {
-		'SLOT0_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot0', 
-		'SLOT1_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot1', 
+		'SLOT0_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot0',
+		'SLOT1_PRESENT' : '<inventory_root>/system/chassis/io_board/pcie_slot1',
 	}
 }
 
@@ -284,6 +297,3 @@ def convertGpio(name):
 	a = ord(c)-65
 	base = a*8+GPIO_BASE
 	return base+offset
-
-
-
