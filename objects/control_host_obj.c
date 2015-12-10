@@ -21,7 +21,7 @@ GPIO fsi_data     = (GPIO){ "FSI_DATA" };
 GPIO fsi_clk      = (GPIO){ "FSI_CLK" };
 GPIO fsi_enable   = (GPIO){ "FSI_ENABLE" };
 GPIO cronus_sel   = (GPIO){ "CRONUS_SEL" };
-GPIO Throttle   = (GPIO){ "BMC_TROTTLE" };
+GPIO Throttle     = (GPIO){ "BMC_THROTTLE" };
 
 /* Bit bang patterns */
 
