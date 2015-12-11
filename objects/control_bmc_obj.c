@@ -85,6 +85,7 @@ void reg_init()
 	//GPIO
 	bmcreg = memmap(mem_fd,GPIO_BASE);
 	devmem(bmcreg+0x84,0x00fff0c0);  //Enable UART1
+        devmem(bmcreg+0x70,0x120CE406);
 	devmem(bmcreg+0x80,0xCB000000);
 	devmem(bmcreg+0x88,0x01C000FF);
 	devmem(bmcreg+0x8c,0xC1C000FF);
