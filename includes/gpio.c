@@ -217,7 +217,7 @@ int gpio_open(GPIO* gpio)
 	else
 	{
 		sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
-		gpio->fd = open(buf, O_WRONLY);
+		gpio->fd = open(buf, O_RDWR);
 
 	}
 	if (gpio->fd == -1) {
