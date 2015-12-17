@@ -75,12 +75,6 @@ ENTER_STATE_CALLBACK = {
 			'obj_name'   : '/org/openbmc/control/led/BEEP',
 			'interface_name' : 'org.openbmc.Led',
 		},
-		'setBlinkSlow' : {
-			'bus_name'   : 'org.openbmc.control.led',
-			'obj_name'   : '/org/openbmc/control/led/HEART_BEAT',
-			'interface_name' : 'org.openbmc.Led',
-		},
-
 		'init' : {
 			'bus_name'   : 'org.openbmc.control.Flash',
 			'obj_name'   : '/org/openbmc/control/flash/bios',
