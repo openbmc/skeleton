@@ -69,7 +69,7 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 
 	def getInterface(self,name):
 		o = self.dbus_objects[name]
-		obj = bus.get_object(o['bus_name'],o['object_name'])
+		obj = bus.get_object(o['bus_name'],o['object_name'],introspect=False)
 		return dbus.Interface(obj,o['interface_name'])
 
 

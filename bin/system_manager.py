@@ -86,7 +86,7 @@ class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		try:	
 			cb = System.ENTER_STATE_CALLBACK[state_name]
 			for methd in cb.keys():
-				obj = bus.get_object(cb[methd]['bus_name'],cb[methd]['obj_name'])
+				obj = bus.get_object(cb[methd]['bus_name'],cb[methd]['obj_name'],introspect=False)
 				method = obj.get_dbus_method(methd,cb[methd]['interface_name'])
 				method()
 		except:
