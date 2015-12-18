@@ -34,7 +34,7 @@ class FanControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		## create interface proxies to all fans
 		for fan in FAN_OBJS:
 			print "Initializing fan: "+fan
-			obj = bus.get_object(FAN_BUS,fan)
+			obj = bus.get_object(FAN_BUS,fan,introspect=False)
 			self.fan_intf.append(dbus.Interface(obj,FAN_IFACE))
 		self.InterfacesAdded(name,self.properties)
 			
