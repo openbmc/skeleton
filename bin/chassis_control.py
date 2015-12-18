@@ -132,6 +132,8 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 			self.powerOff()
 		return None
 
+	@dbus.service.method(DBUS_NAME,
+		in_signature='', out_signature='')
 	def softReboot(self):
 		print "Soft Rebooting"
 		if self.getPowerState() == POWER_OFF:
