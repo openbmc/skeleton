@@ -3,13 +3,17 @@
 import sys
 import os
 import gobject
+import glob
 import dbus
 import dbus.service
 import dbus.mainloop.glib
 import Openbmc
+import re
+
 from Sensors import SensorValue as SensorValue
 from Sensors import HwmonSensor as HwmonSensor
 from Sensors import SensorThresholds as SensorThresholds
+
 if (len(sys.argv) < 2):
 	print "Usage:  sensors_hwmon.py [system name]"
 	exit(1)
@@ -18,7 +22,7 @@ System = __import__(sys.argv[1])
 
 SENSOR_BUS = 'org.openbmc.Sensors'
 SENSOR_PATH = '/org/openbmc/sensors'
-DIR_POLL_INTERVAL = 10000
+DIR_POLL_INTERVAL = 30000
 HWMON_PATH = '/sys/class/hwmon'
 
 ## static define which interface each property is under
@@ -55,7 +59,7 @@ class Hwmons():
 	def poll(self,objpath,attribute):
 		try:
 			raw_value = int(self.readAttribute(attribute))
-			obj = bus.get_object(SENSOR_BUS,objpath)
+			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
 			rtn = intf.setByPoll(raw_value)
 			if (rtn[0] == True):
@@ -68,48 +72,41 @@ class Hwmons():
 		return True
 
 
-	def addObject(self,dpath,instance_name,attribute):
-		hwmon = System.HWMON_CONFIG[instance_name][attribute]
+	def addObject(self,dpath,hwmon_path,hwmon):
 		objsuf = hwmon['object_path']
-		try:
-			if (objsuf.find('<label>') > -1):
-				label_file = attribute.replace('_input','_label')
-				label = self.readAttribute(dpath+label_file)
-				objsuf = objsuf.replace('<label>',label)
-		except Exception as e:
-			print e
-			return
-
 		objpath = SENSOR_PATH+'/'+objsuf
-		spath = dpath+attribute
+		
 		if (self.sensors.has_key(objpath) == False):
-			if os.path.isfile(spath):
-				print "HWMON add: "+objpath+" : "+spath
-				obj = bus.get_object(SENSOR_BUS,SENSOR_PATH)
-				intf = dbus.Interface(obj,SENSOR_BUS)
-				intf.register("HwmonSensor",objpath)
+			print "HWMON add: "+objpath+" : "+hwmon_path
+
+			## register object with sensor manager
+			obj = bus.get_object(SENSOR_BUS,SENSOR_PATH,introspect=False)
+			intf = dbus.Interface(obj,SENSOR_BUS)
+			intf.register("HwmonSensor",objpath)
+
+			## set some properties in dbus object		
+			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
+			intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
+			intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
 			
-				obj = bus.get_object(SENSOR_BUS,objpath)
-				intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
-				intf.Set(HwmonSensor.IFACE_NAME,'filename',spath)
-				
-				## check if one of thresholds is defined to know
-				## whether to enable thresholds or not
-				if (hwmon.has_key('critical_upper')):
-					intf.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled',True)
+			## check if one of thresholds is defined to know
+			## whether to enable thresholds or not
+			if (hwmon.has_key('critical_upper')):
+				intf.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled',True)
 
-				for prop in hwmon.keys():
-					if (IFACE_LOOKUP.has_key(prop)):
-						intf.Set(IFACE_LOOKUP[prop],prop,hwmon[prop])
-						print "Setting: "+prop+" = "+str(hwmon[prop])
+			for prop in hwmon.keys():
+				if (IFACE_LOOKUP.has_key(prop)):
+					intf.Set(IFACE_LOOKUP[prop],prop,hwmon[prop])
+					print "Setting: "+prop+" = "+str(hwmon[prop])
 
-				self.sensors[objpath]=True
-				self.hwmon_root[dpath].append(objpath)
-				gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,spath)
+			self.sensors[objpath]=True
+			self.hwmon_root[dpath].append(objpath)
+			gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path)
 	
 	def scanDirectory(self):
 	 	devices = os.listdir(HWMON_PATH)
 		found_hwmon = {}
+		regx = re.compile('([a-z]+)\d+\_')
 		for d in devices:
 			dpath = HWMON_PATH+'/'+d+'/'
 			found_hwmon[dpath] = True
@@ -117,11 +114,28 @@ class Hwmons():
 				self.hwmon_root[dpath] = []
 			## the instance name is a soft link
 			instance_name = os.path.realpath(dpath+'device').split('/').pop()
+			
+			
 			if (System.HWMON_CONFIG.has_key(instance_name)):
-	 			for attribute in System.HWMON_CONFIG[instance_name].keys():
-					self.addObject(dpath,instance_name,attribute)
+				hwmon = System.HWMON_CONFIG[instance_name]
+	 			
+				if (hwmon.has_key('labels')):
+					label_files = glob.glob(dpath+'/*_label')
+					for f in label_files:
+						label_key = self.readAttribute(f)
+						if (hwmon['labels'].has_key(label_key)):
+							namef = f.replace('_label','_input')
+							self.addObject(dpath,namef,hwmon['labels'][label_key])
+						else:
+							pass
+							#print "WARNING - hwmon: label ("+label_key+") not found in lookup: "+f
+							
+				if hwmon.has_key('names'):
+					for attribute in hwmon['names'].keys():
+						self.addObject(dpath,dpath+attribute,hwmon['names'][attribute])
+						
 			else:
-				print "WARNING: Unhandled hwmon: "+dpath
+				print "WARNING - hwmon: Unhandled hwmon: "+dpath
 	
 
 		for k in self.hwmon_root.keys():
@@ -132,7 +146,7 @@ class Hwmons():
 					if (self.sensors.has_key(objpath) == True):
 						print "HWMON remove: "+objpath
 						self.sensors.pop(objpath,None)
-						obj = bus.get_object(SENSOR_BUS,SENSOR_PATH)
+						obj = bus.get_object(SENSOR_BUS,SENSOR_PATH,introspect=False)
 						intf = dbus.Interface(obj,SENSOR_BUS)
 						intf.delete(objpath)
 
