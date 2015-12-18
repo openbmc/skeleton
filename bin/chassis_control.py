@@ -60,6 +60,9 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		bus.add_signal_receiver(self.reset_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "PressedLong", 
 					path="/org/openbmc/buttons/power0" )
+		bus.add_signal_receiver(self.softreset_button_signal_handler, 
+					dbus_interface = "org.openbmc.Button", signal_name = "Released", 
+					path="/org/openbmc/buttons/reset0" )
 
     		bus.add_signal_receiver(self.host_watchdog_signal_handler, 
 					dbus_interface = "org.openbmc.Watchdog", signal_name = "WatchdogError")
@@ -179,6 +182,9 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 
 	def reset_button_signal_handler(self):
 		self.reboot();
+
+	def softreset_button_signal_handler(self):
+		self.softReboot();
 		
 	def host_watchdog_signal_handler(self):
 		print "Watchdog Error, Hard Rebooting"
