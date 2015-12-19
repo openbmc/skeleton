@@ -21,6 +21,7 @@ GPIO fsi_data     = (GPIO){ "FSI_DATA" };
 GPIO fsi_clk      = (GPIO){ "FSI_CLK" };
 GPIO fsi_enable   = (GPIO){ "FSI_ENABLE" };
 GPIO cronus_sel   = (GPIO){ "CRONUS_SEL" };
+GPIO Throttle     = (GPIO){ "BMC_THROTTLE" };
 
 /* Bit bang patterns */
 
@@ -102,12 +103,14 @@ on_boot         (ControlHost        *host,
 		rc |= gpio_open(&fsi_data);
 		rc |= gpio_open(&fsi_enable);
 		rc |= gpio_open(&cronus_sel);
+		rc |= gpio_open(&Throttle);
 		if (rc!=GPIO_OK) { break; }
 
 		//setup dc pins		
 		rc = gpio_write(&cronus_sel,1);
 		rc |= gpio_write(&fsi_enable,1);
 		rc |= gpio_write(&fsi_clk,1);
+		rc |= gpio_write(&Throttle,1);
 		if (rc!=GPIO_OK) { break; }
 
 		//data standy state
@@ -165,6 +168,7 @@ on_boot         (ControlHost        *host,
 	gpio_close(&fsi_data);
 	gpio_close(&fsi_enable);
 	gpio_close(&cronus_sel);
+	gpio_close(&Throttle);
 
 	control_host_emit_booted(host);
 	return TRUE;
@@ -221,6 +225,7 @@ on_bus_acquired (GDBusConnection *connection,
 	gpio_init(connection,&fsi_clk);
 	gpio_init(connection,&fsi_enable);
 	gpio_init(connection,&cronus_sel);
+	gpio_init(connection,&Throttle);
 	emit_object_added((GDBusObjectManager*)manager); 	
 }
 

@@ -10,11 +10,13 @@ static const gchar* dbus_name        = "org.openbmc.control.led";
 
 static GDBusObjectManagerServer *manager = NULL;
 
-#define  NUM_GPIO 2
+#define  NUM_GPIO 4
 
 GPIO led_gpio[NUM_GPIO] = { 
 	(GPIO){"IDENTIFY"},
-	(GPIO){"BMC_READY"}
+	(GPIO){"BMC_READY"},
+	(GPIO){"BEEP"},
+    (GPIO){"HEART_BEAT"}
 };
 
 
