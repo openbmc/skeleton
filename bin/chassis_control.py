@@ -188,8 +188,8 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		
 	def host_watchdog_signal_handler(self):
 		print "Watchdog Error, Hard Rebooting"
-		#self.Set(DBUS_NAME,"reboot",1)
-		#self.powerOff()
+		self.Set(DBUS_NAME,"reboot",1)
+		self.powerOff()
 		
 
 if __name__ == '__main__':
