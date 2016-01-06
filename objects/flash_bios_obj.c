@@ -165,6 +165,12 @@ on_done        (Flash          *flash,
 	printf("Flash Done. Clearing locks\n");
 	shared_resource_set_lock(lock,false);
 	shared_resource_set_name(lock,"");
+	const gchar* filename = flash_get_filename(flash);
+	rc = unlink(filename);
+	if (rc != 0 )
+	{
+		printf("ERROR: Unable to delete file %s (%d)\n",filename,rc);
+	}
 	
 	return TRUE;
 }

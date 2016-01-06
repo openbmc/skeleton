@@ -5,7 +5,6 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import tftpy
 import Openbmc
 if (len(sys.argv) < 2):
 	print "Usage:  download_manager.py [system name]"
@@ -35,14 +34,13 @@ class DownloadManagerObject(dbus.service.Object):
 	def DownloadHandler(self,url,filename,path = None):
 		try:
 			filename = str(filename)
-			client = tftpy.TftpClient(url, TFTP_PORT)
 			print "Downloading: "+filename+" from "+url
 			outfile = System.FLASH_DOWNLOAD_PATH+"/"+filename
-			client.download(filename,outfile)
+			subprocess.call(["tftp", "-l",outfile,"-r",filename,"-g",url])
 			obj = bus.get_object("org.openbmc.control.Flash",path)
 			intf = dbus.Interface(obj,"org.openbmc.Flash")
 			intf.update(outfile)
-					
+
 		except Exception as e:
 			print "ERROR DownloadManager: "+str(e)
 			obj = bus.get_object("org.openbmc.control.Flash",path)
