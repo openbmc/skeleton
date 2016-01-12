@@ -276,6 +276,7 @@ GPIO_CONFIG['FSI_ENABLE'] =   { 'gpio_pin': 'D0', 'direction': 'out' }
 GPIO_CONFIG['POWER_PIN']  =   { 'gpio_pin': 'E1', 'direction': 'out'  }
 GPIO_CONFIG['CRONUS_SEL'] =   { 'gpio_pin': 'A6', 'direction': 'out'  }
 GPIO_CONFIG['PGOOD']      =   { 'gpio_pin': 'C7', 'direction': 'in'  }
+GPIO_CONFIG['BMC_THROTTLE'] = { 'gpio_pin': 'J3', 'direction': 'out' }
 GPIO_CONFIG['IDENTIFY']   =   { 'gpio_pin': 'R4', 'direction': 'out' }
 GPIO_CONFIG['BMC_READY']   =  { 'gpio_pin': 'R4', 'direction': 'out' }
 GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_pin': 'E0', 'direction': 'both' }
@@ -297,3 +298,11 @@ def convertGpio(name):
 	a = ord(c)-65
 	base = a*8+GPIO_BASE
 	return base+offset
+
+HWMON_CONFIG = {
+	'2-004c' :  {
+		'names' : {
+			'temp1_input' : { 'object_path' : 'temperature/ambient','poll_interval' : 5000,'scale' : 1000,'units' : 'C' },
+		}
+	}
+}

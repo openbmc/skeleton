@@ -486,6 +486,7 @@ ID_LOOKUP = {
 		0x05 : '/org/openbmc/sensors/host/BootProgress',
 		0x04 : '/org/openbmc/sensors/host/HostStatus',
 		0x08 : '/org/openbmc/sensors/host/OccStatus',
+		0x0A : '/org/openbmc/sensors/host/OccStatus1',
 		0x32 : '/org/openbmc/sensors/host/OperatingSystemStatus',
 		0x33 : '/org/openbmc/sensors/host/powercap',
 	},
