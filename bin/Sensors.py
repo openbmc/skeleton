@@ -189,5 +189,8 @@ class OperatingSystemStatusSensor(VirtualSensor):
 	def __init__(self,bus,name):
 		VirtualSensor.__init__(self,bus,name)
 		self.setValue("Off")
-	
+		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 
+	def SystemStateHandler(self,state):
+		if (state == "HOST_POWERED_OFF"):
+			self.setValue("Off")
