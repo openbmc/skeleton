@@ -66,6 +66,10 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 
     		bus.add_signal_receiver(self.host_watchdog_signal_handler, 
 					dbus_interface = "org.openbmc.Watchdog", signal_name = "WatchdogError")
+
+   		bus.add_signal_receiver(self.emergency_shutdown_signal_handler, 
+					dbus_interface = "org.openbmc.SensorThresholds", signal_name = "Emergency")
+
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 		self.InterfacesAdded(name,self.properties)
 
@@ -190,6 +194,11 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		print "Watchdog Error, Hard Rebooting"
 		#self.Set(DBUS_NAME,"reboot",1)
 		#self.powerOff()
+
+	def emergency_shutdown_signal_handler(self):
+		print "Emergency Shutdown!"
+		self.powerOff()
+		
 		
 
 if __name__ == '__main__':

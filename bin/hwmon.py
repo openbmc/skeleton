@@ -35,6 +35,7 @@ IFACE_LOOKUP = {
 	'warning_upper' : SensorThresholds.IFACE_NAME,
 	'critical_lower' : SensorThresholds.IFACE_NAME,
 	'warning_lower' : SensorThresholds.IFACE_NAME,
+	'emergency_enabled' : SensorThresholds.IFACE_NAME,
 }
 
 class Hwmons():

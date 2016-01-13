@@ -31,6 +31,7 @@ class SensorThresholds(Openbmc.DbusProperties):
 	IFACE_NAME = 'org.openbmc.SensorThresholds'
 	def __init__(self,bus,name):
 		self.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled',False)
+		self.Set(SensorThresholds.IFACE_NAME,'emergency_enabled',False)
 		self.Set(SensorThresholds.IFACE_NAME,'warning_upper',0)
 		self.Set(SensorThresholds.IFACE_NAME,'warning_lower',0)
 		self.Set(SensorThresholds.IFACE_NAME,'critical_upper',0)
@@ -52,16 +53,22 @@ class SensorThresholds(Openbmc.DbusProperties):
 		current_state = "NORMAL"
 		if (value >= self.properties[iface]['critical_upper']):
 			current_state = "CRITICAL"
-			rtn = True	
-		elif (value <= self.properties[iface]['critical_lower']):
-			current_state = "CRITICAL"	
-			rtn = True	
-		elif (value >= self.properties[iface]['warning_upper']):
-			current_state = "WARNING"	
-			rtn = True	
-		elif (value <= self.properties[iface]['warning_lower']):
-			current_state = "WARNING"	
 			rtn = True
+		elif (value <= self.properties[iface]['critical_lower']):
+			current_state = "CRITICAL"
+			rtn = True
+		elif (value >= self.properties[iface]['warning_upper']):
+			current_state = "WARNING"
+			rtn = True
+		elif (value <= self.properties[iface]['warning_lower']):
+			current_state = "WARNING"
+			rtn = True
+
+		if (self.Get(iface,'threshold_state') != current_state and
+		 		current_state == "CRITICAL" and
+				self.Get(iface,'emergency_enabled') == True):
+			self.Emergency()
+
 		self.Set(iface,'threshold_state',current_state)
 		worst = self.properties[iface]['worst_threshold_state']
 		if (current_state == "CRITICAL" or 
@@ -69,6 +76,11 @@ class SensorThresholds(Openbmc.DbusProperties):
 			self.Set(iface,'worst_threshold_state',current_state)
 
 		return rtn
+
+	@dbus.service.signal(IFACE_NAME,signature='')
+	def Emergency(self):
+		pass
+
 
 class VirtualSensor(SensorValue):
 	def __init__(self,bus,name):
