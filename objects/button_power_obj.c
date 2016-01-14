@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "interfaces/openbmc_intf.h"
 #include "gpio.h"
 #include "openbmc.h"
@@ -42,7 +43,11 @@ on_button_interrupt( GIOChannel *channel,
 
 	GError *error = 0;
 	gsize bytes_read = 0;
-	gchar buf[2]; 
+	gchar buf[2];
+
+	uint8_t val;
+	int rc1 = GPIO_OK;
+
 	buf[1] = '\0';
 	g_io_channel_seek_position( channel, 0, G_SEEK_SET, 0 );
 	GIOStatus rc = g_io_channel_read_chars( channel,
@@ -50,7 +55,7 @@ on_button_interrupt( GIOChannel *channel,
                                             &bytes_read,
                                             &error );
 	printf("%s\n",buf);
-	
+
 	time_t current_time = time(NULL);
 	if (gpio_button.irq_inited)
 	{
@@ -65,19 +70,25 @@ on_button_interrupt( GIOChannel *channel,
 		{
 			long press_time = current_time-button_get_timer(button);
 			printf("Power Button released, held for %ld seconds\n",press_time);
-			if (press_time > LONG_PRESS_SECONDS)
-			{
-				button_emit_pressed_long(button);
-			} else {
-				button_emit_released(button);
-			}
+		//	if (press_time > LONG_PRESS_SECONDS)
+		//	{
+		//		button_emit_pressed_long(button);
+		//	} else {
+			rc1 =  gpio_open(&gpio_button);
+			rc1 = gpio_read(&gpio_button,&val);
+			if (val == 1)
+			button_emit_released(button);
+
+			//	if (press_time > 1)
+			//	sleep(1);
+			//}
 		}
-	} 
+	}
 	else { gpio_button.irq_inited = true; }
 
 	return TRUE;
 }
-static void 
+static void
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
@@ -110,7 +121,7 @@ on_bus_acquired (GDBusConnection *connection,
                     G_CALLBACK (on_button_press),
                     NULL); /* user_data */
 
-		
+
 	/* Export the object (@manager takes its own reference to @object) */
 	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
 	g_object_unref (object);
@@ -130,7 +141,7 @@ on_bus_acquired (GDBusConnection *connection,
 	{
 		printf("ERROR PowerButton: GPIO setup (rc=%d)\n",rc);
 	}
-	emit_object_added((GDBusObjectManager*)manager); 
+	emit_object_added((GDBusObjectManager*)manager);
 }
 
 static void
@@ -171,7 +182,7 @@ main (gint argc, gchar *argv[])
                        NULL);
 
   g_main_loop_run (loop);
-  
+
   g_bus_unown_name (id);
   g_main_loop_unref (loop);
   return 0;
