@@ -13,7 +13,6 @@ SYSTEM_NAME = "Palmetto"
 ##   - objects specified in EXIT_STATE_DEPEND have started
 SYSTEM_STATES = [
 	'BASE_APPS',
-	'BMC_INIT',
 	'BMC_STARTING',
 	'BMC_READY',
 	'HOST_POWERING_ON',
@@ -65,12 +64,6 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : False,
 		'process_name'    : 'startup_hacks.sh',
-	},
-	'bmc_init' : {
-		'system_state'    : 'BMC_INIT',
-		'start_process'   : True,
-		'monitor_process' : False,
-		'process_name'    : 'control_bmc.exe',
 	},
 	'inventory' : {
 		'system_state'    : 'BMC_STARTING',
