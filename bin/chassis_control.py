@@ -130,7 +130,7 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 	def reboot(self):
 		print "Rebooting"
 		if self.getPowerState() == POWER_OFF:
-			self.powerOn();
+			print "Power off, no reboot."
 		else:
 			self.Set(DBUS_NAME,"reboot",1)
 			self.powerOff()
