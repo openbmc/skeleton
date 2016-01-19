@@ -186,7 +186,21 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : False,
 		'process_name'    : 'phosphor-read-eeprom',
-		'args'            : ['--eeprom','/sys/devices/platform/ahb/ahb:apb/1e78a000.i2c/1e78a040.i2c-bus/i2c-0/0-0050/eeprom','--fruid','64'],
+		'args'            : ['--eeprom','/sys/bus/i2c/devices/0-0050/eeprom','--fruid','64'],
+	},
+	'exp_vpd' : {
+		'system_state'    : 'BMC_STARTING2',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'phosphor-read-eeprom',
+		'args'            : ['--eeprom','/sys/bus/i2c/devices/6-0051/eeprom','--fruid','65'],
+	},
+	'hdd_vpd' : {
+		'system_state'    : 'BMC_STARTING2',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'phosphor-read-eeprom',
+		'args'            : ['--eeprom','/sys/bus/i2c/devices/6-0055/eeprom','--fruid','66'],
 	},
 	'restore' : {
 		'system_state'    : 'BMC_READY',
@@ -211,6 +225,8 @@ FRU_INSTANCES = {
 
 	'<inventory_root>/system/chassis/motherboard' : { 'fru_type' : 'MAIN_PLANAR','is_fru' : True, },
 	'<inventory_root>/system/chassis/io_board' : { 'fru_type' : 'DAUGHTER_CARD','is_fru' : True, },
+	'<inventory_root>/system/chassis/sas_expander' : { 'fru_type' : 'DAUGHTER_CARD','is_fru' : True, },
+	'<inventory_root>/system/chassis/hdd_backplane' : { 'fru_type' : 'DAUGHTER_CARD','is_fru' : True, },
 
 	'<inventory_root>/system/systemevent'                  : { 'fru_type' : 'SYSTEM_EVENT', 'is_fru' : False, },
 	'<inventory_root>/system/chassis/motherboard/refclock' : { 'fru_type' : 'MAIN_PLANAR', 'is_fru' : False, },
@@ -223,6 +239,7 @@ FRU_INSTANCES = {
 	'<inventory_root>/system/chassis/fan2' : { 'fru_type' : 'FAN','is_fru' : True, },
 	'<inventory_root>/system/chassis/fan3' : { 'fru_type' : 'FAN','is_fru' : True, },
 	'<inventory_root>/system/chassis/fan4' : { 'fru_type' : 'FAN','is_fru' : True, },
+	'<inventory_root>/system/chassis/fan5' : { 'fru_type' : 'FAN','is_fru' : True, },
 
 	'<inventory_root>/system/chassis/motherboard/bmc' : { 'fru_type' : 'BMC','is_fru' : False, 'manufacturer' : 'ASPEED' },
 
@@ -363,6 +380,8 @@ ID_LOOKUP = {
 		'CHASSIS_2'  : '<inventory_root>/system/chassis',
 		'CHASSIS_100': '<inventory_root>/system/chassis',
 		'BOARD_100'  : '<inventory_root>/system/chassis/io_board',
+		'BOARD_101'  : '<inventory_root>/system/chassis/sas_expander',
+		'BOARD_102'  : '<inventory_root>/system/chassis/hdd_backplane',
 		'CHASSIS_3'  : '<inventory_root>/system/chassis/motherboard',
 		'BOARD_1'    : '<inventory_root>/system/chassis/motherboard/cpu0',
 		'BOARD_2'    : '<inventory_root>/system/chassis/motherboard/cpu1',
