@@ -107,7 +107,7 @@
 		<signal name="Started"/>
 	</interface>
 	<interface name="org.openbmc.control.Bmc">
-		<method name="place_holder"/>
+		<method name="warmReset"/>
 	</interface>
 	<interface name="org.openbmc.control.Host">
 		<method name="boot"/>

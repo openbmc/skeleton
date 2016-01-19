@@ -14419,22 +14419,22 @@ control_skeleton_new (void)
 
 /* ---- Introspection data for org.openbmc.control.Bmc ---- */
 
-static const _ExtendedGDBusMethodInfo _control_bmc_method_info_place_holder =
+static const _ExtendedGDBusMethodInfo _control_bmc_method_info_warm_reset =
 {
   {
     -1,
-    (gchar *) "place_holder",
+    (gchar *) "warmReset",
     NULL,
     NULL,
     NULL
   },
-  "handle-place-holder",
+  "handle-warm-reset",
   FALSE
 };
 
 static const _ExtendedGDBusMethodInfo * const _control_bmc_method_info_pointers[] =
 {
-  &_control_bmc_method_info_place_holder,
+  &_control_bmc_method_info_warm_reset,
   NULL
 };
 
@@ -14492,7 +14492,7 @@ control_bmc_override_properties (GObjectClass *klass, guint property_id_begin)
 /**
  * ControlBmcIface:
  * @parent_iface: The parent interface.
- * @handle_place_holder: Handler for the #ControlBmc::handle-place-holder signal.
+ * @handle_warm_reset: Handler for the #ControlBmc::handle-warm-reset signal.
  *
  * Virtual table for the D-Bus interface <link linkend="gdbus-interface-org-openbmc-control-Bmc.top_of_page">org.openbmc.control.Bmc</link>.
  */
@@ -14505,20 +14505,20 @@ control_bmc_default_init (ControlBmcIface *iface)
 {
   /* GObject signals for incoming D-Bus method calls: */
   /**
-   * ControlBmc::handle-place-holder:
+   * ControlBmc::handle-warm-reset:
    * @object: A #ControlBmc.
    * @invocation: A #GDBusMethodInvocation.
    *
-   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-control-Bmc.place_holder">place_holder()</link> D-Bus method.
+   * Signal emitted when a remote caller is invoking the <link linkend="gdbus-method-org-openbmc-control-Bmc.warmReset">warmReset()</link> D-Bus method.
    *
-   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call control_bmc_complete_place_holder() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
+   * If a signal handler returns %TRUE, it means the signal handler will handle the invocation (e.g. take a reference to @invocation and eventually call control_bmc_complete_warm_reset() or e.g. g_dbus_method_invocation_return_error() on it) and no order signal handlers will run. If no signal handler handles the invocation, the %G_DBUS_ERROR_UNKNOWN_METHOD error is returned.
    *
    * Returns: %TRUE if the invocation was handled, %FALSE to let other signal handlers run.
    */
-  g_signal_new ("handle-place-holder",
+  g_signal_new ("handle-warm-reset",
     G_TYPE_FROM_INTERFACE (iface),
     G_SIGNAL_RUN_LAST,
-    G_STRUCT_OFFSET (ControlBmcIface, handle_place_holder),
+    G_STRUCT_OFFSET (ControlBmcIface, handle_warm_reset),
     g_signal_accumulator_true_handled,
     NULL,
     g_cclosure_marshal_generic,
@@ -14529,27 +14529,27 @@ control_bmc_default_init (ControlBmcIface *iface)
 }
 
 /**
- * control_bmc_call_place_holder:
+ * control_bmc_call_warm_reset:
  * @proxy: A #ControlBmcProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @callback: A #GAsyncReadyCallback to call when the request is satisfied or %NULL.
  * @user_data: User data to pass to @callback.
  *
- * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Bmc.place_holder">place_holder()</link> D-Bus method on @proxy.
+ * Asynchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Bmc.warmReset">warmReset()</link> D-Bus method on @proxy.
  * When the operation is finished, @callback will be invoked in the <link linkend="g-main-context-push-thread-default">thread-default main loop</link> of the thread you are calling this method from.
- * You can then call control_bmc_call_place_holder_finish() to get the result of the operation.
+ * You can then call control_bmc_call_warm_reset_finish() to get the result of the operation.
  *
- * See control_bmc_call_place_holder_sync() for the synchronous, blocking version of this method.
+ * See control_bmc_call_warm_reset_sync() for the synchronous, blocking version of this method.
  */
 void
-control_bmc_call_place_holder (
+control_bmc_call_warm_reset (
     ControlBmc *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data)
 {
   g_dbus_proxy_call (G_DBUS_PROXY (proxy),
-    "place_holder",
+    "warmReset",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -14559,17 +14559,17 @@ control_bmc_call_place_holder (
 }
 
 /**
- * control_bmc_call_place_holder_finish:
+ * control_bmc_call_warm_reset_finish:
  * @proxy: A #ControlBmcProxy.
- * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_bmc_call_place_holder().
+ * @res: The #GAsyncResult obtained from the #GAsyncReadyCallback passed to control_bmc_call_warm_reset().
  * @error: Return location for error or %NULL.
  *
- * Finishes an operation started with control_bmc_call_place_holder().
+ * Finishes an operation started with control_bmc_call_warm_reset().
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-control_bmc_call_place_holder_finish (
+control_bmc_call_warm_reset_finish (
     ControlBmc *proxy,
     GAsyncResult *res,
     GError **error)
@@ -14586,26 +14586,26 @@ _out:
 }
 
 /**
- * control_bmc_call_place_holder_sync:
+ * control_bmc_call_warm_reset_sync:
  * @proxy: A #ControlBmcProxy.
  * @cancellable: (allow-none): A #GCancellable or %NULL.
  * @error: Return location for error or %NULL.
  *
- * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Bmc.place_holder">place_holder()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
+ * Synchronously invokes the <link linkend="gdbus-method-org-openbmc-control-Bmc.warmReset">warmReset()</link> D-Bus method on @proxy. The calling thread is blocked until a reply is received.
  *
- * See control_bmc_call_place_holder() for the asynchronous version of this method.
+ * See control_bmc_call_warm_reset() for the asynchronous version of this method.
  *
  * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
  */
 gboolean
-control_bmc_call_place_holder_sync (
+control_bmc_call_warm_reset_sync (
     ControlBmc *proxy,
     GCancellable *cancellable,
     GError **error)
 {
   GVariant *_ret;
   _ret = g_dbus_proxy_call_sync (G_DBUS_PROXY (proxy),
-    "place_holder",
+    "warmReset",
     g_variant_new ("()"),
     G_DBUS_CALL_FLAGS_NONE,
     -1,
@@ -14621,16 +14621,16 @@ _out:
 }
 
 /**
- * control_bmc_complete_place_holder:
+ * control_bmc_complete_warm_reset:
  * @object: A #ControlBmc.
  * @invocation: (transfer full): A #GDBusMethodInvocation.
  *
- * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-control-Bmc.place_holder">place_holder()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
+ * Helper function used in service implementations to finish handling invocations of the <link linkend="gdbus-method-org-openbmc-control-Bmc.warmReset">warmReset()</link> D-Bus method. If you instead want to finish handling an invocation by returning an error, use g_dbus_method_invocation_return_error() or similar.
  *
  * This method will free @invocation, you cannot use it afterwards.
  */
 void
-control_bmc_complete_place_holder (
+control_bmc_complete_warm_reset (
     ControlBmc *object,
     GDBusMethodInvocation *invocation)
 {
