@@ -5,5 +5,5 @@ echo "A session log is created in current directory"
 echo "[Enter] to continue"
 read a
 devmem 0x1e78909c 32 0x08060000
-screen -U -L /dev/ttyS3 115200
+screen -U /dev/ttyS3 115200
 devmem 0x1e78909c 32 0x00000000
