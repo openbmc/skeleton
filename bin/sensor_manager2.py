@@ -56,8 +56,12 @@ if __name__ == '__main__':
 	root_sensor.add(obj_path,Sensors.PowerCap(bus,obj_path))
 	obj_path = OBJ_PATH+"/host/BootProgress"
 	root_sensor.add(obj_path,Sensors.BootProgressSensor(bus,obj_path))
+
 	obj_path = OBJ_PATH+"/host/OccStatus"
-	root_sensor.add(obj_path,Sensors.OccStatusSensor(bus,obj_path))
+	sensor_obj = Sensors.OccStatusSensor(bus,obj_path)
+	sensor_obj.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0050/online"
+	root_sensor.add(obj_path,sensor_obj)
+
 	obj_path = OBJ_PATH+"/host/BootCount"
 	root_sensor.add(obj_path,Sensors.BootCountSensor(bus,obj_path))
 	obj_path = OBJ_PATH+"/host/OperatingSystemStatus"
