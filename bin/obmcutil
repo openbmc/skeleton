@@ -175,7 +175,7 @@ elif (len(sys.argv)>0):
 bus_name = objinfo['bus_name']
 obj_path = objinfo['object_name']
 intf_name = objinfo['interface_name']
-obj = bus.get_object(bus_name,obj_path,introspect=False)
+obj = bus.get_object(bus_name,obj_path)
 
 if (method_name != ""):
 	methd = obj.get_dbus_method(method_name,intf_name)
