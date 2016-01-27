@@ -67,7 +67,7 @@ void reg_init()
 
 	//UART
 
-	
+
 	bmcreg = memmap(mem_fd,UART_BASE);
 	devmem(bmcreg+0x00,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
@@ -109,9 +109,31 @@ on_init (Control          *control,
 	//#endif
 	control_complete_init(control,invocation);
 	//control_emit_goto_system_state(control,"BMC_STARTING");
-	
+
 	return TRUE;
 }
+
+static gboolean
+on_cold_reset (Control          *control,
+         GDBusMethodInvocation  *invocation,
+         gpointer                user_data)
+{
+	GError *err = NULL;
+	/* wait a while before reboot, so the caller can get respond */
+	/* note that g_spawn_command_line_async cannot parse ';' as
+	 * a command separator. Need to use 'sh -c' to let shell parse it. */
+	gchar *reboot_command = "/bin/sh -c 'sleep 3;reboot --force'";
+
+	g_spawn_command_line_async(reboot_command, &err);
+	if (err != NULL) {
+		fprintf(stderr, "cold_reset() err: %s\n", err->message);
+		g_error_free (err);
+	}
+
+	control_bmc_complete_cold_reset(control,invocation);
+	return TRUE;
+}
+
 gboolean go(gpointer user_data)
 {
  	cmdline *cmd = user_data;
@@ -125,7 +147,7 @@ gboolean go(gpointer user_data)
 	return FALSE;
 }
 
-static void 
+static void
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
@@ -151,6 +173,11 @@ on_bus_acquired (GDBusConnection *connection,
 	g_signal_connect (control,
        	            "handle-init",
                	    G_CALLBACK (on_init),
+               	    NULL); /* user_data */
+
+	g_signal_connect (control_bmc,
+       	            "handle-cold-reset",
+               	    G_CALLBACK (on_cold_reset),
                	    NULL); /* user_data */
 
 	/* Export the object (@manager takes its own reference to @object) */
@@ -210,7 +237,7 @@ main (gint argc, gchar *argv[])
                        NULL);
 
   g_main_loop_run (loop);
-  
+
   g_bus_unown_name (id);
   g_main_loop_unref (loop);
   return 0;
