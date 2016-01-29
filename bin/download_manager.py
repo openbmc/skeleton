@@ -21,7 +21,11 @@ class DownloadManagerObject(dbus.service.Object):
 	def __init__(self,bus,name):
 		dbus.service.Object.__init__(self,bus,name)
 		bus.add_signal_receiver(self.DownloadHandler, 
-			dbus_interface = "org.openbmc.Flash", signal_name = "Download", path_keyword = "path")
+			dbus_interface = "org.openbmc.Flash",
+			signal_name = "Download", path_keyword = "path")
+		bus.add_signal_receiver(self.TftpDownloadHandler,
+			signal_name = "TftpDownload", path_keyword = "path")
+
 
 	@dbus.service.signal(DBUS_NAME,signature='ss')
 	def DownloadComplete(self,outfile,filename):
@@ -32,6 +36,24 @@ class DownloadManagerObject(dbus.service.Object):
 	def DownloadError(self,filename):
 		pass
 
+	def TftpDownloadHandler(self,ip,filename,path = None):
+		try:
+			filename = str(filename)
+			print "Downloading: "+filename+" from "+ip
+			outfile = System.FLASH_DOWNLOAD_PATH+"/"+filename
+			rc = subprocess.call(["tftp", "-l",outfile,"-r",filename,"-g",ip])
+			if (rc == 0):
+				self.DownloadComplete(outfile,filename)
+			else:
+				self.DownloadError(filename)
+
+
+		except Exception as e:
+			print "ERROR DownloadManager: "+str(e)
+			self.DownloadError(filename)
+
+
+	## TODO: this needs to be deprecated.  Shouldn't call flash interface from here
 	def DownloadHandler(self,url,filename,path = None):
 		try:
 			filename = str(filename)
