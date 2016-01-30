@@ -163,6 +163,8 @@ class BootProgressSensor(VirtualSensor):
 		
 class OccStatusSensor(VirtualSensor):
 	def __init__(self,bus,name):
+		## default path. can be override
+		self.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0050/online"
 		VirtualSensor.__init__(self,bus,name)
 		self.setValue("Disabled")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
@@ -170,7 +172,6 @@ class OccStatusSensor(VirtualSensor):
 	def SystemStateHandler(self,state):
 		if (state == "HOST_POWERED_OFF"):
 			self.setValue("Disabled")
-			
 
 	##override setValue method
 	@dbus.service.method(SensorValue.IFACE_NAME,
@@ -178,14 +179,10 @@ class OccStatusSensor(VirtualSensor):
 	def setValue(self,value):
 		if (value == "Enabled"):
 			print "Installing OCC device"
-			os.system("echo occ-i2c 0x50 >  /sys/bus/i2c/devices/i2c-3/new_device")
-			os.system("echo occ-i2c 0x51 >  /sys/bus/i2c/devices/i2c-3/new_device")
+			os.system("echo 1 > " +  self.sysfs_attr)
 		else:
 			print "Deleting OCC device"
-			os.system("echo 0x50 >  /sys/bus/i2c/devices/i2c-3/delete_device")
-			os.system("echo 0x51 >  /sys/bus/i2c/devices/i2c-3/delete_device")
-
-
+			os.system("echo 0 > " +  self.sysfs_attr)
 		SensorValue.setValue(self,value)
 			
 	@dbus.service.signal(CONTROL_IFACE,signature='s')
