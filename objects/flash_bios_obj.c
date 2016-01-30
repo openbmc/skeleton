@@ -308,8 +308,8 @@ on_bus_acquired (GDBusConnection *connection,
 		c--;
 	}
 
-	const char* inst[] = {"bios","bmc","bmc_ramdisk","bmc_kernel"};
-  	for (i=0;i<4;i++)
+	const char* inst[] = {"bios"};
+  	for (i=0;i<1;i++)
   	{
 		gchar* s;
 		s = g_strdup_printf ("%s/%s",dbus_object_path,inst[i]);

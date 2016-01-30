@@ -141,15 +141,12 @@ APPS = {
 		'monitor_process' : True,
 		'process_name'    : 'button_power.exe',
 	},
-
         'reset_button' : {
                 'system_state'    : 'BMC_STARTING',
                 'start_process'   : True,
                 'monitor_process' : True,
                 'process_name'    : 'button_reset.exe',
         },
-
-
 	'led_control' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
@@ -161,6 +158,12 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'flash_bios.exe',
+	},
+	'bmc_flash_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'bmc_update.py',
 	},
 	'download_manager' : {
 		'system_state'    : 'BMC_STARTING',
