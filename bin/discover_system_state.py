@@ -13,15 +13,25 @@ dbus_objects = {
 		'object_name' : '/org/openbmc/control/power0',
 		'interface_name' : 'org.openbmc.control.Power'
 	},
-	'occstatus' : { 
+	'occstatus0' : { 
 		'bus_name' : 'org.openbmc.Sensors',
-		'object_name' : '/org/openbmc/sensors/host/OccStatus',
+		'object_name' : '/org/openbmc/sensors/host/cpu0/OccStatus',
+		'interface_name' : 'org.openbmc.SensorValue'
+	},
+	'occstatus1' : { 
+		'bus_name' : 'org.openbmc.Sensors',
+		'object_name' : '/org/openbmc/sensors/host/cpu1/OccStatus',
 		'interface_name' : 'org.openbmc.SensorValue'
 	},
 	'bootprogress' : { 
 		'bus_name' : 'org.openbmc.Sensors',
 		'object_name' : '/org/openbmc/sensors/host/BootProgress',
 		'interface_name' : 'org.openbmc.SensorValue'
+	},
+	'chassis' : { 
+		'bus_name' : 'org.openbmc.control.Chassis',
+		'object_name' : '/org/openbmc/control/chassis0',
+		'interface_name' : 'org.openbmc.control.Chassis'
 	},
 }
 
@@ -41,9 +51,16 @@ pgood = getProperty(bus,dbus_objects,'power','pgood')
 if (pgood == 1):
 	intf = getInterface(bus,dbus_objects,'bootprogress')
 	intf.setValue("FW Progress, Starting OS")
-	intf = getInterface(bus,dbus_objects,'occstatus')
+	intf = getInterface(bus,dbus_objects,'occstatus0')
 	intf.setValue("Enabled")
-	
+	intf = getInterface(bus,dbus_objects,'occstatus1')
+	intf.setValue("Enabled")
+#else:
+#	chassis_intf = getInterface(bus,dbus_objects,'chassis')
+#	if (power_policy == "ALWAYS_POWER_ON" or
+#	  (power_policy == "RESTORE_LAST_STATE" and 
+#	  saved_system_state =="HOST_BOOTED")):
+#		chassis_intf.powerOn()
 
-		
+
 

@@ -57,12 +57,12 @@ if __name__ == '__main__':
 	obj_path = OBJ_PATH+"/host/BootProgress"
 	root_sensor.add(obj_path,Sensors.BootProgressSensor(bus,obj_path))
 
-	obj_path = OBJ_PATH+"/host/OccStatus"
+	obj_path = OBJ_PATH+"/host/cpu0/OccStatus"
 	sensor_obj = Sensors.OccStatusSensor(bus,obj_path)
 	sensor_obj.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0050/online"
 	root_sensor.add(obj_path,sensor_obj)
 
-	obj_path = OBJ_PATH+"/host/OccStatus1"
+	obj_path = OBJ_PATH+"/host/cpu1/OccStatus"
 	sensor_obj = Sensors.OccStatusSensor(bus,obj_path)
 	sensor_obj.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0051/online"
 	root_sensor.add(obj_path,sensor_obj)
