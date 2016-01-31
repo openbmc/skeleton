@@ -46,13 +46,16 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 				'object_name' : '/org/openbmc/HostServices',
 				'interface_name' : 'org.openbmc.HostServices'
 			},
+			'settings' : {
+				'bus_name' : 'org.openbmc.settings.Host',
+				'object_name' : '/org/openbmc/settings/host0',
+				'interface_name' : 'org.freedesktop.DBus.Properties'
+			},
 		}
 
 		#uuid
 		self.Set(DBUS_NAME,"uuid",str(uuid.uuid1()))
 		self.Set(DBUS_NAME,"reboot",0)
-		self.Set(DBUS_NAME,"power_policy",0)	
-		self.Set(DBUS_NAME,"last_system_state","")
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
 					dbus_interface = "org.openbmc.Button", signal_name = "Released", 
@@ -156,25 +159,15 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		intf = self.getInterface('power_control')
 		return intf.getPowerState()
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='', out_signature='')
-	def setDebugMode(self):
-		return None
-
-	@dbus.service.method(DBUS_NAME,
-		in_signature='i', out_signature='')
-	def setPowerPolicy(self,policy):
-		self.Set(DBUS_NAME,"power_policy",policy)	
-		return None
-
-
 	## Signal handler
 
 	def SystemStateHandler(self,state_name):
-		self.Set(DBUS_NAME,"last_system_state",state_name)	
+		if (state_name == "HOST_POWERED_OFF" or state_name == "HOST_POWERED_ON"):
+			intf = self.getInterface('settings')
+			intf.Set("org.openbmc.settings.Host","system_state",state_name)
+
 		if (state_name == "HOST_POWERED_OFF" and self.Get(DBUS_NAME,"reboot")==1):
 			self.powerOn()
-				
 
 	def power_button_signal_handler(self):
 		# toggle power
