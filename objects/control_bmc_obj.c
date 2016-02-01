@@ -67,7 +67,6 @@ void reg_init()
 
 	//UART
 
-	
 	bmcreg = memmap(mem_fd,UART_BASE);
 	devmem(bmcreg+0x00,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
@@ -109,9 +108,31 @@ on_init (Control          *control,
 	//#endif
 	control_complete_init(control,invocation);
 	//control_emit_goto_system_state(control,"BMC_STARTING");
-	
 	return TRUE;
 }
+
+static gboolean
+on_warm_reset (ControlBmc            	*bmc,
+               GDBusMethodInvocation	*invocation,
+               gpointer		            user_data)
+{
+	GError *err = NULL;
+	/* Wait a while before reboot, so the caller can be responded.
+	 * Note that g_spawn_command_line_async() cannot parse ';' as
+	 * a command separator. Need to use 'sh -c' to let shell parse it.
+	 */
+	gchar *reboot_command = "/bin/sh -c 'sleep 3;reboot'";
+
+	g_spawn_command_line_async(reboot_command, &err);
+	if (err != NULL) {
+		fprintf(stderr, "warmReset() error: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	control_bmc_complete_warm_reset(bmc, invocation);
+	return TRUE;
+}
+
 gboolean go(gpointer user_data)
 {
  	cmdline *cmd = user_data;
@@ -125,7 +146,7 @@ gboolean go(gpointer user_data)
 	return FALSE;
 }
 
-static void 
+static void
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
@@ -153,6 +174,12 @@ on_bus_acquired (GDBusConnection *connection,
                	    G_CALLBACK (on_init),
                	    NULL); /* user_data */
 
+
+	g_signal_connect (control_bmc,
+		"handle-warm-reset",
+		G_CALLBACK (on_warm_reset),
+		NULL); /* user_data */
+
 	/* Export the object (@manager takes its own reference to @object) */
 	g_dbus_object_manager_server_export (manager, G_DBUS_OBJECT_SKELETON (object));
 	g_object_unref (object);
@@ -163,7 +190,7 @@ on_bus_acquired (GDBusConnection *connection,
 	//TODO:  This is a bad hack to wait for object to be on bus
 	//sleep(1);
 	cmd->user_data = object;
-	g_idle_add(go,cmd);
+	//g_idle_add(go,cmd);
 }
 
 
@@ -210,7 +237,7 @@ main (gint argc, gchar *argv[])
                        NULL);
 
   g_main_loop_run (loop);
-  
+
   g_bus_unown_name (id);
   g_main_loop_unref (loop);
   return 0;

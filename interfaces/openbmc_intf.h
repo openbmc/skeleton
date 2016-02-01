@@ -1850,7 +1850,7 @@ struct _ControlBmcIface
 {
   GTypeInterface parent_iface;
 
-  gboolean (*handle_place_holder) (
+  gboolean (*handle_warm_reset) (
     ControlBmc *object,
     GDBusMethodInvocation *invocation);
 
@@ -1863,25 +1863,25 @@ guint control_bmc_override_properties (GObjectClass *klass, guint property_id_be
 
 
 /* D-Bus method call completion functions: */
-void control_bmc_complete_place_holder (
+void control_bmc_complete_warm_reset (
     ControlBmc *object,
     GDBusMethodInvocation *invocation);
 
 
 
 /* D-Bus method calls: */
-void control_bmc_call_place_holder (
+void control_bmc_call_warm_reset (
     ControlBmc *proxy,
     GCancellable *cancellable,
     GAsyncReadyCallback callback,
     gpointer user_data);
 
-gboolean control_bmc_call_place_holder_finish (
+gboolean control_bmc_call_warm_reset_finish (
     ControlBmc *proxy,
     GAsyncResult *res,
     GError **error);
 
-gboolean control_bmc_call_place_holder_sync (
+gboolean control_bmc_call_warm_reset_sync (
     ControlBmc *proxy,
     GCancellable *cancellable,
     GError **error);

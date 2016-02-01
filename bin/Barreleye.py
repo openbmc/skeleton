@@ -211,6 +211,12 @@ APPS = {
 		'monitor_process' : False,
 		'process_name'    : 'discover_system_state.py',
 	},
+	'bmc_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'control_bmc.exe',
+	},
 }
 
 CACHED_INTERFACES = {
