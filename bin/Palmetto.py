@@ -148,12 +148,13 @@ APPS = {
 		'monitor_process' : True,
 		'process_name'    : 'fan.exe',
 		'args'            : [ 'fan0','fan1','fan2','fan3','fan4' ]
-	}
+	},
 	'bmc_control' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'control_bmc.exe',
+	}
 }
 
 CACHED_INTERFACES = {
