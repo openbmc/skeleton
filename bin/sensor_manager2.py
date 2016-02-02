@@ -53,7 +53,12 @@ if __name__ == '__main__':
 	## TODO: this should not be hardcoded
 
 	obj_path = OBJ_PATH+"/host/PowerCap"
-	root_sensor.add(obj_path,Sensors.PowerCap(bus,obj_path))
+	sensor_obj = Sensors.PowerCap(bus,obj_path)
+	## hwmon3 is default for master OCC on Barreleye.
+	## should rewrite sensor_manager to remove hardcode
+	sensor_obj.sysfs_attr = "/sys/class/hwmon/hwmon3/user_powercap"
+	root_sensor.add(obj_path,sensor_obj)
+
 	obj_path = OBJ_PATH+"/host/BootProgress"
 	root_sensor.add(obj_path,Sensors.BootProgressSensor(bus,obj_path))
 
