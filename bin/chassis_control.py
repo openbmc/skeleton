@@ -118,6 +118,8 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		in_signature='', out_signature='')
 	def powerOff(self):
 		print "Turn off power"
+		intfwatchdog = self.getInterface('watchdog')
+		intfwatchdog.stop()
 		intf = self.getInterface('power_control')
 		intf.setPowerState(POWER_OFF)
 		return None

@@ -33,6 +33,16 @@ poll_watchdog(gpointer user_data)
 }
 
 static gboolean
+remove_watchdog(void)
+{
+    if (watchdogid)
+    {
+        g_source_remove(watchdogid);
+        watchdogid = 0;
+    }
+}
+
+static gboolean
 set_poll_interval (Watchdog  *wd,
                 GDBusMethodInvocation  *invocation,
                 guint                   interval,
@@ -48,6 +58,7 @@ on_start        (Watchdog  *wd,
                 GDBusMethodInvocation  *invocation,
                 gpointer                user_data)
 {
+  	remove_watchdog();
   	watchdog_set_watchdog(wd,1);
 	guint poll_interval = watchdog_get_poll_interval(wd);
     g_print("Starting watchdog with poll interval: %d\n", poll_interval);
@@ -72,13 +83,7 @@ on_stop         (Watchdog  *wd,
                 gpointer                user_data)
 {
     g_print("Stopping watchdog\n");
-
-    if (watchdogid)
-    {
-        g_source_remove(watchdogid);
-        watchdogid = 0;
-    }
-
+    remove_watchdog();
     watchdog_complete_stop(wd,invocation);
     return TRUE;
 }
