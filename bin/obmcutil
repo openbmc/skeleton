@@ -105,15 +105,15 @@ dbus_objects = {
 		'interface_name' : 'org.openbmc.Flash',
 	},
 	'bmcupdate' : {
-		'bus_name' : 'org.openbmc.control.Flash',
+		'bus_name' : 'org.openbmc.control.BmcFlash',
 		'object_name' : '/org/openbmc/control/flash/bmc',
-		'interface_name' : 'org.openbmc.Flash',
+		'interface_name' : 'org.openbmc.control.BmcFlash',
 		'method' : 'updateViaTftp',
 	},
 	'bmcflash' : {
-		'bus_name' : 'org.openbmc.control.Flash',
+		'bus_name' : 'org.openbmc.control.BmcFlash',
 		'object_name' : '/org/openbmc/control/flash/bmc',
-		'interface_name' : 'org.openbmc.Flash',
+		'interface_name' : 'org.openbmc.control.BmcFlash',
 	},
 	'getinventory' : {
 		'bus_name' : 'org.openbmc.Inventory',

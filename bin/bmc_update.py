@@ -7,6 +7,7 @@ import dbus.mainloop.glib
 import Openbmc
 import shutil
 import tarfile
+import os
 
 DBUS_NAME = 'org.openbmc.control.BmcFlash'
 OBJ_NAME = '/org/openbmc/control/flash/bmc'
@@ -33,7 +34,8 @@ class BmcFlashControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		self.Set(DBUS_NAME,"filename","")
 		self.Set(DBUS_NAME,"preserve_network_settings",False)
 		self.Set(DBUS_NAME,"restore_application_defaults",False)
-		self.Set(DBUS_NAME,"update_kernel_and_apps_only",False)
+		self.Set(DBUS_NAME,"update_kernel_and_apps",False)
+		self.Set(DBUS_NAME,"clear_persistent_files",False)
 	
 		bus.add_signal_receiver(self.download_error_handler,signal_name = "DownloadError")
 		bus.add_signal_receiver(self.download_complete_handler,signal_name = "DownloadComplete")
@@ -69,7 +71,7 @@ class BmcFlashControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		copy_files = {}
 		
 		## determine needed files
-		if (self.Get(DBUS_NAME,"update_kernel_and_apps_only") == False):
+		if (self.Get(DBUS_NAME,"update_kernel_and_apps") == False):
 			copy_files["image-bmc"] = True
 		else:
 			copy_files["image-kernel"] = True
@@ -77,7 +79,7 @@ class BmcFlashControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 			copy_files["image-rofs"] = True
 
 		if (self.Get(DBUS_NAME,"restore_application_defaults") == True):
-			copy_files["image-rofs"] = True
+			copy_files["image-rwfs"] = True
 			
 		
 		## make sure files exist in archive
@@ -100,8 +102,12 @@ class BmcFlashControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 			tar = tarfile.open(outfile,"r")
 			tar.extractall(UPDATE_PATH,members=doExtract(tar,copy_files))
 			tar.close()
-	
+
+			if (self.Get(DBUS_NAME,"clear_persistent_files") == False):
+				print "Removing persistent files"
+				os.unlink(UPDATE_PATH+"/whitelist")
 			if (self.Get(DBUS_NAME,"preserve_network_settings") == True):
+				print "Preserving network settings"
 				shutil.copy2("/dev/mtd2",UPDATE_PATH+"image-u-boot-env")
 				
 		except Exception as e:
