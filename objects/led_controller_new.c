@@ -48,7 +48,7 @@ int write_to_led(const char *name, const char *ctrl_file, const char *value)
     char led_path[128] = {0};
 
     int len = 0;
-    len = snprintf(led_path, sizeof(led_path), 
+    len = snprintf(led_path, sizeof(led_path),
                    "/sys/class/leds/%s/%s",name, ctrl_file);
     if(len >= sizeof(led_path))
     {
@@ -59,16 +59,14 @@ int write_to_led(const char *name, const char *ctrl_file, const char *value)
     FILE *fp = fopen(led_path,"w");
     if(fp == NULL)
     {
-        perror("Error:");
-        fprintf(stderr,"Error opening:[%s]\n",led_path);
+        fprintf(stderr,"Error:[%s] opening:[%s]\n",strerror(errno),led_path);
         return rc;
     }
 
     rc = fwrite(value, strlen(value), 1, fp);
     if(rc != 1)
     {
-        perror("Error:");
-        fprintf(stderr, "Error writing to :[%s]\n",led_path);
+        fprintf(stderr, "Error:[%s] writing to :[%s]\n",strerror(errno),led_path);
     }
 
     fclose(fp);
@@ -129,11 +127,11 @@ static int led_function_router(sd_bus_message *msg, void *user_data,
         char value_str[10] = {0};
         const char *led_state = NULL;
 
-        rc = read_led(led_name, power_ctrl, value_str, sizeof(value_str));
+        rc = read_led(led_name, power_ctrl, value_str, sizeof(value_str)-1);
         if(rc >= 0)
         {
-            /* LED is active low */
-            led_state = strtoul(value_str, NULL, 0) ? "Off" : "On";
+            /* LED is active HI */
+            led_state = strtoul(value_str, NULL, 0) ? "On" : "Off";
         }
         return sd_bus_reply_method_return(msg, "is", rc, led_state);
     }
@@ -156,12 +154,12 @@ int led_stable_state_function(char *led_name, char *led_function)
     int rc = -1;
 
     const char *value = NULL;
-    if(strcmp(led_function, "setOn") == 0)
+    if(strcmp(led_function, "setOff") == 0)
     {
-        /* LED active low */
+        /* LED active HI */
         value = "0";
     }
-    else if(strcmp(led_function, "setOff") == 0)
+    else if(strcmp(led_function, "setOn") == 0)
     {
         value  = "255";
     }
@@ -272,11 +270,11 @@ int led_default_blink(char *led_name, char *blink_type)
  * Gets the current value of passed in LED file
  * Mainly used for reading 'brightness'
  * NOTE : It is the responsibility of the caller to allocate
- * sufficient space for buffer. This will read upto user supplied 
+ * sufficient space for buffer. This will read upto user supplied
  * size -or- entire contents of file whichever is smaller
  * ----------------------------------------------------------------
  */
-int read_led(const char *name, const char *ctrl_file, 
+int read_led(const char *name, const char *ctrl_file,
              void *value, const size_t len)
 {
     /* Generic error reporter. */
@@ -293,7 +291,7 @@ int read_led(const char *name, const char *ctrl_file,
     char led_path[128] = {0};
 
     int led_len = 0;
-    led_len = snprintf(led_path, sizeof(led_path), 
+    led_len = snprintf(led_path, sizeof(led_path),
                    "/sys/class/leds/%s/%s",name, ctrl_file);
     if(led_len >= sizeof(led_path))
     {
@@ -304,8 +302,7 @@ int read_led(const char *name, const char *ctrl_file,
     FILE *fp = fopen(led_path,"rb");
     if(fp == NULL)
     {
-        perror("Error:");
-        fprintf(stderr,"Error opening:[%s]\n",led_path);
+        fprintf(stderr,"Error:[%s] opening:[%s]\n",strerror(errno),led_path);
         return rc;
     }
 
@@ -314,7 +311,6 @@ int read_led(const char *name, const char *ctrl_file,
     {
         sysfs_value[count++] = fgetc(fp);
     }
-    sysfs_value[count]='\0';
 
     fclose(fp);
     return 0;
@@ -378,7 +374,7 @@ int start_led_services()
         return rc;
     }
 
-    count_leds = num_leds = scandir("/sys/class/leds/", 
+    count_leds = num_leds = scandir("/sys/class/leds/",
                                     &led_list, led_select, alphasort);
     if(num_leds <= 0)
     {
@@ -427,11 +423,8 @@ int start_led_services()
     while (count_leds > 0)
     {
         free(led_list[--count_leds]);
-        if(count_leds == 0)
-        {
-            free(led_list);
-        }
     }
+    free(led_list);
 
     /* If we had success in adding the providers, request for a bus name. */
     if(rc == 0)
