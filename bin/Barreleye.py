@@ -29,7 +29,7 @@ EXIT_STATE_DEPEND = {
 	},
 	'BMC_STARTING' : {
 		'/org/openbmc/control/power0' : 0,
-		'/org/openbmc/control/led/BMC_READY' : 0,
+		'/org/openbmc/control/led/identify' : 0,
 		'/org/openbmc/control/host0' : 0,
 		'/org/openbmc/control/flash/bios' : 0,
 		'/org/openbmc/sensors/speed/fan5': 0,
@@ -56,14 +56,14 @@ ENTER_STATE_CALLBACK = {
 		},
 		'setOn' : {
 			'bus_name'   : 'org.openbmc.control.led',
-			'obj_name'   : '/org/openbmc/control/led/BMC_READY',
+			'obj_name'   : '/org/openbmc/control/led/identify',
 			'interface_name' : 'org.openbmc.Led',
 		}
 	},
 	'HOST_POWERED_OFF' : {
 		'setOff' : {
 			'bus_name'   : 'org.openbmc.control.led',
-			'obj_name'   : '/org/openbmc/control/led/BMC_READY',
+			'obj_name'   : '/org/openbmc/control/led/identify',
 			'interface_name' : 'org.openbmc.Led',
 		}
 
@@ -71,7 +71,7 @@ ENTER_STATE_CALLBACK = {
 	'BMC_READY' : {
 		'setOn' : {
 			'bus_name'   : 'org.openbmc.control.led',
-			'obj_name'   : '/org/openbmc/control/led/BEEP',
+			'obj_name'   : '/org/openbmc/control/led/beep',
 			'interface_name' : 'org.openbmc.Led',
 		},
 		'init' : {
@@ -537,14 +537,10 @@ GPIO_CONFIG['FSI_ENABLE'] =   { 'gpio_pin': 'D0', 'direction': 'out' }
 GPIO_CONFIG['POWER_PIN']  =   { 'gpio_pin': 'E1', 'direction': 'out'  }
 GPIO_CONFIG['CRONUS_SEL'] =   { 'gpio_pin': 'A6', 'direction': 'out'  }
 GPIO_CONFIG['PGOOD']      =   { 'gpio_pin': 'C7', 'direction': 'in'  }
-GPIO_CONFIG['IDENTIFY']   =   { 'gpio_pin': 'R5', 'direction': 'out' }
-GPIO_CONFIG['BMC_READY']   =  { 'gpio_pin': 'H2', 'direction': 'out' }
 GPIO_CONFIG['POWER_BUTTON'] = { 'gpio_pin': 'E0', 'direction': 'both' }
 GPIO_CONFIG['PCIE_RESET']   = { 'gpio_pin': 'B5', 'direction': 'out' }
 GPIO_CONFIG['USB_RESET']    = { 'gpio_pin': 'B6', 'direction': 'out' }
 
-GPIO_CONFIG['BEEP']       = { 'gpio_pin': 'N7', 'direction': 'out' }
-GPIO_CONFIG['HEART_BEAT']       = { 'gpio_pin': 'R4', 'direction': 'out' }
 GPIO_CONFIG['BMC_THROTTLE']       = { 'gpio_pin': 'J3', 'direction': 'out' }
 GPIO_CONFIG['RESET_BUTTON']       = { 'gpio_pin': 'E2', 'direction': 'both' }
 GPIO_CONFIG['CPLD_TCK']    	  =   { 'gpio_pin': 'P0', 'direction': 'out' }

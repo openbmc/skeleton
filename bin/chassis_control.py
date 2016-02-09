@@ -33,7 +33,7 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 			},
 			'identify_led' : {
 				'bus_name' : 'org.openbmc.control.led',
-				'object_name' : '/org/openbmc/led/IDENTIFY',
+				'object_name' : '/org/openbmc/control/led/identify',
 				'interface_name' : 'org.openbmc.Led'
 			},
 			'watchdog' : {				

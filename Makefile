@@ -36,11 +36,8 @@ libopenbmc_intf: openbmc_intf.o
 power_control: power_control_obj.o gpio.o object_mapper.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
 
-led_controller: led_controller.o gpio.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/gpio.o obj/led_controller.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
-
-led_controller_new: led_controller_new.o
-	$(CC) -o bin/$@.exe obj/led_controller_new.o $(LDFLAGS) $(LIBS) -lsystemd
+led_controller: led_controller.o
+	$(CC) -o bin/$@.exe obj/led_controller.o $(LDFLAGS) $(LIBS) -lsystemd
 
 button_power: button_power_obj.o gpio.o object_mapper.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/button_power_obj.o obj/gpio.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
