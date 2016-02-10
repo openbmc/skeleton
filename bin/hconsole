@@ -4,6 +4,4 @@ echo "Ctrl-a k  to exit console"
 echo "A session log is created in current directory"
 echo "[Enter] to continue"
 read a
-devmem 0x1e78909c 32 0x08060000
-screen -U /dev/ttyS3 115200
-devmem 0x1e78909c 32 0x00000000
+screen -U /dev/ttyS5
