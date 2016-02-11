@@ -13,12 +13,28 @@ DBUS_NAME = 'org.openbmc.control.Chassis'
 OBJ_NAME = '/org/openbmc/control/chassis0'
 CONTROL_INTF = 'org.openbmc.Control'
 
+MACHINE_ID = '/etc/machine-id'
+
 POWER_OFF = 0
 POWER_ON = 1
 
 BOOTED = 100
 
 class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
+	def getUuid(self):
+		uuid = "";
+		try:
+			with open(MACHINE_ID) as f:
+				data = f.readline().rstrip('\n')
+				if (len(data) == 32):
+					uuid = data
+				else:
+					print "ERROR:  UUID is not formatted correctly: "+data
+		except:
+			print "ERROR: Unable to open uuid file: "+MACHINE_ID
+				
+		return uuid
+ 
 	def __init__(self,bus,name):
 		self.dbus_objects = { }
 		Openbmc.DbusProperties.__init__(self)
@@ -54,7 +70,7 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		}
 
 		#uuid
-		self.Set(DBUS_NAME,"uuid",str(uuid.uuid1()))
+		self.Set(DBUS_NAME,"uuid",self.getUuid())
 		self.Set(DBUS_NAME,"reboot",0)
 
 		bus.add_signal_receiver(self.power_button_signal_handler, 
