@@ -9,6 +9,11 @@ LIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Llib -lopenbmc_intf
 INCLUDES += $(shell pkg-config --cflags --libs libsystemd) -I. -O2
 LIB_FLAG += $(shell pkg-config  --libs libsystemd)
 
+DEPPKGS = libsystemd
+INCLUDES_info += $(shell pkg-config --cflags $(DEPPKGS))
+LIBS_info += $(shell pkg-config --libs $(DEPPKGS))
+
+
 %.o: interfaces/%.c 
 	$(CC) -c -fPIC -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
@@ -24,7 +29,7 @@ LIB_FLAG += $(shell pkg-config  --libs libsystemd)
 %.o: objects/pflash/libflash/%.c
 	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
-all: setup libopenbmc_intf power_control led_controller button_power button_reset control_host host_watchdog board_vpd pcie_slot_present flash_bios flasher pflash hwmons_barreleye control_bmc
+all: setup libopenbmc_intf power_control led_controller button_power button_reset control_host host_watchdog board_vpd pcie_slot_present flash_bios flasher pflash hwmons_barreleye control_bmc i2craw info
 
 setup: 
 	mkdir -p obj lib
@@ -68,6 +73,12 @@ flasher:  $(OBJS2) flasher_obj.o libopenbmc_intf
 
 pflash:  $(OBJS2) pflash.o
 	$(CC) -o bin/$@ obj/pflash.o $(OBJS3) $(LDFLAGS)
+
+i2craw:  $(OBJS2) i2craw.o
+	$(CC) -o bin/$@ obj/i2craw.o $(LDFLAGS)
+
+info:   info.o
+	$(CC) -o bin/$@ obj/info.o $(LDFLAGS) $(LIBS_info)
 
 hwmons_barreleye: hwmons_barreleye.o object_mapper.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/hwmons_barreleye.o obj/object_mapper.o  $(LDFLAGS) $(LIBS)

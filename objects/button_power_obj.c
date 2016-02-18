@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "interfaces/openbmc_intf.h"
 #include "gpio.h"
 #include "openbmc.h"
@@ -42,7 +43,10 @@ on_button_interrupt( GIOChannel *channel,
 
 	GError *error = 0;
 	gsize bytes_read = 0;
-	gchar buf[2]; 
+	gchar buf[2];
+ 
+ 	uint8_t val;
+ 	int rc1 = GPIO_OK;
 	buf[1] = '\0';
 	g_io_channel_seek_position( channel, 0, G_SEEK_SET, 0 );
 	GIOStatus rc = g_io_channel_read_chars( channel,
@@ -65,12 +69,11 @@ on_button_interrupt( GIOChannel *channel,
 		{
 			long press_time = current_time-button_get_timer(button);
 			printf("Power Button released, held for %ld seconds\n",press_time);
-			if (press_time > LONG_PRESS_SECONDS)
-			{
-				button_emit_pressed_long(button);
-			} else {
-				button_emit_released(button);
-			}
+			rc1 =  gpio_open(&gpio_button);
+			rc1 = gpio_read(&gpio_button,&val);
+			if (val == 1)
+			button_emit_released(button);
+
 		}
 	} 
 	else { gpio_button.irq_inited = true; }
