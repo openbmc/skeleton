@@ -2,6 +2,7 @@
 
 import sys
 import os
+import glob
 import gobject
 import dbus
 import dbus.service
@@ -54,9 +55,13 @@ if __name__ == '__main__':
 
 	obj_path = OBJ_PATH+"/host/PowerCap"
 	sensor_obj = Sensors.PowerCap(bus,obj_path)
-	## hwmon3 is default for master OCC on Barreleye.
-	## should rewrite sensor_manager to remove hardcode
-	sensor_obj.sysfs_attr = "/sys/class/hwmon/hwmon3/user_powercap"
+	## scan hwmon sysfs for master occ's user_powercap attribute
+	for pcap_file in glob.glob('/sys/class/hwmon/*/user_powercap'):
+		occ_i2c_dev = os.path.dirname(pcap_file)+'/device'
+		occ_i2c_dev = os.path.realpath(occ_i2c_dev).split('/').pop()
+		# master OCC address
+		if occ_i2c_dev == '3-0050':
+			sensor_obj.sysfs_attr = pcap_file
 	root_sensor.add(obj_path,sensor_obj)
 
 	obj_path = OBJ_PATH+"/host/BootProgress"
