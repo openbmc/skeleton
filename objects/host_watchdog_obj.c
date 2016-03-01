@@ -59,7 +59,7 @@ on_start        (Watchdog  *wd,
                 gpointer                user_data)
 {
   	remove_watchdog();
-  	watchdog_set_watchdog(wd,1);
+  	watchdog_set_watchdog(wd,0);
 	guint poll_interval = watchdog_get_poll_interval(wd);
     g_print("Starting watchdog with poll interval: %d\n", poll_interval);
   	watchdogid = g_timeout_add(poll_interval, poll_watchdog, user_data);
