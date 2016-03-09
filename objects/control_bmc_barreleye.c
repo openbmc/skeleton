@@ -94,10 +94,10 @@ void reg_init()
 	bmcreg = memmap(mem_fd,GPIO_BASE);
 	devmem(bmcreg+0x84,0x00fff0c0);  //Enable UART1
 	devmem(bmcreg+0x80,0xCB000000);
-	devmem(bmcreg+0x88,0x01C000FF);
+	devmem(bmcreg+0x88,0x01C00000);		//Changed Assigned value to SCU 88 for PCie inventory to work
 	devmem(bmcreg+0x8c,0xC1C000FF);
 	devmem(bmcreg+0x90,0x003FA009);
-	devmem(bmcreg+0x88,0x01C0007F);
+	// devmem(bmcreg+0x88,0x01C0007F);	// Commented out to prevent dual assignment of SCU88
 
 
 	bmcreg = memmap(mem_fd,COM_BASE);
