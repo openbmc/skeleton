@@ -22,11 +22,11 @@ static const gchar* dbus_name        = "org.openbmc.control.Bmc";
 #define LPC_HICR7		0x88
 #define LPC_HICR8		0x8c
 #define SPI_BASE		(off_t)0x1e630000
-#define SCU_BASE                (off_t)0x1e780000
+#define SCU_BASE                (off_t)0x1e6e2000
 #define UART_BASE               (off_t)0x1e783000
 #define COM_BASE                (off_t)0x1e789000
 #define COM_BASE2               (off_t)0x1e789100
-#define GPIO_BASE		(off_t)0x1e6e2000
+#define GPIO_BASE		(off_t)0x1e780000
 
 static GDBusObjectManagerServer *manager = NULL;
 
@@ -45,7 +45,7 @@ void* memmap(int mem_fd,off_t base)
 
 void reg_init()
 {
-	g_print("BMC init\n");
+	g_print("===============BMC init===============\n");
 	// BMC init done here
 
 	void *bmcreg;
@@ -54,7 +54,9 @@ void reg_init()
 		printf("ERROR: Unable to open /dev/mem");
 		exit(1);
 	}
-
+	bmcreg = memmap(mem_fd,SCU_BASE);
+	devmem(bmcreg+0x90,0x003FA008);
+/*
 	bmcreg = memmap(mem_fd,LPC_BASE);
 	devmem(bmcreg+LPC_HICR6,0x00000500); //Enable LPC FWH cycles, Enable LPC to AHB bridge
 	devmem(bmcreg+LPC_HICR7,0x30000E00); //32M PNOR
@@ -66,7 +68,6 @@ void reg_init()
 	devmem(bmcreg+0x04,0x00002404);
 
 	//UART
-
 	bmcreg = memmap(mem_fd,UART_BASE);
 	devmem(bmcreg+0x00,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
 	devmem(bmcreg+0x04,0x00000000);  //Set Baud rate divisor -> 13 (Baud 115200)
@@ -74,26 +75,24 @@ void reg_init()
 	bmcreg = memmap(mem_fd,COM_BASE);
 	devmem(bmcreg+0x9C,0x00000000);  //Set UART routing
 
-	bmcreg = memmap(mem_fd,SCU_BASE);
+	bmcreg = memmap(mem_fd,GPIO_BASE);
 	devmem(bmcreg+0x00,0x13008CE7);
 	devmem(bmcreg+0x04,0x0370E677);
 	devmem(bmcreg+0x20,0xDF48F7FF);
 	devmem(bmcreg+0x24,0xC738F202);
-
-
-	//GPIO
-	bmcreg = memmap(mem_fd,GPIO_BASE);
+	
+	bmcreg = memmap(mem_fd,SCU_BASE);
 	devmem(bmcreg+0x84,0x00fff0c0);  //Enable UART1
         devmem(bmcreg+0x70,0x120CE406);
 	devmem(bmcreg+0x80,0xCB000000);
 	devmem(bmcreg+0x88,0x01C000FF);
 	devmem(bmcreg+0x8c,0xC1C000FF);
-	devmem(bmcreg+0x90,0x003FA009);
+	devmem(bmcreg+0x90,0x003FA008);
 
 	bmcreg = memmap(mem_fd,COM_BASE);
 	devmem(bmcreg+0x170,0x00000042);
 	devmem(bmcreg+0x174,0x00004000);
-
+*/
 
 	close(mem_fd);
 }
@@ -225,6 +224,7 @@ main (gint argc, gchar *argv[])
   guint id;
   loop = g_main_loop_new (NULL, FALSE);
   cmd.loop = loop;
+  reg_init();
 
   id = g_bus_own_name (DBUS_TYPE,
                        dbus_name,

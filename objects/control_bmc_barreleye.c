@@ -96,7 +96,7 @@ void reg_init()
 	devmem(bmcreg+0x80,0xCB000000);
 	devmem(bmcreg+0x88,0x01C000FF);
 	devmem(bmcreg+0x8c,0xC1C000FF);
-	devmem(bmcreg+0x90,0x003FA009);
+	devmem(bmcreg+0x90,0x003FA008);
 	devmem(bmcreg+0x88,0x01C0007F);
 
 
