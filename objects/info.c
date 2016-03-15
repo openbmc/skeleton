@@ -145,7 +145,7 @@ int get_hdd_status(void)
 
     g_read_tmp[2]=g_read_bytes[2];
     g_read_tmp[3]=g_read_bytes[3];
-
+    close(fd);
 }
 
 int send_esel_to_dbus(const char *desc, const char *sev, const char *details, uint8_t *debug, size_t debuglen) {
