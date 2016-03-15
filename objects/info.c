@@ -42,6 +42,7 @@ static int i2c_open() {
   fd = open(fn, O_RDWR);
   if (fd == -1) {
     LOG_ERR(errno, "Failed to open i2c device %s", fn);
+    close(fd);
     return -1;
   }
 
@@ -108,6 +109,7 @@ static int i2c_io(int fd) {
   rc = ioctl(fd, I2C_RDWR, &data);
   if (rc < 0) {
     LOG_ERR(errno, "Failed to do raw io");
+    close(fd);
     return -1;
   }
 
@@ -126,6 +128,7 @@ int get_hdd_status(void)
   }
 
   if (i2c_io(fd) < 0) {
+    close(fd);
     return -1;
   }
 
@@ -145,7 +148,7 @@ int get_hdd_status(void)
 
     g_read_tmp[2]=g_read_bytes[2];
     g_read_tmp[3]=g_read_bytes[3];
-
+    close(fd);
 }
 
 int send_esel_to_dbus(const char *desc, const char *sev, const char *details, uint8_t *debug, size_t debuglen) {
