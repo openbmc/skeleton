@@ -717,5 +717,27 @@ HWMON_CONFIG = {
 		'101' :  { 'object_path' : 'temperature/membuf7','poll_interval' : 5000,'scale' : 1000,'units' : 'C' },
 		}
 	},
+	'4-0010' :  {
+		'names' : {
+			# Barreleye uses 0.25 millioohms sense resistor for adm1278
+			# To convert Iout register value Y to real-world value X, use an equation:
+			# X= 1/m * (Y * 10^-R - b), here m = 800 * R_sense, and R_sense is expressed in milliohms.
+			# The adm1278 driver did the conversion, but the R_sense is set here as a scale factor. 
+			'curr1_input' : { 'object_path' : 'HSCA/Iout','poll_interval' : 5000,'scale' : 0.25,'units' : 'mA' },
+			'in2_input' : { 'object_path' : 'HSCA/Vout','poll_interval' : 5000,'scale' : 1,'units' : 'mV' },
+		}
+	},
+	'5-0010' :  {
+		'names' : {
+			'curr1_input' : { 'object_path' : 'HSCB/Iout','poll_interval' : 5000,'scale' : 0.25,'units' : 'mA' },
+			'in2_input' : { 'object_path' : 'HSCB/Vout','poll_interval' : 5000,'scale' : 1,'units' : 'mV' },
+		}
+	},
+	'6-0010' :  {
+		'names' : {
+			'curr1_input' : { 'object_path' : 'HSCC/Iout','poll_interval' : 5000,'scale' : 0.25,'units' : 'mA' },
+			'in2_input' : { 'object_path' : 'HSCC/Vout','poll_interval' : 5000,'scale' : 1,'units' : 'mV' },
+		}
+	},
 }
 

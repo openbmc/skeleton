@@ -124,7 +124,8 @@ class HwmonSensor(SensorValue,SensorThresholds):
 			val = (self.properties[SensorValue.IFACE_NAME]['value']-offset) * scale
 			return [True,val]
 		else:
-			val = (value/scale) + offset
+			# Keep the val as integer. scale may be floating point
+			val = int(value/scale + offset)
 			if (val != self.value):
 				SensorValue.setValue(self,val)
 				self.check_thresholds(val)
