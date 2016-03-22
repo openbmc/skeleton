@@ -620,6 +620,11 @@ HWMON_CONFIG = {
                         'in14_input' : { 'object_path' : 'voltage/P1V35_CPU1_BUF3','poll_interval' : 10000,'scale' : 1,'units' : '' },
 		}
          },
+	'6-0048' : {
+		'names' : {
+                        'temp1_input' : { 'object_path' : 'temperature/outlet','poll_interval' : 5000,'scale' : 1000,'units' : 'C' },
+		}
+	},
 	'3-0050' : {
 		'names' : {
 			'caps_curr_powercap' : { 'object_path' : 'powercap/curr_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
