@@ -29,7 +29,7 @@ LIBS_info += $(shell pkg-config --libs $(DEPPKGS))
 %.o: objects/pflash/libflash/%.c
 	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
-all: setup libopenbmc_intf power_control led_controller button_power button_reset control_host host_watchdog board_vpd pcie_slot_present flash_bios flasher pflash hwmons_barreleye control_bmc i2craw info
+all: setup libopenbmc_intf power_control led_controller button_power button_reset control_host host_watchdog board_vpd pcie_slot_present flash_bios flasher pflash hwmons_barreleye control_bmc i2craw info fan_algorithm
 
 setup: 
 	mkdir -p obj lib
@@ -80,9 +80,17 @@ i2craw:  $(OBJS2) i2craw.o
 info:   info.o
 	$(CC) -o bin/$@ obj/info.o $(LDFLAGS) $(LIBS_info)
 
+fan_algorithm:   fan_algorithm.o
+	$(CC) -o bin/$@ obj/fan_algorithm.o $(LDFLAGS) $(LIBS_info)
+
 hwmons_barreleye: hwmons_barreleye.o object_mapper.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/hwmons_barreleye.o obj/object_mapper.o  $(LDFLAGS) $(LIBS)
 
 control_bmc: control_bmc_obj.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/control_bmc_obj.o $(LDFLAGS) $(LIBS)
 
+i2craw:  $(OBJS2) i2craw.o
+        $(CC) -o bin/$@ obj/i2craw.o $(LDFLAGS)
+
+info:   info.o
+        $(CC) -o bin/$@ obj/info.o $(LDFLAGS) $(LIBS_info)

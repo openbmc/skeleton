@@ -48,11 +48,6 @@ ENTER_STATE_CALLBACK = {
 			'obj_name'    : '/org/openbmc/control/host0',
 			'interface_name' : 'org.openbmc.control.Host',
 		},
-		'setMax' : {
-			'bus_name'    : 'org.openbmc.control.Fans',
-			'obj_name'    : '/org/openbmc/control/fans',
-			'interface_name' : 'org.openbmc.control.Fans',
-		},
 		'setOn' : {
 			'bus_name'   : 'org.openbmc.control.led',
 			'obj_name'   : '/org/openbmc/control/led/identify',
@@ -210,12 +205,18 @@ APPS = {
 		'monitor_process' : False,
 		'process_name'    : 'discover_system_state.py',
 	},
-        'info' : {
+    'info' : {
                 'system_state'    : 'BMC_STARTING2',
                 'start_process'   : True,
                 'monitor_process' : True,
                 'process_name'    : 'info',
         },
+    'fan_algorithm' : {
+                'system_state'    : 'HOST_POWERED_ON',
+                'start_process'   : True,
+                'monitor_process' : True,
+                'process_name'    : 'fan_algorithm',
+    },
 	'bmc_control' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
