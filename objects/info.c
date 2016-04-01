@@ -17,7 +17,6 @@ const char *gIntPath_c = "org.openbmc.control.Chassis";
 //const char *chassis_iface = "org.openbmc.SensorValue";
 
 char *gMessage = NULL;
-sd_bus *bus = NULL;
 
 #define MAX_BYTES 255
 
@@ -32,323 +31,296 @@ uint8_t g_read_tmp[MAX_BYTES];
 uint8_t g_bus = -1;
 uint8_t g_slave_addr = 0xff;
 
-static int i2c_open() {
-  int fd;
-  char fn[32];
-  int rc;
+static int i2c_open()
+{
+	int rc = 0, fd = -1;
+	char fn[32];
 
-  g_bus = 6;
-  snprintf(fn, sizeof(fn), "/dev/i2c-%d", g_bus);
-  fd = open(fn, O_RDWR);
-  if (fd == -1) {
-    LOG_ERR(errno, "Failed to open i2c device %s", fn);
-    close(fd);
-    return -1;
-  }
+	g_bus = 6;
+	snprintf(fn, sizeof(fn), "/dev/i2c-%d", g_bus);
+	fd = open(fn, O_RDWR);
+	if (fd == -1) {
+		LOG_ERR(errno, "Failed to open i2c device %s", fn);
+		close(fd);
+		return -1;
+	}
 
-  g_slave_addr = 0x4f;
-  rc = ioctl(fd, I2C_SLAVE, g_slave_addr);
-  if (rc < 0) {
-    LOG_ERR(errno, "Failed to open slave @ address 0x%x", g_slave_addr);
-    close(fd);
-  }
+	g_slave_addr = 0x4f;
 
-  return fd;
+	rc = ioctl(fd, I2C_SLAVE, g_slave_addr);
+	if (rc < 0) {
+		LOG_ERR(errno, "Failed to open slave @ address 0x%x", g_slave_addr);
+		close(fd);
+	}
+
+	return fd;
 }
 
 static int i2c_io(int fd) {
-  struct i2c_rdwr_ioctl_data data;
-  struct i2c_msg msg[2];
-  int n_msg = 0;
-  int rc;
+	struct i2c_rdwr_ioctl_data data;
+	  struct i2c_msg msg[2];
+	int rc = 0, n_msg = 0;
 
-  memset(&msg, 0, sizeof(msg));
+	memset(&msg, 0, sizeof(msg));
 
-  g_slave_addr = 0x5f;
-  g_use_pec = 0;
-  g_n_write = 3;
-  g_write_bytes[0] = 0xfc;
-  g_write_bytes[1] = 0x3;
-  g_write_bytes[2] = 0x0;
-  
+	g_slave_addr = 0x5f;
+	g_use_pec = 0;
+	g_n_write = 3;
+	g_write_bytes[0] = 0xfc;
+	g_write_bytes[1] = 0x3;
+	g_write_bytes[2] = 0x0;
+	g_n_read = 5;
 
-  g_n_read = 5;
-  
+	if (1) {
+		msg[n_msg].addr = g_slave_addr;
+		msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
+		msg[n_msg].len = g_n_write;
+		msg[n_msg].buf = g_write_bytes;
+		n_msg++;
+	}
 
-  if (1) {
-    msg[n_msg].addr = g_slave_addr;
-    msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
-    msg[n_msg].len = g_n_write;
-    msg[n_msg].buf = g_write_bytes;
-    n_msg++;
-  }
+	if (1) {
+		msg[n_msg].addr = g_slave_addr;
+		msg[n_msg].flags = I2C_M_RD | ((g_use_pec) ? I2C_CLIENT_PEC : 0)
+					| ((g_n_read == 0) ? I2C_M_RECV_LEN : 0);
+		/*
+		* In case of g_n_read is 0, block length will be added by
+		* the underlying bus driver.
+		*/
+		msg[n_msg].len = (g_n_read) ? g_n_read : 256;
+		msg[n_msg].buf = g_read_bytes;
+		if (g_n_read == 0) {
+			/* If we're using variable length block reads, we have to set the
+			* first byte of the buffer to at least one or the kernel complains.
+			*/
+			g_read_bytes[0] = 1;
+		}
+		n_msg++;
+	  }
 
-  if (1) {
-    msg[n_msg].addr = g_slave_addr;
-    msg[n_msg].flags = I2C_M_RD
-      | ((g_use_pec) ? I2C_CLIENT_PEC : 0)
-      | ((g_n_read == 0) ? I2C_M_RECV_LEN : 0);
-    /*
-     * In case of g_n_read is 0, block length will be added by
-     * the underlying bus driver.
-     */
-    msg[n_msg].len = (g_n_read) ? g_n_read : 256;
-    msg[n_msg].buf = g_read_bytes;
-    if (g_n_read == 0) {
-      /* If we're using variable length block reads, we have to set the
-       * first byte of the buffer to at least one or the kernel complains.
-       */
-      g_read_bytes[0] = 1;
-    }
-    n_msg++;
-  }
+	data.msgs = msg;
+	data.nmsgs = n_msg;
 
-  data.msgs = msg;
-  data.nmsgs = n_msg;
+	rc = ioctl(fd, I2C_RDWR, &data);
+	if (rc < 0) {
+		LOG_ERR(errno, "Failed to do raw io");
+		close(fd);
+		return -1;
+	}
 
-  rc = ioctl(fd, I2C_RDWR, &data);
-  if (rc < 0) {
-    LOG_ERR(errno, "Failed to do raw io");
-    close(fd);
-    return -1;
-  }
-
-  return 0;
+	return 0;
 }
 
 int get_hdd_status(void)
 {
-  int fd, i;
-  char *test;
-  test="Ken";
-  char str[10];
-  fd = i2c_open();
-  if (fd < 0) {
-    return -1;
-  }
+	int fd = -1, i = 0;
+	char *test = NULL;
+	test = "Ken";
+	char str[10];
 
-  if (i2c_io(fd) < 0) {
-    close(fd);
-    return -1;
-  }
+	fd = i2c_open();
+	if (fd < 0)
+		return -1;
 
-    //printf("Received:\n ");
-    if (g_n_read == 0) {
-      g_n_read = g_read_bytes[0] + 1;
-    }
-    for (i = 0; i < g_n_read; i++) {
-      //printf(" 0x%x", g_read_bytes[i]);
-    }
-    if ((g_read_tmp[2]!=g_read_bytes[2])||(g_read_tmp[3]!=g_read_bytes[3]))
-    {
-    sprintf(str, "HDD change:0x%x,0x%x", g_read_bytes[2], g_read_bytes[3]);
-   
-	send_esel_to_dbus(str, "Low", "assoc", "hack", 3);
-    }
+	if (i2c_io(fd) < 0) {
+		close(fd);
+		return -1;
+	}
 
-    g_read_tmp[2]=g_read_bytes[2];
-    g_read_tmp[3]=g_read_bytes[3];
-    close(fd);
+//	printf("Received:\n ");
+	if (g_n_read == 0)
+		g_n_read = g_read_bytes[0] + 1;
+
+#if 0
+	for (i = 0; i < g_n_read; i++)
+		printf(" 0x%x", g_read_bytes[i]);
+#endif
+
+	if ((g_read_tmp[2] != g_read_bytes[2]) || (g_read_tmp[3] != g_read_bytes[3])) {
+		sprintf(str, "HDD change:0x%x,0x%x", g_read_bytes[2], g_read_bytes[3]);
+		send_esel_to_dbus(str, "Low", "assoc", "hack", 3);
+	}
+
+	g_read_tmp[2]=g_read_bytes[2];
+	g_read_tmp[3]=g_read_bytes[3];
+	close(fd);
 }
 
-int send_esel_to_dbus(const char *desc, const char *sev, const char *details, uint8_t *debug, size_t debuglen) {
-
+int send_esel_to_dbus(const char *desc, const char *sev, const char *details, uint8_t *debug, size_t debuglen)
+{
 	sd_bus *mbus = NULL;
-    sd_bus_error error = SD_BUS_ERROR_NULL;
-    sd_bus_message *reply = NULL, *m=NULL;
-    uint16_t x;
-    int r;
-	sd_bus_error_free(&error);
+	sd_bus_error error = SD_BUS_ERROR_NULL;
+	sd_bus_message *reply = NULL, *m = NULL;
+	uint16_t value = 0;
+	int ret = 0;
 
-	printf("add sel\n");
- 	r = sd_bus_open_system(&mbus);
-	if (r < 0) {
-		fprintf(stderr, "Failed to connect to system bus: %s\n", strerror(-r));
+	fprintf(stderr,"add sel\n");
+	ret = sd_bus_open_system(&mbus);
+	if (ret < 0) {
+		fprintf(stderr, "Failed to connect to system bus: %s\n", strerror(-ret));
 		goto finish;
 	}
 
-    r = sd_bus_message_new_method_call(mbus,&m,
-    									"org.openbmc.records.events",
-    									"/org/openbmc/records/events",
-    									"org.openbmc.recordlog",
-    									"acceptHostMessage");
-    if (r < 0) {
-        fprintf(stderr, "Failed to add the method object: %s\n", strerror(-r));
-        goto finish;
-    }
+	ret = sd_bus_message_new_method_call(mbus,&m,
+						"org.openbmc.records.events",
+						"/org/openbmc/records/events",
+						"org.openbmc.recordlog",
+						"acceptHostMessage");
+	if (ret < 0) {
+		fprintf(stderr, "Failed to add the method object: %s\n", strerror(-ret));
+		goto finish;
+	}
 
-    r = sd_bus_message_append(m, "sss", desc, sev, details);
-    if (r < 0) {
-        fprintf(stderr, "Failed add the message strings : %s\n", strerror(-r));
-        goto finish;
-    }
+	ret = sd_bus_message_append(m, "sss", desc, sev, details);
+	if (ret < 0) {
+		fprintf(stderr, "Failed add the message strings : %s\n", strerror(-ret));
+		goto finish;
+	}
 
-    r = sd_bus_message_append_array(m, 'y', debug, debuglen);
-    if (r < 0) {
-        fprintf(stderr, "Failed to add the raw array of bytes: %s\n", strerror(-r));
-        goto finish;
-    }
-    // Call the IPMI responder on the bus so the message can be sent to the CEC
-    r = sd_bus_call(mbus, m, 0, &error, &reply);
-    if (r < 0) {
-        fprintf(stderr, "Failed to call the method: %s %s\n", __FUNCTION__, strerror(-r));
-        goto finish;
-    }
-    r = sd_bus_message_read(reply, "q", &x);
-    if (r < 0) {
-        fprintf(stderr, "Failed to get a rc from the method: %s\n", strerror(-r));
-    }
+	ret = sd_bus_message_append_array(m, 'y', debug, debuglen);
+	if (ret < 0) {
+		fprintf(stderr, "Failed to add the raw array of bytes: %s\n", strerror(-ret));
+		goto finish;
+	}
+
+	// Call the IPMI responder on the bus so the message can be sent to the CEC
+	ret = sd_bus_call(mbus, m, 0, &error, &reply);
+	if (ret < 0) {
+		fprintf(stderr, "Failed to call the method: %s %s\n", __FUNCTION__, strerror(-ret));
+		goto finish;
+	}
+	ret = sd_bus_message_read(reply, "q", &value);
+	if (ret < 0) {
+		fprintf(stderr, "Failed to get a rc from the method: %s\n", strerror(-ret));
+	}
 
 finish:
-    sd_bus_error_free(&error);
-    sd_bus_message_unref(m);
-    sd_bus_message_unref(reply);
-    return r;	
+	sd_bus_error_free(&error);
+	m = sd_bus_message_unref(m);
+	reply = sd_bus_message_unref(reply);
+	mbus = sd_bus_flush_close_unref(mbus);
+	return ret;
 }
-int start_system_information(void) {
 
-	sd_bus *bus;
-	sd_bus_slot *slot;
-	int r, x, rc,retry;
-	char *OccStatus;
-    r = -1;
-	while(r < 0) {
-	/* Connect to the user bus this time */
-	r = sd_bus_open_system(&bus);
-		if(r < 0){	
-			fprintf(stderr, "Failed to connect to system bus: %s\n", strerror(-r));
-		sleep(1);
-			}
-	//	goto finish;
-	
-		}
-	// SD Bus error report mechanism.
+int start_system_information(void)
+{
+	sd_bus *bus = NULL;
 	sd_bus_error bus_error = SD_BUS_ERROR_NULL;
-	sd_bus_message *response = NULL, *m = NULL;;
-        sd_bus_error_free(&bus_error);
-        sd_bus_message_unref(response);
-//		send_esel_to_dbus("desc", "sev", "assoc", "hack", 3);
+	sd_bus_message *response = NULL;
+	int ret = 0, value = 0;
+	char *OccStatus = NULL;
 
-while(1){
-       sd_bus_error_free(&bus_error);
-
-
-	   
-       rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService_c,               // Service to contact
-                                gObjPath_c,            // Object path
-                                gIntPath_c,              // Interface name
-                                "getPowerState",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-                                // NULL);                  // First argument to getObjectFromId
-                                //"BOARD_1");             // Second Argument
-        if(rc < 0)
-        {
-            fprintf(stderr, "Failed to resolve getPowerState to dbus: %s\n", bus_error.message);
-	    r = sd_bus_open_system(&bus);
-                if(r < 0){
-                        fprintf(stderr, "Failed to connect to system bus: %s\n", strerror(-r));
-                        sleep(1);
-                        }
-
-            goto finish;
-        }
-
-        rc = sd_bus_message_read(response, "i", &x);
-        if (rc < 0 )
-        {
-           fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-rc));
-           goto finish;
-        }
-        printf("PowerState value=[%d] \n",x);
-	if (x == 0 ) goto finish;
-	get_hdd_status();	
-        sleep(1);
-       sd_bus_error_free(&bus_error);
-       rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService,               // Service to contact
-                                gObjPath_o,            // Object path
-                                gIntPath,              // Interface name
-                                "getValue",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-                                // NULL);                  // First argument to getObjectFromId
-                                //"BOARD_1");             // Second Argument
-        if(rc < 0)
-        {
-            fprintf(stderr, "Failed to resolve fruid to dbus: %s\n", bus_error.message);
-            goto finish;
-        }
-
-        rc = sd_bus_message_read(response, "v","s", &OccStatus);
-        if (rc < 0 )
-        {
-           fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-rc));
-           goto finish;
-        }
-        printf("OCCtate value=[%s][%d] \n",OccStatus,strcmp(OccStatus, "Disable"));
-	
-        if (strcmp(OccStatus, "Disable") != 1 ) goto finish;
-
-        rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService,               // Service to contact
-                                gObjPath,            // Object path
-                                gIntPath,              // Interface name
-                                "getValue",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-                                // NULL);                  // First argument to getObjectFromId
-                                //"BOARD_1");             // Second Argument
-
-        if(rc < 0)
-        {
-            fprintf(stderr, "Failed to resolve fruid to dbus: %s\n", bus_error.message);
-            goto finish;
-        }
-
-	rc = sd_bus_message_read(response, "v","i", &x);
-	if (rc < 0 )
-	{ 
-           fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-rc));
-           goto finish;
-	}
-	printf("CPU value=[%d] \n",x);
-
-	if(x >= 90)
-	{
-	//printf("====Ken poweroff==== \n");
-	send_esel_to_dbus("CPU thermal trip", "High", "assoc", "hack", 3);
-	sd_bus_error_free(&bus_error);
-        rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService_c,               // Service to contact
-                                gObjPath_c,            // Object path
-                                gIntPath_c,              // Interface name
-                                "powerOff",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-                                // NULL);                  // First argument to getObjectFromId
-                                //"BOARD_1");             // Second Argument
-
-        if(rc < 0)
-        {
-            fprintf(stderr, "Failed to resolve poweroff to dbus: %s\n", bus_error.message);
-            goto finish;
-        }
-
-	}
-	
-	sleep(1);
-///		sd_bus_unref(bus);
-	finish:
-		sd_bus_unref(bus);
+	/* Connect to the user bus this time */
+	do {
+		ret = sd_bus_open_system(&bus);
+		if(ret < 0) {
+			fprintf(stderr, "Failed to connect to system bus: %s\n", strerror(-ret));
+			bus = sd_bus_flush_close_unref(bus);
+		}
 		sleep(1);
-}
-	return r < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+	} while (ret < 0);
+	
+	while (1) {
+		ret = sd_bus_call_method(bus,                   // On the System Bus
+					gService_c,               // Service to contact
+					gObjPath_c,            // Object path
+					gIntPath_c,              // Interface name
+					"getPowerState",          // Method to be called
+					&bus_error,                 // object to return error
+					&response,                  // Response message on success
+					NULL);                       // input message (string,byte)
+		if(ret < 0) {
+//			fprintf(stderr, "Failed to resolve getPowerState to dbus: %s\n", bus_error.message);
+			goto finish;
+		}
+
+		ret = sd_bus_message_read(response, "i", &value);
+		if (ret < 0 ) {
+			fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-ret));
+			goto finish;
+		}
+		sd_bus_error_free(&bus_error);
+		response = sd_bus_message_unref(response);
+//		fprintf(stderr,"PowerState value = [%d] \n",value);
+		if (value == 0 )
+			goto finish;
+	
+		get_hdd_status();
+
+		sleep(1);
+
+		ret = sd_bus_call_method(bus,                   // On the System Bus
+					gService,               // Service to contact
+					gObjPath_o,            // Object path
+					gIntPath,              // Interface name
+					"getValue",          // Method to be called
+					&bus_error,                 // object to return error
+					&response,                  // Response message on success
+					NULL);                       // input message (string,byte)
+		if(ret < 0) {
+			fprintf(stderr, "Failed to resolve fruid to dbus: %s\n", bus_error.message);
+			goto finish;
+		}
+		ret = sd_bus_message_read(response, "v","s", &OccStatus);
+		if (ret < 0 ) {
+			fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-ret));
+			goto finish;
+		}
+		sd_bus_error_free(&bus_error);
+		response = sd_bus_message_unref(response);
+		fprintf(stderr,"OCCState value = [%s][%d] \n",OccStatus,strcmp(OccStatus, "Disable"));
+		if (strcmp(OccStatus, "Disable") != 1 )
+			goto finish;
+
+		ret = sd_bus_call_method(bus,                   // On the System Bus
+					gService,               // Service to contact
+					gObjPath,            // Object path
+					gIntPath,              // Interface name
+					"getValue",          // Method to be called
+					&bus_error,                 // object to return error
+					&response,                  // Response message on success
+					NULL);                       // input message (string,byte)
+		if(ret < 0) {
+			fprintf(stderr, "Failed to resolve fruid to dbus: %s\n", bus_error.message);
+			goto finish;
+		}
+		ret = sd_bus_message_read(response, "v","i", &value);
+		if (ret < 0 ) {
+			fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-ret));
+			goto finish;
+		}
+		sd_bus_error_free(&bus_error);
+		response = sd_bus_message_unref(response);
+		fprintf(stderr,"CPU value = [%d] \n",value);
+		if(value >= 90) {
+			//printf("====Ken poweroff==== \n");
+			send_esel_to_dbus("CPU thermal trip", "High", "assoc", "hack", 3);
+
+			ret = sd_bus_call_method(bus,                   // On the System Bus
+						gService_c,               // Service to contact
+						gObjPath_c,            // Object path
+						gIntPath_c,              // Interface name
+						"powerOff",          // Method to be called
+						&bus_error,                 // object to return error
+						&response,                  // Response message on success
+						NULL);                       // input message (string,byte)
+
+			if(ret < 0) {
+				fprintf(stderr, "Failed to resolve poweroff to dbus: %s\n", bus_error.message);
+				goto finish;
+			}
+			sd_bus_error_free(&bus_error);
+		}
+	
+finish:
+		sd_bus_error_free(&bus_error);
+		response = sd_bus_message_unref(response);
+		sd_bus_flush(bus);
+		sleep(1);
+	}
+
+	bus = sd_bus_flush_close_unref(bus);
+	return ret < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 

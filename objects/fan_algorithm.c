@@ -92,7 +92,6 @@ const char *gIntPath = "org.openbmc.SensorValue";
 
 
 char *gMessage = NULL;
-sd_bus *bus = NULL;
 
 #define MAX_BYTES 255
 
@@ -126,73 +125,72 @@ int Openloopspeed = 0;
 int Closeloopspeed = 0;
 int Finalfanspeed = 0;
 
-static int i2c_open() {
-  int fd;
-  char fn[32];
-  int rc;
+static int i2c_open()
+{
+	int rc = 0, fd = -1;
+	char fn[32];
 
-  g_bus = 6;
-  snprintf(fn, sizeof(fn), "/dev/i2c-%d", g_bus);
-  fd = open(fn, O_RDWR);
-  if (fd == -1) {
-    LOG_ERR(errno, "Failed to open i2c device %s", fn);
-	close(fd);
-    return -1;
-  }
-  return fd;
+	g_bus = 6;
+	snprintf(fn, sizeof(fn), "/dev/i2c-%d", g_bus);
+	fd = open(fn, O_RDWR);
+	if (fd == -1) {
+		LOG_ERR(errno, "Failed to open i2c device %s", fn);
+		close(fd);
+		return -1;
+	}
+	return fd;
 }
 
-static int SetFanLed(int fd,int color) {
-  struct i2c_rdwr_ioctl_data data;
-  struct i2c_msg msg[2];
-  int n_msg = 0;
-  int rc;
+static int SetFanLed(int fd,int color)
+{
+	struct i2c_rdwr_ioctl_data data;
+	struct i2c_msg msg[2];
+	int rc = 0, n_msg = 0;
 
-  memset(&msg, 0, sizeof(msg));
+	memset(&msg, 0, sizeof(msg));
 
-  g_slave_addr = 0x20;
-  g_use_pec = 0;
-  g_n_write = 2;
+	g_slave_addr = 0x20;
+	g_use_pec = 0;
+	g_n_write = 2;
 
-  if(color==1) //blue light
-  {
-  g_write_bytes[0] = 0x03;
-  g_write_bytes[1] = 0x55;
-  g_write_color_bytes[0] = 0x02;
-  g_write_color_bytes[1] = 0xaa;
-  }
-    else //red light
-	{
-    g_write_bytes[0] = 0x03;
-   	g_write_bytes[1] = 0xaa;
-    g_write_color_bytes[0] = 0x02;
-    g_write_color_bytes[1] = 0x55;
-  	}
+	if(color == 1) {
+		//blue light
+		g_write_bytes[0] = 0x03;
+		g_write_bytes[1] = 0x55;
+		g_write_color_bytes[0] = 0x02;
+		g_write_color_bytes[1] = 0xaa;
+	} else {
+		//red light
+		g_write_bytes[0] = 0x03;
+		g_write_bytes[1] = 0xaa;
+		g_write_color_bytes[0] = 0x02;
+		g_write_color_bytes[1] = 0x55;
+	}
   
-  if (1) {
-    msg[n_msg].addr = g_slave_addr;
-    msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
-    msg[n_msg].len = g_n_write;
-    msg[n_msg].buf = g_write_bytes;
-    n_msg++;
-  }
-  if (1) {
-	  msg[n_msg].addr = g_slave_addr;
-	  msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
-	  msg[n_msg].len = g_n_write;
-	  msg[n_msg].buf = g_write_color_bytes;
-	  n_msg++;
-  }
-  data.msgs = msg;
-  data.nmsgs = n_msg;
-  rc = ioctl(fd, I2C_RDWR, &data);
-  if (rc < 0) {
-    LOG_ERR(errno, "Failed to do raw io");
-	close(fd);
-    return -1;
-  }
+	if (1) {
+		msg[n_msg].addr = g_slave_addr;
+		msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
+		msg[n_msg].len = g_n_write;
+		msg[n_msg].buf = g_write_bytes;
+		n_msg++;
+	}
+	 if (1) {
+		msg[n_msg].addr = g_slave_addr;
+		msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
+		msg[n_msg].len = g_n_write;
+		msg[n_msg].buf = g_write_color_bytes;
+		n_msg++;
+	}
+	data.msgs = msg;
+	data.nmsgs = n_msg;
+	rc = ioctl(fd, I2C_RDWR, &data);
+	if (rc < 0) {
+		LOG_ERR(errno, "Failed to do raw io");
+		close(fd);
+		return -1;
+	}
 
-  return 0;
+	return 0;
 }
 
 
@@ -218,76 +216,63 @@ int CloseLoop (int cpureading,int dimmreading)
 	static int DIMM_differential_error = 0;
 	static int DIMM_last_error = 0;
 		
-//CPU closeloop
-CPU_tracking_error = cpureading - g_CPUVariable;
-Interal_CPU_Err[intergral_i]=CPU_tracking_error;
-CPU_integral_error = 0;
-for(i=0;i<g_Sampling_N;i++)
-{
-	CPU_integral_error += Interal_CPU_Err[i] ;
-}			
+	//CPU closeloop
+	CPU_tracking_error = cpureading - g_CPUVariable;
+	Interal_CPU_Err[intergral_i] = CPU_tracking_error;
+	CPU_integral_error = 0;
 
-CPU_differential_error = CPU_tracking_error - CPU_last_error;			
-CPU_PID_value = g_Kp * CPU_tracking_error +  g_Ki * CPU_integral_error + g_Kd * CPU_differential_error;
+	for(i=0;i<g_Sampling_N;i++)
+		CPU_integral_error += Interal_CPU_Err[i] ;
 
-CPU_PWM_speed= CPU_PID_value + g_fanspeed;
-if(CPU_PWM_speed > 100)
-{
-	CPU_PWM_speed = 100;
-}
-if(CPU_PWM_speed < 0)
-{
-	CPU_PWM_speed = 0;
-}
+	CPU_differential_error = CPU_tracking_error - CPU_last_error;
+	CPU_PID_value = g_Kp * CPU_tracking_error +  g_Ki * CPU_integral_error + g_Kd * CPU_differential_error;
+	CPU_PWM_speed = CPU_PID_value + g_fanspeed;
 
-CPU_last_error = CPU_tracking_error;
+	if(CPU_PWM_speed > 100)
+		CPU_PWM_speed = 100;
 
+	if(CPU_PWM_speed < 0)
+		CPU_PWM_speed = 0;
 
-//DIMM closeloop
+	CPU_last_error = CPU_tracking_error;
 
+	//DIMM closeloop
 	DIMM_tracking_error = dimmreading - g_DIMMVariable;
-		Interal_DIMM_Err[intergral_i]=DIMM_tracking_error;
-		intergral_i++;		
-		DIMM_integral_error = 0;
-		for(i=0;i<g_Sampling_N;i++)
-		{
-			DIMM_integral_error += Interal_DIMM_Err[i] ;
-		}	
-		if(intergral_i == g_Sampling_N)
-			intergral_i = 0;
-		
+	Interal_DIMM_Err[intergral_i] = DIMM_tracking_error;
+	intergral_i++;
+	DIMM_integral_error = 0;
 
-    	DIMM_differential_error = DIMM_tracking_error - DIMM_last_error;			
-		DIMM_PID_value = g_Kp * DIMM_tracking_error +  g_Ki * DIMM_integral_error + g_Kd * DIMM_differential_error;		
-		DIMM_PWM_speed = DIMM_PID_value + g_fanspeed;
-
-		if(DIMM_PWM_speed > 100)
-		{
-			DIMM_PWM_speed = 100;
-		}
-		if(DIMM_PWM_speed < 0)
-		{
-			DIMM_PWM_speed = 0;
-		}
-	
-		DIMM_last_error = DIMM_tracking_error;
-
-	if (DIMM_PWM_speed>CPU_PWM_speed)
-		Closeloopspeed=DIMM_PWM_speed;
-	else
-		Closeloopspeed=CPU_PWM_speed;
+	for(i=0;i<g_Sampling_N;i++)
+		DIMM_integral_error += Interal_DIMM_Err[i] ;
 
 	if(intergral_i == g_Sampling_N)
 		intergral_i = 0;
+		
 
+    	DIMM_differential_error = DIMM_tracking_error - DIMM_last_error;			
+	DIMM_PID_value = g_Kp * DIMM_tracking_error +  g_Ki * DIMM_integral_error + g_Kd * DIMM_differential_error;
+	DIMM_PWM_speed = DIMM_PID_value + g_fanspeed;
 
+	if(DIMM_PWM_speed > 100)
+		DIMM_PWM_speed = 100;
+
+	if(DIMM_PWM_speed < 0)
+		DIMM_PWM_speed = 0;
+	
+		DIMM_last_error = DIMM_tracking_error;
+
+	if (DIMM_PWM_speed > CPU_PWM_speed)
+		Closeloopspeed = DIMM_PWM_speed;
+	else
+		Closeloopspeed = CPU_PWM_speed;
+
+	if(intergral_i == g_Sampling_N)
+		intergral_i = 0;
 }
 
 
 int OpenLoop (int sensorreading)
 {
-
-
 	int speed = 0;
 	float paramA= 0;
 	float paramB= 2; 
@@ -295,268 +280,220 @@ int OpenLoop (int sensorreading)
 	int Low_Amb = 20;
 	int Up_Amb = 40;
 	
-    if (sensorreading >= Up_Amb)
-    {
-    	speed = 100;
-		//printf("## Ambient >=%dC, the Fan duty is %d \n",Up_Amb,speed);	
-    }
-	else if (sensorreading <= Low_Amb)
-    {
-    	speed = 40;
-		//printf("## Ambient <=%dC, the Fan duty is %d \n",Low_Amb,speed);	
-    }
-	else
-	{
+	if (sensorreading >= Up_Amb) {
+		speed = 100;
+//		printf("## Ambient >=%dC, the Fan duty is %d \n",Up_Amb,speed);
+	} else if (sensorreading <= Low_Amb) {
+		speed = 40;
+//		printf("## Ambient <=%dC, the Fan duty is %d \n",Low_Amb,speed);
+	} else {
 		speed = ( paramA * sensorreading * sensorreading ) + ( paramB * sensorreading ) + paramC;
-		if(speed > 100)
-		{
-			speed = 100;
-		}	
-		if(speed < 40)
-		{
-			speed = 40;
-		}
-	//	printf("The Fan duty is %d \n",speed);
 
+		if(speed > 100)
+			speed = 100;
+
+		if(speed < 40)
+			speed = 40;
+//		printf("The Fan duty is %d \n",speed);
 	}
 
-	Openloopspeed=speed;
+	Openloopspeed = speed;
 
-return 0;
+	return 0;
 }
 
 
-
-
-int Fan_control_algorithm(void) {
-
-	sd_bus *bus;
-	sd_bus_slot *slot;
-	int r, Ambient_reading, rc,retry,i;
+int Fan_control_algorithm(void)
+{
+	sd_bus *bus = NULL;
+	sd_bus_error bus_error = SD_BUS_ERROR_NULL;
+	sd_bus_message *response = NULL;
+	int Ambient_reading = 0, rc = 0, i = 0;
 	int CPU0_core_temperature[12];
 	int CPU1_core_temperature[12];
 	int DIMM_temperature[32];
 	int HighestCPUtemp = 0;
 	int HighestDIMMtemp = 0;
 	int CPUnocore[2];
-	int fd;
+	int fd = -1;
 	int FinalFanSpeed = 0;
-	int CPUtemp=0;
+	int CPUtemp = 0;
 	
-	r = -1;
-	while(r < 0) {
-	/* Connect to the user bus this time */
-	r = sd_bus_open_system(&bus);
-		if(r < 0){	
-			fprintf(stderr, "fan 1 Failed to connect to system bus: %s\n", strerror(-r));
-		sleep(1);
+	do {
+		/* Connect to the user bus this time */
+		rc = sd_bus_open_system(&bus);
+		if(rc < 0) {
+			fprintf(stderr, "fan 1 Failed to connect to system bus: %s\n", strerror(-rc));
+			bus = sd_bus_flush_close_unref(bus);
+			sleep(1);
+		}
+	} while (rc < 0);
+
+	while (1) {
+		CPUtemp = 0;
+		for(i=0; i<12; i++) {
+			rc = sd_bus_call_method(bus,                   // On the System Bus
+						gService,               // Service to contact
+						gCPU0ObjPath[i],            // Object path
+						gIntPath,              // Interface name
+						"getValue",          // Method to be called
+						&bus_error,                 // object to return error
+						&response,                  // Response message on success
+						NULL);                       // input message (string,byte)
+			if(rc < 0) {
+//				fprintf(stderr, "gCPU0ObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+				CPU0_core_temperature[i] = 0;
+			} else {
+				rc = sd_bus_message_read(response, "v","i", &CPU0_core_temperature[i]);
+				if (rc < 0 ) {
+					fprintf(stderr, "gCPU0ObjPath Failed to parse response message:[%s]\n", strerror(-rc));
+					CPU0_core_temperature[i] = 0;
+				}
 			}
-	
+//			fprintf(stderr, "CPU0 core %d temperature is %d\n",i ,CPU0_core_temperature[i]);
+			if(CPU0_core_temperature[i] > HighestCPUtemp) {
+				HighestCPUtemp = CPU0_core_temperature[i];
+				CPUnocore[0] = 0;
+				CPUnocore[1] = i;
+			}
+			CPUtemp = CPUtemp + CPU0_core_temperature[i];
+			sd_bus_error_free(&bus_error);
+			response = sd_bus_message_unref(response);
 		}
-	// SD Bus error report mechanism.
-	sd_bus_error bus_error = SD_BUS_ERROR_NULL;
-	sd_bus_message *response = NULL, *m = NULL;;
-    sd_bus_error_free(&bus_error);
-    sd_bus_message_unref(response);
 
+		for(i=0; i<12; i++) {
+			rc = sd_bus_call_method(bus,                   // On the System Bus
+						gService,               // Service to contact
+						gCPU1ObjPath[i],            // Object path
+						gIntPath,              // Interface name
+						"getValue",          // Method to be called
+						&bus_error,                 // object to return error
+						&response,                  // Response message on success
+						NULL);                       // input message (string,byte)
+			if(rc < 0) {
+//				fprintf(stderr, "gCPU1ObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+				CPU1_core_temperature[i] = 0;
+			} else {
+				rc = sd_bus_message_read(response, "v","i", &CPU1_core_temperature[i]);
+				if (rc < 0 ) {
+					fprintf(stderr, "gCPU1ObjPath Failed to parse response message:[%s]\n", strerror(-rc));
+					CPU1_core_temperature[i] = 0;
+				}
+			}
+//			fprintf(stderr, "CPU1 core %d temperature is %d\n",i ,CPU1_core_temperature[i]);
+			if(CPU1_core_temperature[i] > HighestCPUtemp ) {
+				HighestCPUtemp = CPU1_core_temperature[i];
+				CPUnocore[0] = 1;
+				CPUnocore[1] = i;
+			}
+			sd_bus_error_free(&bus_error);
+			response = sd_bus_message_unref(response);
+		}
+//		fprintf(stderr, "Highest CPU temperature = [%d]\n", HighestCPUtemp);
+	
+		for(i=0; i<32; i++) {
+			rc = sd_bus_call_method(bus,                   // On the System Bus
+						gService,               // Service to contact
+						gDIMMObjPath[i],            // Object path
+						gIntPath,              // Interface name
+						"getValue",          // Method to be called
+						&bus_error,                 // object to return error
+						&response,                  // Response message on success
+						NULL);                       // input message (string,byte)
+			if(rc < 0) {
+//				fprintf(stderr, "gDIMMObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+				DIMM_temperature[i] = 0;
+			} else {
+				rc = sd_bus_message_read(response, "v","i", &DIMM_temperature[i]);
+				if (rc < 0 ) {
+					fprintf(stderr, "gDIMMObjPath Failed to parse response message:[%s]\n", strerror(-rc));
+					DIMM_temperature[i] = 0;
+				}
+			}
+//			fprintf(stderr, "DIMM %d temperature is %d\n", i, DIMM_temperature[i]);
+			if(DIMM_temperature[i] > HighestDIMMtemp )
+				HighestDIMMtemp = DIMM_temperature[i];
+			sd_bus_error_free(&bus_error);
+			response = sd_bus_message_unref(response);
+		}
+//		fprintf(stderr, "Highest DIMM temperature = [%d]\n",HighestDIMMtemp);
 
-while(1){
-  	fd = i2c_open();
-	CPUtemp=0;
-	for(i=0;i<12;i++){
-       sd_bus_error_free(&bus_error);
-
-        rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService,               // Service to contact
-                                gCPU0ObjPath[i],            // Object path
-                                gIntPath,              // Interface name
-                                "getValue",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-
-        if(rc < 0)
-        {
-            //fprintf(stderr, "gCPU0ObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
-           // goto finish;
-           CPU0_core_temperature[i]=0;
-        }
-		else
-		{
-			rc = sd_bus_message_read(response, "v","i", &CPU0_core_temperature[i]);
-			if (rc < 0 )
-			{ 
-         	 // fprintf(stderr, "gCPU0ObjPath Failed to parse response message:[%s]\n", strerror(-rc));
-          // goto finish;
+		rc = sd_bus_call_method(bus,                   // On the System Bus
+					gService,               // Service to contact
+					gObjPath_Ambient,            // Object path
+					gIntPath,              // Interface name
+					"getValue",          // Method to be called
+					&bus_error,                 // object to return error
+					&response,                  // Response message on success
+					NULL);                       // input message (string,byte)
+		if(rc < 0) {
+//			fprintf(stderr, "fan2 Failed to resolve fruid to dbus: %s\n", bus_error.message);
+			Ambient_reading = 0;
+		} else {
+			rc = sd_bus_message_read(response, "v","i", &Ambient_reading);
+			if (rc < 0 ) {
+				fprintf(stderr, "fan3 Failed to parse response message:[%s]\n", strerror(-rc));
+				Ambient_reading = 0;
 			}
 		}
-	//printf("CPU0 core %d value=[%d] \n",i,CPU0_core_temperature[i]);
-	if(CPU0_core_temperature[i] > HighestCPUtemp )
-		{
-		HighestCPUtemp = CPU0_core_temperature[i];
-		CPUnocore[0]=0;
-		CPUnocore[1]=i;
-		}
-	CPUtemp=CPUtemp+CPU0_core_temperature[i];
-	}
-	
-	for(i=0;i<12;i++){
-       sd_bus_error_free(&bus_error);
-
-        rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService,               // Service to contact
-                                gCPU1ObjPath[i],            // Object path
-                                gIntPath,              // Interface name
-                                "getValue",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-
-        if(rc < 0)
-        {
-            //fprintf(stderr, "gCPU1ObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
-			CPU1_core_temperature[i]=0;
-			//goto finish;
-        }
-		else
-		{
-		rc = sd_bus_message_read(response, "v","i", &CPU1_core_temperature[i]);
-
-		}
-
-
-		if(CPU1_core_temperature[i] > HighestCPUtemp )
-		{
-		HighestCPUtemp = CPU1_core_temperature[i];
-		CPUnocore[0]=1;
-		CPUnocore[1]=i;
-		}
-
-	}
-
-	
-	for(i=0;i<32;i++){
-       sd_bus_error_free(&bus_error);
-
-        rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService,               // Service to contact
-                                gDIMMObjPath[i],            // Object path
-                                gIntPath,              // Interface name
-                                "getValue",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-
-        if(rc < 0)
-        {
-  
-            DIMM_temperature[i]=0;
-        }
-		else
-		{
-		rc = sd_bus_message_read(response, "v","i", &DIMM_temperature[i]);
-
-			if (rc < 0 )
-			{ 
-         	  fprintf(stderr, "gDIMMObjPath Failed to parse response message:[%s]\n", strerror(-rc));
-      
-			}
-
-		}
-
-	if(DIMM_temperature[i] > HighestDIMMtemp )
-		HighestDIMMtemp = DIMM_temperature[i];
-	}
-	printf("Highest DIMM temperatur is value %d \n",HighestDIMMtemp);
-
-
-
-	sd_bus_error_free(&bus_error);
-     rc = sd_bus_call_method(bus,                   // On the System Bus
-                                gService,               // Service to contact
-                                gObjPath_Ambient,            // Object path
-                                gIntPath,              // Interface name
-                                "getValue",          // Method to be called
-                                &bus_error,                 // object to return error
-                                &response,                  // Response message on success
-                                NULL);                       // input message (string,byte)
-                                // NULL);                  // First argument to getObjectFromId
-                                //"BOARD_1");             // Second Argument
-
-        if(rc < 0)
-        {
-            fprintf(stderr, "fan2 Failed to resolve fruid to dbus: %s\n", bus_error.message);
-       
-        }
-
-	rc = sd_bus_message_read(response, "v","i", &Ambient_reading);
-	if (rc < 0 )
-	{ 
-           fprintf(stderr, "fan3 Failed to parse response message:[%s]\n", strerror(-rc));
-  
-	}
-
-	  if (CPUtemp==0)
-	  	{
-		HighestCPUtemp=0;
-		HighestDIMMtemp=0;
-	  	}
-
-	CloseLoop(HighestCPUtemp,HighestDIMMtemp);
-	OpenLoop(Ambient_reading);
-
-	
-
-		if(Openloopspeed>Closeloopspeed)
-		g_fanspeed=Openloopspeed;
-		else
-		g_fanspeed=Closeloopspeed;
-	
-	if(g_fanspeed>30) 
-		SetFanLed(fd,1);
-	else
-		SetFanLed(fd,2);
-
-	FinalFanSpeed=g_fanspeed*255;
-	FinalFanSpeed=FinalFanSpeed/100;
-
-	if(HighestCPUtemp==0) //OCC sensor does not enable
-	{
-	FinalFanSpeed=255;
-	}
-
-
- 	for(i=0;i<6;i++){
-		
 		sd_bus_error_free(&bus_error);
-	rc = sd_bus_call_method(bus,				   // On the System Bus
-							   gService,			   // Service to contact
-							   fanObjPath[i],			// Object path
-							   gIntPath,			  // Interface name
-							   "setValue",			// Method to be called
-							   &bus_error,				   // object to return error
-							   &response,				   // Response message on success
-							   "i",						// input message (string,byte)
-							   FinalFanSpeed);                  // First argument
+		response = sd_bus_message_unref(response);
+//		fprintf(stderr, "Highest ambient inlet temperature = [%d]\n", HighestCPUtemp);
 
-	  if(rc < 0)
-        {
-            fprintf(stderr, "fanObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
-          //  goto finish;
-        }
+		if (CPUtemp == 0)	{
+			HighestCPUtemp = 0;
+			HighestDIMMtemp = 0;
+		}
 
+		CloseLoop(HighestCPUtemp,HighestDIMMtemp);
+		OpenLoop(Ambient_reading);
 
- 	}
-
-	close(fd);
-	sleep(1);
+		if(Openloopspeed > Closeloopspeed)
+			g_fanspeed = Openloopspeed;
+		else
+			g_fanspeed = Closeloopspeed;
 	
+		fd = i2c_open();
+		if (fd == -1) {
+			fprintf(stderr, "Fail to set FAN LED\n");
+		} else {
+			if(g_fanspeed > 30)
+				SetFanLed(fd,1);
+			else
+				SetFanLed(fd,2);
+			close(fd);
+		}
 
-	finish:
-		sd_bus_unref(bus);
+		FinalFanSpeed = g_fanspeed * 255;
+		FinalFanSpeed = FinalFanSpeed / 100;
+
+		if(HighestCPUtemp == 0) //OCC sensor does not enable
+			FinalFanSpeed = 255;
+
+		for(i=0; i<6; i++) {
+			rc = sd_bus_call_method(bus,				   // On the System Bus
+						gService,			   // Service to contact
+						fanObjPath[i],			// Object path
+						gIntPath,			  // Interface name
+						"setValue",			// Method to be called
+						&bus_error,				   // object to return error
+						&response,				   // Response message on success
+						"i",						// input message (string,byte)
+						FinalFanSpeed);                  // First argument
+			if(rc < 0)
+				fprintf(stderr, "fanObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+			sd_bus_error_free(&bus_error);
+			response = sd_bus_message_unref(response);
+		}
+	
+finish:
+		sd_bus_error_free(&bus_error);
+		response = sd_bus_message_unref(response);
+		sd_bus_flush(bus);
 		sleep(1);
-}
-	return r < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+	}
+	bus = sd_bus_flush_close_unref(bus);
+	return rc < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 

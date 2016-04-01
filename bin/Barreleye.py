@@ -212,7 +212,7 @@ APPS = {
                 'process_name'    : 'info',
         },
     'fan_algorithm' : {
-                'system_state'    : 'HOST_POWERED_ON',
+                'system_state'    : 'BMC_READY',
                 'start_process'   : True,
                 'monitor_process' : True,
                 'process_name'    : 'fan_algorithm',
