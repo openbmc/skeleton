@@ -154,7 +154,7 @@ int send_esel_to_dbus(const char *desc, const char *sev, const char *details, ui
 	uint16_t value = 0;
 	int ret = 0;
 
-	fprintf(stderr,"add sel\n");
+	fprintf(stderr,"Add SEL due to Thermal Trip\n");
 	ret = sd_bus_open_system(&mbus);
 	if (ret < 0) {
 		fprintf(stderr, "Failed to connect to system bus: %s\n", strerror(-ret));
@@ -214,7 +214,7 @@ int start_system_information(void)
 	do {
 		ret = sd_bus_open_system(&bus);
 		if(ret < 0) {
-			fprintf(stderr, "Failed to connect to system bus: %s\n", strerror(-ret));
+			fprintf(stderr, "Failed to connect to system bus for info: %s\n", strerror(-ret));
 			bus = sd_bus_flush_close_unref(bus);
 		}
 		sleep(1);
@@ -230,13 +230,13 @@ int start_system_information(void)
 					&response,                  // Response message on success
 					NULL);                       // input message (string,byte)
 		if(ret < 0) {
-//			fprintf(stderr, "Failed to resolve getPowerState to dbus: %s\n", bus_error.message);
+			fprintf(stderr, "Failed to get power state from dbus: %s\n", bus_error.message);
 			goto finish;
 		}
 
 		ret = sd_bus_message_read(response, "i", &value);
 		if (ret < 0 ) {
-			fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-ret));
+			fprintf(stderr, "Failed to parse GetPowerState response message:[%s]\n", strerror(-ret));
 			goto finish;
 		}
 		sd_bus_error_free(&bus_error);
@@ -258,12 +258,12 @@ int start_system_information(void)
 					&response,                  // Response message on success
 					NULL);                       // input message (string,byte)
 		if(ret < 0) {
-			fprintf(stderr, "Failed to resolve fruid to dbus: %s\n", bus_error.message);
+			fprintf(stderr, "Failed to get OCC state from dbus: %s\n", bus_error.message);
 			goto finish;
 		}
 		ret = sd_bus_message_read(response, "v","s", &OccStatus);
 		if (ret < 0 ) {
-			fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-ret));
+			fprintf(stderr, "Failed to parse GetOccState response message:[%s]\n", strerror(-ret));
 			goto finish;
 		}
 		sd_bus_error_free(&bus_error);
@@ -281,36 +281,19 @@ int start_system_information(void)
 					&response,                  // Response message on success
 					NULL);                       // input message (string,byte)
 		if(ret < 0) {
-			fprintf(stderr, "Failed to resolve fruid to dbus: %s\n", bus_error.message);
+			fprintf(stderr, "Failed to get CPU core0 temperature from dbus: %s\n", bus_error.message);
 			goto finish;
 		}
 		ret = sd_bus_message_read(response, "v","i", &value);
 		if (ret < 0 ) {
-			fprintf(stderr, "Failed to parse response message:[%s]\n", strerror(-ret));
+			fprintf(stderr, "Failed to parse GetCpuCore0Temp response message:[%s]\n", strerror(-ret));
 			goto finish;
 		}
 		sd_bus_error_free(&bus_error);
 		response = sd_bus_message_unref(response);
 		fprintf(stderr,"CPU value = [%d] \n",value);
-		if(value >= 90) {
-			//printf("====Ken poweroff==== \n");
+		if(value >= 90)
 			send_esel_to_dbus("CPU thermal trip", "High", "assoc", "hack", 3);
-
-			ret = sd_bus_call_method(bus,                   // On the System Bus
-						gService_c,               // Service to contact
-						gObjPath_c,            // Object path
-						gIntPath_c,              // Interface name
-						"powerOff",          // Method to be called
-						&bus_error,                 // object to return error
-						&response,                  // Response message on success
-						NULL);                       // input message (string,byte)
-
-			if(ret < 0) {
-				fprintf(stderr, "Failed to resolve poweroff to dbus: %s\n", bus_error.message);
-				goto finish;
-			}
-			sd_bus_error_free(&bus_error);
-		}
 	
 finish:
 		sd_bus_error_free(&bus_error);

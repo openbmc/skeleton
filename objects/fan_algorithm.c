@@ -323,7 +323,7 @@ int Fan_control_algorithm(void)
 		/* Connect to the user bus this time */
 		rc = sd_bus_open_system(&bus);
 		if(rc < 0) {
-			fprintf(stderr, "fan 1 Failed to connect to system bus: %s\n", strerror(-rc));
+			fprintf(stderr, "Failed to connect to system bus for fan_algorithm: %s\n", strerror(-rc));
 			bus = sd_bus_flush_close_unref(bus);
 			sleep(1);
 		}
@@ -341,12 +341,12 @@ int Fan_control_algorithm(void)
 						&response,                  // Response message on success
 						NULL);                       // input message (string,byte)
 			if(rc < 0) {
-//				fprintf(stderr, "gCPU0ObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+//				fprintf(stderr, "Failed to get CPU 0 temperature from dbus: %s\n", bus_error.message);
 				CPU0_core_temperature[i] = 0;
 			} else {
 				rc = sd_bus_message_read(response, "v","i", &CPU0_core_temperature[i]);
 				if (rc < 0 ) {
-					fprintf(stderr, "gCPU0ObjPath Failed to parse response message:[%s]\n", strerror(-rc));
+					fprintf(stderr, "Failed to parse GetCpu0Temp response message:[%s]\n", strerror(-rc));
 					CPU0_core_temperature[i] = 0;
 				}
 			}
@@ -371,12 +371,12 @@ int Fan_control_algorithm(void)
 						&response,                  // Response message on success
 						NULL);                       // input message (string,byte)
 			if(rc < 0) {
-//				fprintf(stderr, "gCPU1ObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+//				fprintf(stderr, "Failed to get CPU 1 temperature from dbus: %s\n", bus_error.message);
 				CPU1_core_temperature[i] = 0;
 			} else {
 				rc = sd_bus_message_read(response, "v","i", &CPU1_core_temperature[i]);
 				if (rc < 0 ) {
-					fprintf(stderr, "gCPU1ObjPath Failed to parse response message:[%s]\n", strerror(-rc));
+					fprintf(stderr, "Failed to parse GetCpu1Temp response message:[%s]\n", strerror(-rc));
 					CPU1_core_temperature[i] = 0;
 				}
 			}
@@ -401,12 +401,12 @@ int Fan_control_algorithm(void)
 						&response,                  // Response message on success
 						NULL);                       // input message (string,byte)
 			if(rc < 0) {
-//				fprintf(stderr, "gDIMMObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+//				fprintf(stderr, "Failed to get DIMM temperature from dbus: %s\n", bus_error.message);
 				DIMM_temperature[i] = 0;
 			} else {
 				rc = sd_bus_message_read(response, "v","i", &DIMM_temperature[i]);
 				if (rc < 0 ) {
-					fprintf(stderr, "gDIMMObjPath Failed to parse response message:[%s]\n", strerror(-rc));
+					fprintf(stderr, "Failed to parse GetDimmTemp response message:[%s]\n", strerror(-rc));
 					DIMM_temperature[i] = 0;
 				}
 			}
@@ -427,12 +427,12 @@ int Fan_control_algorithm(void)
 					&response,                  // Response message on success
 					NULL);                       // input message (string,byte)
 		if(rc < 0) {
-//			fprintf(stderr, "fan2 Failed to resolve fruid to dbus: %s\n", bus_error.message);
+//			fprintf(stderr, "Failed to get ambient temperature from dbus: %s\n", bus_error.message);
 			Ambient_reading = 0;
 		} else {
 			rc = sd_bus_message_read(response, "v","i", &Ambient_reading);
 			if (rc < 0 ) {
-				fprintf(stderr, "fan3 Failed to parse response message:[%s]\n", strerror(-rc));
+				fprintf(stderr, "Failed to parse GetDimmTemp response message:[%s]\n", strerror(-rc));
 				Ambient_reading = 0;
 			}
 		}
@@ -481,7 +481,7 @@ int Fan_control_algorithm(void)
 						"i",						// input message (string,byte)
 						FinalFanSpeed);                  // First argument
 			if(rc < 0)
-				fprintf(stderr, "fanObjPath Failed to resolve fruid to dbus: %s\n", bus_error.message);
+				fprintf(stderr, "Failed to adjust fan speed via dbus: %s\n", bus_error.message);
 			sd_bus_error_free(&bus_error);
 			response = sd_bus_message_unref(response);
 		}
