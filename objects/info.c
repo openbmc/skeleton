@@ -360,13 +360,30 @@ int start_system_information(void)
 
 		if(HighestCPUtemp >= 90) {
 			thermaltrip_lock = 1;
-			send_esel_to_dbus("CPU thermal trip", "High", "assoc", "hack", 3);
+			send_esel_to_dbus("thermal shutdown, CPU temperature = 90degC", "High", "assoc", "hack", 3);
+
+			ret = sd_bus_call_method(bus,                   // On the System Bus
+						gService_c,               // Service to contact
+						gObjPath_c,            // Object path
+						gIntPath_c,              // Interface name
+						"powerOff",          // Method to be called
+						&bus_error,                 // object to return error
+						&response,                  // Response message on success
+						NULL);                       // input message (string,byte)
+			if(ret < 0)
+			{
+				fprintf(stderr, "Failed to power off from dbus: %s\n", bus_error.message);
+				goto finish;
+			}
+			sd_bus_error_free(&bus_error);
+			response = sd_bus_message_unref(response);
 		}
 	
 finish:
 		sd_bus_error_free(&bus_error);
 		response = sd_bus_message_unref(response);
 		sd_bus_flush(bus);
+		OccStatus = NULL;
 		HighestCPUtemp = 0;
 		sleep(1);
 	}
