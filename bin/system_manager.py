@@ -115,30 +115,44 @@ class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		return self.Get(DBUS_NAME,"current_state")
 
 	def doObjectLookup(self,category,key):
-		bus_name = ""
-		obj_path = ""
 		intf_name = INTF_ITEM
-		try:
-			obj_path = System.ID_LOOKUP[category][key]
-			bus_name = self.bus_name_lookup[obj_path]
-			parts = obj_path.split('/')
-			if (parts[3] == 'sensors'):
-				intf_name = INTF_SENSOR
-		except Exception as e:
-			print "ERROR SystemManager: "+str(e)+" not found in lookup"
-
+		obj_path = System.ID_LOOKUP[category][key]
+		bus_name = self.bus_name_lookup[obj_path]
+		parts = obj_path.split('/')
+		if (parts[3] == 'sensors'):
+			intf_name = INTF_SENSOR
 		return [bus_name,obj_path,intf_name]
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='ss', out_signature='(sss)')
 	def getObjectFromId(self,category,key):
-		return self.doObjectLookup(category,key)
+		try:
+			return self.doObjectLookup(category,key)
+		except Exception as e:
+			print "WARNING SystemManager:"+\
+				"Object not found for:[%s][%s]" %(category,key)
+			return ["", "", ""]
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='sy', out_signature='(sss)')
 	def getObjectFromByteId(self,category,key):
 		byte = int(key)
-		return self.doObjectLookup(category,byte)
+		try:
+			return self.doObjectLookup(category,byte)
+		except Exception as e:
+			print "WARNING SystemManager:"+\
+				"Object not found for:[%s][%s]" %(category,key)
+			return ["", "", ""]
+
+	# this method is used by ipmi-fru-parser to get the path of a fru_area
+	# do not report 'not found' message since it is expected
+	@dbus.service.method(DBUS_NAME,
+		in_signature='s', out_signature='(sss)')
+	def getFRUObject(self,key):
+		try:
+			return self.doObjectLookup("FRU_STR",key)
+		except Exception as e:
+			return ["", "", ""]
 	
 	def start_process(self,name):
 		if (System.APPS[name]['start_process'] == True):
