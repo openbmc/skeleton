@@ -1,0 +1,6 @@
+lib/*
+obj/*
+bin/*.exe
+bin/pflash
+*.swp
+*.swo
