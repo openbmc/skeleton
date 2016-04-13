@@ -40,6 +40,7 @@ remove_watchdog(void)
 		g_source_remove(watchdogid);
 		watchdogid = 0;
 	}
+	return TRUE;
 }
 
 static gboolean
@@ -51,6 +52,7 @@ set_poll_interval(Watchdog *wd,
 	g_print("Setting watchdog poll interval to: %d\n", interval);
 	watchdog_set_poll_interval(wd, interval);
 	watchdog_complete_set(wd,invocation);
+	return TRUE;
 }
 
 static gboolean
@@ -93,7 +95,6 @@ on_bus_acquired(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
-	cmdline *cmd = user_data;
 	manager = g_dbus_object_manager_server_new(dbus_object_path);
 	gchar *s;
 	s = g_strdup_printf("%s/%s",dbus_object_path,instance_name);

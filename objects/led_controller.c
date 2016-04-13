@@ -5,6 +5,11 @@
 #include <dirent.h>
 #include <systemd/sd-bus.h>
 
+static int led_stable_state_function(const char *, const char *);
+static int led_default_blink(const char *, const char *);
+static int read_led(const char *, const char *, void *, const size_t);
+static int led_custom_blink(const char *, sd_bus_message *);
+
 /*
  * These are control files that are present for each led under
  *'/sys/class/leds/<led_name>/' which are used to trigger action
@@ -156,8 +161,8 @@ led_function_router(sd_bus_message *msg, void *user_data,
  * Turn On or Turn Off the LED
  * --------------------------------------------------------------
  */
-int
-led_stable_state_function(char *led_name, char *led_function)
+static int
+led_stable_state_function(const char *led_name, const char *led_function)
 {
 	/* Generic error reporter. */
 	int rc = -1;
@@ -244,8 +249,8 @@ blink_led(const char *led_name, const char *on_duration, const char *off_duratio
  * Default blink action on the LED.
  * ----------------------------------------------------
  */
-int
-led_default_blink(char *led_name, char *blink_type)
+static int
+led_default_blink(const char *led_name, const char *blink_type)
 {
 	/* Generic error reporter */
 	int rc = -1;
@@ -281,7 +286,7 @@ led_default_blink(char *led_name, char *blink_type)
  * Blinks at user defined 'on' and 'off' intervals.
  * -------------------------------------------------
  */
-int
+static int
 led_custom_blink(const char *led_name, sd_bus_message *msg)
 {
 	/* Generic error reporter. */
@@ -342,7 +347,7 @@ led_custom_blink(const char *led_name, sd_bus_message *msg)
  * size -or- entire contents of file whichever is smaller
  * ----------------------------------------------------------------
  */
-int
+static int
 read_led(const char *name, const char *ctrl_file,
 		void *value, const size_t len)
 {

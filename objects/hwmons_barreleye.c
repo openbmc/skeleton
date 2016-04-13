@@ -1,5 +1,6 @@
 #include "interfaces/openbmc_intf.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include "openbmc.h"
 #include "gpio.h"
@@ -70,7 +71,7 @@ poll_hwmon(gpointer user_data)
 
 			}
 			guint32 value = atoi(buf)/scale;
-			GVariant* v = NEW_VARIANT_U(value);
+			NEW_VARIANT_U(value);
 			GVariant* old_value = sensor_value_get_value(sensor);
 			bool do_set = false;
 			if(old_value == NULL)
@@ -129,8 +130,6 @@ on_bus_acquired(GDBusConnection *connection,
 		gpointer user_data)
 {
 	ObjectSkeleton *object;
-
-	cmdline *cmd = user_data;
 
 	manager = g_dbus_object_manager_server_new(dbus_object_path);
 	int i = 0;

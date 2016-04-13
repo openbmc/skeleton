@@ -24,7 +24,6 @@
 #include "includes/openbmc.h"
 
 static const gchar* dbus_object_path = "/org/openbmc/control";
-static const gchar* dbus_object_name = "Flasher_0";
 static const gchar* dbus_name = "org.openbmc.control.Flasher";
 
 static GDBusObjectManagerServer *manager = NULL;
@@ -33,10 +32,7 @@ static GDBusObjectManagerServer *manager = NULL;
 
 #define PFLASH_VERSION	"0.8.6"
 
-static bool must_confirm = false;
-static bool dummy_run;
 static bool need_relock;
-static bool bmc_flash;
 #ifdef __powerpc__
 static bool using_sfc;
 #endif
@@ -54,7 +50,6 @@ static int32_t			ffs_index = -1;
 static uint8_t FLASH_OK = 0;
 static uint8_t FLASH_ERROR = 0x01;
 static uint8_t FLASH_SETUP_ERROR = 0x02;
-static struct blocklevel_device *bl;
 
 static int
 erase_chip(void)
@@ -80,7 +75,6 @@ flash_message(GDBusConnection* connection,char* obj_path,char* method, char* err
 	GDBusProxy *proxy;
 	GError *error;
 	GVariant *parm = NULL;
-	GVariant *result;
 	error = NULL;
 	proxy = g_dbus_proxy_new_sync(connection,
 			G_DBUS_PROXY_FLAGS_NONE,
@@ -96,7 +90,7 @@ flash_message(GDBusConnection* connection,char* obj_path,char* method, char* err
 	if(strcmp(method,"error")==0) {
 		parm = g_variant_new("(s)",error_msg);
 	}
-	result = g_dbus_proxy_call_sync(proxy,
+	g_dbus_proxy_call_sync(proxy,
 			method,
 			parm,
 			G_DBUS_CALL_FLAGS_NONE,
@@ -164,44 +158,6 @@ program_file(FlashControl* flash_control, const char *file, uint32_t start, uint
 		ffs_update_act_size(ffsh, ffs_index, actual_size);
 	}
 	return(0);
-}
-
-static void
-do_read_file(const char *file, uint32_t start, uint32_t size)
-{
-	int fd, rc;
-	ssize_t len;
-	uint32_t done = 0;
-
-	fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 00666);
-	if(fd == -1) {
-		perror("Failed to open file");
-		exit(1);
-	}
-	printf("Reading to \"%s\" from 0x%08x..0x%08x !\n",
-			file, start, size);
-
-	progress_init(size >> 8);
-	while(size) {
-		len = size > FILE_BUF_SIZE ? FILE_BUF_SIZE : size;
-		rc = flash_read(fl_chip, start, file_buf, len);
-		if(rc) {
-			fprintf(stderr, "Flash read error %d for"
-					" chunk at 0x%08x\n", rc, start);
-			exit(1);
-		}
-		rc = write(fd, file_buf, len);
-		if(rc < 0) {
-			perror("Error writing file");
-			exit(1);
-		}
-		start += len;
-		size -= len;
-		done += len;
-		progress_tick(done >> 8);
-	}
-	progress_end();
-	close(fd);
 }
 
 static void

@@ -44,7 +44,7 @@ on_button_interrupt( GIOChannel *channel,
 	gchar buf[2];
 	buf[1] = '\0';
 	g_io_channel_seek_position( channel, 0, G_SEEK_SET, 0 );
-	GIOStatus rc = g_io_channel_read_chars( channel,
+	g_io_channel_read_chars( channel,
 			buf, 1,
 			&bytes_read,
 			&error );
@@ -84,9 +84,7 @@ on_bus_acquired(GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
 	//g_print ("Acquired a message bus connection: %s\n",name);
-	cmdline *cmd = user_data;
 	manager = g_dbus_object_manager_server_new(dbus_object_path);
-	int i=0;
 	gchar *s;
 	s = g_strdup_printf("%s/%s",dbus_object_path,instance_name);
 	object = object_skeleton_new(s);

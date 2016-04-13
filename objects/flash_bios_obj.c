@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "object_mapper.h"
@@ -9,8 +11,6 @@
 static const gchar* dbus_object_path = "/org/openbmc/control/flash";
 static const gchar* dbus_name = "org.openbmc.control.Flash";
 static const gchar* FLASHER_BIN = "flasher.exe";
-static const gchar* DLOAD_BUS = "org.openbmc.managers.Download";
-static const gchar* DLOAD_OBJ = "/org/openbmc/managers/Download";
 
 static GDBusObjectManagerServer *manager = NULL;
 
@@ -142,9 +142,8 @@ on_error(Flash *flash,
 		gchar* error_msg,
 		gpointer user_data)
 {
-	int rc = 0;
 	SharedResource *lock = object_get_shared_resource((Object*)user_data);
-	gboolean locked = shared_resource_get_lock(lock);
+	shared_resource_get_lock(lock);
 	flash_set_status(flash, error_msg);
 	flash_complete_error(flash,invocation);
 	printf("ERROR: %s.  Clearing locks\n",error_msg);
@@ -161,7 +160,7 @@ on_done(Flash *flash,
 {
 	int rc = 0;
 	SharedResource *lock = object_get_shared_resource((Object*)user_data);
-	gboolean locked = shared_resource_get_lock(lock);
+	shared_resource_get_lock(lock);
 	flash_set_status(flash, "Flash Done");
 	flash_complete_done(flash,invocation);
 	printf("Flash Done. Clearing locks\n");
@@ -221,9 +220,9 @@ on_flash_progress(GDBusConnection* connection,
 		gpointer user_data)
 {
 	Flash *flash = object_get_flash((Object*)user_data);
-	SharedResource *lock = object_get_shared_resource((Object*)user_data);
+	object_get_shared_resource((Object*)user_data);
 	GVariantIter *iter = g_variant_iter_new(parameters);
-	GVariant* v_filename = g_variant_iter_next_value(iter);
+	g_variant_iter_next_value(iter);
 	GVariant* v_progress = g_variant_iter_next_value(iter);
 
 	uint8_t progress = g_variant_get_byte(v_progress);
@@ -232,55 +231,6 @@ on_flash_progress(GDBusConnection* connection,
 	s = g_strdup_printf("Flashing: %d%%",progress);
 	flash_set_status(flash,s);
 	g_free(s);
-}
-
-static void
-on_flash_done(GDBusConnection* connection,
-		const gchar* sender_name,
-		const gchar* object_path,
-		const gchar* interface_name,
-		const gchar* signal_name,
-		GVariant* parameters,
-		gpointer user_data)
-{
-	Flash *flash = object_get_flash((Object*)user_data);
-	SharedResource *lock = object_get_shared_resource((Object*)user_data);
-	printf("Flash succeeded; unlocking flash\n");
-	shared_resource_set_lock(lock,false);
-	shared_resource_set_name(lock,"");
-	flash_set_status(flash,"Flash Done");
-}
-
-static void
-on_flash_error(GDBusConnection* connection,
-		const gchar* sender_name,
-		const gchar* object_path,
-		const gchar* interface_name,
-		const gchar* signal_name,
-		GVariant* parameters,
-		gpointer user_data)
-{
-	Flash *flash = object_get_flash((Object*)user_data);
-	SharedResource *lock = object_get_shared_resource((Object*)user_data);
-	printf("Flash Error; unlocking flash\n");
-	shared_resource_set_lock(lock,false);
-	shared_resource_set_name(lock,"");
-}
-
-static void
-on_download_error(GDBusConnection* connection,
-		const gchar* sender_name,
-		const gchar* object_path,
-		const gchar* interface_name,
-		const gchar* signal_name,
-		GVariant* parameters,
-		gpointer user_data)
-{
-	Flash *flash = object_get_flash((Object*)user_data);
-	SharedResource *lock = object_get_shared_resource((Object*)user_data);
-	printf("ERROR: FlashBios:  Download error; clearing flash lock\n");
-	shared_resource_set_lock(lock,false);
-	shared_resource_set_name(lock,"");
 }
 
 static void
@@ -296,8 +246,7 @@ on_bus_acquired(GDBusConnection *connection,
 	//TODO: don't use fixed buffer
 	char flasher_path[512];
 	memset(flasher_path, '\0', sizeof(flasher_path));
-	bool found = false;
-	gchar *flasher_file;
+	gchar *flasher_file = NULL;
 	int c = strlen(cmd->argv[0]);
 	while(c>0)
 	{

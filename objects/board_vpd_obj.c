@@ -12,7 +12,6 @@ main(gint argc, gchar *argv[])
 	GDBusProxy *p;
 	GError *error;
 	GVariant *parm;
-	GVariant *result;
 
 	loop = g_main_loop_new(NULL, FALSE);
 
@@ -44,7 +43,7 @@ main(gint argc, gchar *argv[])
 	parm = g_variant_new("(v)",dict);
 
 	error = NULL;
-	result = g_dbus_proxy_call_sync(p,
+	g_dbus_proxy_call_sync(p,
 			"update",
 			parm,
 			G_DBUS_CALL_FLAGS_NONE,

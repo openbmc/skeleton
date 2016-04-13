@@ -87,7 +87,6 @@ update_fru_obj(GDBusConnection* connection, object_info* obj_info, const char* p
 	GDBusProxy *proxy;
 	GError *error;
 	GVariant *parm;
-	GVariant *result;
 
 	error = NULL;
 	proxy = g_dbus_proxy_new_sync(connection,
@@ -103,7 +102,7 @@ update_fru_obj(GDBusConnection* connection, object_info* obj_info, const char* p
 	error = NULL;
 	parm = g_variant_new("(s)",present);
 
-	result = g_dbus_proxy_call_sync(proxy,
+	g_dbus_proxy_call_sync(proxy,
 			"setPresent",
 			parm,
 			G_DBUS_CALL_FLAGS_NONE,
@@ -121,8 +120,6 @@ main(gint argc, gchar *argv[])
 	GDBusConnection *c;
 	GDBusProxy *sys_proxy;
 	GError *error;
-	GVariant *parm;
-	GVariant *result;
 
 	loop = g_main_loop_new(NULL, FALSE);
 
@@ -146,7 +143,6 @@ main(gint argc, gchar *argv[])
 	{
 		object_info obj_info;
 		uint8_t present;
-		char* chr_present;
 		do {
 			rc = get_object(sys_proxy,&slots[i],&obj_info);
 			if(rc) { break; }

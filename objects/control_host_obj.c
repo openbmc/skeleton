@@ -182,7 +182,6 @@ on_bus_acquired(GDBusConnection *connection,
 {
 	ObjectSkeleton *object;
 	//g_print ("Acquired a message bus connection: %s\n",name);
-	cmdline *cmd = user_data;
 	manager = g_dbus_object_manager_server_new(dbus_object_path);
 
 	gchar *s;
