@@ -1,6 +1,5 @@
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
-#include "object_mapper.h"
 
 /* ------------------------------------------------------------------------- */
 
@@ -105,10 +104,6 @@ on_bus_acquired(GDBusConnection *connection,
 	object_skeleton_set_watchdog(object, wd);
 	g_object_unref(wd);
 
-	ObjectMapper* mapper = object_mapper_skeleton_new();
-	object_skeleton_set_object_mapper(object, mapper);
-	g_object_unref(mapper);
-
 	// set properties
 	watchdog_set_watchdog(wd,1);
 
@@ -134,12 +129,9 @@ on_bus_acquired(GDBusConnection *connection,
 			object); /* user_data */
 
 	/* Export the object (@manager takes its own reference to @object) */
+	g_dbus_object_manager_server_set_connection(manager, connection);
 	g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 	g_object_unref(object);
-
-	/* Export all objects */
-	g_dbus_object_manager_server_set_connection(manager, connection);
-	emit_object_added((GDBusObjectManager*)manager);
 }
 
 static void

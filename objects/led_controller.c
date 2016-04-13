@@ -431,6 +431,8 @@ led_select(const struct dirent *entry)
 int
 start_led_services()
 {
+	static const char *led_dbus_root = "/org/openbmc/control/led";
+
 	/* Generic error reporter. */
 	int rc = -1;
 	int num_leds = 0;
@@ -462,6 +464,17 @@ start_led_services()
 		return rc;
 	}
 
+	/* Install a freedesktop object manager */
+	rc = sd_bus_add_object_manager(bus_type, NULL, led_dbus_root);
+	if(rc < 0) {
+		fprintf(stderr, "Failed to add object to dbus: %s\n",
+				strerror(-rc));
+
+		sd_bus_slot_unref(led_slot);
+		sd_bus_unref(bus_type);
+		return rc;
+	}
+
 	/* Fully qualified Dbus object for a particular LED */
 	char led_object[128] = {0};
 	int len = 0;
@@ -471,8 +484,8 @@ start_led_services()
 	{
 		memset(led_object, 0x0, sizeof(led_object));
 
-		len = snprintf(led_object, sizeof(led_object), "%s%s",
-				"/org/openbmc/control/led/", led_list[num_leds]->d_name);
+		len = snprintf(led_object, sizeof(led_object), "%s%s%s",
+				led_dbus_root, "/", led_list[num_leds]->d_name);
 
 		if(len >= sizeof(led_object))
 		{
@@ -494,6 +507,15 @@ start_led_services()
 			fprintf(stderr, "Failed to add object to dbus: %s\n", strerror(-rc));
 			break;
 		}
+
+		rc = sd_bus_emit_object_added(bus_type, led_object);
+
+		if(rc < 0)
+		{
+			fprintf(stderr, "Failed to emit InterfacesAdded "
+					"signal: %s\n", strerror(-rc));
+			break;
+		}
 	}
 
 	/* Done with all registration. */
@@ -504,7 +526,7 @@ start_led_services()
 	free(led_list);
 
 	/* If we had success in adding the providers, request for a bus name. */
-	if(rc == 0)
+	if(rc >= 0)
 	{
 		/* Take one in OpenBmc */
 		rc = sd_bus_request_name(bus_type, "org.openbmc.control.led", 0);

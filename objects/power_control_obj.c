@@ -10,7 +10,6 @@
 #include "interfaces/openbmc_intf.h"
 #include "openbmc.h"
 #include "gpio.h"
-#include "object_mapper.h"
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
@@ -202,10 +201,6 @@ on_bus_acquired(GDBusConnection *connection,
 	object_skeleton_set_control(object, control);
 	g_object_unref(control);
 
-	ObjectMapper* mapper = object_mapper_skeleton_new();
-	object_skeleton_set_object_mapper(object, mapper);
-	g_object_unref(mapper);
-
 	//define method callbacks here
 	g_signal_connect(control_power,
 			"handle-set-power-state",
@@ -224,11 +219,9 @@ on_bus_acquired(GDBusConnection *connection,
 
 
 	/* Export the object (@manager takes its own reference to @object) */
+	g_dbus_object_manager_server_set_connection(manager, connection);
 	g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 	g_object_unref(object);
-
-	/* Export all objects */
-	g_dbus_object_manager_server_set_connection(manager, connection);
 
 	// get gpio device paths
 	int rc = GPIO_OK;
@@ -268,7 +261,6 @@ on_bus_acquired(GDBusConnection *connection,
 		control_power_set_pgood_timeout(control_power,pgood_timeout);
 		g_timeout_add(poll_interval, poll_pgood, object);
 	}
-	emit_object_added((GDBusObjectManager*)manager);
 }
 
 static void
