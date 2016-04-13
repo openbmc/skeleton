@@ -2,7 +2,6 @@
 #include "interfaces/openbmc_intf.h"
 #include "gpio.h"
 #include "openbmc.h"
-#include "object_mapper.h"
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/buttons";
@@ -94,10 +93,6 @@ on_bus_acquired(GDBusConnection *connection,
 	object_skeleton_set_button(object, button);
 	g_object_unref(button);
 
-	ObjectMapper* mapper = object_mapper_skeleton_new();
-	object_skeleton_set_object_mapper(object, mapper);
-	g_object_unref(mapper);
-
 	//define method callbacks
 	g_signal_connect(button,
 			"handle-is-on",
@@ -110,11 +105,9 @@ on_bus_acquired(GDBusConnection *connection,
 
 
 	/* Export the object (@manager takes its own reference to @object) */
+	g_dbus_object_manager_server_set_connection(manager, connection);
 	g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 	g_object_unref(object);
-
-	/* Export all objects */
-	g_dbus_object_manager_server_set_connection(manager, connection);
 
 	// get gpio device paths
 	int rc = GPIO_OK;
@@ -128,7 +121,6 @@ on_bus_acquired(GDBusConnection *connection,
 	{
 		printf("ERROR PowerButton: GPIO setup (rc=%d)\n",rc);
 	}
-	emit_object_added((GDBusObjectManager*)manager);
 }
 
 static void

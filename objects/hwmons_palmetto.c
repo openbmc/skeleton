@@ -3,7 +3,6 @@
 #include <fcntl.h>
 #include "openbmc.h"
 #include "gpio.h"
-#include "object_mapper.h"
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/sensors";
@@ -144,10 +143,6 @@ on_bus_acquired(GDBusConnection *connection,
 		object_skeleton_set_sensor_value(object, sensor);
 		g_object_unref(sensor);
 
-		ObjectMapper* mapper = object_mapper_skeleton_new();
-		object_skeleton_set_object_mapper(object, mapper);
-		g_object_unref(mapper);
-
 		hwmon_set_sysfs_path(hwmon,hwmons[i].filename);
 		hwmon_set_scale(hwmon,hwmons[i].scale);
 		sensor_value_set_units(sensor,hwmons[i].units);
@@ -163,12 +158,10 @@ on_bus_acquired(GDBusConnection *connection,
 			g_timeout_add(hwmons[i].poll_interval, poll_hwmon, object);
 		}
 		/* Export the object (@manager takes its own reference to @object) */
+		g_dbus_object_manager_server_set_connection(manager, connection);
 		g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 		g_object_unref(object);
 	}
-	/* Export all objects */
-	g_dbus_object_manager_server_set_connection(manager, connection);
-	emit_object_added((GDBusObjectManager*)manager);
 }
 
 static void

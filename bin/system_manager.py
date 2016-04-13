@@ -34,7 +34,7 @@ class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		dbus.service.Object.__init__(self,bus,obj_name)
 
 		bus.add_signal_receiver(self.NewObjectHandler,
-			signal_name = "ObjectAdded", sender_keyword = 'bus_name')
+			signal_name = "InterfacesAdded", sender_keyword = 'bus_name')
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 
 		self.Set(DBUS_NAME,"current_state","")
@@ -173,7 +173,7 @@ class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 	
 		return True
 
-	def NewObjectHandler(self,obj_path, interface_name, bus_name = None):
+	def NewObjectHandler(self, obj_path, iprops, bus_name = None):
 		current_state = self.Get(DBUS_NAME,"current_state")
 		if (self.bus_name_lookup.has_key(obj_path)):
 			if (self.bus_name_lookup[obj_path] == bus_name):
