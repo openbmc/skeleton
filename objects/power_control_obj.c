@@ -36,8 +36,6 @@ poll_pgood(gpointer user_data)
 	Control* control = object_get_control((Object*)user_data);
 
 	//send the heartbeat
-	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
-
 	guint poll_int = control_get_poll_interval(control);
 	if(poll_int == 0)
 	{
@@ -119,7 +117,6 @@ on_set_power_state(ControlPower *pwr,
 		gpointer user_data)
 {
 	Control* control = object_get_control((Object*)user_data);
-	const gchar* obj_path = g_dbus_object_get_object_path((GDBusObject*)user_data);
 	if(state > 1)
 	{
 		g_dbus_method_invocation_return_dbus_error(invocation,

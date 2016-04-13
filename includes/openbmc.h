@@ -20,7 +20,7 @@
 #ifdef __arm__
 static inline void devmem(void* addr, uint32_t val)
 {
-	printf("devmem 0x%08x = 0x%08x\n",addr,val);
+	printf("devmem 0x%08x = 0x%08x\n",(uint32_t)addr,val);
         asm volatile("" : : : "memory");
         *(volatile uint32_t *)addr = val;
 }
