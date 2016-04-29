@@ -71,7 +71,7 @@ def getVersion():
 		for line in f:
 			p = line.rstrip('\n')
 			parts = line.rstrip('\n').split('=')
-			if (parts[0] == "BUILD_ID"):
+			if (parts[0] == "VERSION_ID"):
 				version = parts[1]
 	return version
 
