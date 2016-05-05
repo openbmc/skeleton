@@ -608,3 +608,18 @@ HWMON_CONFIG = {
         }
     },
 }
+
+
+# Miscellaneous non-poll sensor with system specific properties.
+# The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
+MISC_SENSORS = {
+	0x5f : { 'class' : 'BootCountSensor' },
+	0x05 : { 'class' : 'BootProgressSensor' },
+	0x08 : { 'class' : 'OccStatusSensor',
+		'os_path' : '/sys/class/i2c-adapter/i2c-3/3-0050/online' },
+	0x09 : { 'class' : 'OccStatusSensor',
+		'os_path' : '/sys/class/i2c-adapter/i2c-3/3-0051/online' },
+	0xb5 : { 'class' : 'OperatingSystemStatusSensor' },
+	0xb3 : { 'class' : 'PowerCap',
+		'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
+}
