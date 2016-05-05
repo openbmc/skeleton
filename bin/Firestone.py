@@ -608,3 +608,30 @@ HWMON_CONFIG = {
         }
     },
 }
+
+
+# Miscellaneous non-poll sensor with system specific properties.
+# The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
+MISC_SENSORS = {
+	'BootCount' : { 'id' : 0x09,
+			'class' : 'BootCountSensor',
+			'object_path' : '/org/openbmc/sensors/host/BootCount' },
+	'BootProgress' : { 'id' : 0x05,
+			'class' : 'BootProgressSensor',
+			'object_path' : '/org/openbmc/sensors/host/BootProgress' },
+	'OccStatus_0' : { 'id' : 0x08,
+			'class' : 'OccStatusSensor',
+			'object_path'  : '/org/openbmc/sensors/host/cpu0/OccStatus',
+			'os_path' : '/sys/class/i2c-adapter/i2c-3/3-0050/online' },
+	'OccStatus_1' : { 'id' : 0x0A,
+			'class' : 'OccStatusSensor',
+			'object_path' : '/org/openbmc/sensors/host/cpu1/OccStatus',
+			'os_path' : '/sys/class/i2c-adapter/i2c-3/3-0051/online' },
+	'OperatingSystemStatus' : { 'id' : 0x32,
+			'class' : 'OperatingSystemStatusSensor',
+			'object_path' : '/org/openbmc/sensors/host/OperatingSystemStatus' },
+	'PowerCap' : { 'id' : 0x33,
+			'class' : 'PowerCap',
+			'object_path' : '/org/openbmc/sensors/host/PowerCap',
+			'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
+}

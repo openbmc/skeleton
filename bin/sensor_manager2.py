@@ -9,6 +9,8 @@ import dbus.mainloop.glib
 import Openbmc
 import Sensors
 
+System = __import__(sys.argv[1])
+
 DBUS_NAME = 'org.openbmc.Sensors'
 OBJ_PATH = '/org/openbmc/sensors'
 
@@ -50,32 +52,13 @@ if __name__ == '__main__':
 
 	## instantiate non-polling sensors
 	## these don't need to be in seperate process
-	## TODO: this should not be hardcoded
-
-	obj_path = OBJ_PATH+"/host/PowerCap"
-	sensor_obj = Sensors.PowerCap(bus,obj_path)
-	## hwmon3 is default for master OCC on Barreleye.
-	## should rewrite sensor_manager to remove hardcode
-	sensor_obj.sysfs_attr = "/sys/class/hwmon/hwmon3/user_powercap"
-	root_sensor.add(obj_path,sensor_obj)
-
-	obj_path = OBJ_PATH+"/host/BootProgress"
-	root_sensor.add(obj_path,Sensors.BootProgressSensor(bus,obj_path))
-
-	obj_path = OBJ_PATH+"/host/cpu0/OccStatus"
-	sensor_obj = Sensors.OccStatusSensor(bus,obj_path)
-	sensor_obj.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0050/online"
-	root_sensor.add(obj_path,sensor_obj)
-
-	obj_path = OBJ_PATH+"/host/cpu1/OccStatus"
-	sensor_obj = Sensors.OccStatusSensor(bus,obj_path)
-	sensor_obj.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0051/online"
-	root_sensor.add(obj_path,sensor_obj)
-
-	obj_path = OBJ_PATH+"/host/BootCount"
-	root_sensor.add(obj_path,Sensors.BootCountSensor(bus,obj_path))
-	obj_path = OBJ_PATH+"/host/OperatingSystemStatus"
-	root_sensor.add(obj_path,Sensors.OperatingSystemStatusSensor(bus,obj_path))
+	for the_sensor in System.MISC_SENSORS.values():
+		sensor_class = the_sensor['class']
+		obj_path = the_sensor['object_path']
+		sensor_obj = getattr(Sensors, sensor_class)(bus, obj_path)
+		if 'os_path' in the_sensor:
+			sensor_obj.sysfs_attr = the_sensor['os_path']
+		root_sensor.add(obj_path, sensor_obj)
 
 	mainloop = gobject.MainLoop()
 	print "Starting sensor manager"
