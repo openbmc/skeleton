@@ -79,7 +79,6 @@ def getVersion():
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = Openbmc.getDBus()
-    name = dbus.service.BusName(DBUS_NAME,bus)
     mainloop = gobject.MainLoop()
     obj_parent = Inventory(bus, '/org/openbmc/inventory')
 
@@ -94,6 +93,7 @@ if __name__ == '__main__':
 		version = getVersion()
 		obj.update({'version': version})
 
+    name = dbus.service.BusName(DBUS_NAME,bus)
     print "Running Inventory Manager"
     mainloop.run()
 
