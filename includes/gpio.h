@@ -6,10 +6,10 @@
 #include <stdbool.h>
 
 typedef struct {
-  gchar* name;
-  gchar* dev;
+  char* name;
+  char* dev;
   uint16_t num;
-  gchar* direction;
+  char* direction;
   int fd;
   bool irq_inited;
 } GPIO;
@@ -24,7 +24,8 @@ typedef struct {
 #define GPIO_WRITE_ERROR  0x10
 #define GPIO_LOOKUP_ERROR 0x20
 
-int gpio_init(GDBusConnection*, GPIO*);
+/*int gpio_init(GDBusConnection*, GPIO*);*/
+int gpio_init(void*, GPIO*);
 void gpio_close(GPIO*);
 int  gpio_open(GPIO*);
 int gpio_open_interrupt(GPIO*, GIOFunc, gpointer);

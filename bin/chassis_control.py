@@ -2,6 +2,7 @@
 
 import sys
 import uuid
+import time
 #from gi.repository import GObject
 import gobject
 import dbus
@@ -91,6 +92,10 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
 		self.InterfacesAdded(name,self.properties)
+
+		bus.add_signal_receiver(self.host_xstop_signal_handler, 
+					dbus_interface = "org.freedesktop.DBus.Properties", signal_name = "PropertiesChanged", 
+					path="/org/openbmc/sensors/host/cpu0/XStop" )
 
 
 	def getInterface(self,name):
@@ -210,16 +215,19 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		print "Emergency Shutdown!"
 		self.powerOff()
 		
-		
+	def host_xstop_signal_handler(self):
+		print "Checkstop Error, Waiting for 30sec before Hard Rebooting"
+		time.sleep(30)
+		self.Set(DBUS_NAME,"reboot",1)
+		self.reboot()
 
 if __name__ == '__main__':
-    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+		dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-    bus = Openbmc.getDBus()
-    name = dbus.service.BusName(DBUS_NAME, bus)
-    obj = ChassisControlObject(bus, OBJ_NAME)
-    mainloop = gobject.MainLoop()
-    
-    print "Running ChassisControlService"
-    mainloop.run()
+		bus = Openbmc.getDBus()
+		name = dbus.service.BusName(DBUS_NAME, bus)
+		obj = ChassisControlObject(bus, OBJ_NAME)
+		mainloop = gobject.MainLoop()
 
+		print "Running ChassisControlService"
+		mainloop.run()
