@@ -9,11 +9,6 @@ LIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Llib -lopenbmc_intf
 INCLUDES += $(shell pkg-config --cflags --libs libsystemd) -I. -O2
 LIB_FLAG += $(shell pkg-config  --libs libsystemd)
 
-DEPPKGS = libsystemd
-INCLUDES_info += $(shell pkg-config --cflags $(DEPPKGS))
-LIBS_info += $(shell pkg-config --libs $(DEPPKGS))
-
-
 %.o: interfaces/%.c 
 	$(CC) -c -fPIC -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
@@ -40,27 +35,27 @@ clean:
 libopenbmc_intf: openbmc_intf.o
 	$(CC) -shared -o lib/$@.so obj/openbmc_intf.o $(LDFLAGS)
 
-power_control: power_control_obj.o gpio.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
+power_control: power_control_obj.o gpio.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/gpio.o obj/power_control_obj.o $(LDFLAGS) $(LIBS)
 
 led_controller: led_controller.o
 	$(CC) -o bin/$@.exe obj/led_controller.o $(LDFLAGS) $(LIB_FLAG)
 
-button_power: button_power_obj.o gpio.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/button_power_obj.o obj/gpio.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
+button_power: button_power_obj.o gpio.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/button_power_obj.o obj/gpio.o $(LDFLAGS) $(LIBS)
 
-button_reset: button_reset_obj.o gpio.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/button_reset_obj.o obj/gpio.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
+button_reset: button_reset_obj.o gpio.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/button_reset_obj.o obj/gpio.o $(LDFLAGS) $(LIBS)
 
 
-control_host: control_host_obj.o gpio.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/gpio.o obj/control_host_obj.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
+control_host: control_host_obj.o gpio.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/gpio.o obj/control_host_obj.o $(LDFLAGS) $(LIBS)
 
-flash_bios:  flash_bios_obj.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/flash_bios_obj.o obj/object_mapper.o $(LDFLAGS) $(LIBS)
+flash_bios:  flash_bios_obj.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/flash_bios_obj.o $(LDFLAGS) $(LIBS)
 
-host_watchdog: host_watchdog_obj.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/host_watchdog_obj.o obj/object_mapper.o  $(LDFLAGS) $(LIBS)
+host_watchdog: host_watchdog_obj.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/host_watchdog_obj.o $(LDFLAGS) $(LIBS)
 
 board_vpd: board_vpd_obj.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/board_vpd_obj.o $(LDFLAGS) $(LIBS)
@@ -83,8 +78,9 @@ info:   info.o
 fan_algorithm:   fan_algorithm.o
 	$(CC) -o bin/$@ obj/fan_algorithm.o $(LDFLAGS) $(LIBS_info)
 
-hwmons_barreleye: hwmons_barreleye.o object_mapper.o libopenbmc_intf
-	$(CC) -o bin/$@.exe obj/hwmons_barreleye.o obj/object_mapper.o  $(LDFLAGS) $(LIBS)
+hwmons_barreleye: hwmons_barreleye.o libopenbmc_intf
+	$(CC) -o bin/$@.exe obj/hwmons_barreleye.o $(LDFLAGS) $(LIBS)
 
 control_bmc: control_bmc_obj.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/control_bmc_obj.o $(LDFLAGS) $(LIBS)
+

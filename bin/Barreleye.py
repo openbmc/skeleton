@@ -392,7 +392,6 @@ ID_LOOKUP = {
 		'BOARD_3'    : '<inventory_root>/system/misc',
 		'PRODUCT_51' : '<inventory_root>/system/misc',
 		'PRODUCT_100': '<inventory_root>/system',
-		'CHASSIS_2'  : '<inventory_root>/system/chassis',
 		'CHASSIS_100': '<inventory_root>/system/chassis',
 		'BOARD_100'  : '<inventory_root>/system/chassis/io_board',
 		'BOARD_101'  : '<inventory_root>/system/chassis/sas_expander',

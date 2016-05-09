@@ -123,6 +123,12 @@ APPS = {
 		'monitor_process' : True,
 		'process_name'    : 'flash_bios.exe',
 	},
+	'bmc_flash_control' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'bmc_update.py',
+	},
 	'download_manager' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
@@ -141,13 +147,6 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : True,
 		'process_name'    : 'chassis_control.py',
-	},
-	'fans' : {
-		'system_state'    : 'BMC_STARTING',
-		'start_process'   : True,
-		'monitor_process' : True,
-		'process_name'    : 'fan.exe',
-		'args'            : [ 'fan0','fan1','fan2','fan3','fan4' ]
 	},
 	'bmc_control' : {
 		'system_state'    : 'BMC_STARTING',

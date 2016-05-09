@@ -176,9 +176,12 @@ class BootProgressSensor(VirtualSensor):
 		pass
 		
 class OccStatusSensor(VirtualSensor):
-	def __init__(self,bus,name):
+	def __init__(self,bus,name, sysfs = None):
 		## default path. can be override
-		self.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0050/online"
+		if sysfs is None:
+			self.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0050/online"
+		else:
+			self.sysfs_attr = sysfs
 		VirtualSensor.__init__(self,bus,name)
 		self.setValue("Disabled")
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
