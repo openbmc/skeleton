@@ -9,6 +9,10 @@ LIBS=$(shell pkg-config --libs gio-unix-2.0 glib-2.0) -Llib -lopenbmc_intf
 INCLUDES += $(shell pkg-config --cflags --libs libsystemd) -I. -O2
 LIB_FLAG += $(shell pkg-config  --libs libsystemd)
 
+DEPPKGS = libsystemd
+INCLUDES_info += $(shell pkg-config --cflags $(DEPPKGS))
+LIBS_info += $(shell pkg-config --libs $(DEPPKGS))
+
 %.o: interfaces/%.c 
 	$(CC) -c -fPIC -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
