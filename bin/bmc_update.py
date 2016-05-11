@@ -103,7 +103,7 @@ class BmcFlashControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 			tar.extractall(UPDATE_PATH,members=doExtract(tar,copy_files))
 			tar.close()
 
-			if (self.Get(DBUS_NAME,"clear_persistent_files") == False):
+			if (self.Get(DBUS_NAME,"clear_persistent_files") == True):
 				print "Removing persistent files"
 				os.unlink(UPDATE_PATH+"/whitelist")
 			if (self.Get(DBUS_NAME,"preserve_network_settings") == True):
