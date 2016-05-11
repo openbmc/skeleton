@@ -108,7 +108,7 @@ class BmcFlashControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 				os.unlink(UPDATE_PATH+"/whitelist")
 			if (self.Get(DBUS_NAME,"preserve_network_settings") == True):
 				print "Preserving network settings"
-				shutil.copy2("/dev/mtd2",UPDATE_PATH+"image-u-boot-env")
+				shutil.copy2("/dev/mtd2",UPDATE_PATH+"/image-u-boot-env")
 				
 		except Exception as e:
 			print e
