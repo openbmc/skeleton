@@ -6,7 +6,7 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import Openbmc
+from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
 DBUS_NAME = 'org.openbmc.control.Fans'
 OBJ_PATH = '/org/openbmc/control/fans'
@@ -23,10 +23,10 @@ FAN_OBJS = [
 ]
 FAN_IFACE = 'org.openbmc.SensorValue'
 
-class FanControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
+class FanControl(DbusProperties,DbusObjectManager):
 	def __init__(self,bus,name):
-		Openbmc.DbusProperties.__init__(self)
-		Openbmc.DbusObjectManager.__init__(self)
+		DbusProperties.__init__(self)
+		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 		self.Set(IFACE_NAME,"floor",250)
 		self.Set(IFACE_NAME,"ceiling",255)
@@ -49,7 +49,7 @@ class FanControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 if __name__ == '__main__':
 	
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-	bus = Openbmc.getDBus()
+	bus = get_dbus()
 	name = dbus.service.BusName(DBUS_NAME,bus)
 	fan_control = FanControl(bus,OBJ_PATH)
 	mainloop = gobject.MainLoop()

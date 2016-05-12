@@ -6,7 +6,8 @@ import dbus
 import dbus.service
 import dbus.mainloop.glib
 import subprocess
-import Openbmc
+from obmc.dbuslib.bindings import get_dbus
+
 if (len(sys.argv) < 2):
 	print "Usage:  download_manager.py [system name]"
 	exit(1)
@@ -73,7 +74,7 @@ class DownloadManagerObject(dbus.service.Object):
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = Openbmc.getDBus()
+    bus = get_dbus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = DownloadManagerObject(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()

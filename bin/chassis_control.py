@@ -2,12 +2,11 @@
 
 import sys
 import uuid
-#from gi.repository import GObject
 import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import Openbmc
+from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
 DBUS_NAME = 'org.openbmc.control.Chassis'
 OBJ_NAME = '/org/openbmc/control/chassis0'
@@ -20,7 +19,7 @@ POWER_ON = 1
 
 BOOTED = 100
 
-class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
+class ChassisControlObject(DbusProperties,DbusObjectManager):
 	def getUuid(self):
 		uuid = "";
 		try:
@@ -37,8 +36,8 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
  
 	def __init__(self,bus,name):
 		self.dbus_objects = { }
-		Openbmc.DbusProperties.__init__(self)
-		Openbmc.DbusObjectManager.__init__(self)
+		DbusProperties.__init__(self)
+		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 		## load utilized objects
 		self.dbus_objects = {
@@ -215,7 +214,7 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-    bus = Openbmc.getDBus()
+    bus = get_dbus()
     name = dbus.service.BusName(DBUS_NAME, bus)
     obj = ChassisControlObject(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()
