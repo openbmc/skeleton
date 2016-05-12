@@ -190,7 +190,7 @@ FRU_INSTANCES = {
 	'<inventory_root>/system/chassis/motherboard/cpu0/core11' : { 'fru_type' : 'CORE', 'is_fru' : False, },
 
 	
-	'<inventory_root>/system/chassis/motherboard/centaur0' : { 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
+	'<inventory_root>/system/chassis/motherboard/membuf0' : { 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
 
 	'<inventory_root>/system/chassis/motherboard/dimm0' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
 	'<inventory_root>/system/chassis/motherboard/dimm1' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
@@ -212,7 +212,7 @@ ID_LOOKUP = {
 		0x0d : '<inventory_root>/system/chassis',
 		0x34 : '<inventory_root>/system/chassis/motherboard',
 		0x01 : '<inventory_root>/system/chassis/motherboard/cpu0',
-		0x02 : '<inventory_root>/system/chassis/motherboard/centaur0',
+		0x02 : '<inventory_root>/system/chassis/motherboard/membuf0',
 		0x03 : '<inventory_root>/system/chassis/motherboard/dimm0',
 		0x04 : '<inventory_root>/system/chassis/motherboard/dimm1',
 		0x05 : '<inventory_root>/system/chassis/motherboard/dimm2',
@@ -223,7 +223,7 @@ ID_LOOKUP = {
 		'PRODUCT_15' : '<inventory_root>/system',
 		'CHASSIS_2' : '<inventory_root>/system/chassis',
 		'BOARD_1'   : '<inventory_root>/system/chassis/motherboard/cpu0',
-		'BOARD_2'   : '<inventory_root>/system/chassis/motherboard/centaur0',
+		'BOARD_2'   : '<inventory_root>/system/chassis/motherboard/membuf0',
 		'BOARD_14'   : '<inventory_root>/system/chassis/motherboard',
 		'PRODUCT_3'   : '<inventory_root>/system/chassis/motherboard/dimm0',
 		'PRODUCT_4'   : '<inventory_root>/system/chassis/motherboard/dimm1',
@@ -250,7 +250,7 @@ ID_LOOKUP = {
 		0x2b : '<inventory_root>/system/chassis/motherboard/cpu0/core9',
 		0x2c : '<inventory_root>/system/chassis/motherboard/cpu0/core10',
 		0x2d : '<inventory_root>/system/chassis/motherboard/cpu0/core11',
-		0x2e : '<inventory_root>/system/chassis/motherboard/centaur0',
+		0x2e : '<inventory_root>/system/chassis/motherboard/membuf0',
 		0x1e : '<inventory_root>/system/chassis/motherboard/dimm0',
 		0x1f : '<inventory_root>/system/chassis/motherboard/dimm1',
 		0x20 : '<inventory_root>/system/chassis/motherboard/dimm2',
