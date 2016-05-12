@@ -6,7 +6,7 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import Sensors
+import obmc.sensors
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 
 DBUS_NAME = 'org.openbmc.Sensors'
@@ -25,7 +25,7 @@ class SensorManager(DbusProperties,DbusObjectManager):
 	def register(self,object_name,obj_path):
 		if (self.objects.has_key(obj_path) == False):
 			print "Register: "+object_name+" : "+obj_path
-			sensor = eval('Sensors.'+object_name+'(bus,obj_path)')
+			sensor = eval('obmc.sensors.'+object_name+'(bus,obj_path)')
 			self.add(obj_path,sensor)
 
 	@dbus.service.method(DBUS_NAME,
@@ -53,29 +53,29 @@ if __name__ == '__main__':
 	## TODO: this should not be hardcoded
 
 	obj_path = OBJ_PATH+"/host/PowerCap"
-	sensor_obj = Sensors.PowerCap(bus,obj_path)
+	sensor_obj = obmc.sensors.PowerCap(bus,obj_path)
 	## hwmon3 is default for master OCC on Barreleye.
 	## should rewrite sensor_manager to remove hardcode
 	sensor_obj.sysfs_attr = "/sys/class/hwmon/hwmon3/user_powercap"
 	root_sensor.add(obj_path,sensor_obj)
 
 	obj_path = OBJ_PATH+"/host/BootProgress"
-	root_sensor.add(obj_path,Sensors.BootProgressSensor(bus,obj_path))
+	root_sensor.add(obj_path,obmc.sensors.BootProgressSensor(bus,obj_path))
 
 	obj_path = OBJ_PATH+"/host/cpu0/OccStatus"
-	sensor_obj = Sensors.OccStatusSensor(bus,obj_path)
+	sensor_obj = obmc.sensors.OccStatusSensor(bus,obj_path)
 	sensor_obj.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0050/online"
 	root_sensor.add(obj_path,sensor_obj)
 
 	obj_path = OBJ_PATH+"/host/cpu1/OccStatus"
-	sensor_obj = Sensors.OccStatusSensor(bus,obj_path)
+	sensor_obj = obmc.sensors.OccStatusSensor(bus,obj_path)
 	sensor_obj.sysfs_attr = "/sys/class/i2c-adapter/i2c-3/3-0051/online"
 	root_sensor.add(obj_path,sensor_obj)
 
 	obj_path = OBJ_PATH+"/host/BootCount"
-	root_sensor.add(obj_path,Sensors.BootCountSensor(bus,obj_path))
+	root_sensor.add(obj_path,obmc.sensors.BootCountSensor(bus,obj_path))
 	obj_path = OBJ_PATH+"/host/OperatingSystemStatus"
-	root_sensor.add(obj_path,Sensors.OperatingSystemStatusSensor(bus,obj_path))
+	root_sensor.add(obj_path,obmc.sensors.OperatingSystemStatusSensor(bus,obj_path))
 
 	mainloop = gobject.MainLoop()
 	print "Starting sensor manager"

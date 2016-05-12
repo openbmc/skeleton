@@ -8,7 +8,7 @@ import dbus.service
 import dbus.mainloop.glib
 import os
 import time
-from obmc.dbuslib.propertycacher import PropertyCacher
+import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 import obmc.enums
 
