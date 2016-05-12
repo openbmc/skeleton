@@ -1,13 +1,13 @@
 #!/usr/bin/python -u
 
 import sys
-import subprocess
 #from gi.repository import GObject
 import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
 import os
+import glob
 import Openbmc
 
 ## Abstract class, must subclass
@@ -138,21 +138,81 @@ class PowerCap(VirtualSensor):
 	def __init__(self, bus, name):
 		VirtualSensor.__init__(self, bus, name)
 		SensorValue.setValue(self, 0)
-		self.sysfs_attr = "/sys/class/hwmon/hwmon3/user_powercap"
 	##override setValue method
 	@dbus.service.method(SensorValue.IFACE_NAME,
 		in_signature='v', out_signature='')
 	def setValue(self, value):
 		try:
-			cmd_str = "echo "+str(value)+" > "+self.sysfs_attr
-			ret = subprocess.check_output(cmd_str, shell=True)
-		except subprocess.CalledProcessError as powerexc:
-			print "Set PowerCap Error", powerexc.returncode,
-			powerexc.output
-			return
+			value = int(value)
+		except ValueError:
+			raise dbus.exceptions.DBusException(
+				"Set an integer value",
+				name='org.freedesktop.DBus.Python.TypeError')
+
+		# master occ hwmon path is created dymanically
+		# when occ is active scan hwmon sysfs directory for update
+		for pcap_file in glob.glob('/sys/class/hwmon/*/user_powercap'):
+			# only master occ has 'user_powercap' attribute
+			setcap_file = pcap_file
+			break
+		else:
+			raise dbus.exceptions.DBusException(
+				"Cannot find user_powercap hwmon attribute, "+
+				"check occ status.",
+				name='org.freedesktop.DBus.Python.TypeError')
+
+		# verify the user set value is in the range [min_cap, max_cap]
+		try:
+			caps_file = open(os.path.dirname(setcap_file) +
+					'/caps_min_powercap', 'r')
+			min_cap = caps_file.readline()
+			caps_file = open(os.path.dirname(setcap_file) +
+					'/caps_max_powercap', 'r')
+			max_cap = caps_file.readline()
+		except IOError:
+			raise dbus.exceptions.DBusException(
+				"Cannot get caps_min or caps_max",
+				name='org.freedesktop.DBus.Error.InvalidArgs')
+
+		if value != 0 and (value < int(min_cap)
+				or value > int(max_cap)):
+			raise dbus.exceptions.DBusException(
+				"Set a value in the range [%d, %d]"
+				% (int(min_cap), int(max_cap)),
+				name='org.freedesktop.DBus.Error.InvalidArgs')
+
+		try:
+			open(setcap_file, 'w').write(str(value));
+		except IOError:
+			raise dbus.exceptions.DBusException(
+				"Cannot set PowerCap",
+				name='org.freedesktop.DBus.Python.TypeError')
 		print "Set PowerCap: ", value
 		SensorValue.setValue(self, value)
-		
+	@dbus.service.method(SensorValue.IFACE_NAME,
+		in_signature='', out_signature='v')
+	def getValue(self):
+		# Read current powercap sensor. OCC will set system powercap
+		# based on its algorithm
+		for pcap_file in glob.glob(
+				'/sys/class/hwmon/*/caps_curr_powercap'):
+			# only master occ has 'caps_curr_powercap' attribute
+			curr_cap_file = pcap_file
+			break
+		else:
+			raise dbus.exceptions.DBusException(
+				"Cannot find caps_curr_powercap" +
+				"hwmon attribute, " + "check occ status.",
+				name='org.freedesktop.DBus.Python.TypeError')
+
+		try:
+			cap_val = open(curr_cap_file, 'r').read()
+		except IOError:
+			raise dbus.exceptions.DBusException(
+				"Cannot read current powercap",
+				name='org.freedesktop.DBus.Python.TypeError')
+		return cap_val
+
 class BootProgressSensor(VirtualSensor):
 	def __init__(self,bus,name):
 		VirtualSensor.__init__(self,bus,name)
