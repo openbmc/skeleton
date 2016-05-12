@@ -8,7 +8,7 @@ import dbus.service
 import dbus.mainloop.glib
 import cPickle
 import json
-import PropertyCacher
+from obmc.dbuslib.propertycacher import PropertyCacher
 from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
 if (len(sys.argv) < 2):
@@ -37,7 +37,6 @@ class InventoryItem(DbusProperties):
 		self.name = name
 		
 		## this will load properties from cache
-		# PropertyCacher.load(name,INTF_NAME,self.properties)
 		if (data.has_key('present') == False):
 			data['present'] = 'False'
 		if (data.has_key('fault') == False):
