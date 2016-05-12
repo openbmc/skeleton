@@ -9,14 +9,14 @@ import dbus.mainloop.glib
 import os
 import time
 import PropertyCacher
-import Openbmc
+from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
+import obmc.enums
 
 if (len(sys.argv) < 2):
 	print "Usage:  system_manager.py [system name]"
 	exit(1)
 
 System = __import__(sys.argv[1])
-import Openbmc
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
@@ -27,10 +27,10 @@ INTF_ITEM = 'org.openbmc.InventoryItem'
 INTF_CONTROL = 'org.openbmc.Control'
 
 
-class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
+class SystemManager(DbusProperties,DbusObjectManager):
 	def __init__(self,bus,obj_name):
-		Openbmc.DbusProperties.__init__(self)
-		Openbmc.DbusObjectManager.__init__(self)
+		DbusProperties.__init__(self)
+		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,obj_name)
 
 		bus.add_signal_receiver(self.NewObjectHandler,
@@ -234,14 +234,14 @@ class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 					print "ERROR: SystemManager - GPIO lookup failed for "+name
 		
 			if (gpio_num != -1):
-				r = [Openbmc.GPIO_DEV, gpio_num, gpio['direction']]
+				r = [obmc.enums.GPIO_DEV, gpio_num, gpio['direction']]
 		return r
 
 		
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = Openbmc.getDBus()
+    bus = get_dbus()
     name = dbus.service.BusName(DBUS_NAME,bus)
     obj = SystemManager(bus,OBJ_NAME)
     mainloop = gobject.MainLoop()

@@ -1,7 +1,6 @@
 import os
 import cPickle
 import json
-import Openbmc
 
 CACHE_PATH = '/var/cache/obmc/'
 

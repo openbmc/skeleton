@@ -6,8 +6,8 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import Openbmc
 import Sensors
+from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 
 System = __import__(sys.argv[1])
 
@@ -15,10 +15,10 @@ DBUS_NAME = 'org.openbmc.Sensors'
 OBJ_PATH = '/org/openbmc/sensors'
 
 
-class SensorManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
+class SensorManager(DbusProperties,DbusObjectManager):
 	def __init__(self,bus,name):
-		Openbmc.DbusProperties.__init__(self)
-		Openbmc.DbusObjectManager.__init__(self)
+		DbusProperties.__init__(self)
+		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 		self.InterfacesAdded(name,self.properties)
 
@@ -45,7 +45,7 @@ class SensorManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 			
 if __name__ == '__main__':
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-	bus = Openbmc.getDBus()
+	bus = get_dbus()
 	name = dbus.service.BusName(DBUS_NAME,bus)
 	root_sensor = SensorManager(bus,OBJ_PATH)
 
