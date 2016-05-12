@@ -8,7 +8,7 @@ import dbus.service
 import dbus.mainloop.glib
 import cPickle
 import json
-from obmc.dbuslib.propertycacher import PropertyCacher
+import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
 if (len(sys.argv) < 2):

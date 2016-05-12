@@ -6,7 +6,7 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import Sensors
+import obmc.sensors
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 
 System = __import__(sys.argv[1])
@@ -27,7 +27,7 @@ class SensorManager(DbusProperties,DbusObjectManager):
 	def register(self,object_name,obj_path):
 		if (self.objects.has_key(obj_path) == False):
 			print "Register: "+object_name+" : "+obj_path
-			sensor = eval('Sensors.'+object_name+'(bus,obj_path)')
+			sensor = eval('obmc.sensors.'+object_name+'(bus,obj_path)')
 			self.add(obj_path,sensor)
 
 	@dbus.service.method(DBUS_NAME,
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 	for (id, the_sensor) in System.MISC_SENSORS.items():
 		sensor_class = the_sensor['class']
 		obj_path = System.ID_LOOKUP['SENSOR'][id]
-		sensor_obj = getattr(Sensors, sensor_class)(bus, obj_path)
+		sensor_obj = getattr(obmc.sensors, sensor_class)(bus, obj_path)
 		if 'os_path' in the_sensor:
 			sensor_obj.sysfs_attr = the_sensor['os_path']
 		root_sensor.add(obj_path, sensor_obj)

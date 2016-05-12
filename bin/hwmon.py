@@ -10,9 +10,9 @@ import dbus.mainloop.glib
 import re
 from obmc.dbuslib.bindings import get_dbus
 
-from Sensors import SensorValue as SensorValue
-from Sensors import HwmonSensor as HwmonSensor
-from Sensors import SensorThresholds as SensorThresholds
+from obmc.sensors import SensorValue as SensorValue
+from obmc.sensors import HwmonSensor as HwmonSensor
+from obmc.sensors import SensorThresholds as SensorThresholds
 
 if (len(sys.argv) < 2):
 	print "Usage:  sensors_hwmon.py [system name]"
