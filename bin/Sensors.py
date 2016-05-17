@@ -8,13 +8,12 @@ import dbus
 import dbus.service
 import dbus.mainloop.glib
 import os
-import Openbmc
+from obmc.dbuslib.bindings import DbusProperties
 
 ## Abstract class, must subclass
-class SensorValue(Openbmc.DbusProperties):
+class SensorValue(DbusProperties):
 	IFACE_NAME = 'org.openbmc.SensorValue'
 	def __init__(self,bus,name):
-		#Openbmc.DbusProperties.__init__(self)
 		self.Set(SensorValue.IFACE_NAME,'units',"")
 		self.Set(SensorValue.IFACE_NAME,'error',False)
 		
@@ -28,7 +27,7 @@ class SensorValue(Openbmc.DbusProperties):
 	def getValue(self):
 		return self.Get(SensorValue.IFACE_NAME,'value')
 
-class SensorThresholds(Openbmc.DbusProperties):
+class SensorThresholds(DbusProperties):
 	IFACE_NAME = 'org.openbmc.SensorThresholds'
 	def __init__(self,bus,name):
 		self.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled',False)
@@ -85,14 +84,14 @@ class SensorThresholds(Openbmc.DbusProperties):
 
 class VirtualSensor(SensorValue):
 	def __init__(self,bus,name):
-		Openbmc.DbusProperties.__init__(self)
+		DbusProperties.__init__(self)
 		SensorValue.__init__(self,bus,name)
 		dbus.service.Object.__init__(self,bus,name)
 
 class HwmonSensor(SensorValue,SensorThresholds):
 	IFACE_NAME = 'org.openbmc.HwmonSensor'
 	def __init__(self,bus,name):
-		Openbmc.DbusProperties.__init__(self)
+		DbusProperties.__init__(self)
 		SensorValue.__init__(self,bus,name)
 		SensorThresholds.__init__(self,bus,name)
 		self.Set(HwmonSensor.IFACE_NAME,'scale',1)
