@@ -127,6 +127,12 @@ APPS = {
 		'monitor_process' : True,
 		'process_name'    : 'host_watchdog.exe',
 	},
+	'host_xstop' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'host_xstop.exe',
+	},
 	'power_control' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,

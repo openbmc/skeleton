@@ -35,6 +35,9 @@ static const char* iface_name  = "org.openbmc.SensorValue";
 
 int bus_property_get_bool(sd_bus *bus, const char *path, const char *interface, const char *property, sd_bus_message *reply, void *userdata, sd_bus_error *error)
 { 
+        int b = *(bool*) userdata;
+
+        return sd_bus_message_append_basic(reply, 'b', &b);
 }
 
 static const sd_bus_vtable host_xstop_vtable[] =
@@ -49,31 +52,23 @@ sd_bus* bus         = NULL;
 sd_bus_slot* slot   = NULL;
 
 static gboolean
-on_host_xstop (GIOChannel *channel, 
-                GIOCondition condition, 
-                gpointer user_data)
+on_host_xstop (GIOChannel *channel, GIOCondition condition, gpointer user_data)
 {
-
 	GError* error       = 0;
 	gsize bytes_read    = 0;
 	gchar buf[2]; 
 	buf[1] = '\0';
+
 	g_io_channel_seek_position(channel, 0, G_SEEK_SET, 0);
-	GIOStatus rc = g_io_channel_read_chars(channel,
-                                            buf, 1,
-                                            &bytes_read,
-                                            &error);
+	GIOStatus rc = g_io_channel_read_chars(channel, buf, 1, &bytes_read, &error);
+
 	printf("%s\n",buf);
 	
-	if (gpio_xstop.irq_inited)
-	{
-        hostState.isXstopped = true;
-        /* Wait for 30 secs */ 
-        /* and Reboot the host. */
-	} 
-	else 
-    { 
-        gpio_xstop.irq_inited = true; 
+	if (gpio_xstop.irq_inited) {
+         hostState.isXstopped = true;
+    }
+    else {
+        gpio_xstop.irq_inited = true;
     }
 
 	return true;
@@ -92,8 +87,7 @@ int main(void)
 
     /* Latch onto system bus. */
     rc = sd_bus_open_system(&bus);
-    if(rc < 0)
-    {
+    if(rc < 0) {
         fprintf(stderr,"Error opening system bus.\n");
         goto cleanup;
     }
@@ -105,8 +99,7 @@ int main(void)
                                     iface_name,
                                     host_xstop_vtable,
                                     NULL);
-    if (rc < 0)
-    {
+    if (rc < 0) {
         fprintf(stderr, "Failed to add object to dbus: %s\n", strerror(-rc));
         goto cleanup;
     }
@@ -122,16 +115,14 @@ int main(void)
 		if (rc != GPIO_OK) { goto cleanup; }
 	} while(0);
 
-	if (rc != GPIO_OK)
-	{
+	if (rc != GPIO_OK) {
 		printf("ERROR PowerButton: GPIO setup (rc=%d)\n",rc);
         goto cleanup;
 	}
 
     /* Register as a dbus service */
     rc = sd_bus_request_name (bus, srvc_name, 0);
-    if (rc < 0)
-    {
+    if (rc < 0) {
         fprintf(stderr, "Failed to register service: %s\n", strerror(-rc));
         goto cleanup;
     }
@@ -139,13 +130,11 @@ int main(void)
     /* Register for GPIO IRQ */
     gpio_xstop.irq_inited = false;
 	fd = open(gpio_val_xstop, O_RDONLY | O_NONBLOCK );
-	if (fd == -1)
-	{
+	if (fd == -1) {
 		rc = -1;
         goto cleanup;
 	}
-	else
-	{
+	else {
 		GIOChannel* channel = g_io_channel_unix_new(fd);
 		g_io_add_watch(channel, G_IO_PRI, on_host_xstop, NULL);
 	}
@@ -165,23 +154,21 @@ int main(void)
                                 xstop0,
                                 "HostXstopSensor"); /* FIXME: register method needs the Sensor class name ! */
                              
-    if(rc < 0)
-    {
+    if(rc < 0) {
         fprintf(stderr, "Failed to init gpio for %s : %s\n", xstop0, err.message);
         return -1;
     }
+
     for (;;) {
         rc = sd_bus_process (bus, NULL);
-        if (rc < 0)
-        {
+        if (rc < 0) {
             fprintf(stderr, "Failed to process bus: %s\n", strerror(-rc));
             goto cleanup;
         }
         if (rc > 0) continue;
 
         rc = sd_bus_wait (bus, (uint64_t)-1);
-        if (rc < 0)
-        {
+        if (rc < 0) {
             fprintf(stderr, "Failed to wait on bus: %s\n", strerror(-rc));
             goto cleanup;
         }

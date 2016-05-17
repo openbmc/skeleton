@@ -2,6 +2,7 @@
 
 import sys
 import uuid
+import time
 #from gi.repository import GObject
 import gobject
 import dbus
@@ -93,7 +94,7 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		self.InterfacesAdded(name,self.properties)
 
 		bus.add_signal_receiver(self.host_xstop_signal_handler, 
-					dbus_interface = "org.openbmc.SensorValue", signal_name = "Changed", 
+					dbus_interface = "org.freedesktop.DBus.Properties", signal_name = "PropertiesChanged", 
 					path="/org/openbmc/sensors/host/cpu0/XStop" )
 
 
@@ -216,6 +217,7 @@ class ChassisControlObject(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		
 	def host_xstop_signal_handler(self):
 		print "Checkstop Error, Waiting for 30sec before Hard Rebooting"
+        time.sleep(30)
 		self.Set(DBUS_NAME,"reboot",1)
 		self.reboot()
 
