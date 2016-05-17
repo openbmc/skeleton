@@ -7,10 +7,10 @@ import dbus.service
 import dbus.mainloop.glib
 import subprocess
 import Openbmc
-if (len(sys.argv) < 2):
-	print "Usage:  download_manager.py [system name]"
+if (len(sys.argv) < 1):
+	print "Usage:  download_manager.py"
 	exit(1)
-System = __import__(sys.argv[1])
+System = __import__('system_config')
 
 
 DBUS_NAME = 'org.openbmc.managers.Download'

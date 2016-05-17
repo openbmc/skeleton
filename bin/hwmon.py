@@ -14,11 +14,11 @@ from Sensors import SensorValue as SensorValue
 from Sensors import HwmonSensor as HwmonSensor
 from Sensors import SensorThresholds as SensorThresholds
 
-if (len(sys.argv) < 2):
-	print "Usage:  sensors_hwmon.py [system name]"
+if (len(sys.argv) < 1):
+	print "Usage:  sensors_hwmon.py"
 	exit(1)
 
-System = __import__(sys.argv[1])
+System = __import__('system_config')
 
 SENSOR_BUS = 'org.openbmc.Sensors'
 SENSOR_PATH = '/org/openbmc/sensors'
