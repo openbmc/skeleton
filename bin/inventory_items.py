@@ -10,10 +10,10 @@ import cPickle
 import json
 import PropertyCacher
 
-if (len(sys.argv) < 2):
-	print "Usage:  inventory_items.py [system name]"
+if (len(sys.argv) < 1):
+	print "Usage:  inventory_items.py"
 	exit(1)
-System = __import__(sys.argv[1])
+System = __import__('system_config')
 import Openbmc
 
 

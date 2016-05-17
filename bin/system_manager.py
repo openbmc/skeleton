@@ -11,11 +11,11 @@ import time
 import PropertyCacher
 import Openbmc
 
-if (len(sys.argv) < 2):
-	print "Usage:  system_manager.py [system name]"
+if (len(sys.argv) < 1):
+	print "Usage:  system_manager.py"
 	exit(1)
 
-System = __import__(sys.argv[1])
+System = __import__('system_config')
 import Openbmc
 
 DBUS_NAME = 'org.openbmc.managers.System'
