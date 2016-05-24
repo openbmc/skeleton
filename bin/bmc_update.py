@@ -49,6 +49,12 @@ class BmcFlashControl(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 		self.TftpDownload(ip,filename)
 		self.Set(DBUS_NAME,"status","Downloading")
 		
+	@dbus.service.method(DBUS_NAME,
+		in_signature='s', out_signature='')
+	def update(self,filename):
+		self.Set(DBUS_NAME,"filename",filename)
+		self.download_complete_handler(filename, filename)
+
 	@dbus.service.signal(DOWNLOAD_INTF,signature='ss')
 	def TftpDownload(self,ip,filename):
 		self.Set(DBUS_NAME,"filename",filename)
