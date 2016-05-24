@@ -139,7 +139,23 @@ class SystemManager(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
 	def getObjectFromByteId(self,category,key):
 		byte = int(key)
 		return self.doObjectLookup(category,byte)
-	
+
+	# Get the FRU area names defined in ID_LOOKUP table given a fru_id.
+	# If serval areas are defined for a fru_id, the areas are returned
+	# together as a string with each area name seperated with ','.
+	# If no fru area defined in ID_LOOKUP, an empty string will be returned.
+	@dbus.service.method(DBUS_NAME,
+		in_signature='y', out_signature='s')
+	def getFRUArea(self,fru_id):
+		ret_str = ''
+		fru_id = '_' + str(fru_id)
+		area_list = [area for area in System.ID_LOOKUP['FRU_STR'].keys() \
+				if area.endswith(fru_id)]
+		for area in area_list:
+			ret_str = area + ',' + ret_str
+		# remove the last ','
+		return ret_str[:-1]
+
 	def start_process(self,name):
 		if (System.APPS[name]['start_process'] == True):
 			app = System.APPS[name]
