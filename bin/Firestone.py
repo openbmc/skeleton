@@ -466,7 +466,8 @@ GPIO_CONFIG['CP0_DEVICES_RESET_N'] = \
         {'gpio_pin': 'N3', 'direction': 'out'}
 GPIO_CONFIG['CP1_DEVICES_RESET_N'] = \
         {'gpio_pin': 'N5', 'direction': 'out'}
-
+GPIO_CONFIG['IDBTN']       = \
+        { 'gpio_pin': 'Q7', 'direction': 'out' }
 GPIO_CONFIG['FSI_DATA'] = \
         {'gpio_pin': 'A5', 'direction': 'out'}
 GPIO_CONFIG['FSI_CLK'] = \

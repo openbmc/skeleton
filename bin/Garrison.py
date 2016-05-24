@@ -478,6 +478,8 @@ GPIO_CONFIG['CRONUS_SEL'] = \
 GPIO_CONFIG['BMC_THROTTLE'] = \
         {'gpio_pin': 'J3', 'direction': 'out'}
 
+GPIO_CONFIG['IDBTN']       = \
+    { 'gpio_pin': 'Q7', 'direction': 'out' }
 GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'E0', 'direction': 'both'}
 GPIO_CONFIG['RESET_BUTTON'] = \
