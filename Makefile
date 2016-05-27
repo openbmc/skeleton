@@ -24,7 +24,7 @@ LIB_FLAG += $(shell pkg-config  --libs libsystemd)
 %.o: objects/pflash/libflash/%.c
 	$(CC) -c -o obj/$@ $< $(CFLAGS) $(INCLUDES)
 
-all: setup libopenbmc_intf power_control led_controller button_power button_reset control_host host_watchdog board_vpd pcie_slot_present flash_bios flasher pflash hwmons_barreleye control_bmc
+all: setup libopenbmc_intf power_control led_controller button_power button_reset host_checkstop control_host host_watchdog board_vpd pcie_slot_present flash_bios flasher pflash hwmons_barreleye control_bmc
 
 setup: 
 	mkdir -p obj lib
@@ -47,6 +47,8 @@ button_power: button_power_obj.o gpio.o libopenbmc_intf
 button_reset: button_reset_obj.o gpio.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/button_reset_obj.o obj/gpio.o $(LDFLAGS) $(LIBS)
 
+host_checkstop: host_checkstop_obj.o gpio.o libopenbmc_intf
+	$(CC) -o bin/$@ obj/host_checkstop_obj.o obj/gpio.o $(LDFLAGS) $(LIBS)
 
 control_host: control_host_obj.o gpio.o libopenbmc_intf
 	$(CC) -o bin/$@.exe obj/gpio.o obj/control_host_obj.o $(LDFLAGS) $(LIBS)

@@ -132,6 +132,8 @@
 		<property name="state" type="i" access="read"/>
 		<property name="pgood_timeout" type="i" access="readwrite"/>
 	</interface>
+	<interface name="org.openbmc.control.Checkstop">
+	</interface>
 	<interface name="org.openbmc.Watchdog">
 		<method name="start"/>
 		<method name="poke"/>
