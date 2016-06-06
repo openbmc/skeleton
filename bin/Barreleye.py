@@ -18,6 +18,7 @@ SYSTEM_STATES = [
 	'BMC_READY',
 	'HOST_POWERING_ON',
 	'HOST_POWERED_ON',
+	'INVENTORY_UPLOADED',
 	'HOST_BOOTING',
 	'HOST_BOOTED',
 	'HOST_POWERED_OFF',
@@ -42,7 +43,7 @@ EXIT_STATE_DEPEND = {
 
 ## method will be called when state is entered
 ENTER_STATE_CALLBACK = {
-	'HOST_POWERED_ON' : {
+	'INVENTORY_UPLOADED' : {
 		'boot' : {
 			'bus_name'    : 'org.openbmc.control.Host',
 			'obj_name'    : '/org/openbmc/control/host0',
@@ -95,8 +96,15 @@ APPS = {
 		'process_name'    : 'inventory_items.py',
 		'args'            : [ SYSTEM_NAME ]
 	},
-	'pcie_present' : {
+	'inventory_upload' : {
 		'system_state'    : 'HOST_POWERED_ON',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'goto_system_state.py',
+		'args'            : [ 'INVENTORY_UPLOADED', 'inventory_upload.py' ]
+	},
+	'pcie_present' : {
+		'system_state'    : 'INVENTORY_UPLOADED',
 		'start_process'   : True,
 		'monitor_process' : False,
 		'process_name'    : 'pcie_slot_present.exe',
