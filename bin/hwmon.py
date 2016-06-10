@@ -47,10 +47,13 @@ class Hwmons():
 		self.cache = {}
 
 	def readAttribute(self,filename):
-		val = ""
+		val = "-1"
+		try:
 		with open(filename, 'r') as f:
 			for line in f:
 				val = line.rstrip('\n')
+		except (OSError, IOError):
+		print "Cannot read attributes:", filename
 		return val
 
 	def writeAttribute(self,filename,value):
@@ -78,6 +81,7 @@ class Hwmons():
 					self.writeAttribute(attribute,rtn[1])
 		except:
 			print "HWMON: Attibute no longer exists: "+attribute
+			self.sensors.pop(objpath,None)
 			if attribute in self.cache:
 				del self.cache[attribute]
 			return False
