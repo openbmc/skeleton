@@ -10,12 +10,7 @@ import cPickle
 import json
 import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
-
-if (len(sys.argv) < 2):
-	print "Usage:  inventory_items.py [system name]"
-	exit(1)
-System = __import__(sys.argv[1])
-
+import obmc_system_config as System
 
 INTF_NAME = 'org.openbmc.InventoryItem'
 DBUS_NAME = 'org.openbmc.Inventory'

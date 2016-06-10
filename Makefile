@@ -14,7 +14,6 @@ GDBUS_APPS = bmcctl \
 	     rstbutton
 
 SUBDIRS = $(GDBUS_APPS) \
-	  configs \
 	  hacks \
 	  ledctl \
 	  libopenbmc_intf \

@@ -13,12 +13,7 @@ from obmc.dbuslib.bindings import get_dbus
 from obmc.sensors import SensorValue as SensorValue
 from obmc.sensors import HwmonSensor as HwmonSensor
 from obmc.sensors import SensorThresholds as SensorThresholds
-
-if (len(sys.argv) < 2):
-	print "Usage:  sensors_hwmon.py [system name]"
-	exit(1)
-
-System = __import__(sys.argv[1])
+import obmc_system_config as System
 
 SENSOR_BUS = 'org.openbmc.Sensors'
 SENSOR_PATH = '/org/openbmc/sensors'

@@ -11,12 +11,7 @@ import time
 import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 import obmc.enums
-
-if (len(sys.argv) < 2):
-	print "Usage:  system_manager.py [system name]"
-	exit(1)
-
-System = __import__(sys.argv[1])
+import obmc_system_config as System
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'

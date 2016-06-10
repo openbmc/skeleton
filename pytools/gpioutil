@@ -3,24 +3,21 @@
 import sys
 import os
 import getopt
+import obmc_system_config as System
 
 
 def printUsage():
 	print '\nUsage:'
-	print 'gpioutil SYSTEM_NAME -n GPIO_NAME  [-v value]'
-	print 'gpioutil SYSTEM_NAME -i GPIO_NUM  -d <DIRECTION = in,out,falling,rising,both> [-v value]'
-	print 'gpioutil SYSTEM_NAME -p PIN_NAME  -d <DIRECTION = in,out,falling,rising,both> [-v value]'
-	print 'gpioutil SYSTEM_NAME -l PIN_NAME     (lookup pin name only)'
+	print 'gpioutil -n GPIO_NAME  [-v value]'
+	print 'gpioutil -i GPIO_NUM  -d <DIRECTION = in,out,falling,rising,both> [-v value]'
+	print 'gpioutil -p PIN_NAME  -d <DIRECTION = in,out,falling,rising,both> [-v value]'
+	print 'gpioutil -l PIN_NAME     (lookup pin name only)'
 	exit(1)
 
 
 
-if (len(sys.argv) < 3):
+if (len(sys.argv) < 2):
 	printUsage()
-
-sys.argv.pop(0)
-libr = sys.argv.pop(0)
-System = __import__(libr)
 
 GPIO_SYSFS = '/sys/class/gpio/'
 

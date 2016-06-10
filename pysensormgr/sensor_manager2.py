@@ -8,8 +8,7 @@ import dbus.service
 import dbus.mainloop.glib
 import obmc.sensors
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
-
-System = __import__(sys.argv[1])
+import obmc_system_config as System
 
 DBUS_NAME = 'org.openbmc.Sensors'
 OBJ_PATH = '/org/openbmc/sensors'
