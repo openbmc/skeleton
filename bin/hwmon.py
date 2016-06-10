@@ -7,12 +7,12 @@ import glob
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-import Openbmc
 import re
+from obmc.dbuslib.bindings import get_dbus
 
-from Sensors import SensorValue as SensorValue
-from Sensors import HwmonSensor as HwmonSensor
-from Sensors import SensorThresholds as SensorThresholds
+from obmc.sensors import SensorValue as SensorValue
+from obmc.sensors import HwmonSensor as HwmonSensor
+from obmc.sensors import SensorThresholds as SensorThresholds
 
 if (len(sys.argv) < 2):
 	print "Usage:  sensors_hwmon.py [system name]"
@@ -172,7 +172,7 @@ class Hwmons():
 if __name__ == '__main__':
 	
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-	bus = Openbmc.getDBus()
+	bus = get_dbus()
 	root_sensor = Hwmons(bus)
 	mainloop = gobject.MainLoop()
 

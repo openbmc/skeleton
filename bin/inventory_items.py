@@ -8,36 +8,35 @@ import dbus.service
 import dbus.mainloop.glib
 import cPickle
 import json
-import PropertyCacher
+import obmc.dbuslib.propertycacher as PropertyCacher
+from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
 if (len(sys.argv) < 2):
 	print "Usage:  inventory_items.py [system name]"
 	exit(1)
 System = __import__(sys.argv[1])
-import Openbmc
 
 
 INTF_NAME = 'org.openbmc.InventoryItem'
 DBUS_NAME = 'org.openbmc.Inventory'
 FRUS = System.FRU_INSTANCES
 
-class Inventory(Openbmc.DbusProperties,Openbmc.DbusObjectManager):
+class Inventory(DbusProperties,DbusObjectManager):
 	def __init__(self,bus,name):
-		Openbmc.DbusProperties.__init__(self)
-		Openbmc.DbusObjectManager.__init__(self)
+		DbusProperties.__init__(self)
+		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 		self.InterfacesAdded(name,self.properties)
 
 
-class InventoryItem(Openbmc.DbusProperties):
+class InventoryItem(DbusProperties):
 	def __init__(self,bus,name,data):		
-		Openbmc.DbusProperties.__init__(self)
+		DbusProperties.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
 
 		self.name = name
 		
 		## this will load properties from cache
-		# PropertyCacher.load(name,INTF_NAME,self.properties)
 		if (data.has_key('present') == False):
 			data['present'] = 'False'
 		if (data.has_key('fault') == False):
@@ -78,7 +77,7 @@ def getVersion():
 
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-    bus = Openbmc.getDBus()
+    bus = get_dbus()
     mainloop = gobject.MainLoop()
     obj_parent = Inventory(bus, '/org/openbmc/inventory')
 
