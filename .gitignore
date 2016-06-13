@@ -1,6 +1,7 @@
-lib/*
-obj/*
-bin/*.exe
-bin/pflash
+*.exe
+*.o
+*.so
+*.so.*
 *.swp
 *.swo
+*/build
