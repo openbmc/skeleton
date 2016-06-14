@@ -44,11 +44,11 @@ class Hwmons():
 	def readAttribute(self,filename):
 		val = "-1"
 		try:
-		with open(filename, 'r') as f:
-			for line in f:
-				val = line.rstrip('\n')
+			with open(filename, 'r') as f:
+				for line in f:
+					val = line.rstrip('\n')
 		except (OSError, IOError):
-		print "Cannot read attributes:", filename
+			print "Cannot read attributes:", filename
 		return val
 
 	def writeAttribute(self,filename,value):
