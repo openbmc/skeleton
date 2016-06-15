@@ -55,7 +55,7 @@ class Hwmons():
 		with open(filename, 'w') as f:
 			f.write(str(value)+'\n')
 
-	def should_update(attribute, value):
+	def should_update(self, attribute, value):
 		if attribute not in self.cache:
 			self.cache[attribute] = value
 			return True
