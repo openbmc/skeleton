@@ -32,7 +32,7 @@ class BmcFlashControl(DbusProperties,DbusObjectManager):
 		
 		self.Set(DBUS_NAME,"status","Idle")
 		self.Set(DBUS_NAME,"filename","")
-		self.Set(DBUS_NAME,"preserve_network_settings",False)
+		self.Set(DBUS_NAME,"preserve_network_settings",True)
 		self.Set(DBUS_NAME,"restore_application_defaults",False)
 		self.Set(DBUS_NAME,"update_kernel_and_apps",False)
 		self.Set(DBUS_NAME,"clear_persistent_files",False)
@@ -114,7 +114,7 @@ class BmcFlashControl(DbusProperties,DbusObjectManager):
 				os.unlink(UPDATE_PATH+"/whitelist")
 			if (self.Get(DBUS_NAME,"preserve_network_settings") == True):
 				print "Preserving network settings"
-				shutil.copy2("/dev/mtd2",UPDATE_PATH+"/image-u-boot-env")
+				shutil.copy2("/run/fw_env",UPDATE_PATH+"/image-u-boot-env")
 				
 		except Exception as e:
 			print e
