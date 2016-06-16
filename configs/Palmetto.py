@@ -111,6 +111,12 @@ APPS = {
 		'monitor_process' : False,
 		'process_name'    : 'button_power.exe',
 	},
+	'host_checkstop' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : False,
+		'monitor_process' : False,
+		'process_name'    : 'host_checkstop.exe',
+	},
 	'led_control' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,
@@ -287,6 +293,7 @@ GPIO_CONFIG['SLOT1_PRESENT'] =         { 'gpio_pin': 'N4', 'direction': 'in' }
 GPIO_CONFIG['SLOT2_PRESENT'] =         { 'gpio_pin': 'N5', 'direction': 'in' }
 GPIO_CONFIG['MEZZ0_PRESENT'] =         { 'gpio_pin': 'O0', 'direction': 'in' }
 GPIO_CONFIG['MEZZ1_PRESENT'] =         { 'gpio_pin': 'O1', 'direction': 'in' }
+GPIO_CONFIG['CHECKSTOP']      =   { 'gpio_pin': 'P5', 'direction': 'falling' }
 
 def convertGpio(name):
 	name = name.upper()
