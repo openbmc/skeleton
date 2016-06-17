@@ -19,6 +19,9 @@ def printUsage():
 if (len(sys.argv) < 2):
 	printUsage()
 
+# Pop the command name and point to the args
+sys.argv.pop(0)
+
 GPIO_SYSFS = '/sys/class/gpio/'
 
 class Gpio:
