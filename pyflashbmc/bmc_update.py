@@ -111,7 +111,27 @@ class BmcFlashControl(DbusProperties,DbusObjectManager):
 
 			if (self.Get(DBUS_NAME,"clear_persistent_files") == True):
 				print "Removing persistent files"
-				os.unlink(UPDATE_PATH+"/whitelist")
+				try:
+					os.unlink(UPDATE_PATH+"/whitelist")
+				except OSError as e:
+					if (e.errno == errno.EISDIR):
+						pass
+					elif (e.errno == errno.ENOENT):
+						pass
+					else:
+						raise
+
+				try:
+					wldir = UPDATE_PATH + "/whitelist.d"
+
+					for file in os.listdir(wldir):
+						os.unlink(os.path.join(wldir,file))
+				except OSError as e:
+					if (e.errno == errno.EISDIR):
+						pass
+					else:
+						raise
+
 			if (self.Get(DBUS_NAME,"preserve_network_settings") == True):
 				print "Preserving network settings"
 				shutil.copy2("/run/fw_env",UPDATE_PATH+"/image-u-boot-env")
