@@ -3,6 +3,7 @@ TOP := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 .DEFAULT_GOAL := all
 sbindir=/usr/sbin
 libdir=/usr/lib
+includedir=/usr/include
 
 LDLIBS+=$(shell pkg-config --libs $(PACKAGE_DEPS))
 ALL_CFLAGS+=$(shell pkg-config --cflags $(PACKAGE_DEPS)) -fPIC -Werror $(CFLAGS)
