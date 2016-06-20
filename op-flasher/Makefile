@@ -4,11 +4,11 @@ EXTRA_OBJS+=progress.o \
 	    libflash.o \
 	    libffs.o \
 	    arm_io.o
-CFLAGS+=-Ipflash
+ALL_CFLAGS+=-Ipflash
 include ../gdbus.mk
 include ../rules.mk
 
 %.o: pflash/%.c
-	$(CC) -c -o $(CFLAGS) -fPIC -o $@ $<
+	$(CC) -c $(ALL_CFLAGS) -o $@ $<
 %.o: pflash/libflash/%.c
-	$(CC) -c -o $(CFLAGS) -fPIC -o $@ $<
+	$(CC) -c $(ALL_CFLAGS) -o $@ $<
