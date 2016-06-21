@@ -1,12 +1,7 @@
 GDBUS_APPS = bmcctl \
-	     bmcctl-barreleye \
-	     boardvpd \
-	     fanctl \
 	     flashbios \
 	     hostcheckstop \
 	     hostwatchdog \
-	     hwmon \
-	     hwmon-barreleye \
 	     op-flasher \
 	     op-hostctl \
 	     op-pwrctl \
