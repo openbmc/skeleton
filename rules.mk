@@ -5,7 +5,7 @@ sbindir=/usr/sbin
 libdir=/usr/lib
 
 LDLIBS+=$(shell pkg-config --libs $(PACKAGE_DEPS))
-CFLAGS+=$(shell pkg-config --cflags $(PACKAGE_DEPS)) -Werror
+ALL_CFLAGS+=$(shell pkg-config --cflags $(PACKAGE_DEPS)) -fPIC -Werror $(CFLAGS)
 
 INSTALLDEPS?=install-bins
 BIN_SUFFIX?=.exe
@@ -14,10 +14,10 @@ DEFAULT_ALL?=$(BINS)
 all: $(DEFAULT_ALL)
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) -fPIC -o $@ $<
+	$(CC) -c $(ALL_CFLAGS) -o $@ $<
 
 $(BINS): %: %.o $(EXTRA_OBJS)
-	$(CC) $(LDFLAGS) -o $@$(BIN_SUFFIX) $^ $(LDLIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@$(BIN_SUFFIX) $^ $(LDLIBS)
 
 install-bins:
 	@mkdir -p $(DESTDIR)$(sbindir)

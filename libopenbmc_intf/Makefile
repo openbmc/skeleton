@@ -2,11 +2,11 @@ PACKAGE_DEPS=gio-unix-2.0 glib-2.0
 INSTALLDEPS=install-lib
 CLEANDEPS=clean-lib
 DEFAULT_ALL=$(LIBOBMC)
-CFLAGS+=-iquote ../gdbus
+ALL_CFLAGS+=-iquote ../gdbus
 LIBOBMC=openbmc_intf
 
 $(LIBOBMC): %: %.o gpio.o
-	$(CC) -shared $(LDFLAGS) -Wl,-soname,lib$(LIBOBMC).so \
+	$(CC) -shared $(CFLAGS) $(LDFLAGS) -Wl,-soname,lib$(LIBOBMC).so \
 		-o lib$@.so.1 $^ $(LDLIBS)
 
 install-lib:
