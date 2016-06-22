@@ -1,10 +1,4 @@
 <node>
-	<interface name="org.openbmc.Object.Mapper">
-		<signal name="ObjectAdded">
-			<arg name="object_path" type="s"/>
-			<arg name="interface_name" type="s"/>
-		</signal>
-	</interface>
 	<interface name="org.openbmc.Hwmon">
 		<property name="poll_interval" type="i" access="read"/>
 		<property name="sysfs_path" type="s" access="read"/>
