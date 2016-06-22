@@ -19,7 +19,7 @@ all: $(DEFAULT_ALL)
 $(BINS): %: %.o $(EXTRA_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@$(BIN_SUFFIX) $^ $(LDLIBS)
 
-install-bins:
+install-bins: $(BINS)
 	@mkdir -p $(DESTDIR)$(sbindir)
 	@for b in $(BINS); do \
 		install $$b$(BIN_SUFFIX) $(DESTDIR)$(sbindir) || exit 1; \
