@@ -16,6 +16,9 @@ def fix_byte(it,key,parent):
     elif (isinstance(it,dbus.Byte)):   
         if (key != None):              
                 parent[key] = int(it)  
+    elif (isinstance(it,dbus.Double)):
+        if (key != None):
+                parent[key] = float(it)
     else:                              
         pass                           
 

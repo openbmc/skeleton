@@ -39,7 +39,6 @@ class Hwmons():
 		self.hwmon_root = { }
 		self.scanDirectory()
 		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)   
-		self.cache = {}
 
 	def readAttribute(self,filename):
 		val = "-1"
@@ -55,30 +54,17 @@ class Hwmons():
 		with open(filename, 'w') as f:
 			f.write(str(value)+'\n')
 
-	def should_update(self, attribute, value):
-		if attribute not in self.cache:
-			self.cache[attribute] = value
-			return True
-
-		update = (value != self.cache[attribute])
-		self.cache[attribute] = value
-
-		return update
 
 	def poll(self,objpath,attribute):
 		try:
 			raw_value = int(self.readAttribute(attribute))
-			if self.should_update(attribute, raw_value):
-				obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
-				intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
-				rtn = intf.setByPoll(raw_value)
-				if (rtn[0] == True):
-					self.writeAttribute(attribute,rtn[1])
+			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
+			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+			rtn = intf.setByPoll(raw_value)
+			if (rtn[0] == True):
+				self.writeAttribute(attribute,rtn[1])
 		except:
 			print "HWMON: Attibute no longer exists: "+attribute
-			self.sensors.pop(objpath,None)
-			if attribute in self.cache:
-				del self.cache[attribute]
 			return False
 
 
