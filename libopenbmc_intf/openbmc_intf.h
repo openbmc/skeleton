@@ -4,8 +4,8 @@
  * The license of this code is the same as for the source it was derived from.
  */
 
-#ifndef __INTERFACES_OPENBMC_INTF_H__
-#define __INTERFACES_OPENBMC_INTF_H__
+#ifndef __OPENBMC_INTF_H__
+#define __OPENBMC_INTF_H__
 
 #include <gio/gio.h>
 
@@ -4197,4 +4197,4 @@ GDBusObjectManager *object_manager_client_new_for_bus_sync (
 
 G_END_DECLS
 
-#endif /* __INTERFACES_OPENBMC_INTF_H__ */
+#endif /* __OPENBMC_INTF_H__ */
