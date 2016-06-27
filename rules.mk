@@ -1,5 +1,3 @@
-TOP := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-
 .DEFAULT_GOAL := all
 sbindir=/usr/sbin
 
