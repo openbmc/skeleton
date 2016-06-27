@@ -17,7 +17,7 @@ install-headers:
 install-lib:
 	@mkdir -p $(DESTDIR)$(libdir)
 	install lib$(LIBOBMC).so.1 $(DESTDIR)$(libdir)
-	ln -s lib$(LIBOBMC).so.1 $(DESTDIR)$(libdir)/lib$(LIBOBMC).so
+	ln -sf lib$(LIBOBMC).so.1 $(DESTDIR)$(libdir)/lib$(LIBOBMC).so
 
 clean-lib:
 	rm -f lib$(LIBOBMC).so.1
