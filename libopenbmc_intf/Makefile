@@ -8,6 +8,7 @@ INCLUDES=openbmc_intf.h openbmc.h gpio.h
 $(LIBOBMC): %: %.o gpio.o
 	$(CC) -shared $(CFLAGS) $(LDFLAGS) -Wl,-soname,lib$(LIBOBMC).so \
 		-o lib$@.so.1 $^ $(LDLIBS)
+	ln -sf lib$(LIBOBMC).so.1 lib$(LIBOBMC).so
 
 install-headers:
 	@mkdir -p $(DESTDIR)$(includedir)
@@ -20,5 +21,6 @@ install-lib:
 
 clean-lib:
 	rm -f lib$(LIBOBMC).so.1
+	rm -f lib$(LIBOBMC).so
 
 include ../rules.mk
