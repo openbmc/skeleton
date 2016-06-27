@@ -1,5 +1,5 @@
-#include "interfaces/openbmc_intf.h"
-#include "openbmc.h"
+#include <openbmc_intf.h>
+#include <openbmc.h>
 
 /* ------------------------------------------------------------------------- */
 

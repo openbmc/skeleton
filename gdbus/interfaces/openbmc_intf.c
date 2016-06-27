@@ -8,7 +8,7 @@
 #  include "config.h"
 #endif
 
-#include "interfaces/openbmc_intf.h"
+#include "openbmc_intf.h"
 
 #include <string.h>
 #ifdef G_OS_UNIX

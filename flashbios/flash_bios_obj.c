@@ -3,8 +3,8 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
-#include "interfaces/openbmc_intf.h"
-#include "openbmc.h"
+#include <openbmc_intf.h>
+#include <openbmc.h>
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control/flash";

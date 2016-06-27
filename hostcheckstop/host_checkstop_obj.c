@@ -1,6 +1,6 @@
-#include "interfaces/openbmc_intf.h"
-#include "openbmc.h"
-#include "gpio.h"
+#include <openbmc_intf.h>
+#include <openbmc.h>
+#include <gpio.h>
 
 static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* object_name = "/org/openbmc/control/checkstop0";

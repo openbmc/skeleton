@@ -1,5 +1,5 @@
 PACKAGE_DEPS=gio-unix-2.0 glib-2.0
-ALL_CFLAGS+=-iquote ../gdbus -iquote ../libopenbmc_intf
+ALL_CFLAGS+=-I ../libopenbmc_intf
 
 LIBOBMC=$(TOP)/libopenbmc_intf/libopenbmc_intf.so.1
 EXTRA_OBJS+=$(LIBOBMC)

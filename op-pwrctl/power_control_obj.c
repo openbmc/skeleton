@@ -7,9 +7,9 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <syslog.h>
-#include "interfaces/openbmc_intf.h"
-#include "openbmc.h"
-#include "gpio.h"
+#include <openbmc_intf.h>
+#include <openbmc.h>
+#include <gpio.h>
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";

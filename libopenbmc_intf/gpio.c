@@ -7,7 +7,7 @@
 #include <argp.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include "interfaces/openbmc_intf.h"
+#include "openbmc_intf.h"
 #include "gpio.h"
 
 

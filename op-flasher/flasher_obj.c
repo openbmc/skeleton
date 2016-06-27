@@ -20,8 +20,8 @@
 #include "io.h"
 #include "ast.h"
 #include "sfc-ctrl.h"
-#include "interfaces/openbmc_intf.h"
-#include "openbmc.h"
+#include <openbmc_intf.h>
+#include <openbmc.h>
 
 static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* dbus_name = "org.openbmc.control.Flasher";

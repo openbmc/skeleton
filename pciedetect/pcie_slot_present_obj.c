@@ -1,9 +1,9 @@
-#include "interfaces/openbmc_intf.h"
-#include "openbmc.h"
+#include <openbmc_intf.h>
+#include <openbmc.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "gpio.h"
+#include <gpio.h>
 
 #define NUM_SLOTS 8
 GPIO slots[NUM_SLOTS] = {
