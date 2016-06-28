@@ -1,20 +1,33 @@
+libdir=/usr/lib
+includedir=/usr/include
+
 PACKAGE_DEPS=gio-unix-2.0 glib-2.0
-INSTALLDEPS=install-lib
-CLEANDEPS=clean-lib
-DEFAULT_ALL=$(LIBOBMC)
-ALL_CFLAGS+=-iquote ../gdbus
-LIBOBMC=openbmc_intf
+SONAME=libopenbmc_intf.so
+VERSION=1
+LIBOBMC=$(SONAME).$(VERSION)
+INCLUDES=openbmc_intf.h openbmc.h gpio.h
 
-$(LIBOBMC): %: %.o gpio.o
-	$(CC) -shared $(CFLAGS) $(LDFLAGS) -Wl,-soname,lib$(LIBOBMC).so \
-		-o lib$@.so.1 $^ $(LDLIBS)
+LDLIBS+=$(shell pkg-config --libs $(PACKAGE_DEPS))
+ALL_CFLAGS+=$(shell pkg-config --cflags $(PACKAGE_DEPS)) -fPIC -Werror $(CFLAGS)
 
-install-lib:
+all: $(SONAME)
+
+%.o: %.c
+	$(CC) -c $(ALL_CFLAGS) -o $@ $<
+
+$(SONAME): $(LIBOBMC)
+	ln -sf $^ $@
+
+$(LIBOBMC): lib%.so.$(VERSION): %.o gpio.o
+	$(CC) -shared $(CFLAGS) $(LDFLAGS) -Wl,-soname,$(SONAME) \
+		-o $@ $^ $(LDLIBS)
+
+install: $(SONAME) $(LIBOBMC)
+	@mkdir -p $(DESTDIR)$(includedir)
+	install $(INCLUDES) $(DESTDIR)$(includedir)
 	@mkdir -p $(DESTDIR)$(libdir)
-	install lib$(LIBOBMC).so.1 $(DESTDIR)$(libdir)
-	ln -s lib$(LIBOBMC).so.1 $(DESTDIR)$(libdir)/lib$(LIBOBMC).so
+	install $(LIBOBMC) $(DESTDIR)$(libdir)
+	ln -sf $(LIBOBMC) $(DESTDIR)$(libdir)/$(SONAME)
 
-clean-lib:
-	rm -f lib$(LIBOBMC).so.1
-
-include ../rules.mk
+clean:
+	rm -f *.o $(LIBOBMC) $(SONAME)

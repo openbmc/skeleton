@@ -1,1 +1,0 @@
-gdbus-codegen --interface-prefix org.openbmc --c-generate-object-manager --generate-c-code interfaces/$1  xml/$1.xml

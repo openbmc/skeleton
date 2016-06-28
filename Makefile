@@ -9,8 +9,7 @@ GDBUS_APPS = bmcctl \
 	     pwrbutton \
 	     rstbutton
 
-SUBDIRS = $(GDBUS_APPS) \
-	  hacks \
+SUBDIRS = hacks \
 	  ledctl \
 	  libopenbmc_intf \
 	  pychassisctl \
@@ -25,19 +24,20 @@ SUBDIRS = $(GDBUS_APPS) \
 	  pysystemmgr \
 	  pytools
 
-REVERSE_SUBDIRS = $(shell echo $(SUBDIRS) | tr ' ' '\n' | tac |tr '\n' ' ')
+REVERSE_SUBDIRS = $(shell echo $(SUBDIRS) $(GDBUS_APPS) | tr ' ' '\n' | tac |tr '\n' ' ')
 
-.PHONY: subdirs $(SUBDIRS)
+.PHONY: subdirs $(SUBDIRS) $(GDBUS_APPS)
 
-subdirs: $(SUBDIRS)
+subdirs: $(SUBDIRS) $(GDBUS_APPS)
 
 $(SUBDIRS):
 	$(MAKE) -C $@
 
 $(GDBUS_APPS): libopenbmc_intf
+	$(MAKE) -C $@ CFLAGS="-I ../$^" LDFLAGS="-L ../$^"
 
 install: subdirs
-	@for d in $(SUBDIRS); do \
+	@for d in $(SUBDIRS) $(GDBUS_APPS); do \
 		$(MAKE) -C $$d $@ DESTDIR=$(DESTDIR) PREFIX=$(PREFIX) || exit 1; \
 	done
 clean:
