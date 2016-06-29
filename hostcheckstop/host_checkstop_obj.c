@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <openbmc_intf.h>
 #include <openbmc.h>
 #include <gpio.h>
