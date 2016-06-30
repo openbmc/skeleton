@@ -274,9 +274,9 @@ class SystemManager(DbusProperties,DbusObjectManager):
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = get_dbus()
-    name = dbus.service.BusName(DBUS_NAME,bus)
     obj = SystemManager(bus,OBJ_NAME)
     mainloop = gobject.MainLoop()
+    name = dbus.service.BusName(DBUS_NAME,bus)
 
     print "Running SystemManager"
     mainloop.run()

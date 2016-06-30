@@ -86,10 +86,10 @@ class ConsoleReader(object):
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = dbus.SystemBus()
-    name = dbus.service.BusName(DBUS_NAME, bus)
     obj = IpmiDebug(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()
     r = ConsoleReader(obj)
+    name = dbus.service.BusName(DBUS_NAME, bus)
 
     print ("Enter IPMI packet as hex values. First three bytes will be used"
             "as netfn and cmd.\nlun will be zero.")

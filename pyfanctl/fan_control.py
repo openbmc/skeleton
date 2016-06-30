@@ -50,11 +50,11 @@ if __name__ == '__main__':
 	
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 	bus = get_dbus()
-	name = dbus.service.BusName(DBUS_NAME,bus)
 	fan_control = FanControl(bus,OBJ_PATH)
 	mainloop = gobject.MainLoop()
    
 	print "Starting fan control"
 	fan_control.setMax()
+	name = dbus.service.BusName(DBUS_NAME,bus)
 	mainloop.run()
 

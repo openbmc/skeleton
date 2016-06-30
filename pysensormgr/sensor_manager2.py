@@ -45,7 +45,6 @@ class SensorManager(DbusProperties,DbusObjectManager):
 if __name__ == '__main__':
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 	bus = get_dbus()
-	name = dbus.service.BusName(DBUS_NAME,bus)
 	root_sensor = SensorManager(bus,OBJ_PATH)
 
 
@@ -60,6 +59,7 @@ if __name__ == '__main__':
 		root_sensor.add(obj_path, sensor_obj)
 
 	mainloop = gobject.MainLoop()
+	name = dbus.service.BusName(DBUS_NAME,bus)
 	print "Starting sensor manager"
 	mainloop.run()
 
