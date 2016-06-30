@@ -2,5 +2,5 @@ from distutils.core import setup
 
 setup(name='pyinventorymgr',
       version='1.0',
-      scripts=['inventory_items.py'],
+      scripts=['inventory_items.py', 'sync_inventory_items.py'],
       )
