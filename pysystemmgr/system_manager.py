@@ -60,6 +60,16 @@ class SystemManager(DbusProperties,DbusObjectManager):
 		print "SystemManager Init Done"
 
 
+	def try_next_state(self):
+		current_state = self.Get(DBUS_NAME,"current_state")
+		if current_state not in System.EXIT_STATE_DEPEND:
+			return
+
+		if all(System.EXIT_STATE_DEPEND[current_state].values()):
+			print "All required objects started for "+current_state
+			self.gotoNextState()
+
+
 	def SystemStateHandler(self,state_name):
 		## clearing object started flags
 		current_state = self.Get(DBUS_NAME,"current_state")
@@ -190,22 +200,15 @@ class SystemManager(DbusProperties,DbusObjectManager):
 			if (self.bus_name_lookup[obj_path] == bus_name):
 				return
 		self.bus_name_lookup[obj_path] = bus_name
-		print "New object: "+obj_path+" ("+bus_name+")"
-		try:
-			if (System.EXIT_STATE_DEPEND[current_state].has_key(obj_path) == True):
-				System.EXIT_STATE_DEPEND[current_state][obj_path] = 1
-			## check if all required objects are started to move to next state
-			state = 1
-			for obj_path in System.EXIT_STATE_DEPEND[current_state]:
-				if (System.EXIT_STATE_DEPEND[current_state][obj_path] == 0):
-					state = 0
-			## all required objects have started so go to next state
-			if (state == 1):
-				print "All required objects started for "+current_state
-				self.gotoNextState()
-		except:
-			pass
+		if current_state not in System.EXIT_STATE_DEPEND:
+			return
 
+		if obj_path in System.EXIT_STATE_DEPEND[current_state]:
+			print "New object: "+obj_path+" ("+bus_name+")"
+			System.EXIT_STATE_DEPEND[current_state][obj_path] = 1
+			## check if all required objects are
+			# started to move to next state
+			self.try_next_state()
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='s', out_signature='sis')
