@@ -67,6 +67,11 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                 'object_name': '/org/openbmc/settings/host0',
                 'interface_name': 'org.freedesktop.DBus.Properties'
             },
+            'control': {
+                'bus_name': 'org.openbmc.control.Host',
+                'object_name': '/org/openbmc/control/host0',
+                'interface_name': 'org.openbmc.control.Host'
+            },
         }
 
         # uuid
@@ -129,11 +134,22 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         if (self.getPowerState() == 0):
             intf = self.getInterface('power_control')
             intf.setPowerState(POWER_ON)
-            intfwatchdog = self.getInterface('watchdog')
-            # Start watchdog with 30s timeout per the OpenPower Host IPMI Spec
-            #Once the host starts booting, it'll reset and refresh the timer
-            intfwatchdog.set(30000)
-            intfwatchdog.start()
+
+            # Determine if debug_mode is set.  If it is then we don't
+            # want to start the watchdog since debug mode
+            intfcontrol = self.getInterface('control')
+            intfproperties = dbus.Interface(intfcontrol,
+                                            "org.freedesktop.DBus.Properties")
+            debug_mode = intfproperties.Get('org.openbmc.control.Host',
+                                            'debug_mode')
+            if(not debug_mode):
+                intfwatchdog = self.getInterface('watchdog')
+                # Start watchdog with 30s timeout per the OpenPower Host IPMI Spec
+                #Once the host starts booting, it'll reset and refresh the timer
+                intfwatchdog.set(30000)
+                intfwatchdog.start()
+            else:
+                print "Debug mode is on, no watchdog"
         return None
 
     @dbus.service.method(DBUS_NAME,
