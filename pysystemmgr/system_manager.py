@@ -12,6 +12,8 @@ import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 import obmc.enums
 import obmc_system_config as System
+import obmc.dbuslib.introspection
+import obmc.utils.misc
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
@@ -27,7 +29,12 @@ class SystemManager(DbusProperties,DbusObjectManager):
 		DbusProperties.__init__(self)
 		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,obj_name)
+		self.bus = bus
 
+		bus.add_signal_receiver(
+			self.bus_handler,
+			dbus_interface=dbus.BUS_DAEMON_IFACE,
+			signal_name='NameOwnerChanged')
 		bus.add_signal_receiver(self.NewObjectHandler,
 			signal_name = "InterfacesAdded", sender_keyword = 'bus_name')
 		bus.add_signal_receiver(self.SystemStateHandler,signal_name = "GotoSystemState")
@@ -55,6 +62,10 @@ class SystemManager(DbusProperties,DbusObjectManager):
 		if not os.path.exists(PropertyCacher.CACHE_PATH):
 			print "Creating cache directory: "+PropertyCacher.CACHE_PATH
    			os.makedirs(PropertyCacher.CACHE_PATH)
+
+		for s in self.bus.list_names():
+			if obmc.utils.misc.org_dot_openbmc_match(s):
+				self.bus_handler(s, '', s)
 
 		self.InterfacesAdded(obj_name,self.properties)
 		print "SystemManager Init Done"
@@ -193,6 +204,29 @@ class SystemManager(DbusProperties,DbusObjectManager):
 					self.start_process(name)
 	
 		return True
+
+	def bus_handler(self, owned_name, old, new):
+		if obmc.dbuslib.bindings.is_unique(owned_name) or not new:
+			return
+
+		if owned_name == DBUS_NAME:
+			return
+
+		objs = obmc.dbuslib.introspection.find_dbus_interfaces(
+				self.bus, owned_name, '/', bool)
+		current_state = self.Get(DBUS_NAME,"current_state")
+		for o in objs.keys():
+			if o in self.bus_name_lookup:
+				continue
+			self.bus_name_lookup[o] = owned_name
+
+			if current_state not in System.EXIT_STATE_DEPEND:
+				continue
+			if o in System.EXIT_STATE_DEPEND[current_state]:
+				print "New object: "+o+" ("+owned_name+")"
+				System.EXIT_STATE_DEPEND[current_state][o] = 1
+
+		self.try_next_state()
 
 	def NewObjectHandler(self, obj_path, iprops, bus_name = None):
 		current_state = self.Get(DBUS_NAME,"current_state")
