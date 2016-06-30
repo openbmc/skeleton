@@ -276,6 +276,7 @@ if __name__ == '__main__':
     bus = get_dbus()
     obj = SystemManager(bus,OBJ_NAME)
     mainloop = gobject.MainLoop()
+    obj.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME,bus)
 
     print "Running SystemManager"

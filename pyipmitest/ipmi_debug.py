@@ -89,6 +89,8 @@ def main():
     obj = IpmiDebug(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()
     r = ConsoleReader(obj)
+
+    obj.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME, bus)
 
     print ("Enter IPMI packet as hex values. First three bytes will be used"

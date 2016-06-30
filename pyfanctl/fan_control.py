@@ -55,6 +55,8 @@ if __name__ == '__main__':
    
 	print "Starting fan control"
 	fan_control.setMax()
+
+	fan_control.unmask_signals()
 	name = dbus.service.BusName(DBUS_NAME,bus)
 	mainloop.run()
 

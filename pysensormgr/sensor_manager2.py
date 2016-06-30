@@ -59,6 +59,8 @@ if __name__ == '__main__':
 		root_sensor.add(obj_path, sensor_obj)
 
 	mainloop = gobject.MainLoop()
+
+	root_sensor.unmask_signals()
 	name = dbus.service.BusName(DBUS_NAME,bus)
 	print "Starting sensor manager"
 	mainloop.run()

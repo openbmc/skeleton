@@ -295,6 +295,8 @@ if __name__ == '__main__':
     bus = get_dbus()
     obj = BmcFlashControl(bus, OBJ_NAME)
     mainloop = gobject.MainLoop()
+
+    obj.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME, bus)
     
     print "Running Bmc Flash Control"

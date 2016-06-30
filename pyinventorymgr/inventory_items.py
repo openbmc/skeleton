@@ -87,6 +87,7 @@ if __name__ == '__main__':
 		version = getVersion()
 		obj.update({'version': version})
 
+    obj_parent.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME,bus)
     print "Running Inventory Manager"
     mainloop.run()
