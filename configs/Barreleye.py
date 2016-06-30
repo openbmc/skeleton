@@ -224,6 +224,20 @@ APPS = {
 		'process_name'    : 'phosphor-read-eeprom',
 		'args'            : ['--eeprom','/sys/bus/i2c/devices/6-0055/eeprom','--fruid','66'],
 	},
+	'sync_mac' : {
+		'system_state'    : 'BMC_READY',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'sync_inventory_items.py',
+		'args'            : ['-t','DAUGHTER_CARD','-n','io_board','-p','"Custom Field 2"','-s','mac'],
+	},
+	'sync_uuid' : {
+		'system_state'    : 'BMC_READY',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'sync_inventory_items.py',
+		'args'            : ['-t','MAIN_PLANAR','-n','motherboard','-p','"Custom Field 1"','-s','uuid'],
+	},
 	'restore' : {
 		'system_state'    : 'BMC_READY',
 		'start_process'   : True,
