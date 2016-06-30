@@ -101,7 +101,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
 
         bus.add_signal_receiver(self.SystemStateHandler,
                                 signal_name="GotoSystemState")
-        self.InterfacesAdded(name, self.properties)
 
 
     def getInterface(self, name):

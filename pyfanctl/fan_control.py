@@ -36,7 +36,6 @@ class FanControl(DbusProperties,DbusObjectManager):
 			print "Initializing fan: "+fan
 			obj = bus.get_object(FAN_BUS,fan,introspect=False)
 			self.fan_intf.append(dbus.Interface(obj,FAN_IFACE))
-		self.InterfacesAdded(name,self.properties)
 			
 	@dbus.service.method(DBUS_NAME,
 		in_signature='', out_signature='')

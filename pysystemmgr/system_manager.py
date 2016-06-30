@@ -67,7 +67,6 @@ class SystemManager(DbusProperties,DbusObjectManager):
 			if obmc.utils.misc.org_dot_openbmc_match(s):
 				self.bus_handler(s, '', s)
 
-		self.InterfacesAdded(obj_name,self.properties)
 		print "SystemManager Init Done"
 
 

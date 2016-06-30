@@ -21,7 +21,6 @@ class Inventory(DbusProperties,DbusObjectManager):
 		DbusProperties.__init__(self)
 		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
-		self.InterfacesAdded(name,self.properties)
 
 
 class InventoryItem(DbusProperties):

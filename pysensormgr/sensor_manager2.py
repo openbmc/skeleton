@@ -19,7 +19,6 @@ class SensorManager(DbusProperties,DbusObjectManager):
 		DbusProperties.__init__(self)
 		DbusObjectManager.__init__(self)
 		dbus.service.Object.__init__(self,bus,name)
-		self.InterfacesAdded(name,self.properties)
 
 	@dbus.service.method(DBUS_NAME,
 		in_signature='ss', out_signature='')
