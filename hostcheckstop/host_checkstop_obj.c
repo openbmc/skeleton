@@ -155,6 +155,7 @@ on_bus_acquired(GDBusConnection *connection,
     if (rc != GPIO_OK) {
         printf("ERROR Checkstop: GPIO setup (rc=%d)\n", rc);
     }
+    g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 }
 
 static void
@@ -162,7 +163,6 @@ on_name_acquired(GDBusConnection *connection,
         const gchar *name,
         gpointer object)
 {
-    g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 }
 
 static void
@@ -170,7 +170,6 @@ on_name_lost(GDBusConnection *connection,
         const gchar *name,
         gpointer object)
 {
-    g_dbus_object_manager_server_unexport(manager, dbus_object_path);
 }
 
 gint
