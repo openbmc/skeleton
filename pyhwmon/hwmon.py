@@ -65,6 +65,7 @@ class Hwmons():
 				self.writeAttribute(attribute,rtn[1])
 		except:
 			print "HWMON: Attibute no longer exists: "+attribute
+			self.sensors.pop(objpath,None)
 			return False
 
 
