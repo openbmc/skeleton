@@ -232,6 +232,18 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
 
     def emergency_shutdown_signal_handler(self):
         print "Emergency Shutdown!"
+        # log an esel
+        try:
+            obj = bus.get_object("org.openbmc.records.events",
+                                 "/org/openbmc/records/events", introspect=False)
+            intf = dbus.Interface(obj, "org.openbmc.recordlog")
+            desc = message
+            sev = "critical error"
+            details = "Get emergency shutdown signal. Shutdown the host."
+            debug = dbus.ByteArray("")
+            intf.acceptBMCMessage(desc, sev, details, debug)
+        except:
+            print "Emergency shutdown: log esel error."
         self.powerOff()
 
 
