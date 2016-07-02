@@ -229,8 +229,22 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         self.Set(DBUS_NAME, "reboot", 1)
         self.powerOff()
 
-    def emergency_shutdown_signal_handler(self):
+    def emergency_shutdown_signal_handler(self, message):
         print "Emergency Shutdown!"
+        # Log an event.
+        try:
+            # Exception happens or not, we need to power off.
+            obj = bus.get_object("org.openbmc.records.events",
+                                 "/org/openbmc/records/events",
+                                 introspect=False)
+            intf = dbus.Interface(obj, "org.openbmc.recordlog")
+            desc = message
+            sev = "critical error"
+            details = "Get emergency shutdown signal. Shutdown the host."
+            debug = dbus.ByteArray("")
+            intf.acceptBMCMessage(desc, sev, details, debug)
+        except:
+            print "Emergency shutdown signal handler: log event error."
         self.powerOff()
 
 
