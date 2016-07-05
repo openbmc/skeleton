@@ -117,6 +117,12 @@ APPS = {
         'monitor_process' : True,
         'process_name'    : 'button_reset.exe',
     },
+    'host_checkstop' : {
+        'system_state'    : 'BMC_STARTING',
+        'start_process'   : True,
+        'monitor_process' : True,
+        'process_name'    : 'host_checkstop.exe',
+    },
     'led_control' : {
         'system_state'    : 'BMC_STARTING',
         'start_process'   : True,
@@ -454,6 +460,8 @@ GPIO_CONFIG['SYS_PWROK_BUFF'] = \
         {'gpio_pin': 'D2', 'direction': 'in'}
 GPIO_CONFIG['BMC_WD_CLEAR_PULSE_N'] = \
         {'gpio_pin': 'N5', 'direction': 'out'}
+GPIO_CONFIG['CHECKSTOP'] = \
+        {'gpio_pin': 'J2', 'direction': 'falling'}
 
 # witherspoon: not connect
 #GPIO_CONFIG['CM1_OE_R_N'] = \

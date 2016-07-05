@@ -117,6 +117,12 @@ APPS = {
         'monitor_process' : True,
         'process_name'    : 'button_reset.exe',
     },
+    'host_checkstop' : {
+        'system_state'    : 'BMC_STARTING',
+        'start_process'   : True,
+        'monitor_process' : True,
+        'process_name'    : 'host_checkstop.exe',
+    },
     'led_control' : {
         'system_state'    : 'BMC_STARTING',
         'start_process'   : True,
@@ -483,6 +489,8 @@ GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'E0', 'direction': 'both'}
 GPIO_CONFIG['RESET_BUTTON'] = \
         {'gpio_pin': 'E4', 'direction': 'both'}
+GPIO_CONFIG['CHECKSTOP'] = \
+        {'gpio_pin': 'H0', 'direction': 'falling'}
 
 GPIO_CONFIG['PS0_PRES_N'] = \
         {'gpio_pin': 'P7', 'direction': 'in'}
