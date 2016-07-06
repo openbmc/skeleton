@@ -13,7 +13,6 @@ from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
 DBUS_NAME = 'org.openbmc.control.BmcFlash'
 OBJ_NAME = '/org/openbmc/control/flash/bmc'
-FLASH_INTF = 'org.openbmc.Flash'
 DOWNLOAD_INTF = 'org.openbmc.managers.Download'
 
 BMC_DBUS_NAME = 'org.openbmc.control.Bmc'
