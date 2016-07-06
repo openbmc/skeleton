@@ -7,9 +7,9 @@ import dbus.service
 import dbus.mainloop.glib
 import subprocess
 from obmc.dbuslib.bindings import get_dbus
-import obmc_system_config as System
 
 
+FLASH_DOWNLOAD_PATH = '/tmp'
 DBUS_NAME = 'org.openbmc.managers.Download'
 OBJ_NAME = '/org/openbmc/managers/Download'
 TFTP_PORT = 69
@@ -37,7 +37,7 @@ class DownloadManagerObject(dbus.service.Object):
 		try:
 			filename = str(filename)
 			print "Downloading: "+filename+" from "+ip
-			outfile = System.FLASH_DOWNLOAD_PATH+"/"+filename
+			outfile = FLASH_DOWNLOAD_PATH+"/"+filename
 			rc = subprocess.call(["tftp", "-l",outfile,"-r",filename,"-g",ip])
 			if (rc == 0):
 				self.DownloadComplete(outfile,filename)
@@ -55,7 +55,7 @@ class DownloadManagerObject(dbus.service.Object):
 		try:
 			filename = str(filename)
 			print "Downloading: "+filename+" from "+url
-			outfile = System.FLASH_DOWNLOAD_PATH+"/"+filename
+			outfile = FLASH_DOWNLOAD_PATH+"/"+filename
 			subprocess.call(["tftp", "-l",outfile,"-r",filename,"-g",url])
 			obj = bus.get_object("org.openbmc.control.Flash",path)
 			intf = dbus.Interface(obj,"org.openbmc.Flash")
