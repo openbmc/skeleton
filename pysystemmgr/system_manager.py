@@ -7,7 +7,6 @@ import dbus
 import dbus.service
 import dbus.mainloop.glib
 import os
-import time
 import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 import obmc.enums
@@ -17,8 +16,6 @@ import obmc.utils.misc
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
-HEARTBEAT_CHECK_INTERVAL = 20000
-STATE_START_TIMEOUT = 10
 INTF_SENSOR = 'org.openbmc.SensorValue'
 INTF_ITEM = 'org.openbmc.InventoryItem'
 INTF_CONTROL = 'org.openbmc.Control'
@@ -94,10 +91,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
         if state_name in self.system_states:
             for name in self.system_states[state_name]:
                 self.start_process(name)
-
-        if (state_name == "BMC_INIT"):
-            ## Add poll for heartbeat
-            gobject.timeout_add(HEARTBEAT_CHECK_INTERVAL, self.heartbeat_check)
 
         try:
             cb = System.ENTER_STATE_CALLBACK[state_name]
@@ -191,19 +184,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
             except Exception as e:
                 ## TODO: error
                 print "ERROR: starting process: "+" ".join(cmdline)
-
-    def heartbeat_check(self):
-        for name in System.APPS.keys():
-            app = System.APPS[name]
-            if app['start_process'] and 'popen' in app:
-                ##   make sure process is still alive
-                p = app['popen']
-                p.poll()
-                if p.returncode is None:
-                    print "Process for "+name+" appears to be dead"
-                    self.start_process(name)
-
-        return True
 
     def bus_handler(self, owned_name, old, new):
         if obmc.dbuslib.bindings.is_unique(owned_name) or not new:
