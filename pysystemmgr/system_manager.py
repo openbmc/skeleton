@@ -40,7 +40,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
         self.Set(DBUS_NAME, "current_state", "")
         self.system_states = {}
-        self.bus_name_lookup = {}
         self.bin_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 
         for name in System.APPS.keys():
@@ -126,25 +125,23 @@ class SystemManager(DbusProperties, DbusObjectManager):
         return self.Get(DBUS_NAME, "current_state")
 
     def doObjectLookup(self, category, key):
-        bus_name = ""
         obj_path = ""
         intf_name = INTF_ITEM
         try:
             obj_path = System.ID_LOOKUP[category][key]
-            bus_name = self.bus_name_lookup[obj_path]
             parts = obj_path.split('/')
             if (parts[3] == 'sensors'):
                 intf_name = INTF_SENSOR
         except Exception as e:
             print "ERROR SystemManager: "+str(e)+" not found in lookup"
 
-        return [bus_name, obj_path, intf_name]
+        return [obj_path, intf_name]
 
-    @dbus.service.method(DBUS_NAME, in_signature='ss', out_signature='(sss)')
+    @dbus.service.method(DBUS_NAME, in_signature='ss', out_signature='(ss)')
     def getObjectFromId(self, category, key):
         return self.doObjectLookup(category, key)
 
-    @dbus.service.method(DBUS_NAME, in_signature='sy', out_signature='(sss)')
+    @dbus.service.method(DBUS_NAME, in_signature='sy', out_signature='(ss)')
     def getObjectFromByteId(self, category, key):
         byte = int(key)
         return self.doObjectLookup(category, byte)
@@ -196,10 +193,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
             self.bus, owned_name, '/', bool)
         current_state = self.Get(DBUS_NAME, "current_state")
         for o in objs.keys():
-            if o in self.bus_name_lookup:
-                continue
-            self.bus_name_lookup[o] = owned_name
-
             if current_state not in System.EXIT_STATE_DEPEND:
                 continue
             if o in System.EXIT_STATE_DEPEND[current_state]:
@@ -210,10 +203,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
     def NewObjectHandler(self, obj_path, iprops, bus_name=None):
         current_state = self.Get(DBUS_NAME, "current_state")
-        if obj_path in self.bus_name_lookup:
-            if (self.bus_name_lookup[obj_path] == bus_name):
-                return
-        self.bus_name_lookup[obj_path] = bus_name
         if current_state not in System.EXIT_STATE_DEPEND:
             return
 
