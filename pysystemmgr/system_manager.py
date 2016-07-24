@@ -13,6 +13,7 @@ import obmc.enums
 import obmc_system_config as System
 import obmc.dbuslib.introspection
 import obmc.utils.misc
+import obmc.mapper.utils
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
@@ -28,10 +29,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
         dbus.service.Object.__init__(self, bus, obj_name)
         self.bus = bus
 
-        bus.add_signal_receiver(
-            self.bus_handler,
-            dbus_interface=dbus.BUS_DAEMON_IFACE,
-            signal_name='NameOwnerChanged')
         bus.add_signal_receiver(
             self.NewObjectHandler,
             signal_name="InterfacesAdded", sender_keyword='bus_name')
@@ -62,30 +59,9 @@ class SystemManager(DbusProperties, DbusObjectManager):
             print "Creating cache directory: "+PropertyCacher.CACHE_PATH
             os.makedirs(PropertyCacher.CACHE_PATH)
 
-        for s in self.bus.list_names():
-            if obmc.utils.misc.org_dot_openbmc_match(s):
-                self.bus_handler(s, '', s)
-
         print "SystemManager Init Done"
 
-    def try_next_state(self):
-        current_state = self.Get(DBUS_NAME, "current_state")
-        if current_state not in System.EXIT_STATE_DEPEND:
-            return
-
-        if all(System.EXIT_STATE_DEPEND[current_state].values()):
-            print "All required objects started for "+current_state
-            self.gotoNextState()
-
     def SystemStateHandler(self, state_name):
-        ## clearing object started flags
-        current_state = self.Get(DBUS_NAME, "current_state")
-        try:
-            for obj_path in System.EXIT_STATE_DEPEND[current_state]:
-                System.EXIT_STATE_DEPEND[current_state][obj_path] = 0
-        except:
-            pass
-
         print "Running System State: "+state_name
         if state_name in self.system_states:
             for name in self.system_states[state_name]:
@@ -105,6 +81,12 @@ class SystemManager(DbusProperties, DbusObjectManager):
             pass
 
         self.Set(DBUS_NAME, "current_state", state_name)
+
+        waitlist = System.EXIT_STATE_DEPEND.get(state_name, {}).keys()
+        if waitlist:
+            self.waiter = obmc.mapper.utils.Wait(
+                self.bus, waitlist,
+                callback=self.gotoNextState)
 
     def gotoNextState(self):
         s = 0
@@ -182,25 +164,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
                 ## TODO: error
                 print "ERROR: starting process: "+" ".join(cmdline)
 
-    def bus_handler(self, owned_name, old, new):
-        if obmc.dbuslib.bindings.is_unique(owned_name) or not new:
-            return
-
-        if owned_name == DBUS_NAME:
-            return
-
-        objs = obmc.dbuslib.introspection.find_dbus_interfaces(
-            self.bus, owned_name, '/', bool)
-        current_state = self.Get(DBUS_NAME, "current_state")
-        for o in objs.keys():
-            if current_state not in System.EXIT_STATE_DEPEND:
-                continue
-            if o in System.EXIT_STATE_DEPEND[current_state]:
-                print "New object: "+o+" ("+owned_name+")"
-                System.EXIT_STATE_DEPEND[current_state][o] = 1
-
-        self.try_next_state()
-
     def NewObjectHandler(self, obj_path, iprops, bus_name=None):
         current_state = self.Get(DBUS_NAME, "current_state")
         if current_state not in System.EXIT_STATE_DEPEND:
@@ -208,10 +171,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
         if obj_path in System.EXIT_STATE_DEPEND[current_state]:
             print "New object: "+obj_path+" ("+bus_name+")"
-            System.EXIT_STATE_DEPEND[current_state][obj_path] = 1
-            ## check if all required objects are
-            # started to move to next state
-            self.try_next_state()
 
     @dbus.service.method(DBUS_NAME, in_signature='s', out_signature='sis')
     def gpioInit(self, name):
