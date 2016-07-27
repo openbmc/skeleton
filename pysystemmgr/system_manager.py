@@ -55,10 +55,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
         self.SystemStateHandler(System.SYSTEM_STATES[0])
 
-        if not os.path.exists(PropertyCacher.CACHE_PATH):
-            print "Creating cache directory: "+PropertyCacher.CACHE_PATH
-            os.makedirs(PropertyCacher.CACHE_PATH)
-
         print "SystemManager Init Done"
 
     def SystemStateHandler(self, state_name):

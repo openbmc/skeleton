@@ -1,7 +1,6 @@
 #! /usr/bin/python
 
 HOME_PATH = './'
-CACHE_PATH = '/var/cache/obmc/'
 GPIO_BASE = 320
 SYSTEM_NAME = "Palmetto"
 
