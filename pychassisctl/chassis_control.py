@@ -13,7 +13,7 @@ OBJ_NAME = '/org/openbmc/control/chassis0'
 CONTROL_INTF = 'org.openbmc.Control'
 
 MACHINE_ID = '/etc/machine-id'
-
+SYS_STATE_FILE = '/var/lib/obmc/last_system_state'
 POWER_OFF = 0
 POWER_ON = 1
 
@@ -73,7 +73,8 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                 'interface_name': 'org.openbmc.control.Host'
             },
         }
-
+        self.system_last_state = ""
+        self.system_last_state =  self.getSystemLastState()
         # uuid
         self.Set(DBUS_NAME, "uuid", self.getUuid())
         self.Set(DBUS_NAME, "reboot", 0)
@@ -108,6 +109,31 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         obj = bus.get_object(o['bus_name'], o['object_name'], introspect=False)
         return dbus.Interface(obj, o['interface_name'])
 
+    def readLastSystemStateFromDisk(self):
+        #Default State
+        state = "HOST_POWERED_ON"
+        # Open the file(/var/lib/obmc/last_system_state)
+        try:
+            with open(SYS_STATE_FILE, 'r+') as f:
+                state = f.readline().rstrip('\n')
+        except IOError:
+            pass
+        return state
+
+    def writeLastSystemStateToDisk(self):
+        with open(SYS_STATE_FILE, 'w+') as f:
+            f.write(self.system_last_state)
+
+    def setSystemLastState(self,state):
+        self.system_last_state = state
+        self.writeLastSystemStateToDisk()
+
+    @dbus.service.method(DBUS_NAME,
+                         in_signature='', out_signature='s')
+    def getSystemLastState(self):
+        if (self.system_last_state == ""):
+            self.system_last_state = self.readLastSystemStateFromDisk()
+        return self.system_last_state
 
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
@@ -133,7 +159,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         if (self.getPowerState() == 0):
             intf = self.getInterface('power_control')
             intf.setPowerState(POWER_ON)
-
+            self.setSystemLastState("HOST_POWERED_ON")
             # Determine if debug_mode is set.  If it is then we don't
             # want to start the watchdog since debug mode
             intfcontrol = self.getInterface('host_control')
@@ -159,6 +185,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         intfwatchdog.stop()
         intf = self.getInterface('power_control')
         intf.setPowerState(POWER_OFF)
+        self.setSystemLastState("HOST_POWERED_OFF")
         return None
 
     @dbus.service.method(DBUS_NAME,
