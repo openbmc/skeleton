@@ -9,12 +9,12 @@ GDBUS_APPS = bmcctl \
 	     pwrbutton \
 	     rstbutton
 
-SUBDIRS = hacks \
+SUBDIRS = fanctl \
+	  hacks \
 	  ledctl \
 	  libopenbmc_intf \
 	  pychassisctl \
 	  pydownloadmgr \
-	  pyfanctl \
 	  pyflashbmc \
 	  pyhwmon \
 	  pyinventorymgr \
