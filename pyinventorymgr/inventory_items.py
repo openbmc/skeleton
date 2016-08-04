@@ -31,7 +31,6 @@ class InventoryItem(DbusProperties):
 
 		self.name = name
 		
-		## this will load properties from cache
 		if (data.has_key('present') == False):
 			data['present'] = 'False'
 		if (data.has_key('fault') == False):
@@ -40,7 +39,9 @@ class InventoryItem(DbusProperties):
 			data['version'] = ''
 
 		self.SetMultiple(INTF_NAME,data)
-		
+
+		## this will load properties from cache
+		PropertyCacher.load(name, INTF_NAME, self.properties)
 		
 	@dbus.service.method(INTF_NAME,
 		in_signature='a{sv}', out_signature='')
