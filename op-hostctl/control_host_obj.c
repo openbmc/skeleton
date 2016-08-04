@@ -83,6 +83,12 @@ on_boot(ControlHost *host,
 		gpointer user_data)
 {
 	int rc = GPIO_OK;
+	GDBusProxy *proxy;
+	GError *error = NULL;
+	GVariant *parm = NULL;
+	GVariant *result = NULL;
+	GDBusConnection *connection =
+		g_dbus_object_manager_server_get_connection(manager);
 
 	if(control_host_get_debug_mode(host)==1)
 	{
@@ -173,6 +179,41 @@ on_boot(ControlHost *host,
 	gpio_close(&cronus_sel);
 	gpio_close(&Throttle);
 	gpio_close(&idbtn);
+
+	// Start watchdog with 30s timeout per the OpenPower Host IPMI Spec.
+	// Once the host starts booting, it'll reset and refresh the timer.
+	error = NULL;
+	proxy = g_dbus_proxy_new_sync(connection,
+		G_DBUS_PROXY_FLAGS_NONE,
+		NULL, /* GDBusInterfaceInfo* */
+		"org.openbmc.watchdog.Host", /* name */
+		"/org/openbmc/watchdog/host0", /* object path */
+		"org.openbmc.Watchdog", /* interface name */
+		NULL, /* GCancellable */
+		&error);
+	g_assert_no_error(error);
+	// Set watchdog timer to 30s
+	error = NULL;
+	parm = g_variant_new("(i)", 30000);
+	result = g_dbus_proxy_call_sync(proxy,
+		"set",
+		parm,
+		G_DBUS_CALL_FLAGS_NONE,
+		-1,
+		NULL,
+		&error);
+	g_assert_no_error(error);
+	// Start watchdog timer
+	error = NULL;
+	parm = NULL;
+	result = g_dbus_proxy_call_sync(proxy,
+		"start",
+		parm,
+		G_DBUS_CALL_FLAGS_NONE,
+		-1,
+		NULL,
+		&error);
+	g_assert_no_error(error);
 
 	control_host_emit_booted(host);
 	return TRUE;
