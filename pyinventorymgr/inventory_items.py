@@ -68,6 +68,7 @@ def getVersion():
 			parts = line.rstrip('\n').split('=')
 			if (parts[0] == "VERSION_ID"):
 				version = parts[1]
+				version = version.strip('"')
 	return version
 
 
