@@ -24,6 +24,7 @@ HWMON_PATH = '/sys/class/hwmon'
 ## need a better way that is not slow
 IFACE_LOOKUP = {
 	'units' : SensorValue.IFACE_NAME,
+	'adjust' : HwmonSensor.IFACE_NAME,
 	'scale' : HwmonSensor.IFACE_NAME,
 	'offset' : HwmonSensor.IFACE_NAME,
 	'critical_upper' : SensorThresholds.IFACE_NAME,
