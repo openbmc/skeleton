@@ -310,7 +310,7 @@ def convertGpio(name):
 HWMON_CONFIG = {
 	'2-004c' :  {
 		'names' : {
-			'temp1_input' : { 'object_path' : 'temperature/ambient','poll_interval' : 5000,'scale' : 1000,'units' : 'C' },
+			'temp1_input' : { 'object_path' : 'temperature/ambient','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
 		}
 	},
 	'3-0050' : {
