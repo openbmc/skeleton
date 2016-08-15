@@ -82,7 +82,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                                 dbus_interface="org.openbmc.Button",
                                 signal_name="Released",
                                 path="/org/openbmc/buttons/power0")
-        bus.add_signal_receiver(self.reset_button_signal_handler,
+        bus.add_signal_receiver(self.long_power_button_signal_handler,
                                 dbus_interface="org.openbmc.Button",
                                 signal_name="PressedLong",
                                 path="/org/openbmc/buttons/power0")
@@ -196,15 +196,16 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
             self.powerOn()
 
     def power_button_signal_handler(self):
-        # toggle power
+        # toggle power, power-on / soft-power-off
         state = self.getPowerState()
         if state == POWER_OFF:
             self.powerOn()
         elif state == POWER_ON:
-            self.powerOff();
+            self.softPowerOff();
 
-    def reset_button_signal_handler(self):
-        self.reboot();
+    def long_power_button_signal_handler(self):
+        print "Long-press button, hard power off"
+        self.powerOff();
 
     def softreset_button_signal_handler(self):
         self.softReboot();
