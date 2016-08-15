@@ -77,6 +77,16 @@ if __name__ == '__main__':
     bus = get_dbus()
     mainloop = gobject.MainLoop()
     obj_parent = Inventory(bus, '/org/openbmc/inventory')
+    INVENTORY_FILE = "/usr/share/inventory/inventory.json"
+
+    if os.path.exists(INVENTORY_FILE):
+        with open(INVENTORY_FILE, 'r') as f:
+            try:
+                inv = json.load(f)
+            except ValueError:
+                print "Invalid JSON detected in " + INVENTORY_FILE
+            else:
+                FRUS = inv
 
     for f in FRUS.keys():
 	obj_path=f.replace("<inventory_root>",System.INVENTORY_ROOT)
