@@ -1,6 +1,7 @@
 #!/usr/bin/python -u
 
 import sys
+import signal
 import subprocess
 import gobject
 import dbus
@@ -194,6 +195,8 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
 
 if __name__ == '__main__':
+    # Ignore SIGCHLD signal, to prevent child process becoming zombie
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = get_dbus()
     obj = SystemManager(bus, OBJ_NAME)
