@@ -52,11 +52,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                 'object_name': '/org/openbmc/control/led/identify',
                 'interface_name': 'org.openbmc.Led'
             },
-            'watchdog': {
-                'bus_name': 'org.openbmc.watchdog.Host',
-                'object_name': '/org/openbmc/watchdog/host0',
-                'interface_name': 'org.openbmc.Watchdog'
-            },
             'host_services': {
                 'bus_name': 'org.openbmc.HostServices',
                 'object_name': '/org/openbmc/HostServices',
@@ -67,10 +62,10 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                 'object_name': '/org/openbmc/settings/host0',
                 'interface_name': 'org.freedesktop.DBus.Properties'
             },
-            'host_control': {
-                'bus_name': 'org.openbmc.control.Host',
-                'object_name': '/org/openbmc/control/host0',
-                'interface_name': 'org.openbmc.control.Host'
+            'systemd': {
+                'bus_name': 'org.freedesktop.systemd1',
+                'object_name': '/org/freedesktop/systemd1',
+                'interface_name': 'org.freedesktop.systemd1.Manager'
             },
         }
 
@@ -130,19 +125,19 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     def powerOn(self):
         print "Turn on power and boot"
         self.Set(DBUS_NAME, "reboot", 0)
-        if (self.getPowerState() == 0):
-            intf = self.getInterface('power_control')
-            intf.setPowerState(POWER_ON)
+        intf = self.getInterface('systemd')
+        f = getattr(intf, 'StartUnit')
+        f.call_async('obmc-chassis-start@0.target', 'replace')
         return None
 
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
     def powerOff(self):
         print "Turn off power"
-        intfwatchdog = self.getInterface('watchdog')
-        intfwatchdog.stop()
-        intf = self.getInterface('power_control')
-        intf.setPowerState(POWER_OFF)
+
+        intf = self.getInterface('systemd')
+        f = getattr(intf, 'StartUnit')
+        f.call_async('obmc-chassis-stop@0.target', 'replace')
         return None
 
     @dbus.service.method(DBUS_NAME,
