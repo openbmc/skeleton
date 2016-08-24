@@ -33,7 +33,7 @@ int gpio_write(GPIO* gpio, uint8_t value)
 	if (value==1)
 	{
 		buf[0]='1';
-	} 
+	}
 	if (write(gpio->fd, buf, 1) != 1)
 	{
 		rc = GPIO_WRITE_ERROR;
@@ -48,7 +48,7 @@ int gpio_read(GPIO* gpio, uint8_t *value)
 	int r = GPIO_OK;
 	if (gpio->fd <= 0)
 	{
-		r = GPIO_ERROR;	
+		r = GPIO_ERROR;
 	}
 	else
 	{
@@ -112,21 +112,21 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
                                    -1,
                                    NULL,
                                    &error);
-  
+
 	if (error != NULL) {
 		return GPIO_LOOKUP_ERROR;
 	}
 	g_assert (result != NULL);
 	g_variant_get (result, "(&si&s)", &gpio->dev,&gpio->num,&gpio->direction);
 	g_print("GPIO Lookup:  %s = %d,%s\n",gpio->name,gpio->num,gpio->direction);
-	
+
 	//export and set direction
 	char dev[254];
 	char data[4];
 	int fd;
 	do {
 		struct stat st;
-		
+
 		sprintf(dev,"%s/gpio%d/value",gpio->dev,gpio->num);
 		//check if gpio is exported, if not export
     		int result = stat(dev, &st);
@@ -137,7 +137,7 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 			if (fd == GPIO_ERROR) {
 				rc = GPIO_OPEN_ERROR;
 				break;
-			} 
+			}
 			sprintf(data,"%d",gpio->num);
 			rc = write(fd,data,strlen(data));
 			close(fd);
