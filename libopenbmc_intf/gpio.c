@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -176,7 +178,7 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 char* get_gpio_dev(GPIO* gpio)
 {
 	char* buf;
-	sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
+	asprintf(&buf, "%s/gpio%d/value", gpio->dev, gpio->num);
 	return buf;
 }
 
