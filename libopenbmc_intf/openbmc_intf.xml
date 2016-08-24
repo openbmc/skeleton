@@ -101,6 +101,7 @@
 		<signal name="Started"/>
 	</interface>
 	<interface name="org.openbmc.control.Bmc">
+		<method name="coldReset"/>
 		<method name="warmReset"/>
 	</interface>
 	<interface name="org.openbmc.control.Host">
