@@ -42,6 +42,28 @@ on_warm_reset(ControlBmc *bmc,
 	return TRUE;
 }
 
+static gboolean
+on_cold_reset(ControlBmc *bmc,
+		GDBusMethodInvocation *invocation,
+		gpointer user_data)
+{
+	GError *err = NULL;
+	/* Wait a while before reboot, so the caller can be responded.
+	 * Note that g_spawn_command_line_async() cannot parse ';' as
+	 * a command separator. Need to use 'sh -c' to let shell parse it.
+	 */
+	gchar *reboot_command = "/bin/sh -c 'sleep 3;reboot'";
+
+	g_spawn_command_line_async(reboot_command, &err);
+	if(err != NULL) {
+		fprintf(stderr, "coldReset() error: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	control_bmc_complete_cold_reset(bmc, invocation);
+	return TRUE;
+}
+
 static void
 on_bus_acquired(GDBusConnection *connection,
 		const gchar *name,
@@ -70,6 +92,10 @@ on_bus_acquired(GDBusConnection *connection,
 			G_CALLBACK(on_init),
 			NULL); /* user_data */
 
+	g_signal_connect(control_bmc,
+			"handle-cold-reset",
+			G_CALLBACK(on_cold_reset),
+			NULL); /* user_data */
 
 	g_signal_connect(control_bmc,
 			"handle-warm-reset",
