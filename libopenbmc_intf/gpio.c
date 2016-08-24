@@ -147,9 +147,27 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 			}
 		}
 		const char* file = "edge";
-		if (strcmp(gpio->direction,"in")==0 || strcmp(gpio->direction,"out")==0)
+		const char* direction = gpio->direction;
+		if (strcmp(direction, "in") == 0)
 		{
 			file = "direction";
+		}
+		else if (strcmp(direction, "out") == 0)
+		{
+			file = "direction";
+
+			// Read current value, so we can set 'high' or 'low'.
+			// Setting direction directly to 'out' is the same as
+			// setting to 'low' which can change the value in the
+			// GPIO.
+			uint8_t value = 0;
+			rc = gpio_open(gpio);
+			if (rc) break;
+			rc = gpio_read(gpio, &value);
+			if (rc) break;
+			gpio_close(gpio);
+
+			direction = (value ? "high" : "low");
 		}
 		sprintf(dev,"%s/gpio%d/%s",gpio->dev,gpio->num,file);
 		fd = open(dev,O_WRONLY);
@@ -157,8 +175,8 @@ int gpio_init(GDBusConnection *connection, GPIO* gpio)
 			rc = GPIO_WRITE_ERROR;
 			break;
 		}
-		rc = write(fd,gpio->direction,strlen(gpio->direction));
-		if (rc != strlen(gpio->direction)) {
+		rc = write(fd,direction,strlen(direction));
+		if (rc != strlen(direction)) {
 			rc = GPIO_WRITE_ERROR;
 			break;
 		}
