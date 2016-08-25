@@ -1,8 +1,5 @@
 #!/usr/bin/python -u
 
-import sys
-import signal
-import subprocess
 import gobject
 import dbus
 import dbus.service
@@ -12,15 +9,12 @@ import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 import obmc.enums
 import obmc_system_config as System
-import obmc.dbuslib.introspection
-import obmc.utils.misc
 import obmc.mapper.utils
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
 INTF_SENSOR = 'org.openbmc.SensorValue'
 INTF_ITEM = 'org.openbmc.InventoryItem'
-INTF_CONTROL = 'org.openbmc.Control'
 
 
 class SystemManager(DbusProperties, DbusObjectManager):
@@ -37,14 +31,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
             self.SystemStateHandler, signal_name="GotoSystemState")
 
         self.Set(DBUS_NAME, "current_state", "")
-        self.system_states = {}
-        self.bin_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-
-        for name in System.APPS.keys():
-            sys_state = System.APPS[name]['system_state']
-            if sys_state not in self.system_states:
-                self.system_states[sys_state] = []
-            self.system_states[sys_state].append(name)
 
         ## replace symbolic path in ID_LOOKUP
         for category in System.ID_LOOKUP:
@@ -60,22 +46,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
     def SystemStateHandler(self, state_name):
         print "Running System State: "+state_name
-        if state_name in self.system_states:
-            for name in self.system_states[state_name]:
-                self.start_process(name)
-
-        try:
-            cb = System.ENTER_STATE_CALLBACK[state_name]
-            for methd in cb.keys():
-                obj = bus.get_object(
-                    cb[methd]['bus_name'],
-                    cb[methd]['obj_name'],
-                    introspect=False)
-                method = obj.get_dbus_method(
-                    methd, cb[methd]['interface_name'])
-                method()
-        except:
-            pass
 
         self.Set(DBUS_NAME, "current_state", state_name)
 
@@ -141,26 +111,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
         # remove the last ','
         return ret_str[:-1]
 
-    def start_process(self, name):
-        if System.APPS[name]['start_process']:
-            app = System.APPS[name]
-            process_name = self.bin_path+"/"+app['process_name']
-            cmdline = []
-            cmdline.append(process_name)
-            if 'args' in app:
-                for a in app['args']:
-                    cmdline.append(a)
-            try:
-                print "Starting process: "+" ".join(cmdline)+": "+name
-                if app['monitor_process']:
-                    app['popen'] = subprocess.Popen(cmdline)
-                else:
-                    subprocess.Popen(cmdline)
-
-            except Exception as e:
-                ## TODO: error
-                print "ERROR: starting process: "+" ".join(cmdline)
-
     def NewObjectHandler(self, obj_path, iprops, bus_name=None):
         current_state = self.Get(DBUS_NAME, "current_state")
         if current_state not in System.EXIT_STATE_DEPEND:
@@ -195,8 +145,6 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
 
 if __name__ == '__main__':
-    # Ignore SIGCHLD signal, to prevent child process becoming zombie
-    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = get_dbus()
     obj = SystemManager(bus, OBJ_NAME)
