@@ -6,7 +6,12 @@ import dbus.service
 import dbus.mainloop.glib
 import obmc.sensors
 from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
-import obmc_system_config as System
+
+try:
+    import obmc_system_config as System
+    has_system = True
+except ImportError:
+    has_system = False
 
 DBUS_NAME = 'org.openbmc.Sensors'
 OBJ_PATH = '/org/openbmc/sensors'
@@ -46,13 +51,14 @@ if __name__ == '__main__':
 
     ## instantiate non-polling sensors
     ## these don't need to be in seperate process
-    for (id, the_sensor) in System.MISC_SENSORS.items():
-        sensor_class = the_sensor['class']
-        obj_path = System.ID_LOOKUP['SENSOR'][id]
-        sensor_obj = getattr(obmc.sensors, sensor_class)(bus, obj_path)
-        if 'os_path' in the_sensor:
-            sensor_obj.sysfs_attr = the_sensor['os_path']
-        root_sensor.add(obj_path, sensor_obj)
+    if has_system:
+        for (id, the_sensor) in System.MISC_SENSORS.items():
+            sensor_class = the_sensor['class']
+            obj_path = System.ID_LOOKUP['SENSOR'][id]
+            sensor_obj = getattr(obmc.sensors, sensor_class)(bus, obj_path)
+            if 'os_path' in the_sensor:
+                sensor_obj.sysfs_attr = the_sensor['os_path']
+            root_sensor.add(obj_path, sensor_obj)
 
     mainloop = gobject.MainLoop()
 
