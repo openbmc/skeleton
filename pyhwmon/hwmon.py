@@ -12,7 +12,12 @@ from obmc.dbuslib.bindings import get_dbus
 from obmc.sensors import SensorValue as SensorValue
 from obmc.sensors import HwmonSensor as HwmonSensor
 from obmc.sensors import SensorThresholds as SensorThresholds
-import obmc_system_config as System
+
+try:
+    import obmc_system_config as System
+    have_system = True
+except ImportError:
+    have_system = False
 
 SENSOR_BUS = 'org.openbmc.Sensors'
 SENSOR_PATH = '/org/openbmc/sensors'
@@ -38,8 +43,10 @@ class Hwmons():
     def __init__(self, bus):
         self.sensors = {}
         self.hwmon_root = {}
-        self.scanDirectory()
-        gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)
+
+	if have_system:
+            self.scanDirectory()
+            gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)
 
     def readAttribute(self, filename):
         val = "-1"
