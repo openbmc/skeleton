@@ -1,7 +1,5 @@
-#!/usr/bin/python -u
+#!/usr/bin/env python
 
-import sys
-import uuid
 import gobject
 import dbus
 import dbus.service
