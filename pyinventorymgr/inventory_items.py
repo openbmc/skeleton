@@ -6,11 +6,20 @@ import dbus.service
 import dbus.mainloop.glib
 import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
-import obmc_system_config as System
+
+try:
+    import obmc_system_config as System
+    have_system = True
+except ImportError:
+    have_system = False
 
 INTF_NAME = 'org.openbmc.InventoryItem'
 DBUS_NAME = 'org.openbmc.Inventory'
-FRUS = System.FRU_INSTANCES
+
+if have_system:
+    FRUS = System.FRU_INSTANCES
+else:
+    FRUS = {}
 
 
 class Inventory(DbusProperties, DbusObjectManager):
