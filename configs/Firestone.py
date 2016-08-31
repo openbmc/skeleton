@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 HOME_PATH = './'
 GPIO_BASE = 320
 SYSTEM_NAME = "Firestone"
