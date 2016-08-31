@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/env python
 
 import gobject
 import dbus
@@ -21,270 +21,273 @@ BMC_OBJ_NAME = '/org/openbmc/control/bmc0'
 UPDATE_PATH = '/run/initramfs'
 
 
-def doExtract(members,files):
+def doExtract(members, files):
     for tarinfo in members:
-        if files.has_key(tarinfo.name) == True:
+        if tarinfo.name in files:
             yield tarinfo
 
 
-class BmcFlashControl(DbusProperties,DbusObjectManager):
-	def __init__(self,bus,name):
-		self.dbus_objects = { }
-		DbusProperties.__init__(self)
-		DbusObjectManager.__init__(self)
-		dbus.service.Object.__init__(self,bus,name)
-		
-		self.Set(DBUS_NAME,"status","Idle")
-		self.Set(DBUS_NAME,"filename","")
-		self.Set(DBUS_NAME,"preserve_network_settings",True)
-		self.Set(DBUS_NAME,"restore_application_defaults",False)
-		self.Set(DBUS_NAME,"update_kernel_and_apps",False)
-		self.Set(DBUS_NAME,"clear_persistent_files",False)
-		self.Set(DBUS_NAME,"auto_apply",False)
+class BmcFlashControl(DbusProperties, DbusObjectManager):
+    def __init__(self, bus, name):
+        self.dbus_objects = {}
+        DbusProperties.__init__(self)
+        DbusObjectManager.__init__(self)
+        dbus.service.Object.__init__(self, bus, name)
 
-		bus.add_signal_receiver(self.download_error_handler,signal_name = "DownloadError")
-		bus.add_signal_receiver(self.download_complete_handler,signal_name = "DownloadComplete")
+        self.Set(DBUS_NAME, "status", "Idle")
+        self.Set(DBUS_NAME, "filename", "")
+        self.Set(DBUS_NAME, "preserve_network_settings", True)
+        self.Set(DBUS_NAME, "restore_application_defaults", False)
+        self.Set(DBUS_NAME, "update_kernel_and_apps", False)
+        self.Set(DBUS_NAME, "clear_persistent_files", False)
+        self.Set(DBUS_NAME, "auto_apply", False)
 
-		self.update_process = None
-		self.progress_name = None
+        bus.add_signal_receiver(
+            self.download_error_handler, signal_name="DownloadError")
+        bus.add_signal_receiver(
+            self.download_complete_handler, signal_name="DownloadComplete")
 
+        self.update_process = None
+        self.progress_name = None
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='ss', out_signature='')
-	def updateViaTftp(self,ip,filename):
-		self.Set(DBUS_NAME,"status","Downloading")
-		self.TftpDownload(ip,filename)
+    @dbus.service.method(
+        DBUS_NAME, in_signature='ss', out_signature='')
+    def updateViaTftp(self, ip, filename):
+        self.Set(DBUS_NAME, "status", "Downloading")
+        self.TftpDownload(ip, filename)
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='s', out_signature='')
-	def update(self,filename):
-		self.Set(DBUS_NAME,"filename",filename)
-		self.download_complete_handler(filename, filename)
+    @dbus.service.method(
+        DBUS_NAME, in_signature='s', out_signature='')
+    def update(self, filename):
+        self.Set(DBUS_NAME, "filename", filename)
+        self.download_complete_handler(filename, filename)
 
-	@dbus.service.signal(DOWNLOAD_INTF,signature='ss')
-	def TftpDownload(self,ip,filename):
-		self.Set(DBUS_NAME,"filename",filename)
-		pass		
+    @dbus.service.signal(DOWNLOAD_INTF, signature='ss')
+    def TftpDownload(self, ip, filename):
+        self.Set(DBUS_NAME, "filename", filename)
+        pass
 
+    ## Signal handler
+    def download_error_handler(self, filename):
+        if (filename == self.Get(DBUS_NAME, "filename")):
+            self.Set(DBUS_NAME, "status", "Download Error")
 
-	## Signal handler
-	def download_error_handler(self,filename):
-		if (filename == self.Get(DBUS_NAME,"filename")):
-			self.Set(DBUS_NAME,"status","Download Error")
+    def download_complete_handler(self, outfile, filename):
+        ## do update
+        if (filename != self.Get(DBUS_NAME, "filename")):
+            return
 
-	def download_complete_handler(self,outfile,filename):
-		## do update
-		if (filename != self.Get(DBUS_NAME,"filename")):
-			return
-	
-		print "Download complete. Updating..."
-	
-		self.Set(DBUS_NAME,"status","Download Complete")
-		copy_files = {}
-		
-		## determine needed files
-		if (self.Get(DBUS_NAME,"update_kernel_and_apps") == False):
-			copy_files["image-bmc"] = True
-		else:
-			copy_files["image-kernel"] = True
-			copy_files["image-initramfs"] = True
-			copy_files["image-rofs"] = True
+        print "Download complete. Updating..."
 
-		if (self.Get(DBUS_NAME,"restore_application_defaults") == True):
-			copy_files["image-rwfs"] = True
-			
-		
-		## make sure files exist in archive
-		try:
-			tar = tarfile.open(outfile,"r")
-			files = {}
-			for f in tar.getnames():
-				files[f] = True
-			tar.close()
-			for f in copy_files.keys():
-				if (files.has_key(f) == False):
-					raise Exception("ERROR: File not found in update archive: "+f)							
+        self.Set(DBUS_NAME, "status", "Download Complete")
+        copy_files = {}
 
-		except Exception as e:
-			print e
-			self.Set(DBUS_NAME,"status","Unpack Error")
-			return
+        ## determine needed files
+        if not self.Get(DBUS_NAME, "update_kernel_and_apps"):
+            copy_files["image-bmc"] = True
+        else:
+            copy_files["image-kernel"] = True
+            copy_files["image-initramfs"] = True
+            copy_files["image-rofs"] = True
 
-		try:
-			tar = tarfile.open(outfile,"r")
-			tar.extractall(UPDATE_PATH,members=doExtract(tar,copy_files))
-			tar.close()
+        if self.Get(DBUS_NAME, "restore_application_defaults"):
+            copy_files["image-rwfs"] = True
 
-			if (self.Get(DBUS_NAME,"clear_persistent_files") == True):
-				print "Removing persistent files"
-				try:
-					os.unlink(UPDATE_PATH+"/whitelist")
-				except OSError as e:
-					if (e.errno == errno.EISDIR):
-						pass
-					elif (e.errno == errno.ENOENT):
-						pass
-					else:
-						raise
+        ## make sure files exist in archive
+        try:
+            tar = tarfile.open(outfile, "r")
+            files = {}
+            for f in tar.getnames():
+                files[f] = True
+            tar.close()
+            for f in copy_files.keys():
+                if f not in files:
+                    raise Exception(
+                        "ERROR: File not found in update archive: "+f)
 
-				try:
-					wldir = UPDATE_PATH + "/whitelist.d"
+        except Exception as e:
+            print e
+            self.Set(DBUS_NAME, "status", "Unpack Error")
+            return
 
-					for file in os.listdir(wldir):
-						os.unlink(os.path.join(wldir,file))
-				except OSError as e:
-					if (e.errno == errno.EISDIR):
-						pass
-					else:
-						raise
+        try:
+            tar = tarfile.open(outfile, "r")
+            tar.extractall(UPDATE_PATH, members=doExtract(tar, copy_files))
+            tar.close()
 
-			if (self.Get(DBUS_NAME,"preserve_network_settings") == True):
-				print "Preserving network settings"
-				shutil.copy2("/run/fw_env",UPDATE_PATH+"/image-u-boot-env")
-				
-		except Exception as e:
-			print e
-			self.Set(DBUS_NAME,"status","Unpack Error")
+            if self.Get(DBUS_NAME, "clear_persistent_files"):
+                print "Removing persistent files"
+                try:
+                    os.unlink(UPDATE_PATH+"/whitelist")
+                except OSError as e:
+                    if (e.errno == errno.EISDIR):
+                        pass
+                    elif (e.errno == errno.ENOENT):
+                        pass
+                    else:
+                        raise
 
-		self.Verify()
+                try:
+                    wldir = UPDATE_PATH + "/whitelist.d"
 
-	def Verify(self):
-		self.Set(DBUS_NAME,"status","Checking Image")
-		try:
-			subprocess.check_call([
-				"/run/initramfs/update",
-				"--no-flash",
-				"--no-save-files",
-				"--no-restore-files",
-				"--no-clean-saved-files" ])
+                    for file in os.listdir(wldir):
+                        os.unlink(os.path.join(wldir, file))
+                except OSError as e:
+                    if (e.errno == errno.EISDIR):
+                        pass
+                    else:
+                        raise
 
-			self.Set(DBUS_NAME,"status","Image ready to apply.")
-			if (self.Get(DBUS_NAME,"auto_apply")):
-				self.Apply()
-		except:
-			self.Set(DBUS_NAME,"auto_apply",False)
-			try:
-				subprocess.check_output([
-					"/run/initramfs/update",
-					"--no-flash",
-					"--ignore-mount",
-					"--no-save-files",
-					"--no-restore-files",
-					"--no-clean-saved-files" ],
-					stderr = subprocess.STDOUT)
-				self.Set(DBUS_NAME,"status","Deferred for mounted filesystem. reboot BMC to apply.")
-			except subprocess.CalledProcessError as e:
-				self.Set(DBUS_NAME,"status","Verify error: %s"
-					%  e.output)
-			except OSError as e:
-				self.Set(DBUS_NAME,"status","Verify error: problem calling update: %s" %  e.strerror)
+            if self.Get(DBUS_NAME, "preserve_network_settings"):
+                print "Preserving network settings"
+                shutil.copy2("/run/fw_env", UPDATE_PATH+"/image-u-boot-env")
 
+        except Exception as e:
+            print e
+            self.Set(DBUS_NAME, "status", "Unpack Error")
 
-	def Cleanup(self):
-		if self.progress_name:
-			try:
-				os.unlink(self.progress_name)
-				self.progress_name = None
-			except oserror as e:
-				if e.errno == EEXIST:
-					pass
-				raise
-		self.update_process = None
-		self.Set(DBUS_NAME,"status","Idle")
+        self.Verify()
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='', out_signature='')
-	def Abort(self):
-		if self.update_process:
-			try:
-				self.update_process.kill()
-			except:
-				pass
-		for file in os.listdir(UPDATE_PATH):
-			if file.startswith('image-'):
-				os.unlink(os.path.join(UPDATE_PATH,file))
+    def Verify(self):
+        self.Set(DBUS_NAME, "status", "Checking Image")
+        try:
+            subprocess.check_call([
+                "/run/initramfs/update",
+                "--no-flash",
+                "--no-save-files",
+                "--no-restore-files",
+                "--no-clean-saved-files"])
 
-		self.Cleanup();
+            self.Set(DBUS_NAME, "status", "Image ready to apply.")
+            if (self.Get(DBUS_NAME, "auto_apply")):
+                self.Apply()
+        except:
+            self.Set(DBUS_NAME, "auto_apply", False)
+            try:
+                subprocess.check_output([
+                    "/run/initramfs/update",
+                    "--no-flash",
+                    "--ignore-mount",
+                    "--no-save-files",
+                    "--no-restore-files",
+                    "--no-clean-saved-files"],
+                    stderr=subprocess.STDOUT)
+                self.Set(
+                    DBUS_NAME, "status",
+                    "Deferred for mounted filesystem. reboot BMC to apply.")
+            except subprocess.CalledProcessError as e:
+                self.Set(
+                    DBUS_NAME, "status", "Verify error: %s" % e.output)
+            except OSError as e:
+                self.Set(
+                    DBUS_NAME, "status",
+                    "Verify error: problem calling update: %s" % e.strerror)
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='', out_signature='s')
-	def GetUpdateProgress(self):
-		msg = ""
+    def Cleanup(self):
+        if self.progress_name:
+            try:
+                os.unlink(self.progress_name)
+                self.progress_name = None
+            except oserror as e:
+                if e.errno == EEXIST:
+                    pass
+                raise
+        self.update_process = None
+        self.Set(DBUS_NAME, "status", "Idle")
 
-		if self.update_process and self.update_process.returncode is None:
-			self.update_process.poll()
+    @dbus.service.method(
+        DBUS_NAME, in_signature='', out_signature='')
+    def Abort(self):
+        if self.update_process:
+            try:
+                self.update_process.kill()
+            except:
+                pass
+        for file in os.listdir(UPDATE_PATH):
+            if file.startswith('image-'):
+                os.unlink(os.path.join(UPDATE_PATH, file))
 
-		if (self.update_process is None):
-			pass
-		elif (self.update_process.returncode > 0):
-			self.Set(DBUS_NAME,"status","Apply failed")
-		elif (self.update_process.returncode is None):
-			pass
-		else:			# (self.update_process.returncode == 0)
-			files = ""
-			for file in os.listdir(UPDATE_PATH):
-				if file.startswith('image-'):
-					files = files + file;
-			if files == "":
-				msg = "Apply Complete.  Reboot to take effect."
-			else:
-				msg = "Apply Incomplete, Remaining:" + files
-			self.Set(DBUS_NAME,"status", msg)
+        self.Cleanup()
 
-		msg = self.Get(DBUS_NAME,"status") + "\n";
-		if self.progress_name:
-			try:
-				prog = open(self.progress_name,'r')
-				for line in prog:
-					# strip off initial sets of xxx\r here
-					# ignore crlf at the end
-					# cr will be -1 if no '\r' is found
-					cr = line.rfind("\r", 0, -2)
-					msg = msg + line[cr + 1: ]
-			except OSError as e:
-				if (e.error == EEXIST):
-					pass
-				raise
-		return msg
+    @dbus.service.method(
+        DBUS_NAME, in_signature='', out_signature='s')
+    def GetUpdateProgress(self):
+        msg = ""
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='', out_signature='')
-	def Apply(self):
-		progress = None
-		self.Set(DBUS_NAME,"status","Writing images to flash")
-		try:
-			progress = tempfile.NamedTemporaryFile(
-				delete = False, prefix="progress." )
-			self.progress_name = progress.name
-			self.update_process = subprocess.Popen([
-				"/run/initramfs/update" ],
-				stdout = progress.file,
-				stderr = subprocess.STDOUT )
-		except Exception as e:
-			try:
-				progress.close()
-				os.unlink(progress.name)
-				self.progress_name = None
-			except:
-				pass
-			raise
+        if self.update_process and self.update_process.returncode is None:
+            self.update_process.poll()
 
-		try:
-			progress.close()
-		except:
-			pass
+        if (self.update_process is None):
+            pass
+        elif (self.update_process.returncode > 0):
+            self.Set(DBUS_NAME, "status", "Apply failed")
+        elif (self.update_process.returncode is None):
+            pass
+        else:            # (self.update_process.returncode == 0)
+            files = ""
+            for file in os.listdir(UPDATE_PATH):
+                if file.startswith('image-'):
+                    files = files + file
+            if files == "":
+                msg = "Apply Complete.  Reboot to take effect."
+            else:
+                msg = "Apply Incomplete, Remaining:" + files
+            self.Set(DBUS_NAME, "status", msg)
 
-	@dbus.service.method(DBUS_NAME,
-		in_signature='', out_signature='')
-	def PrepareForUpdate(self):
-		subprocess.call([
-			"fw_setenv",
-			"openbmconce",
-			"copy-files-to-ram copy-base-filesystem-to-ram"])
-		self.Set(DBUS_NAME,"status","Switch to update mode in progress")
-		o = bus.get_object(BMC_DBUS_NAME, BMC_OBJ_NAME)
-		intf = dbus.Interface(o, BMC_DBUS_NAME)
-		intf.warmReset()
+        msg = self.Get(DBUS_NAME, "status") + "\n"
+        if self.progress_name:
+            try:
+                prog = open(self.progress_name, 'r')
+                for line in prog:
+                    # strip off initial sets of xxx\r here
+                    # ignore crlf at the end
+                    # cr will be -1 if no '\r' is found
+                    cr = line.rfind("\r", 0, -2)
+                    msg = msg + line[cr + 1:]
+            except OSError as e:
+                if (e.error == EEXIST):
+                    pass
+                raise
+        return msg
+
+    @dbus.service.method(
+        DBUS_NAME, in_signature='', out_signature='')
+    def Apply(self):
+        progress = None
+        self.Set(DBUS_NAME, "status", "Writing images to flash")
+        try:
+            progress = tempfile.NamedTemporaryFile(
+                delete=False, prefix="progress.")
+            self.progress_name = progress.name
+            self.update_process = subprocess.Popen([
+                "/run/initramfs/update"],
+                stdout=progress.file,
+                stderr=subprocess.STDOUT)
+        except Exception as e:
+            try:
+                progress.close()
+                os.unlink(progress.name)
+                self.progress_name = None
+            except:
+                pass
+            raise
+
+        try:
+            progress.close()
+        except:
+            pass
+
+    @dbus.service.method(
+        DBUS_NAME, in_signature='', out_signature='')
+    def PrepareForUpdate(self):
+        subprocess.call([
+            "fw_setenv",
+            "openbmconce",
+            "copy-files-to-ram copy-base-filesystem-to-ram"])
+        self.Set(DBUS_NAME, "status", "Switch to update mode in progress")
+        o = bus.get_object(BMC_DBUS_NAME, BMC_OBJ_NAME)
+        intf = dbus.Interface(o, BMC_DBUS_NAME)
+        intf.warmReset()
 
 
 if __name__ == '__main__':
@@ -296,7 +299,6 @@ if __name__ == '__main__':
 
     obj.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME, bus)
-    
+
     print "Running Bmc Flash Control"
     mainloop.run()
-
