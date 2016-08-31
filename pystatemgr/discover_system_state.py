@@ -62,15 +62,14 @@ if (pgood == 1):
     intf.setValue("Enabled")
 else:
     ## Power is off, so check power policy
-    settings_intf = getInterface(bus,dbus_objects,'settings')
-    system_state = settings_intf.Get("org.openbmc.settings.Host","system_state")
+    chassis_intf = getInterface(bus,dbus_objects,'chassis')
+    system_last_state = chassis_intf.getSystemLastState()
     power_policy = settings_intf.Get("org.openbmc.settings.Host","power_policy")
 
-    print "Last System State: "+system_state+";  Power Policy: "+power_policy
-    chassis_intf = getInterface(bus,dbus_objects,'chassis')
+    print "Last System State: "+system_last_state+";  Power Policy: "+power_policy
     if (power_policy == "ALWAYS_POWER_ON" or
        (power_policy == "RESTORE_LAST_STATE" and 
-        system_state =="HOST_POWERED_ON")):
+        system_last_state == "HOST_POWERED_ON")):
         chassis_intf.powerOn()
 
 
