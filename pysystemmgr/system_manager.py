@@ -16,6 +16,9 @@ OBJ_NAME = '/org/openbmc/managers/System'
 INTF_SENSOR = 'org.openbmc.SensorValue'
 INTF_ITEM = 'org.openbmc.InventoryItem'
 
+SYS_STATE_FILE = '/var/lib/obmc/last_system_state'
+POWER_OFF = 0
+POWER_ON = 1
 
 class SystemManager(DbusProperties, DbusObjectManager):
     def __init__(self, bus, obj_name):
@@ -30,8 +33,15 @@ class SystemManager(DbusProperties, DbusObjectManager):
         bus.add_signal_receiver(
             self.SystemStateHandler, signal_name="GotoSystemState")
 
-        self.Set(DBUS_NAME, "current_state", "")
+        bus.add_signal_receiver(
+            self.chassisPowerStateHandler,
+            dbus_interface="org.freedesktop.DBus.Properties",
+            signal_name="PropertiesChanged",
+            path="/org/openbmc/control/power0")
 
+        self.Set(DBUS_NAME, "current_state", "")
+        self.Set(DBUS_NAME, "system_last_state", "")
+        self.read_last_system_state_from_disk()
         ## replace symbolic path in ID_LOOKUP
         for category in System.ID_LOOKUP:
             for key in System.ID_LOOKUP[category]:
@@ -43,6 +53,14 @@ class SystemManager(DbusProperties, DbusObjectManager):
         self.SystemStateHandler(System.SYSTEM_STATES[0])
 
         print "SystemManager Init Done"
+
+    def chassisPowerStateHandler(self, interface_name, changed_properties, invalidated_properties):
+        for name, value in changed_properties.items():
+            if name == 'state': 
+                if value == POWER_OFF:
+                    self.write_last_system_state_to_disk("HOST_POWERED_OFF")
+                elif value == POWER_ON:
+                    self.write_last_system_state_to_disk("HOST_POWERED_ON") 
 
     def SystemStateHandler(self, state_name):
         print "Running System State: "+state_name
@@ -68,6 +86,24 @@ class SystemManager(DbusProperties, DbusObjectManager):
             new_state_name = System.SYSTEM_STATES[s]
             print "SystemManager Goto System State: "+new_state_name
             self.SystemStateHandler(new_state_name)
+
+    def read_last_system_state_from_disk(self):
+        #Default State
+        state = "HOST_POWERED_ON"
+        try:
+            with open(SYS_STATE_FILE, 'r+') as f:
+                state = f.readline().rstrip('\n')
+        except IOError:
+            pass
+
+        self.Set(DBUS_NAME, "system_last_state",state)
+        return state
+
+    def write_last_system_state_to_disk(self,state):
+        with open(SYS_STATE_FILE, 'w+') as f:
+            f.write(state)
+            self.Set(DBUS_NAME, "system_last_state", state)
+
 
     @dbus.service.method(DBUS_NAME, in_signature='', out_signature='s')
     def getSystemState(self):

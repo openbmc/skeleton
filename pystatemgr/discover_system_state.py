@@ -29,10 +29,15 @@ dbus_objects = {
         'object_name': '/org/openbmc/control/chassis0',
         'interface_name': 'org.openbmc.control.Chassis'
     },
-    'settings': {
-        'bus_name': 'org.openbmc.settings.Host',
-        'object_name': '/org/openbmc/settings/host0',
-        'interface_name': 'org.freedesktop.DBus.Properties'
+    'settings' : {
+        'bus_name' : 'org.openbmc.settings.Host',
+        'object_name' : '/org/openbmc/settings/host0',
+        'interface_name' : 'org.freedesktop.DBus.Properties'
+    },
+    'system' : {
+        'bus_name' : 'org.openbmc.managers.System',
+        'object_name' : '/org/openbmc/managers/System',
+        'interface_name' : 'org.freedesktop.DBus.Properties'
     },
 }
 
@@ -62,15 +67,15 @@ if (pgood == 1):
     intf.setValue("Enabled")
 else:
     ## Power is off, so check power policy
-    settings_intf = getInterface(bus, dbus_objects, 'settings')
-    system_state = settings_intf.Get(
-        "org.openbmc.settings.Host", "system_state")
-    power_policy = settings_intf.Get(
-        "org.openbmc.settings.Host", "power_policy")
+    settings_intf = getInterface(bus,dbus_objects,'settings')
+    system_intf = getInterface(bus,dbus_objects,'system') 
+    system_last_state = system_intf.Get("org.openbmc.managers.System","system_last_state")
+    power_policy = settings_intf.Get("org.openbmc.settings.Host","power_policy")
 
-    print "Last System State: "+system_state+";  Power Policy: "+power_policy
-    chassis_intf = getInterface(bus, dbus_objects, 'chassis')
+    print "Last System State: "+system_last_state+";  Power Policy: "+power_policy
+    chassis_intf = getInterface(bus,dbus_objects,'chassis')
+
     if (power_policy == "ALWAYS_POWER_ON" or
-            (power_policy == "RESTORE_LAST_STATE" and
-             system_state == "HOST_POWERED_ON")):
+       (power_policy == "RESTORE_LAST_STATE" and 
+        system_last_state == "HOST_POWERED_ON")):
         chassis_intf.powerOn()
