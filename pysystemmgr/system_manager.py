@@ -16,6 +16,9 @@ OBJ_NAME = '/org/openbmc/managers/System'
 INTF_SENSOR = 'org.openbmc.SensorValue'
 INTF_ITEM = 'org.openbmc.InventoryItem'
 
+SYS_STATE_FILE = '/var/lib/obmc/last-system-state'
+POWER_OFF = "0"
+
 
 class SystemManager(DbusProperties, DbusObjectManager):
     def __init__(self, bus, obj_name):
@@ -30,9 +33,16 @@ class SystemManager(DbusProperties, DbusObjectManager):
         bus.add_signal_receiver(
             self.SystemStateHandler, signal_name="GotoSystemState")
 
-        self.Set(DBUS_NAME, "current_state", "")
+        bus.add_signal_receiver(
+            self.chassisPowerStateHandler,
+            dbus_interface="org.freedesktop.DBus.Properties",
+            signal_name="PropertiesChanged",
+            path="/org/openbmc/control/power0")
 
-        ## replace symbolic path in ID_LOOKUP
+        self.Set(DBUS_NAME, "current_state", "")
+        self.Set(DBUS_NAME, "system_last_state", POWER_OFF)
+        self.import_system_state_from_disk()
+        # replace symbolic path in ID_LOOKUP
         for category in System.ID_LOOKUP:
             for key in System.ID_LOOKUP[category]:
                 val = System.ID_LOOKUP[category][key]
@@ -43,6 +53,12 @@ class SystemManager(DbusProperties, DbusObjectManager):
         self.SystemStateHandler(System.SYSTEM_STATES[0])
 
         print "SystemManager Init Done"
+
+    def chassisPowerStateHandler(self, interface_name, changed_properties,
+                                 invalidated_properties):
+        value = changed_properties.get('state')
+        if value is not None:
+            self.write_to_disk_and_update(str(value))
 
     def SystemStateHandler(self, state_name):
         print "Running System State: "+state_name
@@ -68,6 +84,24 @@ class SystemManager(DbusProperties, DbusObjectManager):
             new_state_name = System.SYSTEM_STATES[s]
             print "SystemManager Goto System State: "+new_state_name
             self.SystemStateHandler(new_state_name)
+
+    def import_system_state_from_disk(self):
+        state = str(POWER_OFF)
+        try:
+            with open(SYS_STATE_FILE, 'r+') as f:
+                state = f.readline().rstrip('\n')
+        except IOError:
+            pass
+        self.Set(DBUS_NAME, "system_last_state", state)
+        return state
+
+    def write_to_disk_and_update(self, state):
+        try:
+            with open(SYS_STATE_FILE, 'w+') as f:
+                f.write(str(state))
+                self.Set(DBUS_NAME, "system_last_state", state)
+        except IOError:
+            pass
 
     @dbus.service.method(DBUS_NAME, in_signature='', out_signature='s')
     def getSystemState(self):
