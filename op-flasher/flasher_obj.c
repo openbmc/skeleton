@@ -13,13 +13,10 @@
 #include <limits.h>
 #include <arpa/inet.h>
 #include <assert.h>
-
-#include <libflash/libflash.h>
+#include <libflash/arch_flash.h>
 #include <libflash/libffs.h>
-#include "progress.h"
-#include "io.h"
-#include "ast.h"
-#include "sfc-ctrl.h"
+#include <libflash/blocklevel.h>
+#include <libflash/errors.h>
 #include <openbmc_intf.h>
 #include <openbmc.h>
 
@@ -30,18 +27,12 @@ static GDBusObjectManagerServer *manager = NULL;
 
 #define __aligned(x)			__attribute__((aligned(x)))
 
-#define PFLASH_VERSION	"0.8.6"
-
 static bool need_relock;
-#ifdef __powerpc__
-static bool using_sfc;
-#endif
 
 #define FILE_BUF_SIZE	0x10000
 static uint8_t file_buf[FILE_BUF_SIZE] __aligned(0x1000);
 
-static struct spi_flash_ctrl	*fl_ctrl;
-static struct flash_chip	*fl_chip;
+static struct blocklevel_device *bl;
 static struct ffs_handle	*ffsh;
 static uint32_t			fl_total_size, fl_erase_granule;
 static const char		*fl_name;
@@ -59,7 +50,7 @@ erase_chip(void)
 	printf("Erasing... (may take a while !) ");
 	fflush(stdout);
 
-	rc = flash_erase_chip(fl_chip);
+	rc = arch_flash_erase_chip(bl);
 	if(rc) {
 		fprintf(stderr, "Error %d erasing chip\n", rc);
 		return(rc);
@@ -132,7 +123,7 @@ program_file(FlashControl* flash_control, const char *file, uint32_t start, uint
 			len = size;
 		size -= len;
 		actual_size += len;
-		rc = flash_write(fl_chip, start, file_buf, len, true);
+		rc = blocklevel_write(bl, start, file_buf, len);
 		if(rc) {
 			if(rc == FLASH_ERR_VERIFY_FAILURE)
 				fprintf(stderr, "Verification failed for"
@@ -165,30 +156,17 @@ flash_access_cleanup_bmc(void)
 {
 	if(ffsh)
 		ffs_close(ffsh);
-	flash_exit(fl_chip);
-	ast_sf_close(fl_ctrl);
-	close_devs();
+	arch_flash_close(bl, NULL);
 }
 
 static int
-flash_access_setup_bmc(bool use_lpc, bool need_write)
+flash_access_setup_bmc(bool need_write)
 {
 	int rc;
 	printf("Setting up BMC flash\n");
-	/* Open and map devices */
-	open_devs(use_lpc, true);
 
-	/* Create the AST flash controller */
-	rc = ast_sf_open(AST_SF_TYPE_BMC, &fl_ctrl);
-	if(rc) {
-		fprintf(stderr, "Failed to open controller\n");
-		return FLASH_SETUP_ERROR;
-	}
-
-	/* Open flash chip */
-	rc = flash_init(fl_ctrl, &fl_chip);
-	if(rc) {
-		fprintf(stderr, "Failed to open flash chip\n");
+	if(arch_flash_bmc(bl, BMC_DIRECT) != BMC_DIRECT) {
+		fprintf(stderr, "Failed to init flash chip\n");
 		return FLASH_SETUP_ERROR;
 	}
 
@@ -202,54 +180,21 @@ flash_access_cleanup_pnor(void)
 {
 	/* Re-lock flash */
 	if(need_relock)
-		set_wrprotect(true);
+		arch_flash_set_wrprotect(bl, 1);
 
-	if(ffsh)
-		ffs_close(ffsh);
-	flash_exit(fl_chip);
-#ifdef __powerpc__
-	if(using_sfc)
-		sfc_close(fl_ctrl);
-	else
-		ast_sf_close(fl_ctrl);
-#else
-	ast_sf_close(fl_ctrl);
-#endif
-	close_devs();
+	flash_access_cleanup_bmc();
 }
 
 static int
-flash_access_setup_pnor(bool use_lpc, bool use_sfc, bool need_write)
+flash_access_setup_pnor(bool need_write)
 {
 	int rc;
 	printf("Setting up BIOS flash\n");
 
-	/* Open and map devices */
-	open_devs(use_lpc, false);
-
-#ifdef __powerpc__
-	if(use_sfc) {
-		/* Create the SFC flash controller */
-		rc = sfc_open(&fl_ctrl);
-		if(rc) {
-			fprintf(stderr, "Failed to open controller\n");
-			return FLASH_SETUP_ERROR;
-		}
-		using_sfc = true;
-	} else {
-#endif
-		/* Create the AST flash controller */
-		rc = ast_sf_open(AST_SF_TYPE_PNOR, &fl_ctrl);
-		if(rc) {
-			fprintf(stderr, "Failed to open controller\n");
-			return FLASH_SETUP_ERROR;
-		}
-#ifdef __powerpc__
-	}
-#endif
+	/* Create the AST flash controller */
 
 	/* Open flash chip */
-	rc = flash_init(fl_ctrl, &fl_chip);
+	rc = arch_flash_init(&bl, NULL, true);
 	if(rc) {
 		fprintf(stderr, "Failed to open flash chip\n");
 		return FLASH_SETUP_ERROR;
@@ -257,7 +202,7 @@ flash_access_setup_pnor(bool use_lpc, bool use_sfc, bool need_write)
 
 	/* Unlock flash (PNOR only) */
 	if(need_write)
-		need_relock = set_wrprotect(false);
+		need_relock = arch_flash_set_wrprotect(bl, 0);
 
 	/* Setup cleanup function */
 	atexit(flash_access_cleanup_pnor);
@@ -267,43 +212,30 @@ flash_access_setup_pnor(bool use_lpc, bool use_sfc, bool need_write)
 uint8_t
 flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char* write_file, char* obj_path)
 {
-	bool has_sfc = false, has_ast = false, use_lpc = true;
 	bool erase = true, program = true;
 
 	int rc;
 	printf("flasher: %s, BMC = %d, address = 0x%x\n",write_file,bmc_flash,address);
-#ifdef __arm__
-	/* Check platform */
-	check_platform(&has_sfc, &has_ast);
 
 	/* Prepare for access */
 	if(bmc_flash) {
-		if(!has_ast) {
-			fprintf(stderr, "No BMC on this platform\n");
-			return FLASH_SETUP_ERROR;
-		}
-		rc = flash_access_setup_bmc(use_lpc, erase || program);
+		rc = flash_access_setup_bmc(erase || program);
 		if(rc) {
 			return FLASH_SETUP_ERROR;
 		}
 	} else {
-		if(!has_ast && !has_sfc) {
-			fprintf(stderr, "No BMC nor SFC on this platform\n");
-			return FLASH_SETUP_ERROR;
-		}
-		rc = flash_access_setup_pnor(use_lpc, has_sfc, erase || program);
+		rc = flash_access_setup_pnor(erase || program);
 		if(rc) {
 			return FLASH_SETUP_ERROR;
 		}
 	}
 
-	rc = flash_get_info(fl_chip, &fl_name,
+	rc = blocklevel_get_info(bl, &fl_name,
 			&fl_total_size, &fl_erase_granule);
 	if(rc) {
 		fprintf(stderr, "Error %d getting flash info\n", rc);
 		return FLASH_SETUP_ERROR;
 	}
-#endif
 	if(strcmp(write_file,"")!=0)
 	{
 		// If file specified but not size, get size from file
@@ -313,7 +245,6 @@ flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char* write_
 			return FLASH_ERROR;
 		}
 		uint32_t write_size = stbuf.st_size;
-#ifdef __arm__
 		rc = erase_chip();
 		if(rc) {
 			return FLASH_ERROR;
@@ -322,7 +253,6 @@ flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char* write_
 		if(rc) {
 			return FLASH_ERROR;
 		}
-#endif
 
 		printf("Flash done\n");
 	}
