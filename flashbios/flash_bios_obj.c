@@ -372,7 +372,7 @@ main(gint argc, gchar *argv[])
 	guint id;
 	loop = g_main_loop_new(NULL, FALSE);
 
-	//signal(SIGCHLD, catch_child);
+	signal(SIGCHLD, catch_child);
 	id = g_bus_own_name(DBUS_TYPE,
 			dbus_name,
 			G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
