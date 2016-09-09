@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+import sys
 import gobject
 import dbus
 import dbus.service
