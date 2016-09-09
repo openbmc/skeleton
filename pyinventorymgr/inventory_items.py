@@ -26,15 +26,16 @@ else:
 
 class Inventory(DbusProperties, DbusObjectManager):
     def __init__(self, bus, name):
-        DbusProperties.__init__(self)
-        DbusObjectManager.__init__(self)
-        dbus.service.Object.__init__(self, bus, name)
+        super(Inventory, self).__init__(
+            conn=bus,
+            object_path=name)
 
 
 class InventoryItem(DbusProperties):
     def __init__(self, bus, name, data):
-        DbusProperties.__init__(self)
-        dbus.service.Object.__init__(self, bus, name)
+        super(InventoryItem, self).__init__(
+            conn=bus,
+            object_path=name)
 
         self.name = name
 

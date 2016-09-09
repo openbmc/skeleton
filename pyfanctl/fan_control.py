@@ -24,9 +24,9 @@ FAN_IFACE = 'org.openbmc.SensorValue'
 
 class FanControl(DbusProperties, DbusObjectManager):
     def __init__(self, bus, name):
-        DbusProperties.__init__(self)
-        DbusObjectManager.__init__(self)
-        dbus.service.Object.__init__(self, bus, name)
+        super(FanControl, self).__init__(
+            conn=bus,
+            object_path=name)
         self.Set(IFACE_NAME, "floor", 250)
         self.Set(IFACE_NAME, "ceiling", 255)
         self.fan_intf = []

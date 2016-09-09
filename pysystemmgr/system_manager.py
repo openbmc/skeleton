@@ -19,9 +19,9 @@ INTF_ITEM = 'org.openbmc.InventoryItem'
 
 class SystemManager(DbusProperties, DbusObjectManager):
     def __init__(self, bus, obj_name):
-        DbusProperties.__init__(self)
-        DbusObjectManager.__init__(self)
-        dbus.service.Object.__init__(self, bus, obj_name)
+        super(SystemManager, self).__init__(
+            conn=bus,
+            object_path=obj_name)
         self.bus = bus
 
         bus.add_signal_receiver(

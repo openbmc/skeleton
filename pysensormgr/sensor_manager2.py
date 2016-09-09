@@ -19,9 +19,9 @@ OBJ_PATH = '/org/openbmc/sensors'
 
 class SensorManager(DbusProperties, DbusObjectManager):
     def __init__(self, bus, name):
-        DbusProperties.__init__(self)
-        DbusObjectManager.__init__(self)
-        dbus.service.Object.__init__(self, bus, name)
+        super(SensorManager, self).__init__(
+            conn=bus,
+            object_path=name)
 
     @dbus.service.method(
         DBUS_NAME, in_signature='ss', out_signature='')

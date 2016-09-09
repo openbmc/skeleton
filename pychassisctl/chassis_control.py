@@ -34,10 +34,9 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         return uuid
 
     def __init__(self, bus, name):
-        self.dbus_objects = {}
-        DbusProperties.__init__(self)
-        DbusObjectManager.__init__(self)
-        dbus.service.Object.__init__(self, bus, name)
+        super(ChassisControlObject, self).__init__(
+            conn=bus,
+            object_path=name)
         ## load utilized objects
         self.dbus_objects = {
             'power_control': {
