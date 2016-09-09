@@ -29,10 +29,9 @@ def doExtract(members, files):
 
 class BmcFlashControl(DbusProperties, DbusObjectManager):
     def __init__(self, bus, name):
-        self.dbus_objects = {}
-        DbusProperties.__init__(self)
-        DbusObjectManager.__init__(self)
-        dbus.service.Object.__init__(self, bus, name)
+        super(BmcFlashControl, self).__init__(
+            conn=bus,
+            object_path=name)
 
         self.Set(DBUS_NAME, "status", "Idle")
         self.Set(DBUS_NAME, "filename", "")
