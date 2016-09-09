@@ -44,7 +44,7 @@ class Hwmons():
         self.sensors = {}
         self.hwmon_root = {}
 
-	if have_system:
+        if have_system:
             self.scanDirectory()
             gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)
 
