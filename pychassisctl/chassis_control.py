@@ -20,7 +20,7 @@ BOOTED = 100
 
 class ChassisControlObject(DbusProperties, DbusObjectManager):
     def getUuid(self):
-        uuid = "";
+        uuid = ""
         try:
             with open(MACHINE_ID) as f:
                 data = f.readline().rstrip('\n')
@@ -95,12 +95,10 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         bus.add_signal_receiver(self.SystemStateHandler,
                                 signal_name="GotoSystemState")
 
-
     def getInterface(self, name):
         o = self.dbus_objects[name]
         obj = bus.get_object(o['bus_name'], o['object_name'], introspect=False)
         return dbus.Interface(obj, o['interface_name'])
-
 
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
@@ -152,7 +150,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     def reboot(self):
         print "Rebooting"
         if self.getPowerState() == POWER_OFF:
-            self.powerOn();
+            self.powerOn()
         else:
             self.Set(DBUS_NAME, "reboot", 1)
             self.powerOff()
@@ -163,7 +161,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     def softReboot(self):
         print "Soft Rebooting"
         if self.getPowerState() == POWER_OFF:
-            self.powerOn();
+            self.powerOn()
         else:
             self.Set(DBUS_NAME, "reboot", 1)
             self.softPowerOff()
@@ -178,8 +176,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     ## Signal handler
 
     def SystemStateHandler(self, state_name):
-        if (
-                state_name == "HOST_POWERED_OFF" or state_name == "HOST_POWERED_ON"):
+        if state_name in ["HOST_POWERED_OFF", "HOST_POWERED_ON"]:
             intf = self.getInterface('settings')
             intf.Set("org.openbmc.settings.Host", "system_state", state_name)
 
@@ -193,14 +190,14 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         if state == POWER_OFF:
             self.powerOn()
         elif state == POWER_ON:
-            self.softPowerOff();
+            self.softPowerOff()
 
     def long_power_button_signal_handler(self):
         print "Long-press button, hard power off"
-        self.powerOff();
+        self.powerOff()
 
     def softreset_button_signal_handler(self):
-        self.softReboot();
+        self.softReboot()
 
     def host_watchdog_signal_handler(self):
         print "Watchdog Error, Hard Rebooting"
@@ -239,4 +236,3 @@ if __name__ == '__main__':
 
     print "Running ChassisControlService"
     mainloop.run()
-
