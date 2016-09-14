@@ -3,6 +3,7 @@
 import os
 import sys
 import gobject
+import json
 import dbus
 import dbus.service
 import dbus.mainloop.glib
