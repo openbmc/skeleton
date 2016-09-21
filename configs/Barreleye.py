@@ -1,6 +1,3 @@
-GPIO_BASE = 320
-
-
 ## System states
 ##   state can change to next state in 2 ways:
 ##   - a process emits a GotoSystemState signal with state name to goto
@@ -365,15 +362,6 @@ GPIO_CONFIG['SLOT1_PRESENT'] =         { 'gpio_pin': 'N4', 'direction': 'in' }
 GPIO_CONFIG['SLOT2_PRESENT'] =         { 'gpio_pin': 'N5', 'direction': 'in' }
 GPIO_CONFIG['MEZZ0_PRESENT'] =         { 'gpio_pin': 'O0', 'direction': 'in' }
 GPIO_CONFIG['MEZZ1_PRESENT'] =         { 'gpio_pin': 'O1', 'direction': 'in' }
-
-def convertGpio(name):
-	name = name.upper()
-	c = name[0:1]
-	offset = int(name[1:])
-	a = ord(c)-65
-	base = a*8+GPIO_BASE
-	return base+offset
-
 
 HWMON_CONFIG = {
 	'0-004a' :  {

@@ -4,6 +4,7 @@ import sys
 import os
 import getopt
 import obmc_system_config as System
+import obmc.system
 
 
 def printUsage():
@@ -114,9 +115,9 @@ if __name__ == '__main__':
  		elif opt in ("-v"):
 			value = arg
 		elif opt in ("-p"):
-			gpio_name = System.convertGpio(arg) 
+			gpio_name = obmc.system.convertGpio(arg)
 		elif opt in ("-l"):
-			gpio_name = System.convertGpio(arg)
+			gpio_name = obmc.system.convertGpio(arg)
 			print gpio_name
 			exit(0) 
 
@@ -133,7 +134,7 @@ if __name__ == '__main__':
 		if (gpio_info.has_key('gpio_num')):
 			gpio_name = str(gpio_info['gpio_num'])
 		else:
-			gpio_name = str(System.convertGpio(gpio_info['gpio_pin']))
+			gpio_name = str(obmc.system.convertGpio(gpio_info['gpio_pin']))
 		print "GPIO ID: "+gpio_name+"; DIRECTION: "+direction
 
 
