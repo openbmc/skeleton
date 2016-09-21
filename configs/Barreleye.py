@@ -573,3 +573,5 @@ MISC_SENSORS = {
 	0x33 : { 'class' : 'PowerCap',
 		'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
 }
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
