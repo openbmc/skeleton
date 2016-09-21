@@ -99,7 +99,8 @@ if __name__ == '__main__':
             pass
 
     for f in FRUS.keys():
-        obj_path = f.replace("<inventory_root>", System.INVENTORY_ROOT)
+        import obmc.inventory
+        obj_path = f.replace("<inventory_root>", obmc.inventory.INVENTORY_ROOT)
         obj = InventoryItem(bus, obj_path, FRUS[f])
         obj_parent.add(obj_path, obj)
 

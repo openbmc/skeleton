@@ -29,8 +29,6 @@ EXIT_STATE_DEPEND = {
 	}
 }
 
-INVENTORY_ROOT = '/org/openbmc/inventory'
-
 ID_LOOKUP = {
 	'FRU' : {
 		0x0d : '<inventory_root>/system/chassis',

@@ -42,8 +42,9 @@ MAC_LOCALLY_ADMIN_MASK = 0x20000000000
 def get_inv_obj_path(fru_type, fru_name):
     obj_path = ''
     for f in FRUS.keys():
+        import obmc.inventory
         if (FRUS[f]['fru_type'] == fru_type and f.endswith(fru_name)):
-            obj_path = f.replace("<inventory_root>", System.INVENTORY_ROOT)
+            obj_path = f.replace("<inventory_root>", obmc.inventory.INVENTORY_ROOT)
     return obj_path
 
 
