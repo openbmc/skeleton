@@ -1,6 +1,4 @@
-HOME_PATH = './'
 GPIO_BASE = 320
-SYSTEM_NAME = "Barreleye"
 
 
 ## System states
@@ -37,10 +35,6 @@ EXIT_STATE_DEPEND = {
 	},
 }
 
-CACHED_INTERFACES = {
-		"org.openbmc.InventoryItem" : True,
-		"org.openbmc.control.Chassis" : True,
-	}
 INVENTORY_ROOT = '/org/openbmc/inventory'
 
 FRU_INSTANCES = {
