@@ -28,8 +28,6 @@ EXIT_STATE_DEPEND = {
     },
 }
 
-INVENTORY_ROOT = '/org/openbmc/inventory'
-
 FRU_INSTANCES = {
     '<inventory_root>/system' : { 'fru_type' : 'SYSTEM','is_fru' : True, 'present' : "True" },
     '<inventory_root>/system/bios' : { 'fru_type' : 'SYSTEM','is_fru' : True, 'present' : "True" },

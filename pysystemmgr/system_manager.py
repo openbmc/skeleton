@@ -10,6 +10,7 @@ from obmc.dbuslib.bindings import DbusProperties, DbusObjectManager, get_dbus
 import obmc.enums
 import obmc_system_config as System
 import obmc.mapper.utils
+import obmc.inventory
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
@@ -37,7 +38,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
             for key in System.ID_LOOKUP[category]:
                 val = System.ID_LOOKUP[category][key]
                 new_val = val.replace(
-                    "<inventory_root>", System.INVENTORY_ROOT)
+                    "<inventory_root>", obmc.inventory.INVENTORY_ROOT)
                 System.ID_LOOKUP[category][key] = new_val
 
         self.SystemStateHandler(System.SYSTEM_STATES[0])
