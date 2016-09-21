@@ -55,3 +55,5 @@ if __name__ == '__main__':
     fan_control.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME, bus)
     mainloop.run()
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

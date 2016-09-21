@@ -143,3 +143,5 @@ if __name__ == '__main__':
         sys_uuid = get_sys_uuid(chs_obj)
         if inv_value != sys_uuid:
             set_sys_uuid(inv_value)
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

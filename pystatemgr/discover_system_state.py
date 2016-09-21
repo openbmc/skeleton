@@ -74,3 +74,5 @@ else:
             (power_policy == "RESTORE_LAST_STATE" and
              system_state == "HOST_POWERED_ON")):
         chassis_intf.powerOn()
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -170,3 +170,5 @@ if __name__ == '__main__':
 
     print "Starting HWMON sensors"
     mainloop.run()
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
