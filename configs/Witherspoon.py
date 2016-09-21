@@ -1,6 +1,4 @@
-HOME_PATH = './'
 GPIO_BASE = 320
-SYSTEM_NAME = "Witherspoon"
 
 
 ## System states
@@ -28,11 +26,6 @@ EXIT_STATE_DEPEND = {
         '/org/openbmc/control/host0' : 0,
         '/org/openbmc/control/flash/bios' : 0,
     },
-}
-
-CACHED_INTERFACES = {
-        "org.openbmc.InventoryItem" : True,
-        "org.openbmc.control.Chassis" : True,
 }
 
 INVENTORY_ROOT = '/org/openbmc/inventory'
