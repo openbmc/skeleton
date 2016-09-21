@@ -125,8 +125,10 @@ class SystemManager(DbusProperties, DbusObjectManager):
         gpio_num = -1
         r = ['', gpio_num, '']
         if name not in System.GPIO_CONFIG:
-            # TODO: Error handling
-            print "ERROR: "+name+" not found in GPIO config table"
+            # TODO: Better error handling
+            msg = "ERROR: "+name+" not found in GPIO config table"
+            print msg
+            raise Exception(msg)
         else:
 
             gpio_num = -1
@@ -137,7 +139,9 @@ class SystemManager(DbusProperties, DbusObjectManager):
                 if 'gpio_pin' in System.GPIO_CONFIG[name]:
                     gpio_num = System.convertGpio(gpio['gpio_pin'])
                 else:
-                    print "ERROR: SystemManager - GPIO lookup failed for "+name
+                    msg = "ERROR: SystemManager - GPIO lookup failed for "+name
+                    print msg
+                    raise Exception(msg)
 
             if (gpio_num != -1):
                 r = [obmc.enums.GPIO_DEV, gpio_num, gpio['direction']]
