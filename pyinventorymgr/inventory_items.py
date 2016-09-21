@@ -3,26 +3,17 @@
 import os
 import sys
 import gobject
-import json
 import dbus
 import dbus.service
 import dbus.mainloop.glib
 import obmc.dbuslib.propertycacher as PropertyCacher
 from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
-try:
-    import obmc_system_config as System
-    have_system = True
-except ImportError:
-    have_system = False
 
 INTF_NAME = 'org.openbmc.InventoryItem'
 DBUS_NAME = 'org.openbmc.Inventory'
 
-if have_system:
-    FRUS = System.FRU_INSTANCES
-else:
-    FRUS = {}
+FRUS = {}
 
 
 class Inventory(DbusProperties, DbusObjectManager):
@@ -92,6 +83,7 @@ if __name__ == '__main__':
                                   'inventory', 'inventory.json')
 
     if os.path.exists(INVENTORY_FILE):
+        import json
         with open(INVENTORY_FILE, 'r') as f:
             try:
                 inv = json.load(f)
@@ -99,6 +91,12 @@ if __name__ == '__main__':
                 print "Invalid JSON detected in " + INVENTORY_FILE
             else:
                 FRUS = inv
+    else:
+        try:
+            import obmc_system_config as System
+            FRUS = System.FRU_INSTANCES
+        except ImportError:
+            pass
 
     for f in FRUS.keys():
         obj_path = f.replace("<inventory_root>", System.INVENTORY_ROOT)

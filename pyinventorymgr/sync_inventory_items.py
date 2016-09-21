@@ -20,7 +20,7 @@ import sys
 import dbus
 import argparse
 import subprocess
-import obmc_system_config as System
+
 
 INV_DBUS_NAME = 'org.openbmc.Inventory'
 INV_INTF_NAME = 'org.openbmc.InventoryItem'
@@ -30,7 +30,7 @@ CHS_DBUS_NAME = 'org.openbmc.control.Chassis'
 CHS_OBJ_NAME = '/org/openbmc/control/chassis0'
 PROP_INTF_NAME = 'org.freedesktop.DBus.Properties'
 
-FRUS = System.FRU_INSTANCES
+FRUS = {}
 
 # IEEE 802 MAC address mask for locally administered.
 # This means the admin has set the MAC and is no longer
@@ -110,6 +110,21 @@ if __name__ == '__main__':
     fru_name = opt.n
     prop_name = opt.p
     sync_type = opt.s
+
+    inventory = os.path.join(
+        sys.prefix, 'share', 'inventory', 'inventory.json')
+    if os.path.exists(inventory):
+        import json
+        with open(inventory, 'r') as f:
+            try:
+                inv = json.load(f)
+            except ValueError:
+                print "Invalid JSON detected in " + inventory
+            else:
+                FRUS = inv
+    else:
+        import obmc_system_config as System
+        FRUS = System.FRU_INSTANCES
 
     bus = dbus.SystemBus()
     inv_obj_path = get_inv_obj_path(fru_type, fru_name)
