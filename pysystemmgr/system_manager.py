@@ -11,6 +11,7 @@ import obmc.enums
 import obmc_system_config as System
 import obmc.mapper.utils
 import obmc.inventory
+import obmc.system
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
@@ -136,7 +137,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
                 gpio_num = gpio['gpio_num']
             else:
                 if 'gpio_pin' in System.GPIO_CONFIG[name]:
-                    gpio_num = System.convertGpio(gpio['gpio_pin'])
+                    gpio_num = obmc.system.convertGpio(gpio['gpio_pin'])
                 else:
                     print "ERROR: SystemManager - GPIO lookup failed for "+name
 
