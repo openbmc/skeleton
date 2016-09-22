@@ -6,6 +6,8 @@
 #include "gpio.h"
 
 typedef struct PowerGpio {
+	/* Optional active high pin enabling writes to latched power_up pins. */
+	GPIO latch_out; /* NULL name if not used. */
 	/* Active high pin that is asserted following successful host power up. */
 	GPIO power_good_in;
 	/* Selectable polarity pins enabling host power rails. */

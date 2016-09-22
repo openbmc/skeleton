@@ -10,6 +10,7 @@ gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio)
 	GError *error;
 	GVariant *value;
 	gchar *power_good_in_name;
+	gchar *latch_out_name;
 	GVariantIter *power_up_outs_iter;
 	GVariantIter *reset_outs_iter;
 	gchar *power_up_out_name;
@@ -47,9 +48,13 @@ gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio)
 
 	memset(power_gpio, 0, sizeof(*power_gpio));
 	g_assert(value != NULL);
-	g_variant_get(value, "(&sa(sb)a(sb))", &power_good_in_name,
-            &power_up_outs_iter, &reset_outs_iter);
+	g_variant_get(value, "(&s&sa(sb)a(sb))", &power_good_in_name, &latch_out_name,
+			&power_up_outs_iter, &reset_outs_iter);
 
+	g_print("Power GPIO latch output %s\n", latch_out_name);
+	if(*latch_out_name != '\0') {  /* latch is optional */
+		power_gpio->latch_out.name = strdup(latch_out_name);
+	}
 	g_print("Power GPIO power good input %s\n", power_good_in_name);
 	power_gpio->power_good_in.name = strdup(power_good_in_name);
 	power_gpio->num_power_up_outs = g_variant_iter_n_children(
@@ -90,6 +95,7 @@ gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio)
 
 void free_power_gpio(PowerGpio *power_gpio) {
 	int i;
+	free(power_gpio->latch_out.name);
 	free(power_gpio->power_good_in.name);
 	for(i = 0; i < power_gpio->num_power_up_outs; i++) {
 		free(power_gpio->power_up_outs[i].name);

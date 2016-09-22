@@ -203,6 +203,12 @@ set_up_gpio(GDBusConnection *connection,
 	uint8_t pgood_state;
 
 	// get gpio device paths
+	if(power_gpio->latch_out.name != NULL) {  /* latch is optional */
+		rc = gpio_init(connection, &power_gpio->latch_out);
+		if(rc != GPIO_OK) {
+			error = rc;
+		}
+	}
 	rc = gpio_init(connection, &power_gpio->power_good_in);
 	if(rc != GPIO_OK) {
 		error = rc;
@@ -217,6 +223,25 @@ set_up_gpio(GDBusConnection *connection,
 		rc = gpio_init(connection, &power_gpio->reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
+		}
+	}
+
+	/* If there's a latch, it only needs to be set once. */
+	if(power_gpio->latch_out.name != NULL) {
+		do {
+			rc = gpio_open(&power_gpio->latch_out);
+			if(rc != GPIO_OK) {
+				break;
+			}
+			rc = gpio_write(&power_gpio->latch_out, 1);
+			gpio_close(&power_gpio->latch_out);
+		} while(0);
+		if (rc != GPIO_OK) {
+			error = rc;
+			g_print("PowerControl ERROR failed to assert latch %s rc=%d\n",
+					power_gpio->latch_out.name, rc);
+		} else {
+			g_print("PowerControl asserted latch %s\n", power_gpio->latch_out.name);
 		}
 	}
 
