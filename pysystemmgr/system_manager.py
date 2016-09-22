@@ -146,12 +146,13 @@ class SystemManager(DbusProperties, DbusObjectManager):
         return r
 
     @dbus.service.method(DBUS_NAME, in_signature='',
-            out_signature='sa(sb)a(sb)')
+            out_signature='ssa(sb)a(sb)')
     def getPowerConfiguration(self):
         power_good_in = System.POWER_CONFIG.get('power_good_in', '')
+        latch_out = System.POWER_CONFIG.get('latch_out', '')
         power_up_outs = System.POWER_CONFIG.get('power_up_outs', [])
         reset_outs = System.POWER_CONFIG.get('reset_outs', [])
-        r = [power_good_in, power_up_outs, reset_outs]
+        r = [power_good_in, latch_out, power_up_outs, reset_outs]
         print "Power GPIO config: " + str(r)
         return r
 
