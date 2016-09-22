@@ -189,6 +189,17 @@ HWMON_CONFIG = {
 	}
 }
 
+POWER_CONFIG = {
+    'power_good_in' : 'PGOOD',
+    'power_up_outs' : [
+        ('POWER_PIN', False),
+    ],
+    'reset_outs' : [
+        ('PCIE_RESET', False),
+        ('USB_RESET', False),
+    ],
+}
+
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {

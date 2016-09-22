@@ -475,6 +475,22 @@ HWMON_CONFIG = {
 }
 
 
+POWER_CONFIG = {
+    'power_good_in' : 'SYS_PWROK_BUFF',
+    'power_up_outs' : [
+        ('BMC_POWER_UP', True),
+    ],
+    'reset_outs' : [
+        ('CM1_OE_R_N', True),
+        ('BMC_CP0_RESET_N', False),
+        ('BMC_CFAM_RESET_N_R', False),
+        ('PEX8718_DEVICES_RESET_N', False),
+        ('CP0_DEVICES_RESET_N', False),
+        ('CP1_DEVICES_RESET_N', False),
+    ],
+}
+
+
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
