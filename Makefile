@@ -9,8 +9,7 @@ GDBUS_APPS = bmcctl \
 	     pwrbutton \
 	     rstbutton
 
-SUBDIRS = hacks \
-	  ledctl \
+SUBDIRS = ledctl \
 	  libopenbmc_intf \
 	  pychassisctl \
 	  pydownloadmgr \
