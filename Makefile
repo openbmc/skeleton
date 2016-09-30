@@ -10,7 +10,6 @@ GDBUS_APPS = bmcctl \
 	     rstbutton
 
 SUBDIRS = fanctl \
-	  hacks \
 	  ledctl \
 	  libopenbmc_intf \
 	  pychassisctl \
