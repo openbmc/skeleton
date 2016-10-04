@@ -88,7 +88,7 @@ poll_pgood(gpointer user_data)
 					continue;
 				}
 
-				reset_state = pgood_state ^ g_power_gpio.reset_pols[i];
+				reset_state = pgood_state ^ !g_power_gpio.reset_pols[i];
 				g_print("PowerControl: setting reset %s to %d\n", reset_out->name,
 						(int)reset_state);
 				gpio_write(reset_out, reset_state);
@@ -155,7 +155,7 @@ on_set_power_state(ControlPower *pwr,
 							g_power_gpio.power_up_outs[i].name, error);
 					continue;
 				}
-				power_up_out = state ^ g_power_gpio.power_up_pols[i];
+				power_up_out = state ^ !g_power_gpio.power_up_pols[i];
 				g_print("PowerControl: setting power up %s to %d\n",
 						g_power_gpio.power_up_outs[i].name, (int)power_up_out);
 				error = gpio_write(power_pin, power_up_out);
