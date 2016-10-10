@@ -293,7 +293,7 @@ GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'I3', 'direction': 'both'}
 # FIXME: net name is FP_RST_BTN_N in schematic
 GPIO_CONFIG['RESET_BUTTON'] = \
-        {'gpio_pin': 'E16', 'direction': 'both'}
+        {'gpio_pin': 'G3', 'direction': 'both'}
 GPIO_CONFIG['PE_MEZZB_PRSNT_N'] = \
         {'gpio_pin': 'P7', 'direction': 'in'}
 
