@@ -369,6 +369,11 @@ HWMON_CONFIG = {
 			'temp1_input' : { 'object_path' : 'temperature/ambient','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
 		}
 	},
+	'0-0068' :  {
+		'names' : {
+			'temp1_input' : { 'object_path' : 'temperature/rtc','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
+		}
+	},
 	'6-002d' : {
 		'names' : {
 			'pwm1' : { 'object_path' : 'speed/fan0','poll_interval' : 10000,'scale' : 1,'units' : '' },
