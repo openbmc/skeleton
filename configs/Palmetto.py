@@ -108,6 +108,11 @@ GPIO_CONFIG['MEZZ1_PRESENT'] =         { 'gpio_pin': 'O1', 'direction': 'in' }
 GPIO_CONFIG['CHECKSTOP']      =   { 'gpio_pin': 'P5', 'direction': 'falling' }
 
 HWMON_CONFIG = {
+	'0-0068' :  {
+		'names' : {
+			'temp1_input' : { 'object_path' : 'temperature/rtc','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
+		}
+	},
 	'2-004c' :  {
 		'names' : {
 			'temp1_input' : { 'object_path' : 'temperature/ambient','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
