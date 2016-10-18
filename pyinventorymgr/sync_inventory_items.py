@@ -55,11 +55,14 @@ def get_inv_value(obj, prop_name):
     return value
 
 
-# Get the value of the mac on the system without ':' separators
+# Get the value of the mac on the system (from u-boot) without ':' separators
 def get_sys_mac(obj):
     sys_mac = ''
-    dbus_method = obj.get_dbus_method("GetHwAddress", NET_DBUS_NAME)
-    sys_mac = dbus_method("eth0")
+    try:
+        sys_mac = subprocess.check_output(["fw_printenv", "-n", "ethaddr"])
+    except:
+        # Handle when mac does not exist in u-boot
+        return sys_mac
     sys_mac = sys_mac.replace(":", "")
     return sys_mac
 
@@ -68,8 +71,12 @@ def get_sys_mac(obj):
 # MAC if the system MAC is not locally administered because this means
 # the system admin has purposely set the MAC
 def sync_mac(obj, inv_mac, sys_mac):
-    # Convert sys MAC to int to perform bitwise '&'
-    int_sys_mac = int(sys_mac, 16)
+    if sys_mac:
+        # Convert sys MAC to int to perform bitwise '&'
+        int_sys_mac = int(sys_mac, 16)
+    else:
+        # Set mac to 0 for when u-boot mac is not present
+        int_sys_mac = 0
     if not int_sys_mac & MAC_LOCALLY_ADMIN_MASK:
         # Sys MAC is not locally administered, go replace it with inv value
         # Add the ':' separators
