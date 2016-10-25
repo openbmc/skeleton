@@ -17,11 +17,24 @@ static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* instance_name = "power0";
 static const gchar* dbus_name = "org.openbmc.control.Power";
 
+static int g_pcie_reset_held = 1;
+
 static PowerGpio g_power_gpio;
 
 static GDBusObjectManagerServer *manager = NULL;
 
 time_t pgood_timeout_start = 0;
+
+static gboolean
+is_gpio_pcie_reset(gchar *gpio_name)
+{
+	if(!strcmp(gpio_name, "PEX8718_DEVICES_RESET_N") ||
+		!strcmp(gpio_name, "CP0_DEVICES_RESET_N") ||
+		!strcmp(gpio_name, "CP1_DEVICES_RESET_N"))
+		return TRUE;
+	else
+		return FALSE;
+}
 
 // TODO:  Change to interrupt driven instead of polling
 static gboolean
@@ -70,6 +83,7 @@ poll_pgood(gpointer user_data)
 			{
 				control_power_emit_power_lost(control_power);
 				control_emit_goto_system_state(control,"HOST_POWERED_OFF");
+				g_pcie_reset_held = 1;
 			}
 			else
 			{
@@ -80,6 +94,19 @@ poll_pgood(gpointer user_data)
 			for(i = 0; i < g_power_gpio.num_reset_outs; i++)
 			{
 				GPIO *reset_out = &g_power_gpio.reset_outs[i];
+				if(pgood_state == 1)
+				{
+					/*
+					 * When powering on, hold PCIE reset until
+					 * the processor can forward clocks and control reset.
+					 * This is specific to Firestone and Garrison.
+					 */
+					if(is_gpio_pcie_reset(reset_out->name))
+					{
+						g_print("Holding pcie reset: %s\n", reset_out->name);
+						continue;
+					}
+				}
 				rc = gpio_open(reset_out);
 				if(rc != GPIO_OK)
 				{
@@ -114,6 +141,70 @@ poll_pgood(gpointer user_data)
 		pgood_timeout_start = 0;
 	}
 	return TRUE;
+}
+
+/* Handler for BootProgress signal from BootProgress sensor */
+static void
+on_boot_progress(GDBusConnection *connection,
+		const gchar *sender_name,
+		const gchar *object_path,
+		const gchar *interface_name,
+		const gchar *signal_name,
+		GVariant *parameters,
+		gpointer user_data)
+{
+	gchar *boot_progress;
+	uint8_t pgood_state;
+	uint8_t reset_state;
+	int rc;
+	int i;
+
+	if(!parameters)
+		return;
+
+	if(!g_pcie_reset_held)
+		return;
+
+	g_variant_get(parameters, "(s)", &boot_progress);
+	/* Release PCIE reset when FW boot progress goes beyond 'Baseboard Init' */
+	if(strcmp(boot_progress, "FW Progress, Baseboard Init") == 0)
+		return;
+
+	rc = gpio_open(&g_power_gpio.power_good_in);
+	if(rc != GPIO_OK)
+	{
+		g_print("ERROR PowerControl: on_boot_progress(): GPIO open error (gpio=%s,rc=%d)\n",
+			g_power_gpio.power_good_in.name, rc);
+		return;
+	}
+	rc = gpio_read(&g_power_gpio.power_good_in, &pgood_state);
+	gpio_close(&g_power_gpio.power_good_in);
+	if(rc != GPIO_OK || pgood_state != 1)
+		return;
+
+	g_print("%s - Releasing PCIE reset\n", boot_progress);
+	for(i = 0; i < g_power_gpio.num_reset_outs; i++)
+	{
+		GPIO *reset_out = &g_power_gpio.reset_outs[i];
+
+		if(!is_gpio_pcie_reset(reset_out->name))
+			continue;
+
+		rc = gpio_open(reset_out);
+		if(rc != GPIO_OK)
+		{
+			g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
+					reset_out->name, rc);
+			continue;
+		}
+
+		reset_state = pgood_state ^ !g_power_gpio.reset_pols[i];
+		g_print("PowerControl: setting reset %s to %d\n", reset_out->name,
+				(int)reset_state);
+		gpio_write(reset_out, reset_state);
+		gpio_close(reset_out);
+	}
+	g_pcie_reset_held = 0;
 }
 
 static gboolean
@@ -309,6 +400,17 @@ on_bus_acquired(GDBusConnection *connection,
 			G_CALLBACK(on_init),
 			object); /* user_data */
 
+	/* Listen for BootProgress signal from BootProgress sensor */
+	g_dbus_connection_signal_subscribe(connection,
+			NULL, /* service */
+			NULL, /* interface_name */
+			"BootProgress", /* member: name of the signal */
+			"/org/openbmc/sensors/host/BootProgress", /* obj path */
+			NULL, /* arg0 */
+			G_DBUS_SIGNAL_FLAGS_NONE,
+			(GDBusSignalCallback) on_boot_progress,
+			object, /* user data */
+			NULL );
 
 	/* Export the object (@manager takes its own reference to @object) */
 	g_dbus_object_manager_server_set_connection(manager, connection);
