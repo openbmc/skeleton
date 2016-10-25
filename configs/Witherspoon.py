@@ -479,11 +479,11 @@ HWMON_CONFIG = {
 
 
 POWER_CONFIG = {
-    'power_good_in' : 'SYS_PWROK_BUFF',
-    'power_up_outs' : [
+    'power_good_in': 'SYS_PWROK_BUFF',
+    'power_up_outs': [
         ('BMC_POWER_UP', True),
     ],
-    'reset_outs' : [
+    'reset_outs': [
     ],
 }
 
