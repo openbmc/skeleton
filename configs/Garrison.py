@@ -461,9 +461,13 @@ POWER_CONFIG = {
         ('CM1_OE_R_N', True),
         ('BMC_CP0_RESET_N', False),
         ('BMC_CFAM_RESET_N_R', False),
-        ('PEX8718_DEVICES_RESET_N', False),
-        ('CP0_DEVICES_RESET_N', False),
-        ('CP1_DEVICES_RESET_N', False),
+    ],
+    'pci_reset_outs' : [
+        # net name, polarity, reset hold
+        # if 'reset hold' set to 'True', BMC will hold pci reset until host CPU ready to drive PCI
+        ('PEX8718_DEVICES_RESET_N', False, True),
+        ('CP0_DEVICES_RESET_N', False, True),
+        ('CP1_DEVICES_RESET_N', False, True),
     ],
 }
 

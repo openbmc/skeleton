@@ -131,13 +131,16 @@ HWMON_CONFIG = {
 }
 
 POWER_CONFIG = {
-    'power_good_in' : 'PGOOD',
-    'power_up_outs' : [
+    'power_good_in': 'PGOOD',
+    'power_up_outs': [
         ('POWER_PIN', False),
     ],
-    'reset_outs' : [
-        ('PCIE_RESET', False),
+    'reset_outs': [
         ('USB_RESET', False),
+    ],
+    'pci_reset_outs': [
+        # net name, polarity, reset hold
+        ('PCIE_RESET', False, False),
     ],
 }
 
