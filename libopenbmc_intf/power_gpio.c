@@ -31,10 +31,14 @@ gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio)
 	gchar *latch_out_name;
 	GVariantIter *power_up_outs_iter;
 	GVariantIter *reset_outs_iter;
+	GVariantIter *pci_reset_outs_iter;
 	gchar *power_up_out_name;
 	gchar *reset_out_name;
+	gchar *pci_reset_out_name;
 	gboolean power_up_polarity;
 	gboolean reset_out_polarity;
+	gboolean pci_reset_out_polarity;
+	gboolean pci_reset_out_hold;
 	int i;
 
 	proxy = g_dbus_proxy_new_sync(connection,
@@ -67,8 +71,8 @@ gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio)
 
 	g_assert(value != NULL);
 	memset(power_gpio, 0, sizeof(*power_gpio));
-	g_variant_get(value, "(&s&sa(sb)a(sb))", &power_good_in_name, &latch_out_name,
-			&power_up_outs_iter, &reset_outs_iter);
+	g_variant_get(value, "(&s&sa(sb)a(sb)a(sbb))", &power_good_in_name, &latch_out_name,
+			&power_up_outs_iter, &reset_outs_iter, &pci_reset_outs_iter);
 
 	g_print("Power GPIO latch output %s\n", latch_out_name);
 	if(*latch_out_name != '\0') {  /* latch is optional */
@@ -105,8 +109,28 @@ gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio)
 		power_gpio->reset_pols[i] = reset_out_polarity;
 	}
 
+	power_gpio->num_pci_reset_outs = g_variant_iter_n_children(pci_reset_outs_iter);
+	g_print("Power GPIO %d pci reset outputs\n", power_gpio->num_pci_reset_outs);
+	power_gpio->pci_reset_outs = g_malloc0_n(power_gpio->num_pci_reset_outs,
+			sizeof(GPIO));
+	power_gpio->pci_reset_pols = g_malloc0_n(power_gpio->num_pci_reset_outs,
+			sizeof(gboolean));
+	power_gpio->pci_reset_holds = g_malloc0_n(power_gpio->num_pci_reset_outs,
+			sizeof(gboolean));
+	for(i = 0; g_variant_iter_next(pci_reset_outs_iter, "(&sbb)", &pci_reset_out_name,
+				&pci_reset_out_polarity, &pci_reset_out_hold); i++) {
+		g_print("Power GPIO pci reset[%d] = %s active %s, hold - %s\n", i,
+				pci_reset_out_name,
+				pci_reset_out_polarity ? "HIGH" : "LOW",
+				pci_reset_out_hold ? "Yes" : "No");
+		power_gpio->pci_reset_outs[i].name = g_strdup(pci_reset_out_name);
+		power_gpio->pci_reset_pols[i] = pci_reset_out_polarity;
+		power_gpio->pci_reset_holds[i] = pci_reset_out_hold;
+	}
+
 	g_variant_iter_free(power_up_outs_iter);
 	g_variant_iter_free(reset_outs_iter);
+	g_variant_iter_free(pci_reset_outs_iter);
 	g_variant_unref(value);
 
 	return TRUE;
@@ -126,4 +150,10 @@ void free_power_gpio(PowerGpio *power_gpio) {
 	}
 	g_free(power_gpio->reset_outs);
 	g_free(power_gpio->reset_pols);
+	for(i = 0; i < power_gpio->num_pci_reset_outs; i++) {
+		g_free(power_gpio->pci_reset_outs[i].name);
+	}
+	g_free(power_gpio->pci_reset_outs);
+	g_free(power_gpio->pci_reset_pols);
+	g_free(power_gpio->pci_reset_holds);
 }

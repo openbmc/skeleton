@@ -37,6 +37,11 @@ typedef struct PowerGpio {
 	GPIO *reset_outs;
 	/* TRUE for active high */
 	gboolean *reset_pols;
+	size_t num_pci_reset_outs;
+	GPIO *pci_reset_outs;
+	/* TRUE for active high */
+	gboolean *pci_reset_pols;
+	gboolean *pci_reset_holds;
 } PowerGpio;
 
 /* Read system configuration for power GPIOs. */
