@@ -288,6 +288,8 @@ GPIO_CONFIG['FSI_CLK'] = \
         {'gpio_pin': 'AA0', 'direction': 'out'}
 GPIO_CONFIG['FSI_ENABLE'] = \
         {'gpio_pin': 'D0', 'direction': 'out'}
+GPIO_CONFIG['CRONUS_SEL'] = \
+        {'gpio_pin': 'P6', 'direction': 'out'}
 # FIXME: net name is FP_PWR_BTN_N in schematic
 GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'I3', 'direction': 'both'}
