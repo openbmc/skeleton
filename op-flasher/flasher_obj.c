@@ -181,7 +181,7 @@ flash_access_setup_bmc(bool need_write)
 	int rc;
 	printf("Setting up BMC flash\n");
 
-	if(arch_flash_bmc(bl, BMC_DIRECT) != BMC_DIRECT) {
+	if(arch_flash_bmc(bl, BMC_MTD) != BMC_MTD) {
 		fprintf(stderr, "Failed to init flash chip\n");
 		return FLASH_SETUP_ERROR;
 	}
