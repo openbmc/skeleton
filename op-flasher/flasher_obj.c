@@ -222,10 +222,6 @@ flash(FlashControl* flash_control, enum bmc_access chip, uint32_t address, char*
 
 		printf("Flash done\n");
 	}
-	else
-	{
-		printf("Flash tuned\n");
-	}
 	return FLASH_OK;
 }
 
