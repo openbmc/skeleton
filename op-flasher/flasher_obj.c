@@ -158,7 +158,7 @@ program_file(FlashControl* flash_control, const char *file, uint32_t start, uint
 }
 
 static void
-flash_access_cleanup_bmc(void)
+flash_access_cleanup(void)
 {
 	if(ffsh)
 		ffs_close(ffsh);
@@ -177,14 +177,8 @@ flash_access_setup_bmc(void)
 	}
 
 	/* Setup cleanup function */
-	atexit(flash_access_cleanup_bmc);
+	atexit(flash_access_cleanup);
 	return FLASH_OK;
-}
-
-static void
-flash_access_cleanup_pnor(void)
-{
-	flash_access_cleanup_bmc();
 }
 
 static int
@@ -203,7 +197,7 @@ flash_access_setup_pnor(void)
 	}
 
 	/* Setup cleanup function */
-	atexit(flash_access_cleanup_pnor);
+	atexit(flash_access_cleanup);
 	return FLASH_OK;
 }
 
