@@ -258,16 +258,21 @@ on_bus_acquired(GDBusConnection *connection,
 	g_dbus_object_manager_server_set_connection(manager, connection);
 	enum bmc_access chip = PNOR_MTD;
 	uint32_t address = 0;
+
+	/* TODO: Look up all partitions from the device tree or /proc/mtd */
 	if(strcmp(cmd->argv[1],"bmc")==0) {
 		chip = BMC_MTD;
+		address = 0;
 	}
 	if(strcmp(cmd->argv[1],"bmc_ramdisk")==0) {
 		chip = BMC_MTD;
-		address = 0x20300000;
+		/* TODO: Look up from device tree or similar */
+		address = 0x300000;
 	}
 	if(strcmp(cmd->argv[1],"bmc_kernel")==0) {
 		chip = BMC_MTD;
-		address = 0x20080000;
+		/* TODO: Look up from device tree or similar */
+		address = 0x80000;
 	}
 
 	int rc = flash(flash_control, chip, address, cmd->argv[2], cmd->argv[3]);
