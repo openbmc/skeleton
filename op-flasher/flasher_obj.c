@@ -43,8 +43,6 @@ static GDBusObjectManagerServer *manager = NULL;
 
 #define __aligned(x)			__attribute__((aligned(x)))
 
-static bool need_relock;
-
 #define FILE_BUF_SIZE	0x10000
 static uint8_t file_buf[FILE_BUF_SIZE] __aligned(0x1000);
 
@@ -168,7 +166,7 @@ flash_access_cleanup_bmc(void)
 }
 
 static int
-flash_access_setup_bmc(bool need_write)
+flash_access_setup_bmc(void)
 {
 	int rc;
 	printf("Setting up BMC flash\n");
@@ -186,15 +184,11 @@ flash_access_setup_bmc(bool need_write)
 static void
 flash_access_cleanup_pnor(void)
 {
-	/* Re-lock flash */
-	if(need_relock)
-		arch_flash_set_wrprotect(bl, 1);
-
 	flash_access_cleanup_bmc();
 }
 
 static int
-flash_access_setup_pnor(bool need_write)
+flash_access_setup_pnor(void)
 {
 	int rc;
 	printf("Setting up BIOS flash\n");
@@ -208,10 +202,6 @@ flash_access_setup_pnor(bool need_write)
 		return FLASH_SETUP_ERROR;
 	}
 
-	/* Unlock flash (PNOR only) */
-	if(need_write)
-		need_relock = arch_flash_set_wrprotect(bl, 0);
-
 	/* Setup cleanup function */
 	atexit(flash_access_cleanup_pnor);
 	return FLASH_OK;
@@ -220,19 +210,17 @@ flash_access_setup_pnor(bool need_write)
 uint8_t
 flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char* write_file, char* obj_path)
 {
-	bool erase = true, program = true;
-
 	int rc;
 	printf("flasher: %s, BMC = %d, address = 0x%x\n",write_file,bmc_flash,address);
 
 	/* Prepare for access */
 	if(bmc_flash) {
-		rc = flash_access_setup_bmc(erase || program);
+		rc = flash_access_setup_bmc();
 		if(rc) {
 			return FLASH_SETUP_ERROR;
 		}
 	} else {
-		rc = flash_access_setup_pnor(erase || program);
+		rc = flash_access_setup_pnor();
 		if(rc) {
 			return FLASH_SETUP_ERROR;
 		}
