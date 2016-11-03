@@ -202,13 +202,13 @@ flash_access_setup_pnor(void)
 }
 
 uint8_t
-flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char* write_file, char* obj_path)
+flash(FlashControl* flash_control, enum bmc_access chip, uint32_t address, char* write_file, char* obj_path)
 {
 	int rc;
-	printf("flasher: %s, BMC = %d, address = 0x%x\n",write_file,bmc_flash,address);
+	printf("flasher: %s, BMC = %d, address = 0x%x\n", write_file, chip, address);
 
 	/* Prepare for access */
-	if(bmc_flash) {
+	if(chip == BMC_MTD) {
 		rc = flash_access_setup_bmc();
 		if(rc) {
 			return FLASH_SETUP_ERROR;
@@ -278,21 +278,21 @@ on_bus_acquired(GDBusConnection *connection,
 
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection(manager, connection);
-	bool bmc_flash = false;
+	enum bmc_access chip = PNOR_MTD;
 	uint32_t address = 0;
 	if(strcmp(cmd->argv[1],"bmc")==0) {
-		bmc_flash = true;
+		chip = BMC_MTD;
 	}
 	if(strcmp(cmd->argv[1],"bmc_ramdisk")==0) {
-		bmc_flash = true;
+		chip = BMC_MTD;
 		address = 0x20300000;
 	}
 	if(strcmp(cmd->argv[1],"bmc_kernel")==0) {
-		bmc_flash = true;
+		chip = BMC_MTD;
 		address = 0x20080000;
 	}
 
-	int rc = flash(flash_control,bmc_flash,address,cmd->argv[2],cmd->argv[3]);
+	int rc = flash(flash_control, chip, address, cmd->argv[2], cmd->argv[3]);
 	if(rc) {
 		flash_message(connection,cmd->argv[3],"error","Flash Error");
 	} else {
