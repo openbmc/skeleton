@@ -166,34 +166,23 @@ flash_access_cleanup(void)
 }
 
 static int
-flash_access_setup_bmc(void)
+flash_access_setup(enum bmc_access chip)
 {
 	int rc;
-	printf("Setting up BMC flash\n");
+	printf("Setting up flash\n");
 
-	if(arch_flash_bmc(bl, BMC_MTD) != BMC_MTD) {
-		fprintf(stderr, "Failed to init flash chip\n");
-		return FLASH_SETUP_ERROR;
-	}
-
-	/* Setup cleanup function */
-	atexit(flash_access_cleanup);
-	return FLASH_OK;
-}
-
-static int
-flash_access_setup_pnor(void)
-{
-	int rc;
-	printf("Setting up BIOS flash\n");
-
-	/* Create the AST flash controller */
-
-	/* Open flash chip */
-	rc = arch_flash_init(&bl, NULL, true);
-	if(rc) {
-		fprintf(stderr, "Failed to open flash chip\n");
-		return FLASH_SETUP_ERROR;
+	if (chip == BMC_MTD) {
+		rc = arch_flash_bmc(bl, chip);
+		if (rc != BMC_MTD) {
+			fprintf(stderr, "Failed to init flash chip\n");
+			return FLASH_SETUP_ERROR;
+		}
+	} else {
+		rc = arch_flash_init(&bl, NULL, true);
+		if(rc) {
+			fprintf(stderr, "Failed to init flash chip\n");
+			return FLASH_SETUP_ERROR;
+		}
 	}
 
 	/* Setup cleanup function */
@@ -208,16 +197,9 @@ flash(FlashControl* flash_control, enum bmc_access chip, uint32_t address, char*
 	printf("flasher: %s, BMC = %d, address = 0x%x\n", write_file, chip, address);
 
 	/* Prepare for access */
-	if(chip == BMC_MTD) {
-		rc = flash_access_setup_bmc();
-		if(rc) {
-			return FLASH_SETUP_ERROR;
-		}
-	} else {
-		rc = flash_access_setup_pnor();
-		if(rc) {
-			return FLASH_SETUP_ERROR;
-		}
+	rc = flash_access_setup(chip);
+	if(rc) {
+		return FLASH_SETUP_ERROR;
 	}
 
 	if(strcmp(write_file,"")!=0)
