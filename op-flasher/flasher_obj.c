@@ -50,7 +50,6 @@ static uint8_t file_buf[FILE_BUF_SIZE] __aligned(0x1000);
 
 static struct blocklevel_device *bl;
 static struct ffs_handle	*ffsh;
-static int32_t			ffs_index = -1;
 
 static uint8_t FLASH_OK = 0;
 static uint8_t FLASH_ERROR = 0x01;
@@ -157,11 +156,6 @@ program_file(FlashControl* flash_control, const char *file, uint32_t start, uint
 	}
 	close(fd);
 
-	/* If this is a flash partition, adjust its size */
-	if(ffsh && ffs_index >= 0) {
-		printf("Updating actual size in partition header...\n");
-		ffs_update_act_size(ffsh, ffs_index, actual_size);
-	}
 	return(0);
 }
 
