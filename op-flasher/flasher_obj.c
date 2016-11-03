@@ -50,8 +50,6 @@ static uint8_t file_buf[FILE_BUF_SIZE] __aligned(0x1000);
 
 static struct blocklevel_device *bl;
 static struct ffs_handle	*ffsh;
-static uint32_t			fl_total_size, fl_erase_granule;
-static const char		*fl_name;
 static int32_t			ffs_index = -1;
 
 static uint8_t FLASH_OK = 0;
@@ -246,12 +244,6 @@ flash(FlashControl* flash_control,bool bmc_flash, uint32_t address, char* write_
 		}
 	}
 
-	rc = blocklevel_get_info(bl, &fl_name,
-			&fl_total_size, &fl_erase_granule);
-	if(rc) {
-		fprintf(stderr, "Error %d getting flash info\n", rc);
-		return FLASH_SETUP_ERROR;
-	}
 	if(strcmp(write_file,"")!=0)
 	{
 		// If file specified but not size, get size from file
