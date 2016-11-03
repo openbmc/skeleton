@@ -166,23 +166,15 @@ flash_access_cleanup(void)
 }
 
 static int
-flash_access_setup(enum bmc_access chip)
+flash_access_setup(enum flash_access chip)
 {
 	int rc;
 	printf("Setting up flash\n");
 
-	if (chip == BMC_MTD) {
-		rc = arch_flash_bmc(bl, chip);
-		if (rc != BMC_MTD) {
-			fprintf(stderr, "Failed to init flash chip\n");
-			return FLASH_SETUP_ERROR;
-		}
-	} else {
-		rc = arch_flash_init(&bl, NULL, true);
-		if(rc) {
-			fprintf(stderr, "Failed to init flash chip\n");
-			return FLASH_SETUP_ERROR;
-		}
+	rc = arch_flash_access(bl, chip);
+	if (rc != chip) {
+		fprintf(stderr, "Failed to init flash chip\n");
+		return FLASH_SETUP_ERROR;
 	}
 
 	/* Setup cleanup function */
@@ -191,7 +183,7 @@ flash_access_setup(enum bmc_access chip)
 }
 
 uint8_t
-flash(FlashControl* flash_control, enum bmc_access chip, uint32_t address, char* write_file, char* obj_path)
+flash(FlashControl* flash_control, enum flash_access chip, uint32_t address, char* write_file, char* obj_path)
 {
 	int rc;
 	printf("flasher: %s, BMC = %d, address = 0x%x\n", write_file, chip, address);
@@ -256,7 +248,7 @@ on_bus_acquired(GDBusConnection *connection,
 
 	/* Export all objects */
 	g_dbus_object_manager_server_set_connection(manager, connection);
-	enum bmc_access chip = PNOR_MTD;
+	enum flash_access chip = PNOR_MTD;
 	uint32_t address = 0;
 
 	/* TODO: Look up all partitions from the device tree or /proc/mtd */
