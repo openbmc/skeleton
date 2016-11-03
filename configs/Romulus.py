@@ -1,9 +1,5 @@
 # Romulus.py
 #
-# Copy of Witherspoon.py with membufs removed
-# TODO:
-#  - Fix GPIOs
-#
 
 SYSTEM_STATES = [
     'BASE_APPS',
@@ -216,53 +212,26 @@ GPIO_CONFIG['BMC_WD_CLEAR_PULSE_N'] = \
         {'gpio_pin': 'N5', 'direction': 'out'}
 GPIO_CONFIG['CHECKSTOP'] = \
         {'gpio_pin': 'J2', 'direction': 'falling'}
-
-#FIXME: romulus: GPIOD3/D4 is NIC_FUNC_MODE0/1
-#GPIO_CONFIG['PHY_RST_N'] = \
-#        {'gpio_pin': 'D3', 'direction': 'out'}
-#GPIO_CONFIG['HDD_PWR_EN'] = \
-#        {'gpio_pin': 'D4', 'direction': 'out'}
-
 GPIO_CONFIG['BMC_CP0_RESET_N'] = \
         {'gpio_pin': 'A1', 'direction': 'out'}
-
-#FIXME: romulus: GPIOA1 is BMC_CP0_RESET_N
-#GPIO_CONFIG['CP0_DEVICES_RESET_N'] = \
-#        {'gpio_pin': 'A1', 'direction': 'out'}
-
-#FIXME: Is it BMC_CP0_PERST_ENABLE or BMC_CP0_PERST_ENABLE_R
 GPIO_CONFIG['BMC_CP0_PERST_ENABLE_R'] = \
         {'gpio_pin': 'A3', 'direction': 'out'}
-#GPIO_CONFIG['BMC_CP0_PERST_ENABLE'] = \
-#        {'gpio_pin': 'A3', 'direction': 'out'}
-
-# Romulus GPIOB4 is not connected
-#GPIO_CONFIG['BMC_UCD_LATCH_LE'] = \
-#        {'gpio_pin': 'B4', 'direction': 'out'}
-
-#FIXME: romulus: SOFT_FSI_CLK: AA0, SOFT_FSI_DAT: AA2, see romulus_rev1_0 page 69, 71
 GPIO_CONFIG['FSI_DATA'] = \
         {'gpio_pin': 'AA2', 'direction': 'out'}
 GPIO_CONFIG['FSI_CLK'] = \
         {'gpio_pin': 'AA0', 'direction': 'out'}
 GPIO_CONFIG['FSI_ENABLE'] = \
         {'gpio_pin': 'D0', 'direction': 'out'}
-
-# romulus GPIOA6 is DBG_CP0_MUX_SEL
 GPIO_CONFIG['CRONUS_SEL'] = \
         {'gpio_pin': 'A6', 'direction': 'out'}
-
-# romulus: PM_FP_PWRBTN_IN_L
+GPIO_CONFIG['BMC_THROTTLE'] = \
+        {'gpio_pin': 'J3', 'direction': 'out'}
+GPIO_CONFIG['IDBTN']       = \
+        {'gpio_pin': 'Q7', 'direction': 'out'}
 GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'I3', 'direction': 'in'}
-# romulus: PM_NMIBTN_IN_L
 GPIO_CONFIG['RESET_BUTTON'] = \
         {'gpio_pin': 'J1', 'direction': 'in'}
-
-#Romulus GPIOP7 is not connected
-#GPIO_CONFIG['PE_MEZZB_PRSNT_N'] = \
-#        {'gpio_pin': 'P7', 'direction': 'in'}
-
 
 HWMON_CONFIG = {
     '4-0050' : {
@@ -348,13 +317,14 @@ HWMON_CONFIG = {
 }
 
 POWER_CONFIG = {
-    'latch_out' : 'BMC_UCD_LATCH_LE',
     'power_good_in' : 'SYS_PWROK_BUFF',
     'power_up_outs' : [
         ('SOFTWARE_PGOOD', True),
         ('BMC_POWER_UP', True),
     ],
     'reset_outs' : [
+        ('BMC_CP0_RESET_N', False),
+        ('BMC_CP0_PERST_ENABLE_R', False),
     ],
 }
 
