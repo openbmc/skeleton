@@ -300,75 +300,41 @@ ID_LOOKUP = {
 GPIO_CONFIG = {}
 GPIO_CONFIG['BMC_POWER_UP'] = \
         {'gpio_pin': 'D1', 'direction': 'out'}
+GPIO_CONFIG['SOFTWARE_PGOOD'] = \
+        {'gpio_pin': 'R1', 'direction': 'out'}
 GPIO_CONFIG['SYS_PWROK_BUFF'] = \
         {'gpio_pin': 'D2', 'direction': 'in'}
-GPIO_CONFIG['BMC_WD_CLEAR_PULSE_N'] = \
-        {'gpio_pin': 'N5', 'direction': 'out'}
+
 GPIO_CONFIG['CHECKSTOP'] = \
         {'gpio_pin': 'J2', 'direction': 'falling'}
 
-# witherspoon: not connect
-#GPIO_CONFIG['CM1_OE_R_N'] = \
-#        {'gpio_pin': 'A2', 'direction': 'out'}
-
 GPIO_CONFIG['BMC_CP0_RESET_N'] = \
         {'gpio_pin': 'A1', 'direction': 'out'}
-
-# witherspoon: No centaur
-#GPIO_CONFIG['BMC_CFAM_RESET_N_R'] = \
-#        {'gpio_pin': 'J2', 'direction': 'out'}
-
-
-# FIXME: reset pcie switch, looks like BMC_VS1_PERST_N , see workbook fig.46
-#GPIO_CONFIG['PEX8718_DEVICES_RESET_N'] = \
-#        {'gpio_pin': 'B7', 'direction': 'out'}
+# pcie switch reset
 GPIO_CONFIG['BMC_VS1_PERST_N'] = \
         {'gpio_pin': 'B7', 'direction': 'out'}
-
-# FIXME: reset pcie slots, looks like BMC_CP0_PERST_ENABLE_R, see workbook fig.46
-# firestone: gpiog1, gpiog2
-#GPIO_CONFIG['CP0_DEVICES_RESET_N'] = \
-#        {'gpio_pin': 'B1', 'direction': 'out'}
-# FIXME: G2 for Firestone.. Witherspoon: no
-#GPIO_CONFIG['CP1_DEVICES_RESET_N'] = \
-#        {'gpio_pin': 'A1', 'direction': 'out'}
+# pcie slots reset
 GPIO_CONFIG['BMC_CP0_PERST_ENABLE_R'] = \
         {'gpio_pin': 'A3', 'direction': 'out'}
 
-#FIXME: witherspoon: SOFT_FSI_CLK: AA0, SOFT_FSI_DAT: E0, see workbook fig.44
 GPIO_CONFIG['FSI_DATA'] = \
         {'gpio_pin': 'E0', 'direction': 'out'}
 GPIO_CONFIG['FSI_CLK'] = \
         {'gpio_pin': 'AA0', 'direction': 'out'}
 GPIO_CONFIG['FSI_ENABLE'] = \
         {'gpio_pin': 'D0', 'direction': 'out'}
-
-# FIXME: both witherspoon and garrison, gpioa6 is FSI_JMFG0_PRSNT_N
 GPIO_CONFIG['CRONUS_SEL'] = \
         {'gpio_pin': 'A6', 'direction': 'out'}
 
-# FIXME: ?? firestone gpioj3 is NC
-#GPIO_CONFIG['BMC_THROTTLE'] = \
-#        {'gpio_pin': 'J3', 'direction': 'out'}
 
-#FIXME: ?? witherspoon: FP_ID_BTN_N_R, firestone: PD_BMC_IDBTN_IN_OUT_N - it is not connected
-GPIO_CONFIG['IDBTN']       = \
-    { 'gpio_pin': 'Q7', 'direction': 'out' }
-
-#FIXME: witherspoon: FP_PWR_BTN_N, firstone: NC_BMC_PWBTN_IN_N gpioe0 - not connected
 GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'I3', 'direction': 'both'}
-# witherspoon: BMC_NMIBTN_IN_N, firestone: BMC_NMIBTN_IN_N
 GPIO_CONFIG['RESET_BUTTON'] = \
         {'gpio_pin': 'J1', 'direction': 'both'}
 
-GPIO_CONFIG['PS0_PRES_N'] = \
-        {'gpio_pin': 'P7', 'direction': 'in'}
-GPIO_CONFIG['PS1_PRES_N'] = \
-        {'gpio_pin': 'N0', 'direction': 'in'}
-# witherspoon: CARD_PRES_N
-GPIO_CONFIG['CARD_PRES_N'] = \
-        {'gpio_pin': 'I0', 'direction': 'in'}
+# FIXME: needed for Witherspoon?
+GPIO_CONFIG['IDBTN'] = \
+    {'gpio_pin': 'Q7', 'direction': 'out'}
 
 HWMON_CONFIG = {
     '4-0050' : {
@@ -479,11 +445,15 @@ HWMON_CONFIG = {
 
 
 POWER_CONFIG = {
-    'power_good_in' : 'SYS_PWROK_BUFF',
-    'power_up_outs' : [
+    'power_good_in': 'SYS_PWROK_BUFF',
+    'power_up_outs': [
+        ('SOFTWARE_PGOOD', True),
         ('BMC_POWER_UP', True),
     ],
-    'reset_outs' : [
+    'reset_outs': [
+        ('BMC_CP0_RESET_N', False),
+        ('BMC_VS1_PERST_N', False),
+        ('BMC_CP0_PERST_ENABLE_R', False),
     ],
 }
 
