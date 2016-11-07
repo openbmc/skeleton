@@ -1,3 +1,4 @@
+MACHINE_NAME = 'zaius'
 ## System states
 ##   state can change to next state in 2 ways:
 ##   - a process emits a GotoSystemState signal with state name to goto

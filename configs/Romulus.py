@@ -1,3 +1,4 @@
+MACHINE_NAME = 'romulus'
 # Romulus.py
 #
 # Copy of Witherspoon.py with membufs removed

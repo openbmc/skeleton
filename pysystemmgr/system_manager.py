@@ -105,6 +105,11 @@ class SystemManager(DbusProperties, DbusObjectManager):
         except IOError:
             pass
 
+    # get system name (i.e., machine name)
+    @dbus.service.method(DBUS_NAME, in_signature='', out_signature='s')
+    def getSystemName(self):
+        return System.MACHINE_NAME
+
     @dbus.service.method(DBUS_NAME, in_signature='', out_signature='s')
     def getSystemState(self):
         return self.Get(DBUS_NAME, "current_state")
