@@ -25,7 +25,7 @@
 gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio)
 {
 	GDBusProxy *proxy;
-	GError *error;
+	GError *error = NULL;
 	GVariant *value;
 	gchar *power_good_in_name;
 	gchar *latch_out_name;
