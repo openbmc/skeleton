@@ -557,18 +557,30 @@ HWMON_CONFIG = {
 	},
 }
 
-POWER_CONFIG = {
-    'power_good_in': 'PGOOD',
-    'power_up_outs': [
-        ('POWER_PIN', False),
-    ],
-    'reset_outs': [
-        ('USB_RESET', False),
-    ],
-    'pci_reset_outs': [
-        # net name, polarity, reset hold
-        ('PCIE_RESET', False, False),
-    ],
+GPIO_CONFIGS = {
+    'power_config' : {
+        'power_good_in' : 'PGOOD',
+        'power_up_outs' : [
+            ('POWER_PIN', False),
+        ],
+        'reset_outs' : [
+            ('USB_RESET', False),
+        ],
+        'pci_reset_outs': [
+            # net name, polarity, reset hold
+            ('PCIE_RESET', False, False),
+        ],
+    },
+    'hostctl_config' : {
+        'fsi_data' : 'FSI_DATA',
+        'fsi_clk' : 'FSI_CLK',
+        'fsi_enable' : 'FSI_ENABLE',
+        'cronus_sel' : 'CRONUS_SEL',
+        'optionals' : [
+            ('BMC_THROTTLE', True),
+            ('IDBTN', False),
+        ],
+    },
 }
 
 # Miscellaneous non-poll sensor with system specific properties.
