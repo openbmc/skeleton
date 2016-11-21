@@ -308,15 +308,25 @@ HWMON_CONFIG = {
     },
 }
 
-POWER_CONFIG = {
-    'latch_out': 'BMC_UCD_LATCH_LE',
-    'power_good_in': 'SYS_PWROK_BUFF',
-    'power_up_outs': [
-        ('SOFTWARE_PGOOD', True),
-        ('BMC_POWER_UP', True),
-    ],
-    'reset_outs': [
-    ],
+GPIO_CONFIGS = {
+    'power_config' : {
+        'latch_out': 'BMC_UCD_LATCH_LE',
+        'power_good_in' : 'SYS_PWROK_BUFF',
+        'power_up_outs' : [
+            ('SOFTWARE_PGOOD', True),
+            ('BMC_POWER_UP', True),
+        ],
+        'reset_outs' : [
+        ],
+    },
+    'hostctl_config' : {
+        'fsi_data' : 'FSI_DATA',
+        'fsi_clk' : 'FSI_CLK',
+        'fsi_enable' : 'FSI_ENABLE',
+        'cronus_sel' : 'CRONUS_SEL',
+        'optionals' : [
+        ],
+    },
 }
 
 # Miscellaneous non-poll sensor with system specific properties.
