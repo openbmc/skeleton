@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef __POWER_GPIO_H__
-#define __POWER_GPIO_H__
+#ifndef __GPIO_CONFIGS_H__
+#define __GPIO_CONFIGS_H__
 
 #include <stddef.h>
 #include <glib.h>
@@ -44,9 +44,24 @@ typedef struct PowerGpio {
 	gboolean *pci_reset_holds;
 } PowerGpio;
 
-/* Read system configuration for power GPIOs. */
-gboolean read_power_gpio(GDBusConnection *connection, PowerGpio *power_gpio);
+typedef struct HostctlGpio {
+	GPIO fsi_data;
+	GPIO fsi_clk;
+	GPIO fsi_enable;
+	GPIO cronus_sel;
+	size_t num_optionals;
+	GPIO* optionals;
+	gboolean* optional_pols;
+} HostctlGpio;
+
+typedef struct GpioConfigs {
+	PowerGpio power_gpio;
+	HostctlGpio hostctl_gpio;
+} GpioConfigs;
+
+/* Read system configuration for GPIOs. */
+gboolean read_gpios(GDBusConnection *connection, GpioConfigs *gpios);
 /* Frees internal buffers. Does not free parameter. Does not close GPIOs. */
-void free_power_gpio(PowerGpio *power_gpio);
+void free_gpios(GpioConfigs *gpios);
 
 #endif
