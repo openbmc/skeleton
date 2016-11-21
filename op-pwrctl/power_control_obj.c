@@ -10,7 +10,7 @@
 #include <openbmc_intf.h>
 #include <openbmc.h>
 #include <gpio.h>
-#include <power_gpio.h>
+#include <gpio_configs.h>
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
@@ -19,7 +19,7 @@ static const gchar* dbus_name = "org.openbmc.control.Power";
 
 static int g_pci_reset_held = 1;
 
-static PowerGpio g_power_gpio;
+static GpioConfigs g_gpio_configs;
 
 static GDBusObjectManagerServer *manager = NULL;
 
@@ -52,14 +52,14 @@ poll_pgood(gpointer user_data)
 	}
 	uint8_t pgood_state;
 
-	int rc = gpio_open(&g_power_gpio.power_good_in);
+	int rc = gpio_open(&g_gpio_configs.power_gpio.power_good_in);
 	if(rc != GPIO_OK) {
 		g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
-				g_power_gpio.power_good_in.name, rc);
+				g_gpio_configs.power_gpio.power_good_in.name, rc);
 		return FALSE;
 	}
-	rc = gpio_read(&g_power_gpio.power_good_in, &pgood_state);
-	gpio_close(&g_power_gpio.power_good_in);
+	rc = gpio_read(&g_gpio_configs.power_gpio.power_good_in, &pgood_state);
+	gpio_close(&g_gpio_configs.power_gpio.power_good_in);
 	if(rc == GPIO_OK)
 	{
 		//if changed, set property and emit signal
@@ -80,9 +80,9 @@ poll_pgood(gpointer user_data)
 				control_emit_goto_system_state(control,"HOST_POWERED_ON");
 			}
 
-			for(i = 0; i < g_power_gpio.num_reset_outs; i++)
+			for(i = 0; i < g_gpio_configs.power_gpio.num_reset_outs; i++)
 			{
-				GPIO *reset_out = &g_power_gpio.reset_outs[i];
+				GPIO *reset_out = &g_gpio_configs.power_gpio.reset_outs[i];
 				rc = gpio_open(reset_out);
 				if(rc != GPIO_OK)
 				{
@@ -91,23 +91,23 @@ poll_pgood(gpointer user_data)
 					continue;
 				}
 
-				reset_state = pgood_state ^ !g_power_gpio.reset_pols[i];
+				reset_state = pgood_state ^ !g_gpio_configs.power_gpio.reset_pols[i];
 				g_print("PowerControl: setting reset %s to %d\n", reset_out->name,
 						(int)reset_state);
 				gpio_write(reset_out, reset_state);
 				gpio_close(reset_out);
 			}
 
-			for(i = 0; i < g_power_gpio.num_pci_reset_outs; i++)
+			for(i = 0; i < g_gpio_configs.power_gpio.num_pci_reset_outs; i++)
 			{
-				GPIO *pci_reset_out = &g_power_gpio.pci_reset_outs[i];
+				GPIO *pci_reset_out = &g_gpio_configs.power_gpio.pci_reset_outs[i];
 				if(pgood_state == 1)
 				{
 					/*
 					 * When powering on, hold PCI reset until
 					 * the processor can forward clocks and control reset.
 					 */
-					if(g_power_gpio.pci_reset_holds[i])
+					if(g_gpio_configs.power_gpio.pci_reset_holds[i])
 					{
 						g_print("Holding pci reset: %s\n", pci_reset_out->name);
 						continue;
@@ -121,7 +121,7 @@ poll_pgood(gpointer user_data)
 					continue;
 				}
 
-				reset_state = pgood_state ^ !g_power_gpio.pci_reset_pols[i];
+				reset_state = pgood_state ^ !g_gpio_configs.power_gpio.pci_reset_pols[i];
 				g_print("PowerControl: setting pci reset %s to %d\n", pci_reset_out->name,
 						(int)reset_state);
 				gpio_write(pci_reset_out, reset_state);
@@ -130,7 +130,7 @@ poll_pgood(gpointer user_data)
 		}
 	} else {
 		g_print("ERROR PowerControl: GPIO read error (gpio=%s,rc=%d)\n",
-				g_power_gpio.power_good_in.name, rc);
+				g_gpio_configs.power_gpio.power_good_in.name, rc);
 		//return false so poll won't get called anymore
 		return FALSE;
 	}
@@ -177,23 +177,23 @@ on_boot_progress(GDBusConnection *connection,
 	if(strcmp(boot_progress, "FW Progress, Baseboard Init") == 0)
 		return;
 
-	rc = gpio_open(&g_power_gpio.power_good_in);
+	rc = gpio_open(&g_gpio_configs.power_gpio.power_good_in);
 	if(rc != GPIO_OK)
 	{
 		g_print("ERROR PowerControl: on_boot_progress(): GPIO open error (gpio=%s,rc=%d)\n",
-			g_power_gpio.power_good_in.name, rc);
+			g_gpio_configs.power_gpio.power_good_in.name, rc);
 		return;
 	}
-	rc = gpio_read(&g_power_gpio.power_good_in, &pgood_state);
-	gpio_close(&g_power_gpio.power_good_in);
+	rc = gpio_read(&g_gpio_configs.power_gpio.power_good_in, &pgood_state);
+	gpio_close(&g_gpio_configs.power_gpio.power_good_in);
 	if(rc != GPIO_OK || pgood_state != 1)
 		return;
 
-	for(i = 0; i < g_power_gpio.num_pci_reset_outs; i++)
+	for(i = 0; i < g_gpio_configs.power_gpio.num_pci_reset_outs; i++)
 	{
-		GPIO *pci_reset_out = &g_power_gpio.pci_reset_outs[i];
+		GPIO *pci_reset_out = &g_gpio_configs.power_gpio.pci_reset_outs[i];
 
-		if(!g_power_gpio.pci_reset_holds[i])
+		if(!g_gpio_configs.power_gpio.pci_reset_holds[i])
 			continue;
 		rc = gpio_open(pci_reset_out);
 		if(rc != GPIO_OK)
@@ -203,7 +203,7 @@ on_boot_progress(GDBusConnection *connection,
 			continue;
 		}
 
-		reset_state = pgood_state ^ !g_power_gpio.pci_reset_pols[i];
+		reset_state = pgood_state ^ !g_gpio_configs.power_gpio.pci_reset_pols[i];
 		g_print("PowerControl: setting pci reset %s to %d\n", pci_reset_out->name,
 				(int)reset_state);
 		gpio_write(pci_reset_out, reset_state);
@@ -244,17 +244,17 @@ on_set_power_state(ControlPower *pwr,
 			} else {
 				control_emit_goto_system_state(control,"HOST_POWERING_OFF");
 			}
-			for (i = 0; i < g_power_gpio.num_power_up_outs; i++) {
-				GPIO *power_pin = &g_power_gpio.power_up_outs[i];
+			for (i = 0; i < g_gpio_configs.power_gpio.num_power_up_outs; i++) {
+				GPIO *power_pin = &g_gpio_configs.power_gpio.power_up_outs[i];
 				error = gpio_open(power_pin);
 				if(error != GPIO_OK) {
 					g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
-							g_power_gpio.power_up_outs[i].name, error);
+							g_gpio_configs.power_gpio.power_up_outs[i].name, error);
 					continue;
 				}
-				power_up_out = state ^ !g_power_gpio.power_up_pols[i];
+				power_up_out = state ^ !g_gpio_configs.power_gpio.power_up_pols[i];
 				g_print("PowerControl: setting power up %s to %d\n",
-						g_power_gpio.power_up_outs[i].name, (int)power_up_out);
+						g_gpio_configs.power_gpio.power_up_outs[i].name, (int)power_up_out);
 				error = gpio_write(power_pin, power_up_out);
 				if(error != GPIO_OK) {
 					continue;
@@ -429,11 +429,11 @@ on_bus_acquired(GDBusConnection *connection,
 	g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 	g_object_unref(object);
 
-	if(read_power_gpio(connection, &g_power_gpio) != TRUE) {
+	if(read_gpios(connection, &g_gpio_configs) != TRUE) {
 		g_print("ERROR PowerControl: could not read power GPIO configuration\n");
 	}
 
-	int rc = set_up_gpio(connection, &g_power_gpio, control_power);
+	int rc = set_up_gpio(connection, &g_gpio_configs.power_gpio, control_power);
 	if(rc != GPIO_OK) {
 		g_print("ERROR PowerControl: GPIO setup (rc=%d)\n",rc);
 	}
@@ -462,7 +462,7 @@ on_name_lost(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
-	free_power_gpio(&g_power_gpio);
+	free_gpios(&g_gpio_configs);
 }
 
 /*----------------------------------------------------------------*/
