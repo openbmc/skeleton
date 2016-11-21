@@ -451,23 +451,35 @@ HWMON_CONFIG = {
 }
 
 
-POWER_CONFIG = {
-    'power_good_in' : 'SYS_PWROK_BUFF',
-    'power_up_outs' : [
-        ('BMC_POWER_UP', True),
-    ],
-    'reset_outs' : [
-        ('CM1_OE_R_N', True),
-        ('BMC_CP0_RESET_N', False),
-        ('BMC_CFAM_RESET_N_R', False),
-    ],
-    'pci_reset_outs' : [
-        # net name, polarity, reset hold
-        # if 'reset hold' set to 'True', BMC will hold pci reset until host CPU ready to drive PCI
-        ('PEX8718_DEVICES_RESET_N', False, True),
-        ('CP0_DEVICES_RESET_N', False, True),
-        ('CP1_DEVICES_RESET_N', False, True),
-    ],
+GPIO_CONFIGS = {
+    'power_config' : {
+        'power_good_in' : 'SYS_PWROK_BUFF',
+        'power_up_outs' : [
+            ('BMC_POWER_UP', True),
+        ],
+        'reset_outs' : [
+            ('CM1_OE_R_N', True),
+            ('BMC_CP0_RESET_N', False),
+            ('BMC_CFAM_RESET_N_R', False),
+        ],
+        'pci_reset_outs': [
+            # net name, polarity, reset hold
+            # if 'reset hold' set to 'True', BMC will hold pci reset until host CPU ready to drive PCI
+            ('PEX8718_DEVICES_RESET_N', False, True),
+            ('CP0_DEVICES_RESET_N', False, True),
+            ('CP1_DEVICES_RESET_N', False, True),
+        ],
+    },
+    'hostctl_config' : {
+        'fsi_data' : 'FSI_DATA',
+        'fsi_clk' : 'FSI_CLK',
+        'fsi_enable' : 'FSI_ENABLE',
+        'cronus_sel' : 'CRONUS_SEL',
+        'optionals' : [
+            ('BMC_THROTTLE', True),
+            ('IDBTN', False),
+        ],
+    },
 }
 
 
