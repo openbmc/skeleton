@@ -300,6 +300,8 @@ ID_LOOKUP = {
 GPIO_CONFIG = {}
 GPIO_CONFIG['BMC_POWER_UP'] = \
         {'gpio_pin': 'D1', 'direction': 'out'}
+GPIO_CONFIG['SOFTWARE_PGOOD'] = \
+        {'gpio_pin': 'R1', 'direction': 'out'}
 GPIO_CONFIG['SYS_PWROK_BUFF'] = \
         {'gpio_pin': 'D2', 'direction': 'in'}
 GPIO_CONFIG['BMC_WD_CLEAR_PULSE_N'] = \
@@ -478,13 +480,27 @@ HWMON_CONFIG = {
 }
 
 
-POWER_CONFIG = {
-    'power_good_in': 'SYS_PWROK_BUFF',
-    'power_up_outs': [
-        ('BMC_POWER_UP', True),
-    ],
-    'reset_outs': [
-    ],
+GPIO_CONFIGS = {
+    'power_config' : {
+        'power_good_in' : 'SYS_PWROK_BUFF',
+        'power_up_outs' : [
+            ('SOFTWARE_PGOOD', True),
+            ('BMC_POWER_UP', True),
+        ],
+        'reset_outs' : [
+            ('BMC_CP0_RESET_N', False),
+            ('BMC_VS1_PERST_N', False),
+            ('BMC_CP0_PERST_ENABLE_R', False),
+        ],
+    },
+    'hostctl_config' : {
+        'fsi_data' : 'FSI_DATA',
+        'fsi_clk' : 'FSI_CLK',
+        'fsi_enable' : 'FSI_ENABLE',
+        'cronus_sel' : 'CRONUS_SEL',
+        'optionals' : [
+        ],
+    },
 }
 
 
