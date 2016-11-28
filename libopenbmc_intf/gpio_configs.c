@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-#include "power_gpio.h"
+#include "gpio_configs.h"
 
 #include <stdio.h>
 #include <stdlib.h>
