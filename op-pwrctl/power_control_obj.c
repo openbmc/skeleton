@@ -10,7 +10,7 @@
 #include <openbmc_intf.h>
 #include <openbmc.h>
 #include <gpio.h>
-#include <power_gpio.h>
+#include <gpio_configs.h>
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
