@@ -73,7 +73,7 @@ class Gpio:
 			raise Exception("ERROR - Invalid value: "+value)
 	
 	def getValue(self):
-		return self.read(self.getPath('value'))	
+		return self.read(self.getPath('value'))
 
 	def write(self,path,data):
 		f = open(path,'w')
@@ -83,7 +83,7 @@ class Gpio:
 
 	def read(self,path):
 		f = open(path,'r')
-		data = f.readline()
+		data = f.readline().strip()
 		f.close()
 		return data
 
