@@ -59,10 +59,11 @@ class Gpio:
 			self.write(self.getPath('edge'),self.interrupt)
 		else:
 			raise Exception("ERROR - Invalid Direction: "+dir)
-		
-			
-		self.write(self.getPath('direction'),self.direction)
-			
+
+		current_direction = self.read(self.getPath('direction'))
+		if current_direction != self.direction:
+			self.write(self.getPath('direction'),self.direction)
+
 	def setValue(self,value):
 		if (value == '0'):
 			self.write(self.getPath('value'),'0')
@@ -72,7 +73,7 @@ class Gpio:
 			raise Exception("ERROR - Invalid value: "+value)
 	
 	def getValue(self):
-		return self.read(self.getPath('value'))	
+		return self.read(self.getPath('value'))
 
 	def write(self,path,data):
 		f = open(path,'w')
@@ -82,7 +83,7 @@ class Gpio:
 
 	def read(self,path):
 		f = open(path,'r')
-		data = f.readline()
+		data = f.readline().strip()
 		f.close()
 		return data
 
