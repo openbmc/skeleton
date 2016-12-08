@@ -173,7 +173,13 @@ flash_access_setup(enum flash_access chip)
 
 	rc = arch_flash_access(bl, chip);
 	if (rc != chip) {
-		fprintf(stderr, "Failed to init flash chip\n");
+		fprintf(stderr, "Failed to select flash chip\n");
+		return FLASH_SETUP_ERROR;
+	}
+
+	rc = arch_flash_init(&bl, NULL, 1);
+	if (rc) {
+		fprintf(stderr, "Failed to init flash: %d\h", rc);
 		return FLASH_SETUP_ERROR;
 	}
 
