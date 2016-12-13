@@ -20,7 +20,6 @@ EXIT_STATE_DEPEND = {
     'BMC_STARTING' : {
         '/org/openbmc/control/chassis0': 0,
         '/org/openbmc/control/power0' : 0,
-        '/org/openbmc/control/host0' : 0,
         '/org/openbmc/control/flash/bios' : 0,
     },
 }
