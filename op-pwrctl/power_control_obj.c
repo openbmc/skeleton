@@ -91,9 +91,9 @@ poll_pgood(gpointer user_data)
 					continue;
 				}
 
-				reset_state = pgood_state ^ !g_power_gpio.reset_pols[i];
-				g_print("PowerControl: setting reset %s to %d\n", reset_out->name,
-						(int)reset_state);
+				reset_state = pgood_state ^ g_power_gpio.reset_pols[i];
+				g_print("PowerControl: pgood: %d, setting reset %s to %d\n",
+					(int)pgood_state, reset_out->name, (int)reset_state);
 				gpio_write(reset_out, reset_state);
 				gpio_close(reset_out);
 			}
@@ -121,9 +121,9 @@ poll_pgood(gpointer user_data)
 					continue;
 				}
 
-				reset_state = pgood_state ^ !g_power_gpio.pci_reset_pols[i];
-				g_print("PowerControl: setting pci reset %s to %d\n", pci_reset_out->name,
-						(int)reset_state);
+				reset_state = pgood_state ^ g_power_gpio.pci_reset_pols[i];
+				g_print("PowerControl: pgood: %d, setting pci reset %s to %d\n",
+					(int)pgood_state, pci_reset_out->name, (int)reset_state);
 				gpio_write(pci_reset_out, reset_state);
 				gpio_close(pci_reset_out);
 			}
@@ -203,9 +203,9 @@ on_boot_progress(GDBusConnection *connection,
 			continue;
 		}
 
-		reset_state = pgood_state ^ !g_power_gpio.pci_reset_pols[i];
-		g_print("PowerControl: setting pci reset %s to %d\n", pci_reset_out->name,
-				(int)reset_state);
+		reset_state = pgood_state ^ g_power_gpio.pci_reset_pols[i];
+		g_print("PowerControl: pgood: %d, setting pci reset %s to %d\n",
+			(int)pgood_state, pci_reset_out->name, (int)reset_state);
 		gpio_write(pci_reset_out, reset_state);
 		gpio_close(pci_reset_out);
 		g_print("Released pci reset: %s - %s\n", pci_reset_out->name, boot_progress);
