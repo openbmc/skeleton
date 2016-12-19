@@ -83,16 +83,18 @@ dbus_objects = {
         'interface_name': 'org.openbmc.control.Chassis'
     },
     'poweron': {
-        'bus_name': 'org.openbmc.control.Chassis',
-        'object_name': '/org/openbmc/control/chassis0',
-        'interface_name': 'org.openbmc.control.Chassis',
-        'method': 'powerOn',
+        'bus_name': 'xyz.openbmc_project.State.Host',
+        'object_name': '/xyz/openbmc_project/state/host0',
+        'interface_name': 'xyz.openbmc_project.State.Host',
+        'property': 'RequestedHostTransition',
+        'value': 'xyz.openbmc_project.State.Host.Transition.On'
     },
     'poweroff': {
-        'bus_name': 'org.openbmc.control.Chassis',
-        'object_name': '/org/openbmc/control/chassis0',
-        'interface_name': 'org.openbmc.control.Chassis',
-        'method': 'powerOff',
+        'bus_name': 'xyz.openbmc_project.State.Host',
+        'object_name': '/xyz/openbmc_project/state/host0',
+        'interface_name': 'xyz.openbmc_project.State.Host',
+        'property': 'RequestedHostTransition',
+        'value': 'xyz.openbmc_project.State.Host.Transition.Off'
     },
     'state': {
         'bus_name': 'org.openbmc.managers.System',
@@ -211,7 +213,10 @@ if (method_name != ""):
             print "ERROR: Incorrect arguments passed to method"
 elif (property_name != ""):
     intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-    property_value = eval(sys.argv.pop(0))
+    if (objinfo.has_key('value')):
+        property_value = objinfo['value']
+    else:
+        property_value = eval(sys.argv.pop(0))
     intf.Set(intf_name, property_name, property_value)
 else:
     intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
