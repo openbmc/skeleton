@@ -21,32 +21,28 @@ is_host_booted(GDBusConnection* connection)
     GVariant *result = NULL;
 
     error = NULL;
-    proxy = g_dbus_proxy_new_sync(connection,
-            G_DBUS_PROXY_FLAGS_NONE,
-            NULL, /* GDBusInterfaceInfo* */
-            "org.openbmc.managers.System", /* name */
-            "/org/openbmc/managers/System", /* object path */
-            "org.openbmc.managers.System", /* interface name */
-            NULL, /* GCancellable */
-            &error);
+    proxy = g_dbus_proxy_new_sync(
+                connection,
+                G_DBUS_PROXY_FLAGS_NONE,
+                NULL, /* GDBusInterfaceInfo* */
+                "xyz.openbmc_project.State.Host", /* name */
+                "/xyz/openbmc_project/state/host0", /* object path */
+                "xyz.openbmc_project.State.Host", /* interface name */
+                NULL, /* GCancellable */
+                &error);
     g_assert_no_error(error);
 
-    error = NULL;
-    result = g_dbus_proxy_call_sync(proxy,
-            "getSystemState",
-            parm,
-            G_DBUS_CALL_FLAGS_NONE,
-            -1,
-            NULL,
-            &error);
-    g_assert_no_error(error);
+    result = g_dbus_proxy_get_cached_property(
+            proxy,
+            "xyz.openbmc_project.State.Host CurrentHostState");
 
     gchar *system_state;
     g_variant_get(result,"(s)",&system_state);
     g_variant_unref(result);
 
-    if ((strcmp(system_state, "HOST_BOOTED") == 0) ||
-        (strcmp(system_state, "HOST_BOOTING")== 0)) {
+    if (strcmp(system_state,
+                "xyz.openbmc_project.State.Host.Transition.On") == 0)
+    {
         return true;
     }
 
@@ -82,16 +78,16 @@ chassis_reboot(gpointer connection)
         proxy = g_dbus_proxy_new_sync((GDBusConnection*)connection,
             G_DBUS_PROXY_FLAGS_NONE,
             NULL, /* GDBusInterfaceInfo* */
-            "org.openbmc.control.Chassis", /* name */
-            "/org/openbmc/control/chassis0", /* object path */
-            "org.openbmc.control.Chassis", /* interface name */
+            "xyz.openbmc_project.State.Host", /* name */
+            "/xyz/openbmc_project/state/host0", /* object path */
+            "xyz.openbmc_project.State.Host", /* interface name */
             NULL, /* GCancellable */
             &error);
         g_assert_no_error(error);
 
         error = NULL;
         result = g_dbus_proxy_call_sync(proxy,
-            "reboot",
+            "xyz.openbmc_project.State.Host.Transition.Reboot",
             parm,
             G_DBUS_CALL_FLAGS_NONE,
             -1,
