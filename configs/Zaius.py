@@ -281,10 +281,6 @@ GPIO_CONFIG['BMC_CP0_PERST_ENABLE'] = \
         {'gpio_pin': 'A3', 'direction': 'out'}
 GPIO_CONFIG['BMC_UCD_LATCH_LE'] = \
         {'gpio_pin': 'B4', 'direction': 'out'}
-GPIO_CONFIG['FSI_DATA'] = \
-        {'gpio_pin': 'E0', 'direction': 'out'}
-GPIO_CONFIG['FSI_CLK'] = \
-        {'gpio_pin': 'AA0', 'direction': 'out'}
 GPIO_CONFIG['FSI_ENABLE'] = \
         {'gpio_pin': 'D0', 'direction': 'out'}
 GPIO_CONFIG['CRONUS_SEL'] = \
@@ -294,7 +290,7 @@ GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'I3', 'direction': 'both'}
 # FIXME: net name is FP_RST_BTN_N in schematic
 GPIO_CONFIG['RESET_BUTTON'] = \
-        {'gpio_pin': 'G3', 'direction': 'both'}
+        {'gpio_pin': 'AA0', 'direction': 'both'}
 GPIO_CONFIG['PE_MEZZB_PRSNT_N'] = \
         {'gpio_pin': 'P7', 'direction': 'in'}
 
