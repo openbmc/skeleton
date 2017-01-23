@@ -6,21 +6,21 @@ import json
 import xml.etree.ElementTree as ET
 
 
-def fix_byte(it,key,parent):   
-    if (isinstance(it,dbus.Array)):
-        for i in range(0,len(it)): 
-            fix_byte(it[i],i,it)
-    elif (isinstance(it, dict)):   
-        for key in it.keys():      
-            fix_byte(it[key],key,it)
-    elif (isinstance(it,dbus.Byte)):   
-        if (key != None):              
-                parent[key] = int(it)  
-    elif (isinstance(it,dbus.Double)):
+def fix_byte(it, key, parent):
+    if (isinstance(it, dbus.Array)):
+        for i in range(0, len(it)):
+            fix_byte(it[i], i, it)
+    elif (isinstance(it, dict)):
+        for key in it.keys():
+            fix_byte(it[key], key, it)
+    elif (isinstance(it, dbus.Byte)):
         if (key != None):
-                parent[key] = float(it)
-    else:                              
-        pass                           
+            parent[key] = int(it)
+    elif (isinstance(it, dbus.Double)):
+        if (key != None):
+            parent[key] = float(it)
+    else:
+        pass
 
 
 def merge_interfaces(objs):
@@ -33,140 +33,145 @@ def merge_interfaces(objs):
         objs[op] = merged
 
 
-def printDict(name,data):
-    	if (isinstance(data, dict)):   
-		print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-		print name
-		for p in sorted(data.keys()):
-			printDict(p,data[p])
-	else:
-		print name+" = "+str(data)
+def printDict(name, data):
+    if (isinstance(data, dict)):
+        print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        print name
+        for p in sorted(data.keys()):
+            printDict(p, data[p])
+    else:
+        print name + " = " + str(data)
 
-def introspect(bus_name,obj_path,intf_name,method_name):
-	obj = bus.get_object(bus_name,obj_path)
-	introspect_iface = dbus.Interface(obj,"org.freedesktop.DBus.Introspectable")
- 	tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
-	#print method_name
-	#print introspect_iface.Introspect()
- 	root = tree.getroot()
-	found = False
-	for node in root.iter('node'):
-		for intf in node.iter('interface'):
-			if (intf.attrib['name'] == intf_name):
-				for method in intf.iter('method'):
-					if (method.attrib['name'] == method_name):
-						for ar in method.iter('arg'):
-							if (ar.attrib['direction'] == "in"):
-								print "\t"+ar.attrib['name']+" ("+ar.attrib['type']+")"
-								found = True
 
-	return found
+def introspect(bus_name, obj_path, intf_name, method_name):
+    obj = bus.get_object(bus_name, obj_path)
+    introspect_iface = dbus.Interface(obj,
+                                      "org.freedesktop.DBus.Introspectable")
+    tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
+    # print method_name
+    # print introspect_iface.Introspect()
+    root = tree.getroot()
+    found = False
+    for node in root.iter('node'):
+        for intf in node.iter('interface'):
+            if (intf.attrib['name'] == intf_name):
+                for method in intf.iter('method'):
+                    if (method.attrib['name'] == method_name):
+                        for ar in method.iter('arg'):
+                            if (ar.attrib['direction'] == "in"):
+                                print "\t" + ar.attrib['name'] + " (" + \
+                                      ar.attrib['type'] + ")"
+                                found = True
+
+    return found
 
 
 dbus_objects = {
-	'power' : { 
-		'bus_name' : 'org.openbmc.control.Power',
-		'object_name' : '/org/openbmc/control/power0',
-		'interface_name' : 'org.openbmc.control.Power'
-	},
-	'identify_led' : {
-		'bus_name' : 'org.openbmc.control.led',
-		'object_name' : '/org/openbmc/control/led/identify',
-		'interface_name' : 'org.openbmc.Led'
-	},	
-	'chassis' : { 
-		'bus_name' : 'org.openbmc.control.Chassis',
-		'object_name' : '/org/openbmc/control/chassis0',
-		'interface_name' : 'org.openbmc.control.Chassis'
-	},
-	'poweron' : { 
-		'bus_name' : 'org.openbmc.control.Chassis',
-		'object_name' : '/org/openbmc/control/chassis0',
-		'interface_name' : 'org.openbmc.control.Chassis',
-		'method' : 'powerOn',
-	},
-	'poweroff' : { 
-		'bus_name' : 'org.openbmc.control.Chassis',
-		'object_name' : '/org/openbmc/control/chassis0',
-		'interface_name' : 'org.openbmc.control.Chassis',
-		'method' : 'powerOff',
-	},
-	'state' : { 
-		'bus_name' : 'org.openbmc.managers.System',
-		'object_name' : '/org/openbmc/managers/System',
-		'interface_name' : 'org.openbmc.managers.System',
-		'method' : 'getSystemState',
-	},
-	'bootprogress' : { 
-		'bus_name' : 'org.openbmc.Sensors',
-		'object_name' : '/org/openbmc/sensors/host/BootProgress',
-		'interface_name' : 'org.openbmc.SensorValue'
-	},
-	'biosupdate' : {
-		'bus_name' : 'org.openbmc.control.Flash',
-		'object_name' : '/org/openbmc/control/flash/bios',
-		'interface_name' : 'org.openbmc.Flash',
-		'method' : 'updateViaTftp',
-	},
-	'biosflash' : {
-		'bus_name' : 'org.openbmc.control.Flash',
-		'object_name' : '/org/openbmc/control/flash/bios',
-		'interface_name' : 'org.openbmc.Flash',
-	},
-	'bmcupdate' : {
-		'bus_name' : 'org.openbmc.control.BmcFlash',
-		'object_name' : '/org/openbmc/control/flash/bmc',
-		'interface_name' : 'org.openbmc.control.BmcFlash',
-		'method' : 'updateViaTftp',
-	},
-	'bmcflash' : {
-		'bus_name' : 'org.openbmc.control.BmcFlash',
-		'object_name' : '/org/openbmc/control/flash/bmc',
-		'interface_name' : 'org.openbmc.control.BmcFlash',
-	},
-	'getinventory' : {
-		'bus_name' : 'org.openbmc.Inventory',
-		'object_name' : '/org/openbmc/inventory',
-		'interface_name' : 'org.freedesktop.DBus.ObjectManager',
-		'method' : 'GetManagedObjects',
-		'transform' : merge_interfaces
-	},
-	'getsensors' : {
-		'bus_name' : 'org.openbmc.Sensors',
-		'object_name' : '/org/openbmc/sensors',
-		'interface_name' : 'org.freedesktop.DBus.ObjectManager',
-		'method' : 'GetManagedObjects',
-		'transform' : merge_interfaces
-	},
-	'host' : {
-		'bus_name' : 'org.openbmc.control.Host',
-		'object_name' : '/org/openbmc/control/host0',
-		'interface_name' : 'org.openbmc.control.Host',
-	},
-	'setdebugmode' : {
-		'bus_name' : 'org.openbmc.control.Host',
-		'object_name' : '/org/openbmc/control/host0',
-		'interface_name' : 'org.openbmc.control.Host',
-		'property' : 'debug_mode'
-	},
+    'power': {
+        'bus_name': 'org.openbmc.control.Power',
+        'object_name': '/org/openbmc/control/power0',
+        'interface_name': 'org.openbmc.control.Power'
+    },
+    'identify_led': {
+        'bus_name': 'org.openbmc.control.led',
+        'object_name': '/org/openbmc/control/led/identify',
+        'interface_name': 'org.openbmc.Led'
+    },
+    'chassis': {
+        'bus_name': 'org.openbmc.control.Chassis',
+        'object_name': '/org/openbmc/control/chassis0',
+        'interface_name': 'org.openbmc.control.Chassis'
+    },
+    'poweron': {
+        'bus_name': 'org.openbmc.control.Chassis',
+        'object_name': '/org/openbmc/control/chassis0',
+        'interface_name': 'org.openbmc.control.Chassis',
+        'method': 'powerOn',
+    },
+    'poweroff': {
+        'bus_name': 'org.openbmc.control.Chassis',
+        'object_name': '/org/openbmc/control/chassis0',
+        'interface_name': 'org.openbmc.control.Chassis',
+        'method': 'powerOff',
+    },
+    'state': {
+        'bus_name': 'org.openbmc.managers.System',
+        'object_name': '/org/openbmc/managers/System',
+        'interface_name': 'org.openbmc.managers.System',
+        'method': 'getSystemState',
+    },
+    'bootprogress': {
+        'bus_name': 'org.openbmc.Sensors',
+        'object_name': '/org/openbmc/sensors/host/BootProgress',
+        'interface_name': 'org.openbmc.SensorValue'
+    },
+    'biosupdate': {
+        'bus_name': 'org.openbmc.control.Flash',
+        'object_name': '/org/openbmc/control/flash/bios',
+        'interface_name': 'org.openbmc.Flash',
+        'method': 'updateViaTftp',
+    },
+    'biosflash': {
+        'bus_name': 'org.openbmc.control.Flash',
+        'object_name': '/org/openbmc/control/flash/bios',
+        'interface_name': 'org.openbmc.Flash',
+    },
+    'bmcupdate': {
+        'bus_name': 'org.openbmc.control.BmcFlash',
+        'object_name': '/org/openbmc/control/flash/bmc',
+        'interface_name': 'org.openbmc.control.BmcFlash',
+        'method': 'updateViaTftp',
+    },
+    'bmcflash': {
+        'bus_name': 'org.openbmc.control.BmcFlash',
+        'object_name': '/org/openbmc/control/flash/bmc',
+        'interface_name': 'org.openbmc.control.BmcFlash',
+    },
+    'getinventory': {
+        'bus_name': 'org.openbmc.Inventory',
+        'object_name': '/org/openbmc/inventory',
+        'interface_name': 'org.freedesktop.DBus.ObjectManager',
+        'method': 'GetManagedObjects',
+        'transform': merge_interfaces
+    },
+    'getsensors': {
+        'bus_name': 'org.openbmc.Sensors',
+        'object_name': '/org/openbmc/sensors',
+        'interface_name': 'org.freedesktop.DBus.ObjectManager',
+        'method': 'GetManagedObjects',
+        'transform': merge_interfaces
+    },
+    'host': {
+        'bus_name': 'org.openbmc.control.Host',
+        'object_name': '/org/openbmc/control/host0',
+        'interface_name': 'org.openbmc.control.Host',
+    },
+    'setdebugmode': {
+        'bus_name': 'org.openbmc.control.Host',
+        'object_name': '/org/openbmc/control/host0',
+        'interface_name': 'org.openbmc.control.Host',
+        'property': 'debug_mode'
+    },
 }
 
 bus = dbus.SystemBus()
 
+if (len(sys.argv) == 1 or sys.argv[1] == "-h" or dbus_objects.has_key(
+        sys.argv[1]) == False):
+    print "Usage: obmcutil [command] [[method] [*args]]"
+    print "\tIf [method] is blank, then all properties are printed\n"
+    print "Available commands:"
+    for name in sorted(dbus_objects.keys()):
+        m = ""
+        if (dbus_objects[name].has_key('method') == True):
+            m = " (" + dbus_objects[name]['interface_name'] + "->" + \
+                dbus_objects[name]['method'] + ")"
+        elif (dbus_objects[name].has_key('property') == True):
+            m = " (" + dbus_objects[name]['interface_name'] + "->" + \
+                dbus_objects[name]['property'] + ")"
 
-if (len(sys.argv) == 1 or sys.argv[1] == "-h" or dbus_objects.has_key(sys.argv[1])==False):
-	print "Usage: obmcutil [command] [[method] [*args]]"
-	print "\tIf [method] is blank, then all properties are printed\n"
-	print "Available commands:"
-	for name in sorted(dbus_objects.keys()):
-		m = ""
-		if (dbus_objects[name].has_key('method') == True):
-			m=" ("+dbus_objects[name]['interface_name']+"->"+dbus_objects[name]['method']+")"
-		elif (dbus_objects[name].has_key('property') == True):
-			m=" ("+dbus_objects[name]['interface_name']+"->"+dbus_objects[name]['property']+")"
-
-		print "\t"+name+m
-	exit(0)
+        print "\t" + name + m
+    exit(0)
 
 method_name = ""
 property_name = ""
@@ -175,44 +180,41 @@ sys.argv.pop(0)
 objinfo = dbus_objects[sys.argv.pop(0)]
 
 if (objinfo.has_key('method')):
-	method_name = objinfo['method']
+    method_name = objinfo['method']
 elif (objinfo.has_key('property')):
-	property_name = objinfo['property']
-elif (len(sys.argv)>0):
-	## if command line args left and method not specified
-	## then next arg must be method name
-	method_name = sys.argv.pop(0)
+    property_name = objinfo['property']
+elif (len(sys.argv) > 0):
+    ## if command line args left and method not specified
+    ## then next arg must be method name
+    method_name = sys.argv.pop(0)
 
 bus_name = objinfo['bus_name']
 obj_path = objinfo['object_name']
 intf_name = objinfo['interface_name']
-obj = bus.get_object(bus_name,obj_path)
+obj = bus.get_object(bus_name, obj_path)
 
 if (method_name != ""):
-	methd = obj.get_dbus_method(method_name,intf_name)
-	try:
-		data = methd(*sys.argv)
-		fix_byte(data,None,None)	
-		pydata = json.loads(json.dumps(data))
-		if 'transform' in objinfo:
-			objinfo['transform'](pydata)
-		printDict("",pydata)
-	except Exception as e:
-		print e
-		r = introspect(bus_name,obj_path,intf_name,method_name)
-		if (r == False):
-			print "ERROR: Invalid method: "+method_name
-		else:
-			print "ERROR: Incorrect arguments passed to method"
+    methd = obj.get_dbus_method(method_name, intf_name)
+    try:
+        data = methd(*sys.argv)
+        fix_byte(data, None, None)
+        pydata = json.loads(json.dumps(data))
+        if 'transform' in objinfo:
+            objinfo['transform'](pydata)
+        printDict("", pydata)
+    except Exception as e:
+        print e
+        r = introspect(bus_name, obj_path, intf_name, method_name)
+        if (r == False):
+            print "ERROR: Invalid method: " + method_name
+        else:
+            print "ERROR: Incorrect arguments passed to method"
 elif (property_name != ""):
-	intf = dbus.Interface(obj,"org.freedesktop.DBus.Properties")
-	property_value = eval(sys.argv.pop(0))
-	intf.Set(intf_name,property_name,property_value)
+    intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+    property_value = eval(sys.argv.pop(0))
+    intf.Set(intf_name, property_name, property_value)
 else:
-	intf = dbus.Interface(obj,"org.freedesktop.DBus.Properties")
-	props = intf.GetAll(intf_name)	
-	for p in props:
-		print p+" = "+str(props[p])
-	
-		
-
+    intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+    props = intf.GetAll(intf_name)
+    for p in props:
+        print p + " = " + str(props[p])

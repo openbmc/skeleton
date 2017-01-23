@@ -184,14 +184,22 @@ class SystemManager(DbusProperties, DbusObjectManager):
         return r
 
     @dbus.service.method(DBUS_NAME, in_signature='',
-            out_signature='ssa(sb)a(sb)a(sbb)')
-    def getPowerConfiguration(self):
-        power_good_in = System.POWER_CONFIG.get('power_good_in', '')
-        latch_out = System.POWER_CONFIG.get('latch_out', '')
-        power_up_outs = System.POWER_CONFIG.get('power_up_outs', [])
-        reset_outs = System.POWER_CONFIG.get('reset_outs', [])
-        pci_reset_outs = System.POWER_CONFIG.get('pci_reset_outs', [])
-        r = [power_good_in, latch_out, power_up_outs, reset_outs, pci_reset_outs]
+            out_signature='ssa(sb)a(sb)a(sbb)ssssa(sb)')
+    def getGpioConfiguration(self):
+        power_config = System.GPIO_CONFIGS.get('power_config', {})
+        power_good_in = power_config.get('power_good_in', '')
+        latch_out = power_config.get('latch_out', '')
+        power_up_outs = power_config.get('power_up_outs', [])
+        reset_outs = power_config.get('reset_outs', [])
+        pci_reset_outs = System.GPIO_CONFIGS.get('pci_reset_outs', [])
+        hostctl_config = System.GPIO_CONFIGS.get('hostctl_config', {})
+        fsi_data = hostctl_config.get('fsi_data', '')
+        fsi_clk = hostctl_config.get('fsi_clk', '')
+        fsi_enable = hostctl_config.get('fsi_enable', '')
+        cronus_sel = hostctl_config.get('cronus_sel', '')
+        optionals = hostctl_config.get('optionals', [])
+        r = [power_good_in, latch_out, power_up_outs, reset_outs, pci_reset_outs,\
+             fsi_data, fsi_clk, fsi_enable, cronus_sel, optionals]
         print "Power GPIO config: " + str(r)
         return r
 

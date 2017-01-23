@@ -20,7 +20,6 @@ EXIT_STATE_DEPEND = {
     'BMC_STARTING' : {
         '/org/openbmc/control/chassis0': 0,
         '/org/openbmc/control/power0' : 0,
-        '/org/openbmc/control/host0' : 0,
         '/org/openbmc/control/flash/bios' : 0,
     },
 }
@@ -282,10 +281,6 @@ GPIO_CONFIG['BMC_CP0_PERST_ENABLE'] = \
         {'gpio_pin': 'A3', 'direction': 'out'}
 GPIO_CONFIG['BMC_UCD_LATCH_LE'] = \
         {'gpio_pin': 'B4', 'direction': 'out'}
-GPIO_CONFIG['FSI_DATA'] = \
-        {'gpio_pin': 'E0', 'direction': 'out'}
-GPIO_CONFIG['FSI_CLK'] = \
-        {'gpio_pin': 'AA0', 'direction': 'out'}
 GPIO_CONFIG['FSI_ENABLE'] = \
         {'gpio_pin': 'D0', 'direction': 'out'}
 GPIO_CONFIG['CRONUS_SEL'] = \
@@ -295,112 +290,38 @@ GPIO_CONFIG['POWER_BUTTON'] = \
         {'gpio_pin': 'I3', 'direction': 'both'}
 # FIXME: net name is FP_RST_BTN_N in schematic
 GPIO_CONFIG['RESET_BUTTON'] = \
-        {'gpio_pin': 'G3', 'direction': 'both'}
+        {'gpio_pin': 'AA0', 'direction': 'both'}
 GPIO_CONFIG['PE_MEZZB_PRSNT_N'] = \
         {'gpio_pin': 'P7', 'direction': 'in'}
 
 HWMON_CONFIG = {
-    '4-0050' : {
-        'names' : {
+    '0-0064': {
+        'names': {
         },
-        'labels' : {
-        '176' :  { 'object_path' : 'temperature/cpu0/core0','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '177' :  { 'object_path' : 'temperature/cpu0/core1','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '178' :  { 'object_path' : 'temperature/cpu0/core2','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '179' :  { 'object_path' : 'temperature/cpu0/core3','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '180' :  { 'object_path' : 'temperature/cpu0/core4','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '181' :  { 'object_path' : 'temperature/cpu0/core5','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '182' :  { 'object_path' : 'temperature/cpu0/core6','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '183' :  { 'object_path' : 'temperature/cpu0/core7','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '184' :  { 'object_path' : 'temperature/cpu0/core8','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '185' :  { 'object_path' : 'temperature/cpu0/core9','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '186' :  { 'object_path' : 'temperature/cpu0/core10','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '187' :  { 'object_path' : 'temperature/cpu0/core11','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '102' :  { 'object_path' : 'temperature/dimm0','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '103' :  { 'object_path' : 'temperature/dimm1','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '104' :  { 'object_path' : 'temperature/dimm2','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '105' :  { 'object_path' : 'temperature/dimm3','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '106' :  { 'object_path' : 'temperature/dimm4','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '107' :  { 'object_path' : 'temperature/dimm5','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '108' :  { 'object_path' : 'temperature/dimm6','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '109' :  { 'object_path' : 'temperature/dimm7','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '110' :  { 'object_path' : 'temperature/dimm8','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '111' :  { 'object_path' : 'temperature/dimm9','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '112' :  { 'object_path' : 'temperature/dimm10','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '113' :  { 'object_path' : 'temperature/dimm11','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '114' :  { 'object_path' : 'temperature/dimm12','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '115' :  { 'object_path' : 'temperature/dimm13','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '116' :  { 'object_path' : 'temperature/dimm14','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '117' :  { 'object_path' : 'temperature/dimm15','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        }
-    },
-    '5-0050' : {
-        'labels' :  {
-        '188' :  { 'object_path' : 'temperature/cpu1/core0','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '189' :  { 'object_path' : 'temperature/cpu1/core1','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '190' :  { 'object_path' : 'temperature/cpu1/core2','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '191' :  { 'object_path' : 'temperature/cpu1/core3','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '192' :  { 'object_path' : 'temperature/cpu1/core4','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '193' :  { 'object_path' : 'temperature/cpu1/core5','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '194' :  { 'object_path' : 'temperature/cpu1/core6','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '195' :  { 'object_path' : 'temperature/cpu1/core7','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '196' :  { 'object_path' : 'temperature/cpu1/core8','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '197' :  { 'object_path' : 'temperature/cpu1/core9','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '198' :  { 'object_path' : 'temperature/cpu1/core10','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '199' :  { 'object_path' : 'temperature/cpu1/core11','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '118' :  { 'object_path' : 'temperature/dimm16','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '119' :  { 'object_path' : 'temperature/dimm17','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '120' :  { 'object_path' : 'temperature/dimm18','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '121' :  { 'object_path' : 'temperature/dimm19','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '122' :  { 'object_path' : 'temperature/dimm20','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '123' :  { 'object_path' : 'temperature/dimm21','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '124' :  { 'object_path' : 'temperature/dimm22','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '125' :  { 'object_path' : 'temperature/dimm23','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '126' :  { 'object_path' : 'temperature/dimm24','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '127' :  { 'object_path' : 'temperature/dimm25','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '128' :  { 'object_path' : 'temperature/dimm26','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '129' :  { 'object_path' : 'temperature/dimm27','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '130' :  { 'object_path' : 'temperature/dimm28','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '131' :  { 'object_path' : 'temperature/dimm29','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '132' :  { 'object_path' : 'temperature/dimm30','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '133' :  { 'object_path' : 'temperature/dimm31','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        }
+        'labels': {
+        },
     },
 }
 
-POWER_CONFIG = {
-    'latch_out': 'BMC_UCD_LATCH_LE',
-    'power_good_in': 'SYS_PWROK_BUFF',
-    'power_up_outs': [
-        ('SOFTWARE_PGOOD', True),
-        ('BMC_POWER_UP', True),
-    ],
-    'reset_outs': [
-    ],
+GPIO_CONFIGS = {
+    'power_config' : {
+        'latch_out': 'BMC_UCD_LATCH_LE',
+        'power_good_in' : 'SYS_PWROK_BUFF',
+        'power_up_outs' : [
+            ('SOFTWARE_PGOOD', True),
+            ('BMC_POWER_UP', True),
+        ],
+        'reset_outs' : [
+        ],
+    },
+    'hostctl_config' : {
+        'fsi_data' : 'FSI_DATA',
+        'fsi_clk' : 'FSI_CLK',
+        'fsi_enable' : 'FSI_ENABLE',
+        'cronus_sel' : 'CRONUS_SEL',
+        'optionals' : [
+        ],
+    },
 }
 
 # Miscellaneous non-poll sensor with system specific properties.
