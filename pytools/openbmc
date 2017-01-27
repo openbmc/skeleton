@@ -1,0 +1,48 @@
+#!/bin/bash
+
+USAGE="Usage: openbmc [command]
+
+Available commands:
+	poweroff
+	poweron
+	state"
+
+SERVICE_ROOT=org.openbmc
+SERVICE_CONTROL=$SERVICE_ROOT.control
+SERVICE_MANAGERS=$SERVICE_ROOT.managers
+
+OBJECT_ROOT=/org/openbmc
+OBJECT_CONTROL=$OBJECT_ROOT/control
+OBJECT_MANAGERS=$OBJECT_ROOT/managers
+
+call ()
+{
+	busctl call $1 $2 $3 $4 | cut -d'"' -f2
+}
+
+case "$1" in
+	poweroff)
+		SERVICE=$SERVICE_CONTROL.Chassis
+		OBJECT=$OBJECT_CONTROL/chassis0
+		INTERFACE=$SERVICE
+		call $SERVICE $OBJECT $INTERFACE powerOff
+		echo "Power off requested"
+		;;
+	poweron)
+		SERVICE=$SERVICE_CONTROL.Chassis
+		OBJECT=$OBJECT_CONTROL/chassis0
+		INTERFACE=$SERVICE
+		call $SERVICE $OBJECT $INTERFACE powerOn
+		echo "Power on requested"
+		;;
+	state)
+		SERVICE=$SERVICE_MANAGERS.System
+		OBJECT=$OBJECT_MANAGERS/System
+		INTERFACE=$SERVICE
+		call $SERVICE $OBJECT $INTERFACE getSystemState
+		;;
+	*)
+		echo "$USAGE"
+		;;
+
+esac
