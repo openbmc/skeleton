@@ -4,6 +4,7 @@ import gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
+import time
 from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
 DBUS_NAME = 'org.openbmc.control.Chassis'
@@ -181,6 +182,10 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
 
         if (state_name == "HOST_POWERED_OFF" and self.Get(DBUS_NAME,
                                                           "reboot") == 1):
+            # TODO - Hack to give time for mbx to reload during
+            #        power off phase of a reboot
+            print "Sleeping to give mbx time to reload"
+            time.sleep(30)
             self.powerOn()
 
     def power_button_signal_handler(self):
