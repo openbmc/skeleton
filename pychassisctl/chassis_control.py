@@ -167,6 +167,14 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         return None
 
     @dbus.service.method(DBUS_NAME,
+                         in_signature='', out_signature='')
+    def quiesce(self):
+        intf = self.getInterface('systemd')
+        f = getattr(intf, 'StartUnit')
+        f.call_async('obmc-quiesce-host@0.target', 'replace')
+        return None
+
+    @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='i')
     def getPowerState(self):
         intf = self.getInterface('power_control')
@@ -199,9 +207,8 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         self.softReboot()
 
     def host_watchdog_signal_handler(self):
-        print "Watchdog Error, Hard Rebooting"
-        self.Set(DBUS_NAME, "reboot", 1)
-        self.powerOff()
+        print "Watchdog Error, Going to quiesce"
+        self.quiesce()
 
     def emergency_shutdown_signal_handler(self, message):
         print "Emergency Shutdown!"
