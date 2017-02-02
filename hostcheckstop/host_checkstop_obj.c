@@ -82,17 +82,17 @@ chassis_reboot(gpointer connection)
         proxy = g_dbus_proxy_new_sync((GDBusConnection*)connection,
             G_DBUS_PROXY_FLAGS_NONE,
             NULL, /* GDBusInterfaceInfo* */
-            "org.openbmc.control.Chassis", /* name */
-            "/org/openbmc/control/chassis0", /* object path */
-            "org.openbmc.control.Chassis", /* interface name */
+            "org.freedesktop.systemd1", /* name */
+            "/org/freedesktop/systemd1", /* object path */
+            "org.freedesktop.systemd1.Manager", /* interface name */
             NULL, /* GCancellable */
             &error);
         g_assert_no_error(error);
 
         error = NULL;
         result = g_dbus_proxy_call_sync(proxy,
-            "reboot",
-            parm,
+            "StartUnit",
+            g_variant_new("(ss)", "obmc-quiesce-system@0.target", "replace"),
             G_DBUS_CALL_FLAGS_NONE,
             -1,
             NULL,
@@ -200,4 +200,3 @@ main(gint argc, gchar *argv[])
     g_main_loop_unref(loop);
     return 0;
 }
-
