@@ -96,11 +96,23 @@ dbus_objects = {
         'property': 'RequestedHostTransition',
         'value': 'xyz.openbmc_project.State.Host.Transition.Off'
     },
-    'state': {
-        'bus_name': 'org.openbmc.managers.System',
-        'object_name': '/org/openbmc/managers/System',
-        'interface_name': 'org.openbmc.managers.System',
-        'method': 'getSystemState',
+    'bmcstate': {
+        'bus_name': 'xyz.openbmc_project.State.BMC',
+        'object_name': '/xyz/openbmc_project/state/bmc0',
+        'interface_name': 'xyz.openbmc_project.State.BMC',
+        'property': 'CurrentBMCState',
+    },
+    'chassisstate': {
+        'bus_name': 'xyz.openbmc_project.State.Chassis',
+        'object_name': '/xyz/openbmc_project/state/chassis0',
+        'interface_name': 'xyz.openbmc_project.State.Chassis',
+        'property': 'CurrentPowerState',
+    },
+    'hoststate': {
+        'bus_name': 'xyz.openbmc_project.State.Host',
+        'object_name': '/xyz/openbmc_project/state/host0',
+        'interface_name': 'xyz.openbmc_project.State.Host',
+        'property': 'CurrentHostState',
     },
     'bootprogress': {
         'bus_name': 'org.openbmc.Sensors',
@@ -156,10 +168,14 @@ dbus_objects = {
     },
 }
 
+# Commands that need to run multiple objects above
+multicmd_objects = { 'state' : ['bmcstate', 'chassisstate', 'hoststate'] }
+
 bus = dbus.SystemBus()
 
-if (len(sys.argv) == 1 or sys.argv[1] == "-h" or dbus_objects.has_key(
-        sys.argv[1]) == False):
+if (len(sys.argv) == 1 or sys.argv[1] == "-h" or
+        (not(dbus_objects.has_key(sys.argv[1])) and
+        (not(multicmd_objects.has_key(sys.argv[1]))))):
     print "Usage: obmcutil [command] [[method] [*args]]"
     print "\tIf [method] is blank, then all properties are printed\n"
     print "Available commands:"
@@ -173,53 +189,69 @@ if (len(sys.argv) == 1 or sys.argv[1] == "-h" or dbus_objects.has_key(
                 dbus_objects[name]['property'] + ")"
 
         print "\t" + name + m
+    print "Multi-Commands:"
+    for name in sorted(multicmd_objects.keys()):
+        print "\t" + name + " -> " + ",".join(multicmd_objects[name])
     exit(0)
 
 method_name = ""
 property_name = ""
 
 sys.argv.pop(0)
-objinfo = dbus_objects[sys.argv.pop(0)]
+cmd = [sys.argv.pop(0)]
 
-if (objinfo.has_key('method')):
-    method_name = objinfo['method']
-elif (objinfo.has_key('property')):
-    property_name = objinfo['property']
-elif (len(sys.argv) > 0):
-    ## if command line args left and method not specified
-    ## then next arg must be method name
-    method_name = sys.argv.pop(0)
+# Check if this is a multicmd command and update if it is
+if(multicmd_objects.has_key(cmd[0])):
+    cmd = multicmd_objects[cmd[0]]
 
-bus_name = objinfo['bus_name']
-obj_path = objinfo['object_name']
-intf_name = objinfo['interface_name']
-obj = bus.get_object(bus_name, obj_path)
+for c in cmd:
+    objinfo = dbus_objects[c]
+    if (objinfo.has_key('method')):
+        method_name = objinfo['method']
+    elif (objinfo.has_key('property')):
+        property_name = objinfo['property']
+    elif (len(sys.argv) > 0):
+        ## if command line args left and method not specified
+        ## then next arg must be method name
+        method_name = sys.argv.pop(0)
 
-if (method_name != ""):
-    methd = obj.get_dbus_method(method_name, intf_name)
-    try:
-        data = methd(*sys.argv)
-        fix_byte(data, None, None)
-        pydata = json.loads(json.dumps(data))
-        if 'transform' in objinfo:
-            objinfo['transform'](pydata)
-        printDict("", pydata)
-    except Exception as e:
-        print e
-        r = introspect(bus_name, obj_path, intf_name, method_name)
-        if (r == False):
-            print "ERROR: Invalid method: " + method_name
+    bus_name = objinfo['bus_name']
+    obj_path = objinfo['object_name']
+    intf_name = objinfo['interface_name']
+    obj = bus.get_object(bus_name, obj_path)
+
+    if (method_name != ""):
+        methd = obj.get_dbus_method(method_name, intf_name)
+        try:
+            data = methd(*sys.argv)
+            fix_byte(data, None, None)
+            pydata = json.loads(json.dumps(data))
+            if 'transform' in objinfo:
+                objinfo['transform'](pydata)
+            printDict("", pydata)
+        except Exception as e:
+            print e
+            r = introspect(bus_name, obj_path, intf_name, method_name)
+            if (r == False):
+                print "ERROR: Invalid method: " + method_name
+            else:
+                print "ERROR: Incorrect arguments passed to method"
+    elif (property_name != ""):
+        intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+        if (objinfo.has_key('value')):
+            property_value = objinfo['value']
         else:
-            print "ERROR: Incorrect arguments passed to method"
-elif (property_name != ""):
-    intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-    if (objinfo.has_key('value')):
-        property_value = objinfo['value']
+            if(len(sys.argv) > 0):
+                property_value = eval(sys.argv.pop(0))
+            else:
+                property_value = None
+        if(property_value is not None):
+            intf.Set(intf_name, property_name, property_value)
+        else:
+            prop = intf.Get(intf_name,property_name)
+            print '{:<20}'.format(property_name+": ") + str(prop)
     else:
-        property_value = eval(sys.argv.pop(0))
-    intf.Set(intf_name, property_name, property_value)
-else:
-    intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-    props = intf.GetAll(intf_name)
-    for p in props:
-        print p + " = " + str(props[p])
+        intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+        props = intf.GetAll(intf_name)
+        for p in props:
+            print p + " = " + str(props[p])
