@@ -97,10 +97,25 @@ dbus_objects = {
         'value': 'xyz.openbmc_project.State.Host.Transition.Off'
     },
     'state': {
-        'bus_name': 'org.openbmc.managers.System',
-        'object_name': '/org/openbmc/managers/System',
-        'interface_name': 'org.openbmc.managers.System',
-        'method': 'getSystemState',
+        #empty object, code logic will display all relevant states
+    },
+    'bstate': {
+        'bus_name': 'xyz.openbmc_project.State.BMC',
+        'object_name': '/xyz/openbmc_project/state/BMC0',
+        'interface_name': 'xyz.openbmc_project.State.BMC',
+        'property': 'CurrentBMCState',
+    },
+    'cstate': {
+        'bus_name': 'xyz.openbmc_project.State.Chassis',
+        'object_name': '/xyz/openbmc_project/state/chassis0',
+        'interface_name': 'xyz.openbmc_project.State.Chassis',
+        'property': 'CurrentPowerState',
+    },
+    'hstate': {
+        'bus_name': 'xyz.openbmc_project.State.Host',
+        'object_name': '/xyz/openbmc_project/state/host0',
+        'interface_name': 'xyz.openbmc_project.State.Host',
+        'property': 'CurrentHostState',
     },
     'bootprogress': {
         'bus_name': 'org.openbmc.Sensors',
@@ -179,47 +194,62 @@ method_name = ""
 property_name = ""
 
 sys.argv.pop(0)
-objinfo = dbus_objects[sys.argv.pop(0)]
-
-if (objinfo.has_key('method')):
-    method_name = objinfo['method']
-elif (objinfo.has_key('property')):
-    property_name = objinfo['property']
-elif (len(sys.argv) > 0):
-    ## if command line args left and method not specified
-    ## then next arg must be method name
-    method_name = sys.argv.pop(0)
-
-bus_name = objinfo['bus_name']
-obj_path = objinfo['object_name']
-intf_name = objinfo['interface_name']
-obj = bus.get_object(bus_name, obj_path)
-
-if (method_name != ""):
-    methd = obj.get_dbus_method(method_name, intf_name)
-    try:
-        data = methd(*sys.argv)
-        fix_byte(data, None, None)
-        pydata = json.loads(json.dumps(data))
-        if 'transform' in objinfo:
-            objinfo['transform'](pydata)
-        printDict("", pydata)
-    except Exception as e:
-        print e
-        r = introspect(bus_name, obj_path, intf_name, method_name)
-        if (r == False):
-            print "ERROR: Invalid method: " + method_name
-        else:
-            print "ERROR: Incorrect arguments passed to method"
-elif (property_name != ""):
-    intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-    if (objinfo.has_key('value')):
-        property_value = objinfo['value']
-    else:
-        property_value = eval(sys.argv.pop(0))
-    intf.Set(intf_name, property_name, property_value)
+cmd = sys.argv.pop(0)
+if (cmd == "state"):
+    # Show bmc, chassis, and host states
+    objarray = [dbus_objects["bstate"],
+                dbus_objects["cstate"],
+                dbus_objects["hstate"]]
 else:
-    intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-    props = intf.GetAll(intf_name)
-    for p in props:
-        print p + " = " + str(props[p])
+    objarray = [dbus_objects[cmd]]
+
+for objinfo in objarray:
+    if (objinfo.has_key('method')):
+        method_name = objinfo['method']
+    elif (objinfo.has_key('property')):
+        property_name = objinfo['property']
+    elif (len(sys.argv) > 0):
+        ## if command line args left and method not specified
+        ## then next arg must be method name
+        method_name = sys.argv.pop(0)
+
+    bus_name = objinfo['bus_name']
+    obj_path = objinfo['object_name']
+    intf_name = objinfo['interface_name']
+    obj = bus.get_object(bus_name, obj_path)
+
+    if (method_name != ""):
+        methd = obj.get_dbus_method(method_name, intf_name)
+        try:
+            data = methd(*sys.argv)
+            fix_byte(data, None, None)
+            pydata = json.loads(json.dumps(data))
+            if 'transform' in objinfo:
+                objinfo['transform'](pydata)
+            printDict("", pydata)
+        except Exception as e:
+            print e
+            r = introspect(bus_name, obj_path, intf_name, method_name)
+            if (r == False):
+                print "ERROR: Invalid method: " + method_name
+            else:
+                print "ERROR: Incorrect arguments passed to method"
+    elif (property_name != ""):
+        intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+        if (objinfo.has_key('value')):
+            property_value = objinfo['value']
+        else:
+            if(len(sys.argv) > 0):
+                property_value = eval(sys.argv.pop(0))
+            else:
+                property_value = None
+        if(property_value is not None):
+            intf.Set(intf_name, property_name, property_value)
+        else:
+            prop = intf.Get(intf_name,property_name)
+            print '{:<20}'.format(property_name+": ") + str(prop)
+    else:
+        intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+        props = intf.GetAll(intf_name)
+        for p in props:
+            print p + " = " + str(props[p])
