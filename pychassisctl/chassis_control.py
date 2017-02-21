@@ -207,8 +207,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         self.softReboot()
 
     def host_watchdog_signal_handler(self):
-        print "Watchdog Error, Going to quiesce"
-        self.quiesce()
+        print "Watchdog Error, ignoring due to Hostboot not supporting IPMI"
 
     def emergency_shutdown_signal_handler(self, message):
         print "Emergency Shutdown!"
