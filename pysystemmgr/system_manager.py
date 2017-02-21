@@ -34,13 +34,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
             signal_name="InterfacesAdded", sender_keyword='bus_name')
         bus.add_signal_receiver(
             self.SystemStateHandler, signal_name="GotoSystemState")
-
-        bus.add_signal_receiver(
-            self.chassisPowerStateHandler,
-            dbus_interface="org.freedesktop.DBus.Properties",
-            signal_name="PropertiesChanged",
-            path="/org/openbmc/control/power0")
-
+        
         self.Set(DBUS_NAME, "current_state", "")
         self.Set(DBUS_NAME, "system_last_state", POWER_OFF)
         self.import_system_state_from_disk()
@@ -53,6 +47,12 @@ class SystemManager(DbusProperties, DbusObjectManager):
                 System.ID_LOOKUP[category][key] = new_val
 
         self.SystemStateHandler(System.SYSTEM_STATES[0])
+
+        bus.add_signal_receiver(
+            self.chassisPowerStateHandler,
+            dbus_interface="org.freedesktop.DBus.Properties",
+            signal_name="PropertiesChanged",
+            path="/org/openbmc/control/power0")
 
         print "SystemManager Init Done"
 
