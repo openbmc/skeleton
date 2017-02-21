@@ -141,9 +141,6 @@ class Hwmons():
                         self.addObject(
                             dpath, dpath+attribute, hwmon['names'][attribute])
 
-            else:
-                print "WARNING - hwmon: Unhandled hwmon: "+dpath
-
         for k in self.hwmon_root.keys():
             if k not in found_hwmon:
                 ## need to remove all objects associated with this path
