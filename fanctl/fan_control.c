@@ -23,9 +23,9 @@
 
 #define DBUS_MAX_NAME_LEN 256
 
-const char *objectmapper_service_name =  "org.openbmc.ObjectMapper";
-const char *objectmapper_object_name  =  "/org/openbmc/ObjectMapper";
-const char *objectmapper_intf_name    =  "org.openbmc.ObjectMapper";
+const char *objectmapper_service_name =  "xyz.openbmc_project.ObjectMapper";
+const char *objectmapper_object_name  =  "/xyz/openbmc_project/ObjectMapper";
+const char *objectmapper_intf_name    =  "xyz.openbmc_project.ObjectMapper";
 
 typedef struct {
 	int fan_num;

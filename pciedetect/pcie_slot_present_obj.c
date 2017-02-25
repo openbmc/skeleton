@@ -38,9 +38,9 @@ get_service(GDBusConnection *connection, const char *obj,
 	proxy = g_dbus_proxy_new_sync(connection,
 			G_DBUS_PROXY_FLAGS_NONE,
 			NULL, /* GDBusInterfaceInfo* */
-			"org.openbmc.ObjectMapper", /* name */
-			"/org/openbmc/ObjectMapper", /* object path */
-			"org.openbmc.ObjectMapper", /* interface name */
+			"xyz.openbmc_project.ObjectMapper", /* name */
+			"/xyz/openbmc_project/ObjectMapper", /* object path */
+			"xyz.openbmc_project.ObjectMapper", /* interface name */
 			NULL, /* GCancellable */
 			error);
 
