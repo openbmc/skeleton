@@ -69,6 +69,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         # uuid
         self.Set(DBUS_NAME, "uuid", self.getUuid())
         self.Set(DBUS_NAME, "reboot", 0)
+        self.Set(DBUS_NAME, "powerCycle", 0)
 
         bus.add_signal_receiver(self.power_button_signal_handler,
                                 dbus_interface="org.openbmc.Button",
@@ -120,6 +121,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     def powerOn(self):
         print "Turn on power and boot"
         self.Set(DBUS_NAME, "reboot", 0)
+        self.Set(DBUS_NAME, "powerCycle", 0)
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
         f.call_async('obmc-chassis-start@0.target', 'replace')
@@ -168,6 +170,15 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
 
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
+    def powerCycle(self):
+        print "Doing a Power Cycle"
+        if self.getPowerState() == POWER_ON:
+            self.Set(DBUS_NAME, "powerCycle", 1)
+            self.powerOff()
+        return None
+
+    @dbus.service.method(DBUS_NAME,
+                         in_signature='', out_signature='')
     def quiesce(self):
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
@@ -187,8 +198,9 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
             intf = self.getInterface('settings')
             intf.Set("org.openbmc.settings.Host", "system_state", state_name)
 
-        if (state_name == "HOST_POWERED_OFF" and self.Get(DBUS_NAME,
-                                                          "reboot") == 1):
+        if (state_name == "HOST_POWERED_OFF" and
+           (self.Get(DBUS_NAME, "reboot") == 1 or
+                self.Get(DBUS_NAME, "powerCycle") == 1)):
             self.powerOn()
 
     def power_button_signal_handler(self):
