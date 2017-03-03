@@ -220,6 +220,7 @@ on_set_power_state(ControlPower *pwr,
 		gpointer user_data)
 {
 	Control* control = object_get_control((Object*)user_data);
+	PowerGpio *power_gpio = &g_gpio_configs.power_gpio;
 	if(state > 1)
 	{
 		g_dbus_method_invocation_return_dbus_error(invocation,
@@ -244,17 +245,17 @@ on_set_power_state(ControlPower *pwr,
 			} else {
 				control_emit_goto_system_state(control,"HOST_POWERING_OFF");
 			}
-			for (i = 0; i < g_gpio_configs.power_gpio.num_power_up_outs; i++) {
-				GPIO *power_pin = &g_gpio_configs.power_gpio.power_up_outs[i];
+			for (i = 0; i < power_gpio->num_power_up_outs; i++) {
+				GPIO *power_pin = &power_gpio->power_up_outs[i];
 				error = gpio_open(power_pin);
 				if(error != GPIO_OK) {
 					g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
-							g_gpio_configs.power_gpio.power_up_outs[i].name, error);
+							power_gpio->power_up_outs[i].name, error);
 					continue;
 				}
-				power_up_out = state ^ !g_gpio_configs.power_gpio.power_up_pols[i];
+				power_up_out = state ^ !power_gpio->power_up_pols[i];
 				g_print("PowerControl: setting power up %s to %d\n",
-						g_gpio_configs.power_gpio.power_up_outs[i].name, (int)power_up_out);
+						power_gpio->power_up_outs[i].name, (int)power_up_out);
 				error = gpio_write(power_pin, power_up_out);
 				if(error != GPIO_OK) {
 					continue;
@@ -268,7 +269,37 @@ on_set_power_state(ControlPower *pwr,
 		{
 			g_print("ERROR PowerControl: GPIO set power state (rc=%d)\n",error);
 		}
+
+		/* If there's a latch, it should be enabled following changes to the
+		 * power pins' states. This commits the changes to the latch states. */
+		if (power_gpio->latch_out.name != NULL) {
+			int rc;
+			uint8_t latch_value = 0;
+			rc = gpio_open(&power_gpio->latch_out);
+			if (rc != GPIO_OK) {
+				/* Failures are non-fatal. */
+				g_print("PowerControl ERROR failed to open latch %s rc=%d\n",
+						power_gpio->latch_out.name, rc);
+				return TRUE;
+			}
+			/* Make the latch transparent for as brief of a time as possible. */
+			rc = gpio_write(&power_gpio->latch_out, 1);
+			if (rc != GPIO_OK) {
+				g_print("PowerControl ERROR failed to assert latch %s rc=%d\n",
+						power_gpio->latch_out.name, rc);
+			} else {
+				g_print("PowerControl asserted latch %s\n",
+						power_gpio->latch_out.name);
+			}
+			rc = gpio_write(&power_gpio->latch_out, 0);
+			if (rc != GPIO_OK) {
+				g_print("PowerControl ERROR failed to clear latch %s rc=%d\n",
+						power_gpio->latch_out.name, rc);
+			}
+			gpio_close(&power_gpio->latch_out);
+		}
 	}
+
 	return TRUE;
 }
 
@@ -331,26 +362,6 @@ set_up_gpio(GDBusConnection *connection,
 		rc = gpio_init(connection, &power_gpio->pci_reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
-		}
-	}
-
-	/* If there's a latch, it only needs to be set once. */
-	if(power_gpio->latch_out.name != NULL) {
-		do {
-			rc = gpio_open(&power_gpio->latch_out);
-			if(rc != GPIO_OK) {
-				/* Failures are non-fatal. */
-				break;
-			}
-			rc = gpio_write(&power_gpio->latch_out, 1);
-			gpio_close(&power_gpio->latch_out);
-		} while(0);
-		if (rc != GPIO_OK) {
-			error = rc;
-			g_print("PowerControl ERROR failed to assert latch %s rc=%d\n",
-					power_gpio->latch_out.name, rc);
-		} else {
-			g_print("PowerControl asserted latch %s\n", power_gpio->latch_out.name);
 		}
 	}
 
