@@ -74,6 +74,11 @@ FRU_INSTANCES = {
     '<inventory_root>/system/chassis/motherboard/cpu1/core10' : { 'fru_type' : 'CORE', 'is_fru' : False, },
     '<inventory_root>/system/chassis/motherboard/cpu1/core11' : { 'fru_type' : 'CORE', 'is_fru' : False, },
 
+    '<inventory_root>/system/chassis/motherboard/membuf0' : { 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
+    '<inventory_root>/system/chassis/motherboard/membuf1' : { 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
+    '<inventory_root>/system/chassis/motherboard/membuf2' : { 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
+    '<inventory_root>/system/chassis/motherboard/membuf3' : { 'fru_type' : 'MEMORY_BUFFER', 'is_fru' : False, },
+
     '<inventory_root>/system/chassis/motherboard/dimm0' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
     '<inventory_root>/system/chassis/motherboard/dimm1' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
     '<inventory_root>/system/chassis/motherboard/dimm2' : { 'fru_type' : 'DIMM', 'is_fru' : True,},
@@ -97,6 +102,10 @@ ID_LOOKUP = {
         0x01 : '<inventory_root>/system/chassis/motherboard/cpu0',
         0x02 : '<inventory_root>/system/chassis/motherboard/cpu1',
         0x03 : '<inventory_root>/system/chassis/motherboard',
+        0x04 : '<inventory_root>/system/chassis/motherboard/membuf0',
+        0x05 : '<inventory_root>/system/chassis/motherboard/membuf1',
+        0x06 : '<inventory_root>/system/chassis/motherboard/membuf2',
+        0x07 : '<inventory_root>/system/chassis/motherboard/membuf3',
         0x0c : '<inventory_root>/system/chassis/motherboard/dimm0',
         0x0d : '<inventory_root>/system/chassis/motherboard/dimm1',
         0x0e : '<inventory_root>/system/chassis/motherboard/dimm2',
@@ -120,6 +129,10 @@ ID_LOOKUP = {
         'BOARD_2'    : '<inventory_root>/system/chassis/motherboard/cpu1',
         'CHASSIS_3'  : '<inventory_root>/system/chassis/motherboard',
         'BOARD_3'    : '<inventory_root>/system/misc',
+        'BOARD_4'    : '<inventory_root>/system/chassis/motherboard/membuf0',
+        'BOARD_5'    : '<inventory_root>/system/chassis/motherboard/membuf1',
+        'BOARD_6'    : '<inventory_root>/system/chassis/motherboard/membuf2',
+        'BOARD_7'    : '<inventory_root>/system/chassis/motherboard/membuf3',
         'PRODUCT_12'   : '<inventory_root>/system/chassis/motherboard/dimm0',
         'PRODUCT_13'   : '<inventory_root>/system/chassis/motherboard/dimm1',
         'PRODUCT_14'   : '<inventory_root>/system/chassis/motherboard/dimm2',
@@ -139,12 +152,12 @@ ID_LOOKUP = {
         'PRODUCT_47'   : '<inventory_root>/system/misc',
     },
     'SENSOR' : {
-        0x04 : '/org/openbmc/sensors/host/HostStatus',
-        0x05 : '/org/openbmc/sensors/host/BootProgress',
-        0x08 : '/org/openbmc/sensors/host/cpu0/OccStatus',
-        0x09 : '/org/openbmc/sensors/host/cpu1/OccStatus',
-        0x0c : '<inventory_root>/system/chassis/motherboard/cpu0',
-        0x0e : '<inventory_root>/system/chassis/motherboard/cpu1',
+        0x02 : '/org/openbmc/sensors/host/HostStatus',
+        0x03 : '/org/openbmc/sensors/host/BootProgress',
+        0xfc : '/org/openbmc/sensors/host/cpu0/OccStatus',
+        0xfd : '/org/openbmc/sensors/host/cpu1/OccStatus',
+        0x5a : '<inventory_root>/system/chassis/motherboard/cpu0',
+        0xa4 : '<inventory_root>/system/chassis/motherboard/cpu1',
         0x1e : '<inventory_root>/system/chassis/motherboard/dimm3',
         0x1f : '<inventory_root>/system/chassis/motherboard/dimm2',
         0x20 : '<inventory_root>/system/chassis/motherboard/dimm1',
@@ -185,17 +198,17 @@ ID_LOOKUP = {
         0x53 : '<inventory_root>/system/chassis/motherboard/cpu1/core9',
         0x54 : '<inventory_root>/system/chassis/motherboard/cpu1/core10',
         0x55 : '<inventory_root>/system/chassis/motherboard/cpu1/core11',
-        0x5f : '/org/openbmc/sensors/host/BootCount',
-        0x60 : '<inventory_root>/system/chassis/motherboard',
-        0x61 : '<inventory_root>/system/systemevent',
-        0x62 : '<inventory_root>/system/powerlimit',
-        0x63 : '<inventory_root>/system/chassis/motherboard/refclock',
-        0x64 : '<inventory_root>/system/chassis/motherboard/pcieclock',
-        0xb1 : '<inventory_root>/system/chassis/motherboard/todclock',
-        0xb2 : '<inventory_root>/system/chassis/motherboard/apss',
-        0xb3 : '/org/openbmc/sensors/host/powercap',
-        0xb5 : '/org/openbmc/sensors/host/OperatingSystemStatus',
-        0xb6 : '<inventory_root>/system/chassis/motherboard/pcielink',
+        0x07 : '/org/openbmc/sensors/host/BootCount',
+        0x0c : '<inventory_root>/system/chassis/motherboard',
+        0x01 : '<inventory_root>/system/systemevent',
+        0x08 : '<inventory_root>/system/powerlimit',
+        0x0d : '<inventory_root>/system/chassis/motherboard/refclock',
+        0x0e : '<inventory_root>/system/chassis/motherboard/pcieclock',
+        0x0f : '<inventory_root>/system/chassis/motherboard/todclock',
+        0x10 : '<inventory_root>/system/chassis/motherboard/apss',
+        0x06 : '/org/openbmc/sensors/host/powercap',
+        0x02 : '/org/openbmc/sensors/host/OperatingSystemStatus',
+        0x04 : '<inventory_root>/system/chassis/motherboard/pcielink',
     },
     'GPIO_PRESENT' : {}
 }
@@ -281,6 +294,8 @@ HWMON_CONFIG = {
         '107' :  { 'object_path' : 'temperature/dimm5','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
         '108' :  { 'object_path' : 'temperature/dimm6','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
         '109' :  { 'object_path' : 'temperature/dimm7','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
+        '94' :  { 'object_path' : 'temperature/membuf0','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
+        '95' :  { 'object_path' : 'temperature/membuf1','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
         }
     },
     '5-0050' : {
@@ -317,9 +332,12 @@ HWMON_CONFIG = {
         '115' :  { 'object_path' : 'temperature/dimm13','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
         '116' :  { 'object_path' : 'temperature/dimm14','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
         '117' :  { 'object_path' : 'temperature/dimm15','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
+        '98' :  { 'object_path' : 'temperature/membuf4','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
+        '99' :  { 'object_path' : 'temperature/membuf5','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
         }
     },
 }
+
 
 GPIO_CONFIGS = {
     'power_config' : {
@@ -343,17 +361,19 @@ GPIO_CONFIGS = {
     },
 }
 
+
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
-    0x5f : { 'class' : 'BootCountSensor' },
-    0x05 : { 'class' : 'BootProgressSensor' },
-    0x08 : { 'class' : 'OccStatusSensor',
+    0x07 : { 'class' : 'BootCountSensor' },
+    0x03 : { 'class' : 'BootProgressSensor' },
+    #OCC active sensors aren't in the P9 XML yet.  These are wrong.
+    0xfc : { 'class' : 'OccStatusSensor',
         'os_path' : '/sys/bus/i2c/devices/3-0050/online' },
-    0x09 : { 'class' : 'OccStatusSensor',
+    0xfd : { 'class' : 'OccStatusSensor',
         'os_path' : '/sys/bus/i2c/devices/3-0051/online' },
-    0xb5 : { 'class' : 'OperatingSystemStatusSensor' },
-    0xb3 : { 'class' : 'PowerCap',
+    0x02 : { 'class' : 'OperatingSystemStatusSensor' },
+    0x06 : { 'class' : 'PowerCap',
         'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
 }
 
