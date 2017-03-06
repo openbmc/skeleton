@@ -485,9 +485,9 @@ MISC_SENSORS = {
     0x03 : { 'class' : 'BootProgressSensor' },
     #OCC active sensors aren't in the P9 XML yet.  These are wrong.
     0xfc : { 'class' : 'OccStatusSensor',
-        'os_path' : '/sys/class/i2c-adapter/i2c-3/3-0050/online' },
+        'os_path' : '/sys/bus/i2c/devices/3-0050/online' },
     0xfd : { 'class' : 'OccStatusSensor',
-        'os_path' : '/sys/class/i2c-adapter/i2c-3/3-0051/online' },
+        'os_path' : '/sys/bus/i2c/devices/3-0051/online' },
     0x02 : { 'class' : 'OperatingSystemStatusSensor' },
     0x06 : { 'class' : 'PowerCap',
         'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },

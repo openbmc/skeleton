@@ -162,7 +162,7 @@ MISC_SENSORS = {
 	0x09 : { 'class' : 'BootCountSensor' },
 	0x05 : { 'class' : 'BootProgressSensor' },
 	0x08 : { 'class' : 'OccStatusSensor',
-		'os_path' : '/sys/class/i2c-adapter/i2c-3/3-0050/online' },
+		'os_path' : '/sys/bus/i2c/devices/3-0050/online' },
 	0x32 : { 'class' : 'OperatingSystemStatusSensor' },
 	0x33 : { 'class' : 'PowerCap',
 		'os_path' : '/sys/class/hwmon/hwmon1/user_powercap' },
