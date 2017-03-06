@@ -139,12 +139,12 @@ ID_LOOKUP = {
         'PRODUCT_47'   : '<inventory_root>/system/misc',
     },
     'SENSOR' : {
-        0x04 : '/org/openbmc/sensors/host/HostStatus',
-        0x05 : '/org/openbmc/sensors/host/BootProgress',
-        0x08 : '/org/openbmc/sensors/host/cpu0/OccStatus',
-        0x09 : '/org/openbmc/sensors/host/cpu1/OccStatus',
-        0x0c : '<inventory_root>/system/chassis/motherboard/cpu0',
-        0x0e : '<inventory_root>/system/chassis/motherboard/cpu1',
+        0x02 : '/org/openbmc/sensors/host/HostStatus',
+        0x03 : '/org/openbmc/sensors/host/BootProgress',
+        0xfc : '/org/openbmc/sensors/host/cpu0/OccStatus',
+        0xfd : '/org/openbmc/sensors/host/cpu1/OccStatus',
+        0x5a : '<inventory_root>/system/chassis/motherboard/cpu0',
+        0xa4 : '<inventory_root>/system/chassis/motherboard/cpu1',
         0x1e : '<inventory_root>/system/chassis/motherboard/dimm3',
         0x1f : '<inventory_root>/system/chassis/motherboard/dimm2',
         0x20 : '<inventory_root>/system/chassis/motherboard/dimm1',
@@ -185,17 +185,17 @@ ID_LOOKUP = {
         0x53 : '<inventory_root>/system/chassis/motherboard/cpu1/core9',
         0x54 : '<inventory_root>/system/chassis/motherboard/cpu1/core10',
         0x55 : '<inventory_root>/system/chassis/motherboard/cpu1/core11',
-        0x5f : '/org/openbmc/sensors/host/BootCount',
-        0x60 : '<inventory_root>/system/chassis/motherboard',
-        0x61 : '<inventory_root>/system/systemevent',
-        0x62 : '<inventory_root>/system/powerlimit',
-        0x63 : '<inventory_root>/system/chassis/motherboard/refclock',
-        0x64 : '<inventory_root>/system/chassis/motherboard/pcieclock',
-        0xb1 : '<inventory_root>/system/chassis/motherboard/todclock',
-        0xb2 : '<inventory_root>/system/chassis/motherboard/apss',
-        0xb3 : '/org/openbmc/sensors/host/powercap',
-        0xb5 : '/org/openbmc/sensors/host/OperatingSystemStatus',
-        0xb6 : '<inventory_root>/system/chassis/motherboard/pcielink',
+        0x07 : '/org/openbmc/sensors/host/BootCount',
+        0x0c : '<inventory_root>/system/chassis/motherboard',
+        0x01 : '<inventory_root>/system/systemevent',
+        0x08 : '<inventory_root>/system/powerlimit',
+        0x0d : '<inventory_root>/system/chassis/motherboard/refclock',
+        0x0e : '<inventory_root>/system/chassis/motherboard/pcieclock',
+        0x0f : '<inventory_root>/system/chassis/motherboard/todclock',
+        0x10 : '<inventory_root>/system/chassis/motherboard/apss',
+        0x06 : '/org/openbmc/sensors/host/powercap',
+        0x02 : '/org/openbmc/sensors/host/OperatingSystemStatus',
+        0x04 : '<inventory_root>/system/chassis/motherboard/pcielink',
     },
     'GPIO_PRESENT' : {}
 }
@@ -321,6 +321,7 @@ HWMON_CONFIG = {
     },
 }
 
+
 GPIO_CONFIGS = {
     'power_config' : {
         'power_good_in' : 'SYS_PWROK_BUFF',
@@ -343,17 +344,19 @@ GPIO_CONFIGS = {
     },
 }
 
+
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
-    0x5f : { 'class' : 'BootCountSensor' },
-    0x05 : { 'class' : 'BootProgressSensor' },
-    0x08 : { 'class' : 'OccStatusSensor',
+    0x07 : { 'class' : 'BootCountSensor' },
+    0x03 : { 'class' : 'BootProgressSensor' },
+    #OCC active sensors aren't in the P9 XML yet.  These are wrong.
+    0xfc : { 'class' : 'OccStatusSensor',
         'os_path' : '/sys/bus/i2c/devices/3-0050/online' },
-    0x09 : { 'class' : 'OccStatusSensor',
+    0xfd : { 'class' : 'OccStatusSensor',
         'os_path' : '/sys/bus/i2c/devices/3-0051/online' },
-    0xb5 : { 'class' : 'OperatingSystemStatusSensor' },
-    0xb3 : { 'class' : 'PowerCap',
+    0x02 : { 'class' : 'OperatingSystemStatusSensor' },
+    0x06 : { 'class' : 'PowerCap',
         'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
 }
 
