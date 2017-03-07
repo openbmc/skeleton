@@ -122,7 +122,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         self.Set(DBUS_NAME, "reboot", 0)
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
-        f.call_async('obmc-chassis-start@0.target', 'replace')
+        f.call_async('obmc-host-start@0.target', 'replace')
         return None
 
     @dbus.service.method(DBUS_NAME,
@@ -132,7 +132,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
 
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
-        f.call_async('obmc-chassis-stop@0.target', 'replace')
+        f.call_async('obmc-host-stop@0.target', 'replace')
         return None
 
     @dbus.service.method(DBUS_NAME,
