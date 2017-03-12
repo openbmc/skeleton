@@ -18,6 +18,9 @@ AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CXXFLAGS])
 # For linking
 LT_INIT
 
+# Checks for modules
+PKG_CHECK_MODULES([PHOSPHOR_LOGGING], [phosphor-logging],, [AC_MSG_ERROR([Could not find phosphor-logging...openbmc/phosphor-logging package required])])
+
 # Create configured output
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
