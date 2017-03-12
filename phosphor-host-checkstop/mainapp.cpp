@@ -16,8 +16,12 @@
 
 #include <iostream>
 #include <string>
+#include <systemd/sd-event.h>
+#include <phosphor-logging/log.hpp>
 #include "argument.hpp"
 #include "checkstop.hpp"
+
+using namespace phosphor::logging;
 
 static void ExitWithError(const char* err, char** argv)
 {
@@ -29,6 +33,8 @@ static void ExitWithError(const char* err, char** argv)
 
 int main(int argc, char** argv)
 {
+    sd_event* event = nullptr;
+
     // Read arguments.
     auto options = phosphor::checkstop::ArgumentParser(argc, argv);
 
@@ -46,8 +52,22 @@ int main(int argc, char** argv)
         ExitWithError("line not specified.", argv);
     }
 
+    auto r = sd_event_default(&event);
+    if (r < 0)
+    {
+        log<level::ERR>("Error creating a default sd_event handler");
+        return r;
+    }
+
     // Create a checkstop handler object and let it do all the rest
-    phosphor::checkstop::Handler handler(device, std::stoi(line));
+    phosphor::checkstop::Handler handler(device, std::stoi(line), event,
+                            phosphor::checkstop::Handler::processEvents);
+
+    // Wait for events
+    sd_event_loop(event);
+
+    // Delete the event memory
+    event = sd_event_unref(event);
 
     return 0;
 }

@@ -22,11 +22,11 @@ namespace phosphor
 namespace checkstop
 {
 
+using namespace phosphor::logging;
+
 // Gets the file descriptor for passed in device
 void Handler::getFD()
 {
-    using namespace phosphor::logging;
-
     // TODO: For now, this just opens the device and returns the FD.
     // When 4.9 kernel is merged, this will be changed to use some IOCTL to
     // associate a FD to passed in GPIO device.
@@ -37,6 +37,28 @@ void Handler::getFD()
                 entry("PATH=%s", device.c_str()));
         throw std::runtime_error("Failed to open device");
     }
+}
+
+// Attaches the FD to event loop and registers the callback handler
+void Handler::registerCallback()
+{
+    auto r = sd_event_add_io(event, &eventSource, fd,
+                             EPOLLIN, processEvents, this);
+    if (r < 0)
+    {
+        log<level::ERR>("Failed to register callback handler",
+                entry("ERROR=%s", strerror(-r)));
+        throw std::runtime_error("Failed to register callback handler");
+    }
+}
+
+// Callback handler when there is an activity on the FD
+int Handler::processEvents(sd_event_source* es, int fd,
+                           uint32_t revents, void* userData)
+{
+    // TODO. This calls into starting quiesce target
+    log<level::INFO>("Callback handler called");
+    return 0;
 }
 
 } // namespace checkstop
