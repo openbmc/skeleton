@@ -16,8 +16,12 @@
 
 #include <iostream>
 #include <string>
+#include <systemd/sd-event.h>
+#include <phosphor-logging/log.hpp>
 #include "argument.hpp"
 #include "monitor.hpp"
+
+using namespace phosphor::logging;
 
 static void ExitWithError(const char* err, char** argv)
 {
@@ -28,6 +32,8 @@ static void ExitWithError(const char* err, char** argv)
 
 int main(int argc, char** argv)
 {
+    sd_event* event = nullptr;
+
     // Read arguments.
     auto options = phosphor::gpio::ArgumentParser(argc, argv);
 
@@ -49,8 +55,22 @@ int main(int argc, char** argv)
         ExitWithError("state not specified.", argv);
     }
 
-    // Create a GPIO monitor object and let it do all the rest
-    phosphor::gpio::Monitor monitor(path, std::stoi(state));
+    auto r = sd_event_default(&event);
+    if (r < 0)
+    {
+        log<level::ERR>("Error creating a default sd_event handler");
+        return r;
+    }
+
+    // Create a monitor object and let it do all the rest
+    phosphor::gpio::Monitor monitor(path, std::stoi(state), event,
+                            phosphor::gpio::Monitor::processEvents);
+
+    // Wait for events
+    sd_event_loop(event);
+
+    // Delete the event memory
+    event = sd_event_unref(event);
 
     return 0;
 }
