@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include "argument.hpp"
+#include "checkstop.hpp"
 
 static void ExitWithError(const char* err, char** argv)
 {
@@ -45,6 +46,8 @@ int main(int argc, char** argv)
         ExitWithError("line not specified.", argv);
     }
 
-    // TODO : Convert the line to integer
+    // Create a checkstop handler object and let it do all the rest
+    phosphor::checkstop::Handler handler(device, std::stoi(line));
+
     return 0;
 }
