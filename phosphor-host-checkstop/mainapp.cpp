@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include "argument.hpp"
+#include "monitor.hpp"
 
 static void ExitWithError(const char* err, char** argv)
 {
@@ -48,6 +49,8 @@ int main(int argc, char** argv)
         ExitWithError("state not specified.", argv);
     }
 
-    // TODO : Convert the state to integer
+    // Create a GPIO monitor object and let it do all the rest
+    phosphor::gpio::Monitor monitor(path, std::stoi(state));
+
     return 0;
 }
