@@ -19,6 +19,7 @@ AX_APPEND_COMPILE_FLAGS([-Wall -Werror], [CXXFLAGS])
 LT_INIT
 
 # Checks for modules
+PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 221], ,[AC_MSG_ERROR([Could not find systemd...systemd developement package required])])
 PKG_CHECK_MODULES([PHOSPHOR_LOGGING], [phosphor-logging],, [AC_MSG_ERROR([Could not find phosphor-logging...openbmc/phosphor-logging package required])])
 
 # Create configured output
