@@ -39,7 +39,7 @@ get_service(GDBusConnection *connection, const char *obj,
 			G_DBUS_PROXY_FLAGS_NONE,
 			NULL, /* GDBusInterfaceInfo* */
 			"xyz.openbmc_project.ObjectMapper", /* name */
-			"/xyz/openbmc_project/ObjectMapper", /* object path */
+			"/xyz/openbmc_project/object_mapper", /* object path */
 			"xyz.openbmc_project.ObjectMapper", /* interface name */
 			NULL, /* GCancellable */
 			error);
