@@ -39,6 +39,11 @@ dbus_objects = {
         'object_name': '/org/openbmc/managers/System',
         'interface_name': 'org.freedesktop.DBus.Properties'
     },
+    'powersupplyredundancy': {
+        'bus_name': 'org.openbmc.Sensors',
+        'object_name': '/org/openbmc/sensors/host/PowerSupplyRedundancy',
+        'interface_name': 'org.freedesktop.DBus.Properties'
+    },
 }
 
 
