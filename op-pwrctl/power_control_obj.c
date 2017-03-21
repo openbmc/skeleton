@@ -48,7 +48,7 @@ poll_pgood(gpointer user_data)
 		// set timeout to 0 so timeout doesn't happen again
 		control_power_set_pgood_timeout(control_power,0);
 		pgood_timeout_start = 0;
-		return FALSE;
+		return TRUE;
 	}
 	uint8_t pgood_state;
 
