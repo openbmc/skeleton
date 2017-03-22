@@ -63,8 +63,19 @@ int main(int argc, char** argv)
     phosphor::checkstop::Handler handler(device, std::stoi(line), event,
                             phosphor::checkstop::Handler::processEvents);
 
-    // Wait for events
-    sd_event_loop(event);
+    // Wait for client requests until this application has processed
+    // at least one successful checkstop
+    while(!handler.isCompleted())
+    {
+        // -1 denotes wait for ever
+        r = sd_event_run(event, (uint64_t)-1);
+        if (r < 0)
+        {
+            log<level::ERR>("Failure in processing request",
+                    entry("ERROR=%s", strerror(-r)));
+            break;
+        }
+    }
 
     // Delete the event memory
     event = sd_event_unref(event);

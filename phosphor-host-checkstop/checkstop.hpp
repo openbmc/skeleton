@@ -2,6 +2,7 @@
 
 #include <string>
 #include <systemd/sd-event.h>
+#include <sdbusplus/bus.hpp>
 namespace phosphor
 {
 namespace checkstop
@@ -31,7 +32,8 @@ class Handler
             : device(device),
               line(line),
               event(event),
-              callbackHandler(handler)
+              callbackHandler(handler),
+              bus(sdbusplus::bus::new_default())
 
         {
             // Get the file descriptor for the passed in device
@@ -59,6 +61,12 @@ class Handler
         static int processEvents(sd_event_source* es, int fd,
                                  uint32_t revents, void* userData);
 
+        /** @brief Returns the completion state of this handler */
+        inline auto isCompleted()
+        {
+            return completed;
+        }
+
     private:
         /** @brief Absolute path of device */
         const std::string& device;
@@ -78,11 +86,34 @@ class Handler
         /** @brief Callback handler when the FD has some data */
         sd_event_io_handler_t callbackHandler;
 
-        /** @brief Opens the device and returns the descriptor */
+        /** @brief sdbusplus handler */
+        sdbusplus::bus::bus bus;
+
+        /** @brief Completion indicator */
+        bool completed = false;
+
+        /** @brief Opens the device and populates the descriptor */
         void getFD();
 
         /** @brief attaches FD to events and sets up callback handler */
         void registerCallback();
+
+        /** @brief Given the dbus path and interface, returns service name
+         *
+         *  @param[in] objPath      - Dbus Object Path
+         *  @param[in] interface    - Dbus interface
+         *
+         *  @return                 - Service name or empty string
+         */
+        std::string getServiceName(const std::string& objPath,
+                                   const std::string& interface);
+
+        /** @brief Analyzes the GPIO event and starts Host Quiesce target
+         *  if the GPIO is asserted and Host is already in Running state.
+         *
+         *  @return - For now, returns zero
+         */
+        int analyzeEvent();
 };
 
 } // namespace checkstop
