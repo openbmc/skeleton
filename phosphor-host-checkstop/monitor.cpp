@@ -17,10 +17,17 @@
 #include <fcntl.h>
 #include <phosphor-logging/log.hpp>
 #include "monitor.hpp"
+#include "config.h"
+
 namespace phosphor
 {
 namespace gpio
 {
+
+// systemd service to kick start a target.
+constexpr auto SYSTEMD_SERVICE        = "org.freedesktop.systemd1";
+constexpr auto SYSTEMD_ROOT           = "/org/freedesktop/systemd1";
+constexpr auto SYSTEMD_INTERFACE      = "org.freedesktop.systemd1.Manager";
 
 using namespace phosphor::logging;
 
@@ -53,8 +60,29 @@ void Monitor::registerCallback()
 int Monitor::processEvents(sd_event_source* es, int fd,
                            uint32_t revents, void* userData)
 {
-    // TODO. This calls into starting configured target
-    log<level::INFO>("Callback handler called");
+    log<level::INFO>("GPIO line altered");
+    auto monitor = static_cast<Monitor*>(userData);
+
+    // TODO : Need a way to check if the GPIO state change is what we wanted
+    return monitor->analyzeEvent();
+}
+
+// Analyzes the GPIO event
+int Monitor::analyzeEvent()
+{
+    auto method = bus.new_method_call(SYSTEMD_SERVICE,
+                                      SYSTEMD_ROOT,
+                                      SYSTEMD_INTERFACE,
+                                      "StartUnit");
+    method.append(TARGET_UNIT);
+    method.append("replace");
+
+    // If there is any error, an exception would be thrown from here.
+    bus.call_noreply(method);
+
+    // This marks the completion of handling the checkstop and app can exit
+    complete = true;
+
     return 0;
 }
 

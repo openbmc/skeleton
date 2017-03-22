@@ -66,8 +66,19 @@ int main(int argc, char** argv)
     phosphor::gpio::Monitor monitor(path, std::stoi(state), event,
                             phosphor::gpio::Monitor::processEvents);
 
-    // Wait for events
-    sd_event_loop(event);
+    // Wait for client requests until this application has processed
+    // at least one expected GPIO state change
+    while(!monitor.completed())
+    {
+        // -1 denotes wait for ever
+        r = sd_event_run(event, (uint64_t)-1);
+        if (r < 0)
+        {
+            log<level::ERR>("Failure in processing request",
+                    entry("ERROR=%s", strerror(-r)));
+            break;
+        }
+    }
 
     // Delete the event memory
     event = sd_event_unref(event);
