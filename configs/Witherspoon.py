@@ -292,6 +292,7 @@ ID_LOOKUP = {
         0x06 : '/org/openbmc/sensors/host/powercap',
         0x02 : '/org/openbmc/sensors/host/OperatingSystemStatus',
         0x04 : '<inventory_root>/system/chassis/motherboard/pcielink',
+        0xda : '/org/openbmc/sensors/host/TurboAllowed',
     },
     'GPIO_PRESENT' : {}
 }
@@ -491,6 +492,7 @@ MISC_SENSORS = {
     0x02 : { 'class' : 'OperatingSystemStatusSensor' },
     0x06 : { 'class' : 'PowerCap',
         'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
+    0xda : { 'class' : 'TurboAllowedSensor' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

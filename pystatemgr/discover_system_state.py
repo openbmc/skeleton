@@ -39,6 +39,11 @@ dbus_objects = {
         'object_name': '/org/openbmc/managers/System',
         'interface_name': 'org.freedesktop.DBus.Properties'
     },
+    'turboallowed': {
+        'bus_name': 'org.openbmc.Sensors',
+        'object_name': '/org/openbmc/sensors/host/TurboAllowed',
+        'interface_name': 'org.openbmc.SensorValue'
+    },
 }
 
 
