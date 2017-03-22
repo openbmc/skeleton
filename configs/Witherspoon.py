@@ -293,6 +293,7 @@ ID_LOOKUP = {
         0x02 : '/org/openbmc/sensors/host/OperatingSystemStatus',
         0x04 : '<inventory_root>/system/chassis/motherboard/pcielink',
         0xD8 : '/org/openbmc/sensors/host/PowerSupplyRedundancy',
+        0xda : '/org/openbmc/sensors/host/TurboAllowed',
     },
     'GPIO_PRESENT' : {}
 }
@@ -494,6 +495,7 @@ MISC_SENSORS = {
         'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
     # Garrison value is used, need to get from P9 XML.
     0xD8 : { 'class' : 'PowerSupplyRedundancySensor'},
+    0xda : { 'class' : 'TurboAllowedSensor' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
