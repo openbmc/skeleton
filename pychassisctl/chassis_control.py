@@ -44,11 +44,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                 'object_name': '/org/openbmc/control/power0',
                 'interface_name': 'org.openbmc.control.Power'
             },
-            'identify_led': {
-                'bus_name': 'org.openbmc.control.led',
-                'object_name': '/org/openbmc/control/led/identify',
-                'interface_name': 'org.openbmc.Led'
-            },
             'host_services': {
                 'bus_name': 'org.openbmc.HostServices',
                 'object_name': '/org/openbmc/HostServices',
@@ -98,22 +93,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         o = self.dbus_objects[name]
         obj = bus.get_object(o['bus_name'], o['object_name'], introspect=False)
         return dbus.Interface(obj, o['interface_name'])
-
-    @dbus.service.method(DBUS_NAME,
-                         in_signature='', out_signature='')
-    def setIdentify(self):
-        print "Turn on identify"
-        intf = self.getInterface('identify_led')
-        intf.setOn()
-        return None
-
-    @dbus.service.method(DBUS_NAME,
-                         in_signature='', out_signature='')
-    def clearIdentify(self):
-        print "Turn on identify"
-        intf = self.getInterface('identify_led')
-        intf.setOff()
-        return None
 
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')

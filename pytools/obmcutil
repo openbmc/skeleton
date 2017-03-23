@@ -72,11 +72,6 @@ dbus_objects = {
         'object_name': '/org/openbmc/control/power0',
         'interface_name': 'org.openbmc.control.Power'
     },
-    'identify_led': {
-        'bus_name': 'org.openbmc.control.led',
-        'object_name': '/org/openbmc/control/led/identify',
-        'interface_name': 'org.openbmc.Led'
-    },
     'chassis': {
         'bus_name': 'org.openbmc.control.Chassis',
         'object_name': '/org/openbmc/control/chassis0',
