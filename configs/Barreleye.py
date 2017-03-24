@@ -24,7 +24,6 @@ EXIT_STATE_DEPEND = {
 		'/org/openbmc/control/host0' : 0,
 		'/org/openbmc/control/flash/bios' : 0,
 		'/org/openbmc/sensors/speed/fan5': 0,
-		'/org/openbmc/inventory/system/chassis/io_board' : 0,
 	},
 	'BMC_STARTING2' : {
 		'/org/openbmc/control/fans' : 0,
