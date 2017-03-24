@@ -71,7 +71,8 @@ class SystemManager(DbusProperties, DbusObjectManager):
         if waitlist:
             self.waiter = obmc.mapper.utils.Wait(
                 self.bus, waitlist,
-                callback=self.gotoNextState)
+                callback=self.gotoNextState,
+                busy_retries=60)
 
     def gotoNextState(self):
         s = 0
