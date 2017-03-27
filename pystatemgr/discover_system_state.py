@@ -47,6 +47,10 @@ dbus_objects = {
         'bus_name': 'org.openbmc.Sensors',
         'object_name': '/org/openbmc/sensors/host/TurboAllowed',
         'interface_name': 'org.openbmc.SensorValue'
+    'powersupplyderating': {
+        'bus_name': 'org.openbmc.Sensors',
+        'object_name': '/org/openbmc/sensors/host/PowerSupplyDerating',
+        'interface_name': 'org.openbmc.SensorValue'
     },
 }
 
