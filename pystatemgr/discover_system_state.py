@@ -42,7 +42,7 @@ dbus_objects = {
     'powersupplyredundancy': {
         'bus_name': 'org.openbmc.Sensors',
         'object_name': '/org/openbmc/sensors/host/PowerSupplyRedundancy',
-        'interface_name': 'org.freedesktop.DBus.Properties'
+        'interface_name': 'org.openbmc.SensorValue'
     'turboallowed': {
         'bus_name': 'org.openbmc.Sensors',
         'object_name': '/org/openbmc/sensors/host/TurboAllowed',
