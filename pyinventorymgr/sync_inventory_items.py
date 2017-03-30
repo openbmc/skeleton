@@ -15,21 +15,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import sys
 import os
 import dbus
 import argparse
 import subprocess
+import obmc.mapper
+import obmc.utils.dtree
+import obmc.utils.pathtree
+import shutil
 
-
-INV_DBUS_NAME = 'org.openbmc.Inventory'
-INV_INTF_NAME = 'org.openbmc.InventoryItem'
-NET_DBUS_NAME = 'org.openbmc.NetworkManager'
-NET_OBJ_NAME = '/org/openbmc/NetworkManager/Interface'
-CHS_DBUS_NAME = 'org.openbmc.control.Chassis'
-CHS_OBJ_NAME = '/org/openbmc/control/chassis0'
+INV_DBUS_NAME = 'xyz.openbmc_project.Inventory.Manager'
+INV_INTF_NAME = 'xyz.openbmc_project.Inventory.Item.NetworkInterface'
+NET_DBUS_NAME = 'xyz.openbmc_project.NetworkManager'
+NET_OBJ_NAME = '/xyz/openbmc_project/NetworkManager/Interface'
+CHS_DBUS_NAME = 'xyz.openbmc_project.Control.Chassis'
+CHS_INTF_NAME = 'xyz.openbmc_project.Inventory.Item.Bmc'
+CHS_OBJ_NAME = '/xyz/openbmc_project/Common/UUID'
 PROP_INTF_NAME = 'org.freedesktop.DBus.Properties'
+INVENTORY_ROOT = '/xyz/openbmc_project/inventory'
 
 FRUS = {}
 
@@ -40,13 +44,16 @@ MAC_LOCALLY_ADMIN_MASK = 0x20000000000
 
 
 # Get the inventory dbus path based on the requested fru
-def get_inv_obj_path(fru_type, fru_name):
+def get_inv_obj_path(bus, interface):
     obj_path = ''
-    for f in FRUS.keys():
-        import obmc.inventory
-        if (FRUS[f]['fru_type'] == fru_type and f.endswith(fru_name)):
-            obj_path = f.replace("<inventory_root>", obmc.inventory.INVENTORY_ROOT)
+    mapper = obmc.mapper.Mapper(bus)
+    for path, connection in \
+        mapper.get_subtree(
+            path=INVENTORY_ROOT).iteritems():
+        if interface in str(connection):
+            obj_path = path
     return obj_path
+
 
 
 # Get the inventory property value
@@ -82,19 +89,19 @@ def sync_mac(obj, inv_mac, sys_mac):
     if not int_sys_mac & MAC_LOCALLY_ADMIN_MASK:
         # Sys MAC is not locally administered, go replace it with inv value
         # Add the ':' separators
-        mac_str = ':'.join([inv_mac[i]+inv_mac[i+1] for i in range(0, 12, 2)])
-        # The Set HW Method already has checking for mac format
-        dbus_method = obj.get_dbus_method("SetHwAddress", NET_DBUS_NAME)
-        dbus_method("eth0", mac_str)
+        if inv_mac:
+            mac_str = ':'.join([inv_mac[i]+inv_mac[i+1]
+                               for i in range(0, 12, 2)])
+            # The Set HW Method already has checking for mac format
+            dbus_method = obj.get_dbus_method("SetHwAddress", NET_DBUS_NAME)
+            dbus_method("eth0", mac_str)
 
 
 # Get sys uuid
 def get_sys_uuid(obj):
-    sys_uuid = ''
-    dbus_method = obj.get_dbus_method("Get", PROP_INTF_NAME)
-    sys_uuid = dbus_method(CHS_DBUS_NAME, "uuid")
-    return sys_uuid
-
+    inv_uuid = ''
+    inv_uuid = obj.Get(CHS_OBJ_NAME, "uuid")
+    return inv_uuid
 
 # Set sys uuid, this reboots the BMC for the value to take effect
 def set_sys_uuid(uuid):
@@ -109,14 +116,10 @@ def set_sys_uuid(uuid):
 
 if __name__ == '__main__':
     arg = argparse.ArgumentParser()
-    arg.add_argument('-t')
-    arg.add_argument('-n')
     arg.add_argument('-p')
     arg.add_argument('-s')
 
     opt = arg.parse_args()
-    fru_type = opt.t
-    fru_name = opt.n
     prop_name = opt.p
     sync_type = opt.s
 
@@ -136,21 +139,22 @@ if __name__ == '__main__':
         FRUS = System.FRU_INSTANCES
 
     bus = dbus.SystemBus()
-    inv_obj_path = get_inv_obj_path(fru_type, fru_name)
-    inv_obj = bus.get_object(INV_DBUS_NAME, inv_obj_path)
-    net_obj = bus.get_object(NET_DBUS_NAME, NET_OBJ_NAME)
-    chs_obj = bus.get_object(CHS_DBUS_NAME, CHS_OBJ_NAME)
-
-    # Get the value of the requested inventory property
-    inv_value = get_inv_value(inv_obj, prop_name)
-
     if sync_type == "mac":
-        sys_mac = get_sys_mac(net_obj)
-        if inv_value != sys_mac:
-            sync_mac(net_obj, inv_value, sys_mac)
-    elif sync_type == "uuid":
-        sys_uuid = get_sys_uuid(chs_obj)
-        if inv_value != sys_uuid:
-            set_sys_uuid(inv_value)
+        inv_obj_path = get_inv_obj_path(bus, INV_INTF_NAME)
+        if inv_obj_path:
+            inv_obj = bus.get_object(INV_DBUS_NAME, inv_obj_path)
+            net_obj = bus.get_object(NET_DBUS_NAME, NET_OBJ_NAME)
 
+            # Get the value of the requested inventory property
+            inv_value = get_inv_value(inv_obj, prop_name)
+            sys_mac = get_sys_mac(net_obj)
+            if inv_value != sys_mac:
+                sync_mac(net_obj, inv_value, sys_mac)
+    elif sync_type == "uuid":
+        inv_obj_path = get_inv_obj_path(bus, CHS_INTF_NAME)
+        if inv_obj_path:
+            chs_obj = bus.get_object(CHS_DBUS_NAME, inv_obj_path)
+            inv_uuid = get_sys_uuid(chs_obj)
+            if inv_uuid:
+                set_sys_uuid(inv_uuid)
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
