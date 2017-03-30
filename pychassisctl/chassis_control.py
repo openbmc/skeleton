@@ -6,9 +6,13 @@ import dbus.service
 import dbus.mainloop.glib
 from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
 
-DBUS_NAME = 'org.openbmc.control.Chassis'
-OBJ_NAME = '/org/openbmc/control/chassis0'
-CONTROL_INTF = 'org.openbmc.Control'
+# DBUS_NAME = 'org.openbmc.control.Chassis'
+# OBJ_NAME = '/org/openbmc/control/chassis0'
+# CONTROL_INTF = 'org.openbmc.Control'
+
+DBUS_NAME = 'xyz.openbmc_project.Control.Chassis'
+OBJ_NAME = '/xyz/openbmc_project/Control/chassis0'
+CONTROL_INTF = 'xyz.openbmc_project.Control'
 
 MACHINE_ID = '/etc/machine-id'
 
