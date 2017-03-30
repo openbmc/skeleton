@@ -23,8 +23,8 @@ import argparse
 import subprocess
 
 
-INV_DBUS_NAME = 'org.openbmc.Inventory'
-INV_INTF_NAME = 'org.openbmc.InventoryItem'
+INV_DBUS_NAME = 'xyz.openbmc_project.Inventory.Manager'
+INV_INTF_NAME = 'xyz.openbmc_project.Inventory.Item.NetworkInterface'
 NET_DBUS_NAME = 'org.openbmc.NetworkManager'
 NET_OBJ_NAME = '/org/openbmc/NetworkManager/Interface'
 CHS_DBUS_NAME = 'org.openbmc.control.Chassis'
