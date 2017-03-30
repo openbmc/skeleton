@@ -30,6 +30,7 @@ NET_OBJ_NAME = '/org/openbmc/NetworkManager/Interface'
 CHS_DBUS_NAME = 'org.openbmc.control.Chassis'
 CHS_OBJ_NAME = '/org/openbmc/control/chassis0'
 PROP_INTF_NAME = 'org.freedesktop.DBus.Properties'
+INV_DBUS_NAME = 'xyz.openbmc_project.Inventory.Manager'
 
 FRUS = {}
 
