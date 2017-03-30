@@ -15,16 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import sys
 import os
 import dbus
 import argparse
 import subprocess
+import obmc.mapper
+import obmc.utils.dtree
+import obmc.utils.pathtree
 
 
-INV_DBUS_NAME = 'org.openbmc.Inventory'
-INV_INTF_NAME = 'org.openbmc.InventoryItem'
+INV_DBUS_NAME = 'xyz.openbmc_project.Inventory.Manager'
+INV_INTF_NAME = 'xyz.openbmc_project.Inventory.Item.NetworkInterface'
 NET_DBUS_NAME = 'org.openbmc.NetworkManager'
 NET_OBJ_NAME = '/org/openbmc/NetworkManager/Interface'
 CHS_DBUS_NAME = 'org.openbmc.control.Chassis'
@@ -40,12 +42,14 @@ MAC_LOCALLY_ADMIN_MASK = 0x20000000000
 
 
 # Get the inventory dbus path based on the requested fru
-def get_inv_obj_path(fru_type, fru_name):
+def get_inv_obj_path(bus, prop_name):
     obj_path = ''
-    for f in FRUS.keys():
-        import obmc.inventory
-        if (FRUS[f]['fru_type'] == fru_type and f.endswith(fru_name)):
-            obj_path = f.replace("<inventory_root>", obmc.inventory.INVENTORY_ROOT)
+    mapper = obmc.mapper.Mapper(bus)
+    for path, props in \
+        mapper.enumerate_subtree(
+                path='/xyz/openbmc_project/inventory').iteritems():
+        if prop_name in str(props):
+             obj_path = path
     return obj_path
 
 
@@ -109,14 +113,10 @@ def set_sys_uuid(uuid):
 
 if __name__ == '__main__':
     arg = argparse.ArgumentParser()
-    arg.add_argument('-t')
-    arg.add_argument('-n')
     arg.add_argument('-p')
     arg.add_argument('-s')
 
     opt = arg.parse_args()
-    fru_type = opt.t
-    fru_name = opt.n
     prop_name = opt.p
     sync_type = opt.s
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
         FRUS = System.FRU_INSTANCES
 
     bus = dbus.SystemBus()
-    inv_obj_path = get_inv_obj_path(fru_type, fru_name)
+    inv_obj_path = get_inv_obj_path(bus, prop_name)
     inv_obj = bus.get_object(INV_DBUS_NAME, inv_obj_path)
     net_obj = bus.get_object(NET_DBUS_NAME, NET_OBJ_NAME)
     chs_obj = bus.get_object(CHS_DBUS_NAME, CHS_OBJ_NAME)
