@@ -280,11 +280,11 @@ GPIO_CONFIG['IDBTN']       = \
 
 # PM_FP_PWRBTN_IN_L
 GPIO_CONFIG['POWER_BUTTON'] = \
-        {'gpio_pin': 'I3', 'direction': 'in'}
+        {'gpio_pin': 'I3', 'direction': 'both'}
 
 # PM_NMIBTN_IN_L
 GPIO_CONFIG['RESET_BUTTON'] = \
-        {'gpio_pin': 'J1', 'direction': 'in'}
+        {'gpio_pin': 'J1', 'direction': 'both'}
 
 HWMON_CONFIG = {
     '4-0050' : {
