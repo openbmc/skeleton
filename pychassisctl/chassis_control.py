@@ -150,7 +150,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     def quiesce(self):
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
-        f.call_async('obmc-quiesce-host@0.target', 'replace')
+        f.call_async('obmc-host-quiesce@0.target', 'replace')
         return None
 
     @dbus.service.method(DBUS_NAME,
