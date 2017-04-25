@@ -137,8 +137,8 @@ dbus_objects = {
         'interface_name': 'org.openbmc.control.BmcFlash',
     },
     'getinventory': {
-        'bus_name': 'org.openbmc.Inventory',
-        'object_name': '/org/openbmc/inventory',
+        'bus_name': 'xyz.openbmc_project.Inventory.Manager',
+        'object_name': '/xyz/openbmc_project/inventory',
         'interface_name': 'org.freedesktop.DBus.ObjectManager',
         'method': 'GetManagedObjects',
         'transform': merge_interfaces
