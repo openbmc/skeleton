@@ -23,16 +23,6 @@ def fix_byte(it, key, parent):
         pass
 
 
-def merge_interfaces(objs):
-    for op in objs:
-        merged = {}
-        for interface, properties in objs[op].items():
-            merged.update(properties)
-
-        del objs[op]
-        objs[op] = merged
-
-
 def printDict(name, data):
     if (isinstance(data, dict)):
         print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -72,11 +62,6 @@ dbus_objects = {
         'object_name': '/org/openbmc/control/power0',
         'interface_name': 'org.openbmc.control.Power'
     },
-    'chassis': {
-        'bus_name': 'org.openbmc.control.Chassis',
-        'object_name': '/org/openbmc/control/chassis0',
-        'interface_name': 'org.openbmc.control.Chassis'
-    },
     'poweron': {
         'bus_name': 'xyz.openbmc_project.State.Host',
         'object_name': '/xyz/openbmc_project/state/host0',
@@ -113,53 +98,6 @@ dbus_objects = {
         'bus_name': 'org.openbmc.Sensors',
         'object_name': '/org/openbmc/sensors/host/BootProgress',
         'interface_name': 'org.openbmc.SensorValue'
-    },
-    'biosupdate': {
-        'bus_name': 'org.openbmc.control.Flash',
-        'object_name': '/org/openbmc/control/flash/bios',
-        'interface_name': 'org.openbmc.Flash',
-        'method': 'updateViaTftp',
-    },
-    'biosflash': {
-        'bus_name': 'org.openbmc.control.Flash',
-        'object_name': '/org/openbmc/control/flash/bios',
-        'interface_name': 'org.openbmc.Flash',
-    },
-    'bmcupdate': {
-        'bus_name': 'org.openbmc.control.BmcFlash',
-        'object_name': '/org/openbmc/control/flash/bmc',
-        'interface_name': 'org.openbmc.control.BmcFlash',
-        'method': 'updateViaTftp',
-    },
-    'bmcflash': {
-        'bus_name': 'org.openbmc.control.BmcFlash',
-        'object_name': '/org/openbmc/control/flash/bmc',
-        'interface_name': 'org.openbmc.control.BmcFlash',
-    },
-    'getinventory': {
-        'bus_name': 'org.openbmc.Inventory',
-        'object_name': '/org/openbmc/inventory',
-        'interface_name': 'org.freedesktop.DBus.ObjectManager',
-        'method': 'GetManagedObjects',
-        'transform': merge_interfaces
-    },
-    'getsensors': {
-        'bus_name': 'org.openbmc.Sensors',
-        'object_name': '/org/openbmc/sensors',
-        'interface_name': 'org.freedesktop.DBus.ObjectManager',
-        'method': 'GetManagedObjects',
-        'transform': merge_interfaces
-    },
-    'host': {
-        'bus_name': 'org.openbmc.control.Host',
-        'object_name': '/org/openbmc/control/host0',
-        'interface_name': 'org.openbmc.control.Host',
-    },
-    'setdebugmode': {
-        'bus_name': 'org.openbmc.control.Host',
-        'object_name': '/org/openbmc/control/host0',
-        'interface_name': 'org.openbmc.control.Host',
-        'property': 'debug_mode'
     },
 }
 
