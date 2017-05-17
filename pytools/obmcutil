@@ -62,6 +62,20 @@ dbus_objects = {
         'object_name': '/org/openbmc/control/power0',
         'interface_name': 'org.openbmc.control.Power'
     },
+    'chassison': {
+        'bus_name': 'xyz.openbmc_project.State.Chassis',
+        'object_name': '/xyz/openbmc_project/state/chassis0',
+        'interface_name': 'xyz.openbmc_project.State.Chassis',
+        'property': 'RequestedPowerTransition',
+        'value': 'xyz.openbmc_project.State.Chassis.Transition.On'
+    },
+    'chassisoff': {
+        'bus_name': 'xyz.openbmc_project.State.Chassis',
+        'object_name': '/xyz/openbmc_project/state/chassis0',
+        'interface_name': 'xyz.openbmc_project.State.Chassis',
+        'property': 'RequestedPowerTransition',
+        'value': 'xyz.openbmc_project.State.Chassis.Transition.Off'
+    },
     'poweron': {
         'bus_name': 'xyz.openbmc_project.State.Host',
         'object_name': '/xyz/openbmc_project/state/host0',
