@@ -1,6 +1,5 @@
 GDBUS_APPS = bmcctl \
 	     flashbios \
-	     hostcheckstop \
 	     hostwatchdog \
 	     op-flasher \
 	     op-hostctl \
