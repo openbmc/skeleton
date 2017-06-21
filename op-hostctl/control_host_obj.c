@@ -197,9 +197,9 @@ on_boot(ControlHost *host,
 	proxy = g_dbus_proxy_new_sync(connection,
 		G_DBUS_PROXY_FLAGS_NONE,
 		NULL, /* GDBusInterfaceInfo* */
-		"org.openbmc.watchdog.Host", /* name */
-		"/org/openbmc/watchdog/host0", /* object path */
-		"org.openbmc.Watchdog", /* interface name */
+		"xyz.openbmc_project.Watchdog", /* name */
+		"/xyz/openbmc_project/watchdog/host0", /* object path */
+		"org.freedesktop.DBus.Properties", /* interface name */
 		NULL, /* GCancellable */
 		&error);
 	g_assert_no_error(error);
@@ -209,8 +209,10 @@ on_boot(ControlHost *host,
 	// Set watchdog timer to 30s
 	error = NULL;
 	result = g_dbus_proxy_call_sync(proxy,
-		"set",
-		g_variant_new("(i)", 30000),
+		"Set",
+		g_variant_new("(ssv)", "xyz.openbmc_project.State.Watchdog",
+		                       "Enable",
+		                       g_variant_new_boolean(TRUE)),
 		G_DBUS_CALL_FLAGS_NONE,
 		-1,
 		NULL,
@@ -220,19 +222,6 @@ on_boot(ControlHost *host,
 		goto exit;
 	if (result)
 		g_variant_unref(result);
-
-	// Start watchdog timer
-	error = NULL;
-	result = g_dbus_proxy_call_sync(proxy,
-		"start",
-		NULL,
-		G_DBUS_CALL_FLAGS_NONE,
-		-1,
-		NULL,
-		&error);
-	g_assert_no_error(error);
-	if (error)
-		goto exit;
 
 	control_host_emit_booted(host);
 
