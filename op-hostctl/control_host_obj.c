@@ -89,7 +89,6 @@ on_boot(ControlHost *host,
 	int rc = GPIO_OK;
 	GDBusProxy *proxy;
 	GError *error = NULL;
-	GVariant *result = NULL;
 	GDBusConnection *connection =
 		g_dbus_object_manager_server_get_connection(manager);
 
@@ -189,56 +188,7 @@ on_boot(ControlHost *host,
 		gpio_close(&optionals[i]);
 	}
 
-	// Start watchdog with 30s timeout per the OpenPower Host IPMI Spec.
-	// Once the host starts booting, it'll reset and refresh the timer.
-	error = NULL;
-	// TODO Use the object mapper to lookup the bus name when this is
-	// refactored to use sdbus.
-	proxy = g_dbus_proxy_new_sync(connection,
-		G_DBUS_PROXY_FLAGS_NONE,
-		NULL, /* GDBusInterfaceInfo* */
-		"org.openbmc.watchdog.Host", /* name */
-		"/org/openbmc/watchdog/host0", /* object path */
-		"org.openbmc.Watchdog", /* interface name */
-		NULL, /* GCancellable */
-		&error);
-	g_assert_no_error(error);
-	if(error)
-		goto exit;
-
-	// Set watchdog timer to 30s
-	error = NULL;
-	result = g_dbus_proxy_call_sync(proxy,
-		"set",
-		g_variant_new("(i)", 30000),
-		G_DBUS_CALL_FLAGS_NONE,
-		-1,
-		NULL,
-		&error);
-	g_assert_no_error(error);
-	if (error)
-		goto exit;
-	if (result)
-		g_variant_unref(result);
-
-	// Start watchdog timer
-	error = NULL;
-	result = g_dbus_proxy_call_sync(proxy,
-		"start",
-		NULL,
-		G_DBUS_CALL_FLAGS_NONE,
-		-1,
-		NULL,
-		&error);
-	g_assert_no_error(error);
-	if (error)
-		goto exit;
-
 	control_host_emit_booted(host);
-
-exit:
-	if (result)
-		g_variant_unref(result);
 
 	return TRUE;
 }
