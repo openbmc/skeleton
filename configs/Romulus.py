@@ -165,8 +165,6 @@ ID_LOOKUP = {
     'SENSOR' : {
         0x01 : '/org/openbmc/sensors/host/HostStatus',
         0x02 : '/org/openbmc/sensors/host/BootProgress',
-        0x03 : '/org/openbmc/sensors/host/cpu0/OccStatus',
-        0x04 : '/org/openbmc/sensors/host/cpu1/OccStatus',
         0x08 : '<inventory_root>/system/chassis/motherboard/cpu0',
         0x09 : '<inventory_root>/system/chassis/motherboard/cpu1',
         0x0b : '<inventory_root>/system/chassis/motherboard/dimm0',
@@ -243,7 +241,6 @@ ID_LOOKUP = {
         0x92 : '<inventory_root>/system/chassis/motherboard/pcielink',
 #        0x08 : '<inventory_root>/system/powerlimit',
 #        0x10 : '<inventory_root>/system/chassis/motherboard/apss',
-#        0x06 : '/org/openbmc/sensors/host/powercap',
     },
     'GPIO_PRESENT' : {}
 }
@@ -286,90 +283,6 @@ GPIO_CONFIG['POWER_BUTTON'] = \
 GPIO_CONFIG['RESET_BUTTON'] = \
         {'gpio_pin': 'J1', 'direction': 'both'}
 
-HWMON_CONFIG = {
-    '4-0050' : {
-        'names' : {
-            'caps_curr_powercap' : { 'object_path' : 'powercap/curr_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-            'caps_curr_powerreading' : { 'object_path' : 'powercap/system_power','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-            'caps_max_powercap' : { 'object_path' : 'powercap/max_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-            'caps_min_powercap' : { 'object_path' : 'powercap/min_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-            'caps_norm_powercap' : { 'object_path' : 'powercap/n_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-            'caps_user_powerlimit' : { 'object_path' : 'powercap/user_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-        },
-        'labels' : {
-        '176' :  { 'object_path' : 'temperature/cpu0/core0','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '177' :  { 'object_path' : 'temperature/cpu0/core1','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '178' :  { 'object_path' : 'temperature/cpu0/core2','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '179' :  { 'object_path' : 'temperature/cpu0/core3','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '180' :  { 'object_path' : 'temperature/cpu0/core4','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '181' :  { 'object_path' : 'temperature/cpu0/core5','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '182' :  { 'object_path' : 'temperature/cpu0/core6','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '183' :  { 'object_path' : 'temperature/cpu0/core7','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '184' :  { 'object_path' : 'temperature/cpu0/core8','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '185' :  { 'object_path' : 'temperature/cpu0/core9','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '186' :  { 'object_path' : 'temperature/cpu0/core10','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '187' :  { 'object_path' : 'temperature/cpu0/core11','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '102' :  { 'object_path' : 'temperature/dimm0','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '103' :  { 'object_path' : 'temperature/dimm1','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '104' :  { 'object_path' : 'temperature/dimm2','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '105' :  { 'object_path' : 'temperature/dimm3','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '106' :  { 'object_path' : 'temperature/dimm4','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '107' :  { 'object_path' : 'temperature/dimm5','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '108' :  { 'object_path' : 'temperature/dimm6','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '109' :  { 'object_path' : 'temperature/dimm7','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        }
-    },
-    '5-0050' : {
-        'labels' :  {
-        '188' :  { 'object_path' : 'temperature/cpu1/core0','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '189' :  { 'object_path' : 'temperature/cpu1/core1','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '190' :  { 'object_path' : 'temperature/cpu1/core2','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '191' :  { 'object_path' : 'temperature/cpu1/core3','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '192' :  { 'object_path' : 'temperature/cpu1/core4','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '193' :  { 'object_path' : 'temperature/cpu1/core5','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '194' :  { 'object_path' : 'temperature/cpu1/core6','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '195' :  { 'object_path' : 'temperature/cpu1/core7','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '196' :  { 'object_path' : 'temperature/cpu1/core8','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '197' :  { 'object_path' : 'temperature/cpu1/core9','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '198' :  { 'object_path' : 'temperature/cpu1/core10','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '199' :  { 'object_path' : 'temperature/cpu1/core11','poll_interval' : 5000,'scale' : -3,'units' : 'C',
-            'critical_upper' : 100, 'critical_lower' : -100, 'warning_upper' : 90, 'warning_lower' : -99, 'emergency_enabled' : True },
-        '110' :  { 'object_path' : 'temperature/dimm8','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '111' :  { 'object_path' : 'temperature/dimm9','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '112' :  { 'object_path' : 'temperature/dimm10','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '113' :  { 'object_path' : 'temperature/dimm11','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '114' :  { 'object_path' : 'temperature/dimm12','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '115' :  { 'object_path' : 'temperature/dimm13','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '116' :  { 'object_path' : 'temperature/dimm14','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        '117' :  { 'object_path' : 'temperature/dimm15','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-        }
-    },
-}
-
-
 GPIO_CONFIGS = {
     'power_config' : {
         'power_good_in' : 'SYS_PWROK_BUFF',
@@ -398,14 +311,7 @@ GPIO_CONFIGS = {
 MISC_SENSORS = {
     0x8b : { 'class' : 'BootCountSensor' },
     0x02 : { 'class' : 'BootProgressSensor' },
-    #OCC active sensors aren't in the P9 XML yet.  These are wrong.
-    0x03 : { 'class' : 'OccStatusSensor',
-        'os_path' : '/sys/bus/i2c/devices/3-0050/online' },
-    0x04 : { 'class' : 'OccStatusSensor',
-        'os_path' : '/sys/bus/i2c/devices/3-0051/online' },
     0x91 : { 'class' : 'OperatingSystemStatusSensor' },
-    #0x06 : { 'class' : 'PowerCap',
-    #    'os_path' : '/sys/class/hwmon/hwmon3/user_powercap' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -75,9 +75,7 @@ ID_LOOKUP = {
 		0x21 : '<inventory_root>/system/chassis/motherboard/dimm3',
 		0x09 : '/org/openbmc/sensors/host/BootCount',
 		0x05 : '/org/openbmc/sensors/host/BootProgress',
-		0x08 : '/org/openbmc/sensors/host/cpu0/OccStatus',
 		0x32 : '/org/openbmc/sensors/host/OperatingSystemStatus',
-		0x33 : '/org/openbmc/sensors/host/PowerCap',
 	},
 	'GPIO_PRESENT' : {
 		'SLOT0_PRESENT' : '<inventory_root>/system/chassis/motherboard/pciecard_x16',
@@ -106,29 +104,6 @@ GPIO_CONFIG['SLOT2_PRESENT'] =         { 'gpio_pin': 'N5', 'direction': 'in' }
 GPIO_CONFIG['MEZZ0_PRESENT'] =         { 'gpio_pin': 'O0', 'direction': 'in' }
 GPIO_CONFIG['MEZZ1_PRESENT'] =         { 'gpio_pin': 'O1', 'direction': 'in' }
 GPIO_CONFIG['CHECKSTOP']      =   { 'gpio_pin': 'P5', 'direction': 'falling' }
-
-HWMON_CONFIG = {
-	'0-0068' :  {
-		'names' : {
-			'temp1_input' : { 'object_path' : 'temperature/rtc','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-		}
-	},
-	'2-004c' :  {
-		'names' : {
-			'temp1_input' : { 'object_path' : 'temperature/ambient','poll_interval' : 5000,'scale' : -3,'units' : 'C' },
-		}
-	},
-	'3-0050' : {
-		'names' : {
-			'caps_curr_powercap' : { 'object_path' : 'powercap/curr_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-			'caps_curr_powerreading' : { 'object_path' : 'powercap/system_power','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-			'caps_max_powercap' : { 'object_path' : 'powercap/max_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-			'caps_min_powercap' : { 'object_path' : 'powercap/min_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-			'caps_norm_powercap' : { 'object_path' : 'powercap/n_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-			'caps_user_powerlimit' : { 'object_path' : 'powercap/user_cap','poll_interval' : 10000,'scale' : 1,'units' : 'W' },
-		}
-	}
-}
 
 GPIO_CONFIGS = {
     'power_config' : {
@@ -161,11 +136,7 @@ GPIO_CONFIGS = {
 MISC_SENSORS = {
 	0x09 : { 'class' : 'BootCountSensor' },
 	0x05 : { 'class' : 'BootProgressSensor' },
-	0x08 : { 'class' : 'OccStatusSensor',
-		'os_path' : '/sys/bus/i2c/devices/3-0050/online' },
 	0x32 : { 'class' : 'OperatingSystemStatusSensor' },
-	0x33 : { 'class' : 'PowerCap',
-		'os_path' : '/sys/class/hwmon/hwmon1/user_powercap' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

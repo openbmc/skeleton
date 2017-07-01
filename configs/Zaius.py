@@ -343,14 +343,6 @@ GPIO_CONFIG['PE_MEZZB_PRSNT_N'] = \
         {'gpio_pin': 'P7', 'direction': 'in'}
 GPIO_CONFIG['CHECKSTOP'] = \
         {'gpio_pin': 'F7', 'direction': 'falling'}
-HWMON_CONFIG = {
-    '0-0064': {
-        'names': {
-        },
-        'labels': {
-        },
-    },
-}
 
 GPIO_CONFIGS = {
     'power_config' : {
