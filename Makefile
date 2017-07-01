@@ -13,7 +13,6 @@ SUBDIRS = fanctl \
 	  pychassisctl \
 	  pydownloadmgr \
 	  pyflashbmc \
-	  pyhwmon \
 	  pyinventorymgr \
 	  pyipmitest \
 	  pysensormgr \
