@@ -82,10 +82,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                                 dbus_interface="org.openbmc.Watchdog",
                                 signal_name="WatchdogError")
 
-        bus.add_signal_receiver(self.emergency_shutdown_signal_handler,
-                                dbus_interface="org.openbmc.SensorThresholds",
-                                signal_name="Emergency")
-
         bus.add_signal_receiver(self.SystemStateHandler,
                                 signal_name="GotoSystemState")
 
