@@ -63,10 +63,11 @@ class InventoryItem(DbusProperties):
         PropertyCacher.save(self.name, INTF_NAME, self.properties)
 
 
-def getVersion():
+def getIdVersion():
     os_release = readOsRelease()
+    id = os_release.get('ID', 'Error')
     version = os_release.get('VERSION_ID', 'Error')
-    return version
+    return id, version
 
 
 def readOsRelease():
@@ -110,7 +111,8 @@ if __name__ == '__main__':
         ## TODO:  this is a hack to update bmc inventory item with version
         ## should be done by flash object
         if (FRUS[f]['fru_type'] == "BMC"):
-            version = getVersion()
+            id, version = getIdVersion()
+            obj.update({'id': id})
             obj.update({'version': version})
 
     obj_parent.unmask_signals()
