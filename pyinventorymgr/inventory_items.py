@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
 import gobject
 import dbus
@@ -63,15 +64,17 @@ class InventoryItem(DbusProperties):
 
 
 def getVersion():
-    version = "Error"
-    with open('/etc/os-release', 'r') as f:
-        for line in f:
-            p = line.rstrip('\n')
-            parts = line.rstrip('\n').split('=')
-            if (parts[0] == "VERSION_ID"):
-                version = parts[1]
-                version = version.strip('"')
+    os_release = readOsRelease()
+    version = os_release.get('VERSION_ID', 'Error')
     return version
+
+
+def readOsRelease():
+    with open('/etc/os-release', 'r') as f:
+        text = f.read()
+        matches = re.findall('^(\w+)="?(.*?)"?$', text, re.MULTILINE)
+        return dict(matches)
+    return {}
 
 
 if __name__ == '__main__':
