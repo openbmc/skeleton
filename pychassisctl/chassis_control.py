@@ -104,19 +104,18 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                          in_signature='', out_signature='')
     def powerOff(self):
         print "Turn off power"
-
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
-        f.call_async('obmc-host-stop@0.target', 'replace')
+        f.call_async('obmc-chassis-hard-poweroff@0.target', 'replace')
         return None
 
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
     def softPowerOff(self):
         print "Soft off power"
-        intf = self.getInterface('host_services')
-        ## host services will call power off when ready
-        intf.SoftPowerOff()
+        intf = self.getInterface('systemd')
+        f = getattr(intf, 'StartUnit')
+        f.call_async('obmc-host-shutdown@0.target', 'replace')
         return None
 
     @dbus.service.method(DBUS_NAME,
