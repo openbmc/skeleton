@@ -27,6 +27,25 @@ def doExtract(members, files):
             yield tarinfo
 
 
+def save_fw_env():
+    fw_env = "/etc/fw_env.config"
+    lines = 0
+    files=[]
+    envcfg = open(fw_env, 'r')
+    try:
+        for line in envcfg.readlines():
+            # ignore lines that are blank or start with #
+            if (line.startswith("#")): continue
+            if (not len(line.strip())): continue
+            fn = line.partition("\t")[0];
+            files.append(fn)
+            lines += 1
+    finally:
+        envcfg.close()
+    if (lines < 1 or lines > 2 or (lines == 2 and files[0] != files[1])):
+            raise Exception("Error parsing %s\n" % fw_env)
+    shutil.copyfile(files[0], os.path.join(UPDATE_PATH, "image-u-boot-env"))
+
 class BmcFlashControl(DbusProperties, DbusObjectManager):
     def __init__(self, bus, name):
         super(BmcFlashControl, self).__init__(
@@ -138,7 +157,7 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
 
             if self.Get(DBUS_NAME, "preserve_network_settings"):
                 print "Preserving network settings"
-                shutil.copy2("/run/fw_env", UPDATE_PATH+"/image-u-boot-env")
+                save_fw_env()
 
         except Exception as e:
             print e
