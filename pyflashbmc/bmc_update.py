@@ -86,7 +86,6 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
             copy_files["image-bmc"] = True
         else:
             copy_files["image-kernel"] = True
-            copy_files["image-initramfs"] = True
             copy_files["image-rofs"] = True
 
         if self.Get(DBUS_NAME, "restore_application_defaults"):
