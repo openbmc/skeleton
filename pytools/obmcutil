@@ -109,9 +109,10 @@ dbus_objects = {
         'property': 'CurrentHostState',
     },
     'bootprogress': {
-        'bus_name': 'org.openbmc.Sensors',
-        'object_name': '/org/openbmc/sensors/host/BootProgress',
-        'interface_name': 'org.openbmc.SensorValue'
+        'bus_name': 'xyz.openbmc_project.State.Host',
+        'object_name': '/xyz/openbmc_project/state/host0',
+        'interface_name': 'xyz.openbmc_project.State.Boot.Progress',
+        'property': 'BootProgress',
     },
 }
 
