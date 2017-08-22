@@ -191,7 +191,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
         latch_out = power_config.get('latch_out', '')
         power_up_outs = power_config.get('power_up_outs', [])
         reset_outs = power_config.get('reset_outs', [])
-        pci_reset_outs = System.GPIO_CONFIGS.get('pci_reset_outs', [])
+        pci_reset_outs = power_config.get('pci_reset_outs', [])
         hostctl_config = System.GPIO_CONFIGS.get('hostctl_config', {})
         fsi_data = hostctl_config.get('fsi_data', '')
         fsi_clk = hostctl_config.get('fsi_clk', '')
