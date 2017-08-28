@@ -32,6 +32,9 @@ CHS_INTF_NAME = 'xyz.openbmc_project.Common.UUID'
 CHS_OBJ_NAME = '/org/openbmc/control/chassis0'
 PROP_INTF_NAME = 'org.freedesktop.DBus.Properties'
 INVENTORY_ROOT = '/xyz/openbmc_project/inventory'
+NETWORK_ROOT = '/xyz/openbmc_project/network'
+ETHERNET_INTF_NAME = 'xyz.openbmc_project.Network.EthernetInterface'
+MAC_INTF_NAME = 'xyz.openbmc_project.Network.MACAddress'
 
 FRUS = {}
 
@@ -67,6 +70,25 @@ def get_bmc_mac_address(bus, prop):
             # Get the MAC address
             mproxy = obj.get_dbus_method('Get', PROP_INTF_NAME)
             return mproxy(INV_INTF_NAME, prop)
+
+# Get Network Interface object.
+def get_network_interface_object(bus):
+    mapper = obmc.mapper.Mapper(bus)
+
+    # Get the inventory subtree, limited
+    # to objects that implement NetworkInterface.
+    for path, info in \
+        mapper.get_subtree(
+            path=NETWORK_ROOT,
+            interfaces=[ETHERNET_INTF_NAME]).iteritems():
+
+        # Find the one which is having physical interface,it may happen
+        # that vlan interface is there and we want the physical
+        # interface here.
+        if path.split('/')[-1].find('_') < 0:
+            service = info.keys()[0]
+            net_obj = bus.get_object(service, path)
+            return net_obj
 
 
 # Get inventory UUID value.
@@ -106,7 +128,6 @@ def get_sys_mac(obj):
     except:
         # Handle when mac does not exist in u-boot
         return sys_mac
-    sys_mac = sys_mac.replace(":", "")
     return sys_mac
 
 
@@ -116,17 +137,15 @@ def get_sys_mac(obj):
 def sync_mac(obj, inv_mac, sys_mac):
     if sys_mac:
         # Convert sys MAC to int to perform bitwise '&'
+        sys_mac = sys_mac.replace(":", "")
         int_sys_mac = int(sys_mac, 16)
     else:
         # Set mac to 0 for when u-boot mac is not present
         int_sys_mac = 0
     if not int_sys_mac & MAC_LOCALLY_ADMIN_MASK:
         # Sys MAC is not locally administered, go replace it with inv value
-        # Add the ':' separators
-        mac_str = ':'.join([inv_mac[i]+inv_mac[i+1] for i in range(0, 12, 2)])
-        # The Set HW Method already has checking for mac format
-        dbus_method = obj.get_dbus_method("SetHwAddress", NET_DBUS_NAME)
-        dbus_method("eth0", mac_str)
+        intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+        intf.Set(MAC_INTF_NAME, "MACAddress", inv_mac)
 
 
 # Set sys uuid, this reboots the BMC for the value to take effect
@@ -151,12 +170,18 @@ if __name__ == '__main__':
 
     bus = dbus.SystemBus()
     if sync_type == "mac":
-            inv_mac = get_bmc_mac_address(bus, prop_name)
-            if inv_mac:
-                net_obj = bus.get_object(NET_DBUS_NAME, NET_OBJ_NAME)
-                sys_mac = get_sys_mac(net_obj)
-                if inv_mac != sys_mac:
-                    sync_mac(net_obj, inv_mac, sys_mac)
+        inv_mac = get_bmc_mac_address(bus, prop_name)
+        print "Inventory MAC=%s" % (inv_mac)
+        if not inv_mac:
+            sys.exit(1)
+        net_obj = get_network_interface_object(bus)
+        if not net_obj:
+            print "Unable to get the network object"
+            sys.exit(1)
+        sys_mac = get_sys_mac(net_obj)
+        print "System MAC=%s" % (sys_mac)
+        if inv_mac != sys_mac:
+            sync_mac(net_obj, inv_mac, sys_mac)
     elif sync_type == "uuid":
             inv_uuid = get_uuid(bus, prop_name)
             if inv_uuid:
