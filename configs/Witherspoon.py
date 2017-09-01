@@ -289,9 +289,9 @@ ID_LOOKUP = {
         0x10 : '<inventory_root>/system/chassis/motherboard/apss',
         0x02 : '/org/openbmc/sensors/host/OperatingSystemStatus',
         0x04 : '<inventory_root>/system/chassis/motherboard/pcielink',
-        0xD8 : '/org/openbmc/sensors/host/PowerSupplyRedundancy',
+        0x0b : '/org/openbmc/sensors/host/PowerSupplyRedundancy',
         0xda : '/org/openbmc/sensors/host/TurboAllowed',
-        0xb4 : '/org/openbmc/sensors/host/PowerSupplyDerating',
+        0xD8 : '/org/openbmc/sensors/host/PowerSupplyDerating',
     },
     'GPIO_PRESENT' : {}
 }
@@ -377,9 +377,9 @@ MISC_SENSORS = {
     0x03 : { 'class' : 'BootProgressSensor' },
     0x02 : { 'class' : 'OperatingSystemStatusSensor' },
     # Garrison value is used, Not in P9 XML yet.
-    0xD8 : { 'class' : 'PowerSupplyRedundancySensor'},
+    0x0b : { 'class' : 'PowerSupplyRedundancySensor'},
     0xda : { 'class' : 'TurboAllowedSensor' },
-    0xb4 : { 'class' : 'PowerSupplyDeratingSensor' },
+    0xD8 : { 'class' : 'PowerSupplyDeratingSensor' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
