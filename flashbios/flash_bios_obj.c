@@ -31,11 +31,10 @@ update(Flash* flash, const char* obj_path)
 	pid = fork();
 	if(pid == 0)
 	{
-		const gchar* path = flash_get_flasher_path(flash);
 		const gchar* name = flash_get_flasher_name(flash);
 		const gchar* inst = flash_get_flasher_instance(flash);
 		const gchar* filename = flash_get_filename(flash);
-		status = execl(path, name, inst, filename, obj_path, NULL);
+		status = execlp(name, name, inst, filename, obj_path, NULL);
 		return status;
 	}
 	return 0;
@@ -242,21 +241,7 @@ on_bus_acquired(GDBusConnection *connection,
 	manager = g_dbus_object_manager_server_new(dbus_object_path);
 	int i=0;
 
-	//TODO: don't use fixed buffer
-	char flasher_path[512];
-	memset(flasher_path, '\0', sizeof(flasher_path));
-	gchar *flasher_file = NULL;
-	int c = strlen(cmd->argv[0]);
-	while(c>0)
-	{
-		if(cmd->argv[0][c] == '/')
-		{
-			strncpy(flasher_path,cmd->argv[0],c);
-			flasher_file = g_strdup_printf("%s/%s",flasher_path,FLASHER_BIN);
-			break;
-		}
-		c--;
-	}
+	gchar *flasher_file = g_strdup_printf("%s", FLASHER_BIN);
 
 	const char* inst[] = {"bios"};
 	for(i=0;i<1;i++)
@@ -277,7 +262,6 @@ on_bus_acquired(GDBusConnection *connection,
 		shared_resource_set_lock(lock,false);
 		shared_resource_set_name(lock,"");
 
-		flash_set_flasher_path(flash,flasher_file);
 		flash_set_flasher_name(flash,FLASHER_BIN);
 		flash_set_flasher_instance(flash,inst[i]);
 		//g_free (s);
