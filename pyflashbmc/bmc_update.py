@@ -297,10 +297,13 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
     @dbus.service.method(
         DBUS_NAME, in_signature='', out_signature='')
     def PrepareForUpdate(self):
-        subprocess.call([
+        rc = subprocess.call([
             "fw_setenv",
             "openbmconce",
             "copy-files-to-ram copy-base-filesystem-to-ram"])
+        if rc != 0:
+            self.Set(DBUS_NAME, "status", "Error switching to update mode")
+            raise Exception("Error calling fw_setenv (rc=%d)\n" % rc)
         self.Set(DBUS_NAME, "status", "Switch to update mode in progress")
         o = bus.get_object(BMC_DBUS_NAME, BMC_OBJ_NAME)
         intf = dbus.Interface(o, BMC_DBUS_NAME)
