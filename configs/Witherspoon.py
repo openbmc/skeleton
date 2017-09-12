@@ -343,6 +343,7 @@ GPIO_CONFIG['RESET_BUTTON'] = \
 GPIO_CONFIG['IDBTN'] = \
     {'gpio_pin': 'Q7', 'direction': 'out'}
 
+# TODO openbmc/openbmc#2288 - Determine if any pci resets needed
 GPIO_CONFIGS = {
     'power_config' : {
         'power_good_in' : 'SYS_PWROK_BUFF',
@@ -352,11 +353,6 @@ GPIO_CONFIGS = {
         ],
         'reset_outs' : [
             ('BMC_CP0_RESET_N', False),
-        ],
-        'pci_reset_outs': [
-            # net name, polarity, reset hold
-            ('BMC_VS1_PERST_N', False, False),
-            ('BMC_CP0_PERST_ENABLE_R', False, False),
         ],
     },
     'hostctl_config' : {
