@@ -301,6 +301,13 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
             "fw_setenv",
             "openbmconce",
             "copy-files-to-ram copy-base-filesystem-to-ram"])
+        # Set the variable twice so that it is written to both environments of
+        # the u-boot redundant environment variables since initramfs can only
+        # read one of the environments.
+        subprocess.call([
+            "fw_setenv",
+            "openbmconce",
+            "copy-files-to-ram copy-base-filesystem-to-ram"])
         self.Set(DBUS_NAME, "status", "Switch to update mode in progress")
         o = bus.get_object(BMC_DBUS_NAME, BMC_OBJ_NAME)
         intf = dbus.Interface(o, BMC_DBUS_NAME)
