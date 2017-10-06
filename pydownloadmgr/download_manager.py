@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import gobject
 import dbus
 import dbus.service
@@ -38,7 +39,7 @@ class DownloadManagerObject(dbus.service.Object):
 
     def TftpDownloadHandler(self, ip, filename, path=None):
         try:
-            filename = str(filename)
+            filename = os.path.basename(str(filename))
             print "Downloading: "+filename+" from "+ip
             outfile = FLASH_DOWNLOAD_PATH+"/"+filename
             rc = subprocess.call(
@@ -56,7 +57,7 @@ class DownloadManagerObject(dbus.service.Object):
     # Shouldn't call flash interface from here
     def DownloadHandler(self, url, filename, path=None):
         try:
-            filename = str(filename)
+            filename = os.path.basename(str(filename))
             print "Downloading: "+filename+" from "+url
             outfile = FLASH_DOWNLOAD_PATH+"/"+filename
             subprocess.call(
