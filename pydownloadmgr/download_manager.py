@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import gobject
 import dbus
 import dbus.service
@@ -40,7 +41,7 @@ class DownloadManagerObject(dbus.service.Object):
         try:
             filename = str(filename)
             print "Downloading: "+filename+" from "+ip
-            outfile = FLASH_DOWNLOAD_PATH+"/"+filename
+            outfile = FLASH_DOWNLOAD_PATH+"/"+os.path.basename(filename)
             rc = subprocess.call(
                 ["tftp", "-l", outfile, "-r", filename, "-g", ip])
             if (rc == 0):
@@ -58,7 +59,7 @@ class DownloadManagerObject(dbus.service.Object):
         try:
             filename = str(filename)
             print "Downloading: "+filename+" from "+url
-            outfile = FLASH_DOWNLOAD_PATH+"/"+filename
+            outfile = FLASH_DOWNLOAD_PATH+"/"+os.path.basename(filename)
             subprocess.call(
                 ["tftp", "-l", outfile, "-r", filename, "-g", url])
             obj = bus.get_object("org.openbmc.control.Flash", path)
