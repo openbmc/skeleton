@@ -4,7 +4,7 @@ import sys
 import dbus
 import argparse
 
-dbus_objects = {
+descriptors = {
     'power': {
         'bus_name': 'org.openbmc.control.Power',
         'object_name': '/org/openbmc/control/power0',
@@ -65,17 +65,17 @@ dbus_objects = {
     'state' : ['bmcstate', 'chassisstate', 'hoststate']
 }
 
-def run_one_command(dbus_bus, objinfo):
-    bus = objinfo['bus_name']
-    obj = objinfo['object_name']
-    iface = objinfo['interface_name']
+def run_one_command(dbus_bus, descriptor):
+    bus = descriptor['bus_name']
+    obj = descriptor['object_name']
+    iface = descriptor['interface_name']
     dbus_obj = dbus_bus.get_object(bus, obj)
 
-    if (objinfo.has_key('property')):
-        prop = objinfo['property']
+    if (descriptor.has_key('property')):
+        prop = descriptor['property']
         dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
-        if objinfo.has_key('value'):
-            dbus_iface.Set(iface, prop, objinfo['value'])
+        if descriptor.has_key('value'):
+            dbus_iface.Set(iface, prop, descriptor['value'])
         else:
             dbus_prop = dbus_iface.Get(iface, prop)
             print '{:<20}: {}'.format(prop, str(dbus_prop))
@@ -85,21 +85,21 @@ def run_one_command(dbus_bus, objinfo):
         for p in props:
             print p + " = " + str(props[p])
 
-def run_all_commands(dbus_bus, commands):
-    if isinstance(commands, dict):
-        run_one_command(dbus_bus, commands)
+def run_all_commands(dbus_bus, recipe):
+    if isinstance(recipe, dict):
+        run_one_command(dbus_bus, recipe)
         return
 
-    assert isinstance(commands, list)
-    for command in commands:
-        run_one_command(dbus_bus, dbus_objects[command])
+    assert isinstance(recipe, list)
+    for command in recipe:
+        run_one_command(dbus_bus, descriptors[command])
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('recipe', choices=sorted(dbus_objects.keys()))
+    parser.add_argument('recipe', choices=sorted(descriptors.keys()))
     args = parser.parse_args()
 
-    run_all_commands(dbus.SystemBus(), dbus_objects[args.recipe])
+    run_all_commands(dbus.SystemBus(), descriptors[args.recipe])
 
 if __name__ == "__main__":
     main()
