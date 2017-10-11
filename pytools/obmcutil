@@ -2,8 +2,6 @@
 
 import sys
 import dbus
-import json
-import xml.etree.ElementTree as ET
 
 dbus_objects = {
     'power': {
