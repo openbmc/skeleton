@@ -65,63 +65,67 @@ dbus_objects = {
     },
 }
 
-# Commands that need to run multiple objects above
-multicmd_objects = { 'state' : ['bmcstate', 'chassisstate', 'hoststate'] }
+def main():
+    # Commands that need to run multiple objects above
+    multicmd_objects = { 'state' : ['bmcstate', 'chassisstate', 'hoststate'] }
 
-bus = dbus.SystemBus()
+    bus = dbus.SystemBus()
 
-if (len(sys.argv) == 1 or sys.argv[1] == "-h" or
-        (not(dbus_objects.has_key(sys.argv[1])) and
-        (not(multicmd_objects.has_key(sys.argv[1]))))):
-    print "Usage: obmcutil [command]"
-    print "Available commands:"
-    for name in sorted(dbus_objects.keys()):
-        m = ""
-        if (dbus_objects[name].has_key('property') == True):
-            m = " (" + dbus_objects[name]['interface_name'] + "->" + \
-                dbus_objects[name]['property'] + ")"
+    if (len(sys.argv) == 1 or sys.argv[1] == "-h" or
+            (not(dbus_objects.has_key(sys.argv[1])) and
+            (not(multicmd_objects.has_key(sys.argv[1]))))):
+        print "Usage: obmcutil [command]"
+        print "Available commands:"
+        for name in sorted(dbus_objects.keys()):
+            m = ""
+            if (dbus_objects[name].has_key('property') == True):
+                m = " (" + dbus_objects[name]['interface_name'] + "->" + \
+                    dbus_objects[name]['property'] + ")"
 
-        print "\t" + name + m
-    print "Multi-Commands:"
-    for name in sorted(multicmd_objects.keys()):
-        print "\t" + name + " -> " + ",".join(multicmd_objects[name])
-    exit(0)
+            print "\t" + name + m
+        print "Multi-Commands:"
+        for name in sorted(multicmd_objects.keys()):
+            print "\t" + name + " -> " + ",".join(multicmd_objects[name])
+        exit(0)
 
-property_name = ""
+    property_name = ""
 
-sys.argv.pop(0)
-cmd = [sys.argv.pop(0)]
+    sys.argv.pop(0)
+    cmd = [sys.argv.pop(0)]
 
-# Check if this is a multicmd command and update if it is
-if(multicmd_objects.has_key(cmd[0])):
-    cmd = multicmd_objects[cmd[0]]
+    # Check if this is a multicmd command and update if it is
+    if(multicmd_objects.has_key(cmd[0])):
+        cmd = multicmd_objects[cmd[0]]
 
-for c in cmd:
-    objinfo = dbus_objects[c]
-    if (objinfo.has_key('property')):
-        property_name = objinfo['property']
+    for c in cmd:
+        objinfo = dbus_objects[c]
+        if (objinfo.has_key('property')):
+            property_name = objinfo['property']
 
-    bus_name = objinfo['bus_name']
-    obj_path = objinfo['object_name']
-    intf_name = objinfo['interface_name']
-    obj = bus.get_object(bus_name, obj_path)
+        bus_name = objinfo['bus_name']
+        obj_path = objinfo['object_name']
+        intf_name = objinfo['interface_name']
+        obj = bus.get_object(bus_name, obj_path)
 
-    if (property_name != ""):
-        intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-        if (objinfo.has_key('value')):
-            property_value = objinfo['value']
-        else:
-            if(len(sys.argv) > 0):
-                property_value = eval(sys.argv.pop(0))
+        if (property_name != ""):
+            intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+            if (objinfo.has_key('value')):
+                property_value = objinfo['value']
             else:
-                property_value = None
-        if(property_value is not None):
-            intf.Set(intf_name, property_name, property_value)
+                if(len(sys.argv) > 0):
+                    property_value = eval(sys.argv.pop(0))
+                else:
+                    property_value = None
+            if(property_value is not None):
+                intf.Set(intf_name, property_name, property_value)
+            else:
+                prop = intf.Get(intf_name,property_name)
+                print '{:<20}'.format(property_name+": ") + str(prop)
         else:
-            prop = intf.Get(intf_name,property_name)
-            print '{:<20}'.format(property_name+": ") + str(prop)
-    else:
-        intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
-        props = intf.GetAll(intf_name)
-        for p in props:
-            print p + " = " + str(props[p])
+            intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
+            props = intf.GetAll(intf_name)
+            for p in props:
+                print p + " = " + str(props[p])
+
+if __name__ == "__main__":
+    main()
