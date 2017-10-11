@@ -120,7 +120,7 @@ def main():
                 dbus_iface.Set(iface, prop, val)
             else:
                 dbus_prop = dbus_iface.Get(iface, prop)
-                print '{:<20}'.format(prop+": ") + str(dbus_prop)
+                print '{:<20}: {}'.format(prop, str(dbus_prop))
         else:
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
             props = dbus_iface.GetAll(iface)
