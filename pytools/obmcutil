@@ -109,14 +109,14 @@ def main():
 
         if prop:
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
-            if (objinfo.has_key('value')):
+            if objinfo.has_key('value'):
                 val = objinfo['value']
             else:
-                if(len(sys.argv) > 0):
+                if len(sys.argv) > 0:
                     val = eval(sys.argv.pop(0))
                 else:
                     val = None
-            if(val is not None):
+            if val is not None:
                 dbus_iface.Set(iface, prop, val)
             else:
                 dbus_prop = dbus_iface.Get(iface, prop)
