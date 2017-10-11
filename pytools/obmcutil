@@ -85,6 +85,15 @@ def run_one_command(dbus_bus, objinfo):
         for p in props:
             print p + " = " + str(props[p])
 
+def run_all_commands(dbus_bus, commands):
+    if isinstance(commands, dict):
+        run_one_command(dbus_bus, commands)
+        return
+
+    assert isinstance(commands, list)
+    for command in commands:
+        run_one_command(dbus_bus, dbus_objects[command])
+
 def main():
     # Commands that need to run multiple objects above
     multicmd_objects = { 'state' : ['bmcstate', 'chassisstate', 'hoststate'] }
@@ -109,14 +118,13 @@ def main():
         exit(0)
 
     sys.argv.pop(0)
-    cmd = [sys.argv.pop(0)]
+    recipe = sys.argv.pop(0)
 
     # Check if this is a multicmd command and update if it is
-    if(multicmd_objects.has_key(cmd[0])):
-        cmd = multicmd_objects[cmd[0]]
+    if(multicmd_objects.has_key(recipe)):
+        recipe = multicmd_objects[recipe]
 
-    for c in cmd:
-        run_one_command(dbus_bus, dbus_objects[c])
+    run_all_commands(dbus_bus, recipe)
 
 if __name__ == "__main__":
     main()
