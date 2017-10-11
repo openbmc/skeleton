@@ -4,6 +4,9 @@ import sys
 import dbus
 import argparse
 
+from dbus.mainloop.glib import DBusGMainLoop
+import gobject
+
 descriptors = {
     'power': {
         'bus_name': 'org.openbmc.control.Power',
@@ -15,28 +18,32 @@ descriptors = {
         'object_name': '/xyz/openbmc_project/state/chassis0',
         'interface_name': 'xyz.openbmc_project.State.Chassis',
         'property': 'RequestedPowerTransition',
-        'value': 'xyz.openbmc_project.State.Chassis.Transition.On'
+        'value': 'xyz.openbmc_project.State.Chassis.Transition.On',
+        'monitor': 'CurrentPowerState',
     },
     'chassisoff': {
         'bus_name': 'xyz.openbmc_project.State.Chassis',
         'object_name': '/xyz/openbmc_project/state/chassis0',
         'interface_name': 'xyz.openbmc_project.State.Chassis',
         'property': 'RequestedPowerTransition',
-        'value': 'xyz.openbmc_project.State.Chassis.Transition.Off'
+        'value': 'xyz.openbmc_project.State.Chassis.Transition.Off',
+        'monitor': 'CurrentPowerState',
     },
     'poweron': {
         'bus_name': 'xyz.openbmc_project.State.Host',
         'object_name': '/xyz/openbmc_project/state/host0',
         'interface_name': 'xyz.openbmc_project.State.Host',
         'property': 'RequestedHostTransition',
-        'value': 'xyz.openbmc_project.State.Host.Transition.On'
+        'value': 'xyz.openbmc_project.State.Host.Transition.On',
+        'monitor': 'CurrentHostState',
     },
     'poweroff': {
         'bus_name': 'xyz.openbmc_project.State.Host',
         'object_name': '/xyz/openbmc_project/state/host0',
         'interface_name': 'xyz.openbmc_project.State.Host',
         'property': 'RequestedHostTransition',
-        'value': 'xyz.openbmc_project.State.Host.Transition.Off'
+        'value': 'xyz.openbmc_project.State.Host.Transition.Off',
+        'monitor': 'CurrentHostState',
     },
     'bmcstate': {
         'bus_name': 'xyz.openbmc_project.State.BMC',
@@ -65,6 +72,25 @@ descriptors = {
     'state' : ['bmcstate', 'chassisstate', 'hoststate']
 }
 
+def run_set_property(dbus_iface, descriptor):
+    mainloop = gobject.MainLoop()
+
+    def handle_current_host_state(path, update, sig, **kwargs):
+        if descriptor['monitor'] in update:
+            mainloop.quit()
+
+    iface = descriptor['interface_name']
+    prop = descriptor['property']
+
+    if 'monitor' not in descriptor:
+        dbus_iface.Set(iface, prop, descriptor['value'])
+        return
+
+    dbus_iface.connect_to_signal("PropertiesChanged", handle_current_host_state)
+    dbus_iface.Set(iface, prop, descriptor['value'])
+
+    mainloop.run()
+
 def run_one_command(dbus_bus, descriptor):
     bus = descriptor['bus_name']
     obj = descriptor['object_name']
@@ -72,11 +98,11 @@ def run_one_command(dbus_bus, descriptor):
     dbus_obj = dbus_bus.get_object(bus, obj)
 
     if (descriptor.has_key('property')):
-        prop = descriptor['property']
         dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
         if descriptor.has_key('value'):
-            dbus_iface.Set(iface, prop, descriptor['value'])
+            run_set_property(dbus_iface, descriptor)
         else:
+            prop = descriptor['property']
             dbus_prop = dbus_iface.Get(iface, prop)
             print '{:<20}: {}'.format(prop, str(dbus_prop))
     else:
@@ -95,6 +121,8 @@ def run_all_commands(dbus_bus, recipe):
         run_one_command(dbus_bus, descriptors[command])
 
 def main():
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('recipe', choices=sorted(descriptors.keys()))
     args = parser.parse_args()
