@@ -4,6 +4,9 @@ import sys
 import dbus
 import argparse
 
+from dbus.mainloop.glib import DBusGMainLoop
+import gobject
+
 descriptors = {
     'power': {
         'bus_name': 'org.openbmc.control.Power',
@@ -15,28 +18,32 @@ descriptors = {
         'object_name': '/xyz/openbmc_project/state/chassis0',
         'interface_name': 'xyz.openbmc_project.State.Chassis',
         'property': 'RequestedPowerTransition',
-        'value': 'xyz.openbmc_project.State.Chassis.Transition.On'
+        'value': 'xyz.openbmc_project.State.Chassis.Transition.On',
+        'monitor': 'obmc-chassis-poweron@0.target',
     },
     'chassisoff': {
         'bus_name': 'xyz.openbmc_project.State.Chassis',
         'object_name': '/xyz/openbmc_project/state/chassis0',
         'interface_name': 'xyz.openbmc_project.State.Chassis',
         'property': 'RequestedPowerTransition',
-        'value': 'xyz.openbmc_project.State.Chassis.Transition.Off'
+        'value': 'xyz.openbmc_project.State.Chassis.Transition.Off',
+        'monitor': 'obmc-chassis-hard-poweroff@0.target',
     },
     'poweron': {
         'bus_name': 'xyz.openbmc_project.State.Host',
         'object_name': '/xyz/openbmc_project/state/host0',
         'interface_name': 'xyz.openbmc_project.State.Host',
         'property': 'RequestedHostTransition',
-        'value': 'xyz.openbmc_project.State.Host.Transition.On'
+        'value': 'xyz.openbmc_project.State.Host.Transition.On',
+        'monitor': 'obmc-host-start@0.target',
     },
     'poweroff': {
         'bus_name': 'xyz.openbmc_project.State.Host',
         'object_name': '/xyz/openbmc_project/state/host0',
         'interface_name': 'xyz.openbmc_project.State.Host',
         'property': 'RequestedHostTransition',
-        'value': 'xyz.openbmc_project.State.Host.Transition.Off'
+        'value': 'xyz.openbmc_project.State.Host.Transition.Off',
+        'monitor': 'obmc-host-stop@0.target',
     },
     'bmcstate': {
         'bus_name': 'xyz.openbmc_project.State.BMC',
@@ -65,45 +72,88 @@ descriptors = {
     'state' : ['bmcstate', 'chassisstate', 'hoststate']
 }
 
-def run_one_command(dbus_bus, descriptor):
+def run_set_property(dbus_bus, dbus_iface, descriptor, args):
+    mainloop = gobject.MainLoop()
+
+    iface = descriptor['interface_name']
+    prop = descriptor['property']
+
+    if 'monitor' not in descriptor:
+        dbus_iface.Set(iface, prop, descriptor['value'])
+        return True
+
+    def property_listener(job, path, unit, state):
+        if descriptor['monitor'] != unit:
+            return
+
+        property_listener.success = (state == 'done')
+        mainloop.quit()
+
+    property_listener.success = True
+
+    if args.wait:
+        sig_match = dbus_bus.add_signal_receiver(property_listener, "JobRemoved")
+
+    dbus_iface.Set(iface, prop, descriptor['value'])
+
+    if args.wait:
+        mainloop.run()
+        sig_match.remove()
+
+    return property_listener.success
+
+def run_one_command(dbus_bus, descriptor, args):
     bus = descriptor['bus_name']
     obj = descriptor['object_name']
     iface = descriptor['interface_name']
     dbus_obj = dbus_bus.get_object(bus, obj)
+    result = None
 
     if (descriptor.has_key('property')):
-        prop = descriptor['property']
         dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
         if descriptor.has_key('value'):
-            dbus_iface.Set(iface, prop, descriptor['value'])
+            result = run_set_property(dbus_bus, dbus_iface, descriptor, args)
         else:
+            prop = descriptor['property']
             dbus_prop = dbus_iface.Get(iface, prop)
             print '{:<20}: {}'.format(prop, str(dbus_prop))
+            result = True
     else:
         dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
         props = dbus_iface.GetAll(iface)
         for p in props:
             print "{} = {}".format(p, str(props[p]))
+        result = True
 
-def run_all_commands(dbus_bus, recipe):
+    return result
+
+def run_all_commands(dbus_bus, recipe, args):
     if isinstance(recipe, dict):
-        run_one_command(dbus_bus, recipe)
-        return
+        return run_one_command(dbus_bus, recipe, args)
 
     assert isinstance(recipe, list)
     for command in recipe:
-        run_one_command(dbus_bus, descriptors[command])
+        descriptor = descriptors[command]
+        if not run_one_command(dbus_bus, descriptor, args):
+            print "Failed to execute command: {}".format(descriptor)
+            return False
+
+    return True
 
 def main():
+    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
     parser = argparse.ArgumentParser()
+    parser.add_argument('--wait', '-w', action='store_true',
+            help='Block until the state transition succeeds or fails')
     parser.add_argument('recipe', choices=sorted(descriptors.keys()))
     args = parser.parse_args()
 
     dbus_bus = dbus.SystemBus()
     try:
-        run_all_commands(dbus_bus, descriptors[args.recipe], args)
+        return run_all_commands(dbus_bus, descriptors[args.recipe], args)
     finally:
         dbus_bus.close()
 
 if __name__ == "__main__":
-    main()
+    sys.exit(0 if main() else 1)
