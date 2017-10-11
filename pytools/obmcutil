@@ -109,11 +109,8 @@ def main():
 
         if prop:
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
-            val = None
             if objinfo.has_key('value'):
-                val = objinfo['value']
-            if val is not None:
-                dbus_iface.Set(iface, prop, val)
+                dbus_iface.Set(iface, prop, objinfo['value'])
             else:
                 dbus_prop = dbus_iface.Get(iface, prop)
                 print '{:<20}: {}'.format(prop, str(dbus_prop))
