@@ -102,10 +102,10 @@ def main():
         if (objinfo.has_key('property')):
             property_name = objinfo['property']
 
-        bus_name = objinfo['bus_name']
+        bus = objinfo['bus_name']
         obj = objinfo['object_name']
         iface = objinfo['interface_name']
-        dbus_obj = dbus_bus.get_object(bus_name, obj)
+        dbus_obj = dbus_bus.get_object(bus, obj)
 
         if (property_name != ""):
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
