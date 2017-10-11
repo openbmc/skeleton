@@ -159,11 +159,17 @@ on_boot_progress(GDBusConnection *connection,
 		GVariant *parameters,
 		gpointer user_data)
 {
-	gchar *boot_progress;
+	gchar *interface;
+	GVariantIter *properties;
+	GVariantIter *dummy;
+	gchar *boot_progress = NULL;
+	gchar *property;
+	GVariant *value;
 	uint8_t pgood_state;
 	uint8_t reset_state;
 	int rc;
 	int i;
+	int ignore;
 
 	if(!parameters)
 		return;
@@ -172,9 +178,30 @@ on_boot_progress(GDBusConnection *connection,
 	if(!g_pci_reset_held)
 		return;
 
-	g_variant_get(parameters, "(s)", &boot_progress);
+	g_variant_get(parameters, "(&sa{sv}as)", &interface, &properties, &dummy);
+	for(i = 0; g_variant_iter_next(properties, "{&sv}", &property, &value); i++)
+	{
+		if (strcmp(property, "BootProgress") == 0)
+		{
+			gchar* tmp;
+			g_variant_get(value, "&s", &tmp);
+			boot_progress = g_strdup(tmp);
+			g_print("BootProgress: %s\n", boot_progress);
+			g_variant_unref(value);
+		}
+	}
+
+	g_variant_iter_free(properties);
+	g_variant_iter_free(dummy);
+	if (boot_progress == NULL)
+		return;
+
 	/* Release PCI reset when FW boot progress goes beyond 'Baseboard Init' */
-	if(strcmp(boot_progress, "FW Progress, Baseboard Init") == 0)
+	ignore = strcmp(boot_progress,
+		"xyz.openbmc_project.State.Boot.Progress.ProgressStages.MotherboardInit") == 0;
+	g_free(boot_progress);
+
+	if (ignore)
 		return;
 
 	rc = gpio_open(&g_gpio_configs.power_gpio.power_good_in);
@@ -208,7 +235,7 @@ on_boot_progress(GDBusConnection *connection,
 				(int)pgood_state, pci_reset_out->name, (int)reset_state);
 		gpio_write(pci_reset_out, reset_state);
 		gpio_close(pci_reset_out);
-		g_print("Released pci reset: %s - %s\n", pci_reset_out->name, boot_progress);
+		g_print("Released pci reset: %s\n", pci_reset_out->name);
 	}
 	g_pci_reset_held = 0;
 }
@@ -426,9 +453,9 @@ on_bus_acquired(GDBusConnection *connection,
 	/* Listen for BootProgress signal from BootProgress sensor */
 	g_dbus_connection_signal_subscribe(connection,
 			NULL, /* service */
-			NULL, /* interface_name */
-			"BootProgress", /* member: name of the signal */
-			"/org/openbmc/sensors/host/BootProgress", /* obj path */
+			"org.freedesktop.DBus.Properties", /* interface_name */
+			"PropertiesChanged", /* member: name of the signal */
+			"/xyz/openbmc_project/state/host0", /* obj path */
 			NULL, /* arg0 */
 			G_DBUS_SIGNAL_FLAGS_NONE,
 			(GDBusSignalCallback) on_boot_progress,
