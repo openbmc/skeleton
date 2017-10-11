@@ -65,6 +65,26 @@ dbus_objects = {
     },
 }
 
+def run_one_command(dbus_bus, objinfo):
+    bus = objinfo['bus_name']
+    obj = objinfo['object_name']
+    iface = objinfo['interface_name']
+    dbus_obj = dbus_bus.get_object(bus, obj)
+
+    if (objinfo.has_key('property')):
+        prop = objinfo['property']
+        dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
+        if objinfo.has_key('value'):
+            dbus_iface.Set(iface, prop, objinfo['value'])
+        else:
+            dbus_prop = dbus_iface.Get(iface, prop)
+            print '{:<20}: {}'.format(prop, str(dbus_prop))
+    else:
+        dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
+        props = dbus_iface.GetAll(iface)
+        for p in props:
+            print p + " = " + str(props[p])
+
 def main():
     # Commands that need to run multiple objects above
     multicmd_objects = { 'state' : ['bmcstate', 'chassisstate', 'hoststate'] }
@@ -96,26 +116,7 @@ def main():
         cmd = multicmd_objects[cmd[0]]
 
     for c in cmd:
-        objinfo = dbus_objects[c]
-
-        bus = objinfo['bus_name']
-        obj = objinfo['object_name']
-        iface = objinfo['interface_name']
-        dbus_obj = dbus_bus.get_object(bus, obj)
-
-        if (objinfo.has_key('property')):
-            prop = objinfo['property']
-            dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
-            if objinfo.has_key('value'):
-                dbus_iface.Set(iface, prop, objinfo['value'])
-            else:
-                dbus_prop = dbus_iface.Get(iface, prop)
-                print '{:<20}: {}'.format(prop, str(dbus_prop))
-        else:
-            dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
-            props = dbus_iface.GetAll(iface)
-            for p in props:
-                print p + " = " + str(props[p])
+        run_one_command(dbus_bus, dbus_objects[c])
 
 if __name__ == "__main__":
     main()
