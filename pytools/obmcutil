@@ -112,8 +112,6 @@ def main():
             val = None
             if objinfo.has_key('value'):
                 val = objinfo['value']
-            elif len(sys.argv) > 0:
-                val = eval(sys.argv.pop(0))
             if val:
                 dbus_iface.Set(iface, prop, val)
             else:
