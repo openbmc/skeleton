@@ -88,7 +88,7 @@ def main():
             print "\t" + name + " -> " + ",".join(multicmd_objects[name])
         exit(0)
 
-    prop = ""
+    prop = None
 
     sys.argv.pop(0)
     cmd = [sys.argv.pop(0)]
@@ -107,7 +107,7 @@ def main():
         iface = objinfo['interface_name']
         dbus_obj = dbus_bus.get_object(bus, obj)
 
-        if (prop != ""):
+        if prop:
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
             if (objinfo.has_key('value')):
                 val = objinfo['value']
