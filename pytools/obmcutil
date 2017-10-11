@@ -106,7 +106,7 @@ def run_one_command(dbus_bus, descriptor, verbose):
     iface = descriptor['interface_name']
     dbus_obj = dbus_bus.get_object(bus, obj)
 
-    if (descriptor.has_key('property')):
+    if descriptor.has_key('property'):
         dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
         if descriptor.has_key('value'):
             run_set_property(dbus_iface, descriptor, verbose)
