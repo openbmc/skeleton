@@ -83,7 +83,7 @@ def run_one_command(dbus_bus, descriptor):
         dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
         props = dbus_iface.GetAll(iface)
         for p in props:
-            print p + " = " + str(props[p])
+            print "{} = {}".format(p, str(props[p]))
 
 def run_all_commands(dbus_bus, recipe):
     if isinstance(recipe, dict):
