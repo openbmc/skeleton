@@ -5,57 +5,6 @@ import dbus
 import json
 import xml.etree.ElementTree as ET
 
-
-def fix_byte(it, key, parent):
-    if (isinstance(it, dbus.Array)):
-        for i in range(0, len(it)):
-            fix_byte(it[i], i, it)
-    elif (isinstance(it, dict)):
-        for key in it.keys():
-            fix_byte(it[key], key, it)
-    elif (isinstance(it, dbus.Byte)):
-        if (key != None):
-            parent[key] = int(it)
-    elif (isinstance(it, dbus.Double)):
-        if (key != None):
-            parent[key] = float(it)
-    else:
-        pass
-
-
-def printDict(name, data):
-    if (isinstance(data, dict)):
-        print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-        print name
-        for p in sorted(data.keys()):
-            printDict(p, data[p])
-    else:
-        print name + " = " + str(data)
-
-
-def introspect(bus_name, obj_path, intf_name, method_name):
-    obj = bus.get_object(bus_name, obj_path)
-    introspect_iface = dbus.Interface(obj,
-                                      "org.freedesktop.DBus.Introspectable")
-    tree = ET.ElementTree(ET.fromstring(introspect_iface.Introspect()))
-    # print method_name
-    # print introspect_iface.Introspect()
-    root = tree.getroot()
-    found = False
-    for node in root.iter('node'):
-        for intf in node.iter('interface'):
-            if (intf.attrib['name'] == intf_name):
-                for method in intf.iter('method'):
-                    if (method.attrib['name'] == method_name):
-                        for ar in method.iter('arg'):
-                            if (ar.attrib['direction'] == "in"):
-                                print "\t" + ar.attrib['name'] + " (" + \
-                                      ar.attrib['type'] + ")"
-                                found = True
-
-    return found
-
-
 dbus_objects = {
     'power': {
         'bus_name': 'org.openbmc.control.Power',
@@ -124,15 +73,11 @@ bus = dbus.SystemBus()
 if (len(sys.argv) == 1 or sys.argv[1] == "-h" or
         (not(dbus_objects.has_key(sys.argv[1])) and
         (not(multicmd_objects.has_key(sys.argv[1]))))):
-    print "Usage: obmcutil [command] [[method] [*args]]"
-    print "\tIf [method] is blank, then all properties are printed\n"
+    print "Usage: obmcutil [command]"
     print "Available commands:"
     for name in sorted(dbus_objects.keys()):
         m = ""
-        if (dbus_objects[name].has_key('method') == True):
-            m = " (" + dbus_objects[name]['interface_name'] + "->" + \
-                dbus_objects[name]['method'] + ")"
-        elif (dbus_objects[name].has_key('property') == True):
+        if (dbus_objects[name].has_key('property') == True):
             m = " (" + dbus_objects[name]['interface_name'] + "->" + \
                 dbus_objects[name]['property'] + ")"
 
@@ -142,7 +87,6 @@ if (len(sys.argv) == 1 or sys.argv[1] == "-h" or
         print "\t" + name + " -> " + ",".join(multicmd_objects[name])
     exit(0)
 
-method_name = ""
 property_name = ""
 
 sys.argv.pop(0)
@@ -154,37 +98,15 @@ if(multicmd_objects.has_key(cmd[0])):
 
 for c in cmd:
     objinfo = dbus_objects[c]
-    if (objinfo.has_key('method')):
-        method_name = objinfo['method']
-    elif (objinfo.has_key('property')):
+    if (objinfo.has_key('property')):
         property_name = objinfo['property']
-    elif (len(sys.argv) > 0):
-        ## if command line args left and method not specified
-        ## then next arg must be method name
-        method_name = sys.argv.pop(0)
 
     bus_name = objinfo['bus_name']
     obj_path = objinfo['object_name']
     intf_name = objinfo['interface_name']
     obj = bus.get_object(bus_name, obj_path)
 
-    if (method_name != ""):
-        methd = obj.get_dbus_method(method_name, intf_name)
-        try:
-            data = methd(*sys.argv)
-            fix_byte(data, None, None)
-            pydata = json.loads(json.dumps(data))
-            if 'transform' in objinfo:
-                objinfo['transform'](pydata)
-            printDict("", pydata)
-        except Exception as e:
-            print e
-            r = introspect(bus_name, obj_path, intf_name, method_name)
-            if (r == False):
-                print "ERROR: Invalid method: " + method_name
-            else:
-                print "ERROR: Incorrect arguments passed to method"
-    elif (property_name != ""):
+    if (property_name != ""):
         intf = dbus.Interface(obj, "org.freedesktop.DBus.Properties")
         if (objinfo.has_key('value')):
             property_value = objinfo['value']
