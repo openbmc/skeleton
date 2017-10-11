@@ -6,6 +6,8 @@ import argparse
 
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
+import os
+import signal
 
 descriptors = {
     'power': {
@@ -72,7 +74,7 @@ descriptors = {
     'state' : ['bmcstate', 'chassisstate', 'hoststate']
 }
 
-def run_set_property(dbus_iface, descriptor):
+def run_set_property(dbus_iface, descriptor, verbose):
     mainloop = gobject.MainLoop()
 
     def handle_current_host_state(path, update, sig, **kwargs):
@@ -89,9 +91,16 @@ def run_set_property(dbus_iface, descriptor):
     dbus_iface.connect_to_signal("PropertiesChanged", handle_current_host_state)
     dbus_iface.Set(iface, prop, descriptor['value'])
 
+    if verbose:
+        args = ("journalctl", "-f", "--no-pager")
+        pid = os.spawnlp(os.P_NOWAIT, "/bin/journalctl", *args)
+
     mainloop.run()
 
-def run_one_command(dbus_bus, descriptor):
+    if verbose:
+        os.kill(pid, signal.SIGTERM)
+
+def run_one_command(dbus_bus, descriptor, verbose):
     bus = descriptor['bus_name']
     obj = descriptor['object_name']
     iface = descriptor['interface_name']
@@ -100,7 +109,7 @@ def run_one_command(dbus_bus, descriptor):
     if (descriptor.has_key('property')):
         dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
         if descriptor.has_key('value'):
-            run_set_property(dbus_iface, descriptor)
+            run_set_property(dbus_iface, descriptor, verbose)
         else:
             prop = descriptor['property']
             dbus_prop = dbus_iface.Get(iface, prop)
@@ -111,23 +120,24 @@ def run_one_command(dbus_bus, descriptor):
         for p in props:
             print "{} = {}".format(p, str(props[p]))
 
-def run_all_commands(dbus_bus, recipe):
+def run_all_commands(dbus_bus, recipe, verbose):
     if isinstance(recipe, dict):
-        run_one_command(dbus_bus, recipe)
+        run_one_command(dbus_bus, recipe, verbose)
         return
 
     assert isinstance(recipe, list)
     for command in recipe:
-        run_one_command(dbus_bus, descriptors[command])
+        run_one_command(dbus_bus, descriptors[command], verbose)
 
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', '-v', action='store_true')
     parser.add_argument('recipe', choices=sorted(descriptors.keys()))
     args = parser.parse_args()
 
-    run_all_commands(dbus.SystemBus(), descriptors[args.recipe])
+    run_all_commands(dbus.SystemBus(), descriptors[args.recipe], args.verbose)
 
 if __name__ == "__main__":
     main()
