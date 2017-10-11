@@ -88,7 +88,7 @@ def main():
             print "\t" + name + " -> " + ",".join(multicmd_objects[name])
         exit(0)
 
-    property_name = ""
+    prop = ""
 
     sys.argv.pop(0)
     cmd = [sys.argv.pop(0)]
@@ -100,14 +100,14 @@ def main():
     for c in cmd:
         objinfo = dbus_objects[c]
         if (objinfo.has_key('property')):
-            property_name = objinfo['property']
+            prop = objinfo['property']
 
         bus = objinfo['bus_name']
         obj = objinfo['object_name']
         iface = objinfo['interface_name']
         dbus_obj = dbus_bus.get_object(bus, obj)
 
-        if (property_name != ""):
+        if (prop != ""):
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
             if (objinfo.has_key('value')):
                 property_value = objinfo['value']
@@ -117,10 +117,10 @@ def main():
                 else:
                     property_value = None
             if(property_value is not None):
-                dbus_iface.Set(iface, property_name, property_value)
+                dbus_iface.Set(iface, prop, property_value)
             else:
-                dbus_prop = dbus_iface.Get(iface, property_name)
-                print '{:<20}'.format(property_name+": ") + str(dbus_prop)
+                dbus_prop = dbus_iface.Get(iface, prop)
+                print '{:<20}'.format(prop+": ") + str(dbus_prop)
         else:
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
             props = dbus_iface.GetAll(iface)
