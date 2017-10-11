@@ -69,7 +69,7 @@ def main():
     # Commands that need to run multiple objects above
     multicmd_objects = { 'state' : ['bmcstate', 'chassisstate', 'hoststate'] }
 
-    bus = dbus.SystemBus()
+    dbus_bus = dbus.SystemBus()
 
     if (len(sys.argv) == 1 or sys.argv[1] == "-h" or
             (not(dbus_objects.has_key(sys.argv[1])) and
@@ -105,7 +105,7 @@ def main():
         bus_name = objinfo['bus_name']
         obj = objinfo['object_name']
         iface = objinfo['interface_name']
-        dbus_obj = bus.get_object(bus_name, obj)
+        dbus_obj = dbus_bus.get_object(bus_name, obj)
 
         if (property_name != ""):
             dbus_iface = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
