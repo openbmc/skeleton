@@ -6,6 +6,9 @@ import argparse
 
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
+import os
+import signal
+import time
 
 descriptors = {
     'power': {
@@ -91,6 +94,10 @@ def run_set_property(dbus_bus, dbus_iface, descriptor, args):
 
     property_listener.success = True
 
+    if args.wait and args.verbose:
+        cmdline = ("journalctl", "-f", "--no-pager")
+        pid = os.spawnlp(os.P_NOWAIT, "/bin/journalctl", *cmdline)
+
     if args.wait:
         sig_match = dbus_bus.add_signal_receiver(property_listener, "JobRemoved")
 
@@ -99,6 +106,11 @@ def run_set_property(dbus_bus, dbus_iface, descriptor, args):
     if args.wait:
         mainloop.run()
         sig_match.remove()
+
+    if args.wait and args.verbose:
+        # wait some time for the journal output
+        time.sleep(args.wait_tune)
+        os.kill(pid, signal.SIGTERM)
 
     return property_listener.success
 
@@ -144,8 +156,13 @@ def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', '-v', action='store_true',
+            help="Verbose output")
     parser.add_argument('--wait', '-w', action='store_true',
             help='Block until the state transition succeeds or fails')
+    parser.add_argument('--wait-tune', '-t', nargs='?', default=10, type=float,
+            # help='Seconds to wait for journal output to complete after receiving DBus signal',
+            help=argparse.SUPPRESS)
     parser.add_argument('recipe', choices=sorted(descriptors.keys()))
     args = parser.parse_args()
 
