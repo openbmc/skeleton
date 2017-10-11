@@ -116,7 +116,7 @@ def main():
                     val = eval(sys.argv.pop(0))
                 else:
                     val = None
-            if val is not None:
+            if val:
                 dbus_iface.Set(iface, prop, val)
             else:
                 dbus_prop = dbus_iface.Get(iface, prop)
