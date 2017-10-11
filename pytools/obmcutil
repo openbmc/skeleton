@@ -105,10 +105,10 @@ def main():
         bus_name = objinfo['bus_name']
         obj_path = objinfo['object_name']
         intf_name = objinfo['interface_name']
-        db_obj = bus.get_object(bus_name, obj_path)
+        dbus_obj = bus.get_object(bus_name, obj_path)
 
         if (property_name != ""):
-            intf = dbus.Interface(db_obj, "org.freedesktop.DBus.Properties")
+            intf = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
             if (objinfo.has_key('value')):
                 property_value = objinfo['value']
             else:
@@ -122,7 +122,7 @@ def main():
                 prop = intf.Get(intf_name,property_name)
                 print '{:<20}'.format(property_name+": ") + str(prop)
         else:
-            intf = dbus.Interface(db_obj, "org.freedesktop.DBus.Properties")
+            intf = dbus.Interface(dbus_obj, "org.freedesktop.DBus.Properties")
             props = intf.GetAll(intf_name)
             for p in props:
                 print p + " = " + str(props[p])
