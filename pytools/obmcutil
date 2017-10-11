@@ -2,6 +2,7 @@
 
 import sys
 import dbus
+import argparse
 
 dbus_objects = {
     'power': {
@@ -61,6 +62,7 @@ dbus_objects = {
         'interface_name': 'xyz.openbmc_project.State.Boot.Progress',
         'property': 'BootProgress',
     },
+    'state' : ['bmcstate', 'chassisstate', 'hoststate']
 }
 
 def run_one_command(dbus_bus, objinfo):
@@ -93,36 +95,11 @@ def run_all_commands(dbus_bus, commands):
         run_one_command(dbus_bus, dbus_objects[command])
 
 def main():
-    # Commands that need to run multiple objects above
-    multicmd_objects = { 'state' : ['bmcstate', 'chassisstate', 'hoststate'] }
+    parser = argparse.ArgumentParser()
+    parser.add_argument('recipe', choices=sorted(dbus_objects.keys()))
+    args = parser.parse_args()
 
-    dbus_bus = dbus.SystemBus()
-
-    if (len(sys.argv) == 1 or sys.argv[1] == "-h" or
-            (not(dbus_objects.has_key(sys.argv[1])) and
-            (not(multicmd_objects.has_key(sys.argv[1]))))):
-        print "Usage: obmcutil [command]"
-        print "Available commands:"
-        for name in sorted(dbus_objects.keys()):
-            m = ""
-            if (dbus_objects[name].has_key('property') == True):
-                m = " (" + dbus_objects[name]['interface_name'] + "->" + \
-                    dbus_objects[name]['property'] + ")"
-
-            print "\t" + name + m
-        print "Multi-Commands:"
-        for name in sorted(multicmd_objects.keys()):
-            print "\t" + name + " -> " + ",".join(multicmd_objects[name])
-        exit(0)
-
-    sys.argv.pop(0)
-    recipe = sys.argv.pop(0)
-
-    # Check if this is a multicmd command and update if it is
-    if(multicmd_objects.has_key(recipe)):
-        recipe = multicmd_objects[recipe]
-
-    run_all_commands(dbus_bus, recipe)
+    run_all_commands(dbus.SystemBus(), dbus_objects[args.recipe])
 
 if __name__ == "__main__":
     main()
