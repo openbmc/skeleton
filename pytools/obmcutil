@@ -114,11 +114,37 @@ def run_set_property(dbus_bus, dbus_iface, descriptor, args):
 
     return property_listener.success
 
+def get_dbus_obj(dbus_bus, bus, obj, args):
+    if not args.wait:
+        return dbus_bus.get_object(bus, obj)
+
+    mainloop = gobject.MainLoop()
+
+    def property_listener(job, path, unit, state):
+        if 'obmc-standby.target' == unit:
+            mainloop.quit()
+
+    sig_match = dbus_bus.add_signal_receiver(property_listener, "JobRemoved")
+    try:
+        return dbus_bus.get_object(bus, obj)
+    except dbus.exceptions.DBusException as e:
+        if args.verbose:
+            pid = Popen(["/bin/journalctl", "-f", "--no-pager"]).pid
+
+        mainloop.run()
+
+        if args.verbose:
+            os.kill(pid, signal.SIGTERM)
+    finally:
+        sig_match.remove()
+
+    return dbus_bus.get_object(bus, obj)
+
 def run_one_command(dbus_bus, descriptor, args):
     bus = descriptor['bus_name']
     obj = descriptor['object_name']
     iface = descriptor['interface_name']
-    dbus_obj = dbus_bus.get_object(bus, obj)
+    dbus_obj = get_dbus_obj(dbus_bus, bus, obj, args)
     result = None
 
     if 'property' in descriptor:
@@ -167,8 +193,23 @@ def main():
     args = parser.parse_args()
 
     dbus_bus = dbus.SystemBus()
+
+    # The only way to get a sensible backtrace with python 2 without stupid
+    # hoops is to let the uncaught exception handler do the work for you.
+    # Catching and binding an exception appears to overwrite the stack trace at
+    # the point of bind.
+    #
+    # So, if we're in verbose mode, don't try to catch the DBus exception. That
+    # way we can understand where it originated.
+    if args.verbose:
+        return run_all_commands(dbus_bus, descriptors[args.recipe], args)
+
+    # Otherwise, we don't care about the traceback. Just catch it and print the
+    # error message.
     try:
         return run_all_commands(dbus_bus, descriptors[args.recipe], args)
+    except dbus.exceptions.DBusException as e:
+        print >> sys.stderr, "DBus error occurred: {}".format(e.get_dbus_message())
     finally:
         dbus_bus.close()
 
