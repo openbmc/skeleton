@@ -114,11 +114,29 @@ def run_set_property(dbus_bus, dbus_iface, descriptor, args):
 
     return property_listener.success
 
+def get_dbus_obj(dbus_bus, bus, obj):
+    mainloop = gobject.MainLoop()
+
+    def property_listener(job, path, unit, state):
+        if 'obmc-standby.target' == unit:
+            mainloop.quit()
+
+    sig_match = dbus_bus.add_signal_receiver(property_listener, "JobRemoved")
+    try:
+        return dbus_bus.get_object(bus, obj)
+    except dbus.exceptions.DBusException as e:
+        mainloop.run()
+    finally:
+        sig_match.remove()
+
+    return dbus_bus.get_object(bus, obj)
+
 def run_one_command(dbus_bus, descriptor, args):
     bus = descriptor['bus_name']
     obj = descriptor['object_name']
     iface = descriptor['interface_name']
-    dbus_obj = dbus_bus.get_object(bus, obj)
+    dbus_obj = get_dbus_obj(dbus_bus, bus, obj)
+
     result = None
 
     if 'property' in descriptor:
