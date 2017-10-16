@@ -11,6 +11,9 @@ import signal
 import time
 from subprocess import Popen
 
+import obmc_system_config
+import obmc.system
+
 descriptors = {
     'power': {
         'bus_name': 'org.openbmc.control.Power',
@@ -178,8 +181,76 @@ def run_all_commands(dbus_bus, recipe, args):
 
     return True
 
+def gpio_set_value(gpio_name, active_low, asserted):
+    gpio_id = obmc.system.convertGpio(gpio_name)
+    gpio_value_path = "/sys/class/gpio/gpio{}/value".format(gpio_id)
+
+    with open(gpio_value_path, 'w') as gpio:
+        # Inversion behaviour needs to change with the resolution of
+        # https://github.com/openbmc/openbmc/issues/2489, where properly
+        # configuring the kernel will allow it to handle the inversion for us.
+        gpio.write(str(int(asserted ^ active_low)))
+
+    return True
+
+def gpio_deassert(gpio_name, active_low, args):
+    # Deal with silly python2 exception handling as outlined in main
+    if args.verbose:
+        return gpio_set_value(gpio_name, active_low, False)
+
+    try:
+        return gpio_set_value(gpio_name, active_low, False)
+    except IOError as e:
+        print >> sys.stderr, "Failed to access GPIO {}: {}".format(gpio_name, e.message)
+        return False
+
+def run_chassiskill(args):
+    # We shouldn't be able to invoke run_chassiskill() unless it's been
+    # explicitly added as a valid command to argparse in main()
+    assert can_chassiskill()
+
+    # Multi-dimensional fetch is now exception-safe
+    gpios = obmc_system_config.GPIO_CONFIGS['power_config']['power_up_outs']
+
+    gc = obmc_system_config.GPIO_CONFIG
+
+    for gpio in gpios:
+        function = gpio[0]
+
+        if function not in gc or 'gpio_pin' not in gc[function]:
+            print >> sys.stderr, "Missing or invalid definition for '{}' in system GPIO_CONFIG".format(function)
+            continue
+
+        name = gc[function]['gpio_pin']
+
+        # The second element of the tuples stashed in 'power_up_outs'
+        # represents the boolean condition of the statement 'active high'. To
+        # mirror the code at [1] we instead need the condition of the statement
+        # 'active low', thus we negate gpio[1].
+        #
+        # [1] https://github.com/openbmc/skeleton/blob/93b84e42834893313616f96c70743369f26a7190/op-pwrctl/power_control_obj.c#L283
+        active_low = not gpio[1]
+
+        if not gpio_deassert(name, active_low, args):
+            return False
+
+def can_chassiskill():
+    gcs = obmc_system_config.GPIO_CONFIGS
+
+    if 'power_config' in gcs:
+        if 'power_up_outs' in gcs['power_config']:
+            # Just to be sure
+            return len(gcs['power_config']) > 0
+
+    return False
+
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
+    # Conditionally add the `chassiskill` commmand based on whether the
+    # required GPIO configuration is present in the system description.
+    if can_chassiskill():
+        descriptors['chassiskill'] = None
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--verbose', '-v', action='store_true',
@@ -191,6 +262,12 @@ def main():
             help=argparse.SUPPRESS)
     parser.add_argument('recipe', choices=sorted(descriptors.keys()))
     args = parser.parse_args()
+
+    # This is a special case: directly pull the power, don't do any D-Bus
+    # related stuff
+    if args.recipe == "chassiskill":
+        return run_chassiskill(args)
+
 
     dbus_bus = dbus.SystemBus()
 
