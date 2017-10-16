@@ -32,6 +32,7 @@ descriptors = {
         'value': 'xyz.openbmc_project.State.Chassis.Transition.Off',
         'monitor': 'obmc-chassis-hard-poweroff@0.target',
     },
+    'chassiskill' : None,
     'poweron': {
         'bus_name': 'xyz.openbmc_project.State.Host',
         'object_name': '/xyz/openbmc_project/state/host0',
@@ -170,6 +171,19 @@ def run_all_commands(dbus_bus, recipe, args):
 
     return True
 
+def run_chassiskill():
+    import obmc_system_config
+    import obmc.system
+
+    gpio_name = obmc_system_config.GPIO_CONFIG['BMC_POWER_UP']['gpio_pin']
+    gpio_id = obmc.system.convertGpio(gpio_name)
+    gpio_value_path = "/sys/class/gpio/gpio{}/value".format(gpio_id)
+
+    with open(gpio_value_path, 'w') as gpio:
+        gpio.write("0")
+
+    return True
+
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
@@ -183,6 +197,11 @@ def main():
             help=argparse.SUPPRESS)
     parser.add_argument('recipe', choices=sorted(descriptors.keys()))
     args = parser.parse_args()
+
+    # This is a special case: directly pull the power, don't do any D-Bus
+    # related stuff
+    if args.recipe == "chassiskill":
+        return run_chassiskill()
 
     bus = dbus.SystemBus()
     try:
