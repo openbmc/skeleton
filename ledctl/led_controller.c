@@ -343,7 +343,7 @@ led_custom_blink(const char *led_name, sd_bus_message *msg)
  * Gets the current value of passed in LED file
  * Mainly used for reading 'brightness'
  * NOTE : It is the responsibility of the caller to allocate
- * sufficient space for buffer. This will read upto user supplied
+ * sufficient space for buffer. This will read up to user supplied
  * size -or- entire contents of file whichever is smaller
  * ----------------------------------------------------------------
  */

@@ -203,7 +203,7 @@ static int fan_set_max_speed(fan_info_t *info)
 /*
  * FAN_TACH_OFFSET is specific to Barreleye.
  * Barreleye uses NTC7904D HW Monitor as Fan tachometoer.
- * The 13-bit FANIN value is made up Higer part: [12:5],
+ * The 13-bit FANIN value is made up Higher part: [12:5],
  * and Lower part: [4:0], which are read from two sensors.
  * see: https://www.nuvoton.com/resource-files/NCT7904D_Datasheet_V1.44.pdf
  */

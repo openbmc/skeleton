@@ -50,7 +50,7 @@ if __name__ == '__main__':
     root_sensor = SensorManager(bus, OBJ_PATH)
 
     ## instantiate non-polling sensors
-    ## these don't need to be in seperate process
+    ## these don't need to be in separate process
     if has_system:
         for (id, the_sensor) in System.MISC_SENSORS.items():
             sensor_class = the_sensor['class']

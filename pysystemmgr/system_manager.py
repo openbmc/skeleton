@@ -133,7 +133,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
 
     # Get the FRU area names defined in ID_LOOKUP table given a fru_id.
     # If serval areas are defined for a fru_id, the areas are returned
-    # together as a string with each area name seperated with ','.
+    # together as a string with each area name separated with ','.
     # If no fru area defined in ID_LOOKUP, an empty string will be returned.
     @dbus.service.method(DBUS_NAME, in_signature='y', out_signature='s')
     def getFRUArea(self, fru_id):

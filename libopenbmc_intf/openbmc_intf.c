@@ -1937,7 +1937,7 @@ fan_call_set_cooling_zone (
  *
  * Finishes an operation started with fan_call_set_cooling_zone().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 fan_call_set_cooling_zone_finish (
@@ -1967,7 +1967,7 @@ _out:
  *
  * See fan_call_set_cooling_zone() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 fan_call_set_cooling_zone_sync (
@@ -2033,7 +2033,7 @@ fan_call_get_speed (
  *
  * Finishes an operation started with fan_call_get_speed().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 fan_call_get_speed_finish (
@@ -2065,7 +2065,7 @@ _out:
  *
  * See fan_call_get_speed() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 fan_call_get_speed_sync (
@@ -2133,7 +2133,7 @@ fan_call_set_speed (
  *
  * Finishes an operation started with fan_call_set_speed().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 fan_call_set_speed_finish (
@@ -2163,7 +2163,7 @@ _out:
  *
  * See fan_call_set_speed() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 fan_call_set_speed_sync (
@@ -4019,7 +4019,7 @@ sensor_value_call_init (
  *
  * Finishes an operation started with sensor_value_call_init().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_value_call_init_finish (
@@ -4048,7 +4048,7 @@ _out:
  *
  * See sensor_value_call_init() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_value_call_init_sync (
@@ -4112,7 +4112,7 @@ sensor_value_call_get_value (
  *
  * Finishes an operation started with sensor_value_call_get_value().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_value_call_get_value_finish (
@@ -4144,7 +4144,7 @@ _out:
  *
  * See sensor_value_call_get_value() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_value_call_get_value_sync (
@@ -4212,7 +4212,7 @@ sensor_value_call_set_value (
  *
  * Finishes an operation started with sensor_value_call_set_value().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_value_call_set_value_finish (
@@ -4242,7 +4242,7 @@ _out:
  *
  * See sensor_value_call_set_value() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_value_call_set_value_sync (
@@ -6075,7 +6075,7 @@ sensor_threshold_call_get_state (
  *
  * Finishes an operation started with sensor_threshold_call_get_state().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_threshold_call_get_state_finish (
@@ -6107,7 +6107,7 @@ _out:
  *
  * See sensor_threshold_call_get_state() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 sensor_threshold_call_get_state_sync (
@@ -9731,7 +9731,7 @@ process_call_stop (
  *
  * Finishes an operation started with process_call_stop().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 process_call_stop_finish (
@@ -9760,7 +9760,7 @@ _out:
  *
  * See process_call_stop() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 process_call_stop_sync (
@@ -10856,7 +10856,7 @@ shared_resource_call_lock (
  *
  * Finishes an operation started with shared_resource_call_lock().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 shared_resource_call_lock_finish (
@@ -10886,7 +10886,7 @@ _out:
  *
  * See shared_resource_call_lock() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 shared_resource_call_lock_sync (
@@ -10951,7 +10951,7 @@ shared_resource_call_unlock (
  *
  * Finishes an operation started with shared_resource_call_unlock().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 shared_resource_call_unlock_finish (
@@ -10980,7 +10980,7 @@ _out:
  *
  * See shared_resource_call_unlock() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 shared_resource_call_unlock_sync (
@@ -11045,7 +11045,7 @@ shared_resource_call_is_locked (
  *
  * Finishes an operation started with shared_resource_call_is_locked().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 shared_resource_call_is_locked_finish (
@@ -11080,7 +11080,7 @@ _out:
  *
  * See shared_resource_call_is_locked() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 shared_resource_call_is_locked_sync (
@@ -12532,7 +12532,7 @@ control_call_init (
  *
  * Finishes an operation started with control_call_init().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_call_init_finish (
@@ -12561,7 +12561,7 @@ _out:
  *
  * See control_call_init() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_call_init_sync (
@@ -13781,7 +13781,7 @@ control_bmc_call_cold_reset (
  *
  * Finishes an operation started with control_bmc_call_cold_reset().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_bmc_call_cold_reset_finish (
@@ -13810,7 +13810,7 @@ _out:
  *
  * See control_bmc_call_cold_reset() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_bmc_call_cold_reset_sync (
@@ -13873,7 +13873,7 @@ control_bmc_call_warm_reset (
  *
  * Finishes an operation started with control_bmc_call_warm_reset().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_bmc_call_warm_reset_finish (
@@ -13902,7 +13902,7 @@ _out:
  *
  * See control_bmc_call_warm_reset() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_bmc_call_warm_reset_sync (
@@ -15016,7 +15016,7 @@ control_host_call_boot (
  *
  * Finishes an operation started with control_host_call_boot().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_host_call_boot_finish (
@@ -15045,7 +15045,7 @@ _out:
  *
  * See control_host_call_boot() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_host_call_boot_sync (
@@ -15108,7 +15108,7 @@ control_host_call_shutdown (
  *
  * Finishes an operation started with control_host_call_shutdown().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_host_call_shutdown_finish (
@@ -15137,7 +15137,7 @@ _out:
  *
  * See control_host_call_shutdown() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_host_call_shutdown_sync (
@@ -15200,7 +15200,7 @@ control_host_call_reboot (
  *
  * Finishes an operation started with control_host_call_reboot().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_host_call_reboot_finish (
@@ -15229,7 +15229,7 @@ _out:
  *
  * See control_host_call_reboot() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_host_call_reboot_sync (
@@ -16741,7 +16741,7 @@ control_power_call_set_power_state (
  *
  * Finishes an operation started with control_power_call_set_power_state().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_power_call_set_power_state_finish (
@@ -16771,7 +16771,7 @@ _out:
  *
  * See control_power_call_set_power_state() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_power_call_set_power_state_sync (
@@ -16837,7 +16837,7 @@ control_power_call_get_power_state (
  *
  * Finishes an operation started with control_power_call_get_power_state().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_power_call_get_power_state_finish (
@@ -16869,7 +16869,7 @@ _out:
  *
  * See control_power_call_get_power_state() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 control_power_call_get_power_state_sync (
@@ -19084,7 +19084,7 @@ watchdog_call_start (
  *
  * Finishes an operation started with watchdog_call_start().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_start_finish (
@@ -19113,7 +19113,7 @@ _out:
  *
  * See watchdog_call_start() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_start_sync (
@@ -19176,7 +19176,7 @@ watchdog_call_poke (
  *
  * Finishes an operation started with watchdog_call_poke().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_poke_finish (
@@ -19205,7 +19205,7 @@ _out:
  *
  * See watchdog_call_poke() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_poke_sync (
@@ -19268,7 +19268,7 @@ watchdog_call_stop (
  *
  * Finishes an operation started with watchdog_call_stop().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_stop_finish (
@@ -19297,7 +19297,7 @@ _out:
  *
  * See watchdog_call_stop() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_stop_sync (
@@ -19363,7 +19363,7 @@ watchdog_call_set (
  *
  * Finishes an operation started with watchdog_call_set().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_set_finish (
@@ -19393,7 +19393,7 @@ _out:
  *
  * See watchdog_call_set() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 watchdog_call_set_sync (
@@ -20700,7 +20700,7 @@ event_log_call_get_event_log (
  *
  * Finishes an operation started with event_log_call_get_event_log().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 event_log_call_get_event_log_finish (
@@ -20732,7 +20732,7 @@ _out:
  *
  * See event_log_call_get_event_log() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 event_log_call_get_event_log_sync (
@@ -22333,7 +22333,7 @@ flash_call_update (
  *
  * Finishes an operation started with flash_call_update().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_update_finish (
@@ -22363,7 +22363,7 @@ _out:
  *
  * See flash_call_update() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_update_sync (
@@ -22431,7 +22431,7 @@ flash_call_error (
  *
  * Finishes an operation started with flash_call_error().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_error_finish (
@@ -22461,7 +22461,7 @@ _out:
  *
  * See flash_call_error() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_error_sync (
@@ -22526,7 +22526,7 @@ flash_call_done (
  *
  * Finishes an operation started with flash_call_done().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_done_finish (
@@ -22555,7 +22555,7 @@ _out:
  *
  * See flash_call_done() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_done_sync (
@@ -22624,7 +22624,7 @@ flash_call_update_via_tftp (
  *
  * Finishes an operation started with flash_call_update_via_tftp().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_update_via_tftp_finish (
@@ -22655,7 +22655,7 @@ _out:
  *
  * See flash_call_update_via_tftp() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_update_via_tftp_sync (
@@ -22722,7 +22722,7 @@ flash_call_init (
  *
  * Finishes an operation started with flash_call_init().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_init_finish (
@@ -22751,7 +22751,7 @@ _out:
  *
  * See flash_call_init() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_call_init_sync (
@@ -24478,7 +24478,7 @@ flash_control_call_flash (
  *
  * Finishes an operation started with flash_control_call_flash().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_control_call_flash_finish (
@@ -24509,7 +24509,7 @@ _out:
  *
  * See flash_control_call_flash() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 flash_control_call_flash_sync (
@@ -26048,7 +26048,7 @@ button_call_is_on (
  *
  * Finishes an operation started with button_call_is_on().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 button_call_is_on_finish (
@@ -26080,7 +26080,7 @@ _out:
  *
  * See button_call_is_on() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 button_call_is_on_sync (
@@ -26145,7 +26145,7 @@ button_call_sim_press (
  *
  * Finishes an operation started with button_call_sim_press().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 button_call_sim_press_finish (
@@ -26174,7 +26174,7 @@ _out:
  *
  * See button_call_sim_press() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 button_call_sim_press_sync (
@@ -26237,7 +26237,7 @@ button_call_sim_long_press (
  *
  * Finishes an operation started with button_call_sim_long_press().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 button_call_sim_long_press_finish (
@@ -26266,7 +26266,7 @@ _out:
  *
  * See button_call_sim_long_press() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 button_call_sim_long_press_sync (
@@ -27809,7 +27809,7 @@ led_call_set_on (
  *
  * Finishes an operation started with led_call_set_on().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_on_finish (
@@ -27838,7 +27838,7 @@ _out:
  *
  * See led_call_set_on() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_on_sync (
@@ -27901,7 +27901,7 @@ led_call_set_off (
  *
  * Finishes an operation started with led_call_set_off().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_off_finish (
@@ -27930,7 +27930,7 @@ _out:
  *
  * See led_call_set_off() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_off_sync (
@@ -27993,7 +27993,7 @@ led_call_set_blink_slow (
  *
  * Finishes an operation started with led_call_set_blink_slow().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_blink_slow_finish (
@@ -28022,7 +28022,7 @@ _out:
  *
  * See led_call_set_blink_slow() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_blink_slow_sync (
@@ -28085,7 +28085,7 @@ led_call_set_blink_fast (
  *
  * Finishes an operation started with led_call_set_blink_fast().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_blink_fast_finish (
@@ -28114,7 +28114,7 @@ _out:
  *
  * See led_call_set_blink_fast() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 led_call_set_blink_fast_sync (
@@ -29509,7 +29509,7 @@ host_ipmi_call_send_message (
  *
  * Finishes an operation started with host_ipmi_call_send_message().
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 host_ipmi_call_send_message_finish (
@@ -29545,7 +29545,7 @@ _out:
  *
  * See host_ipmi_call_send_message() for the asynchronous version of this method.
  *
- * Returns: (skip): %TRUE if the call succeded, %FALSE if @error is set.
+ * Returns: (skip): %TRUE if the call succeeded, %FALSE if @error is set.
  */
 gboolean
 host_ipmi_call_send_message_sync (

@@ -249,7 +249,7 @@ def can_chassiskill():
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-    # Conditionally add the `chassiskill` commmand based on whether the
+    # Conditionally add the `chassiskill` command based on whether the
     # required GPIO configuration is present in the system description.
     if can_chassiskill():
         descriptors['chassiskill'] = None
