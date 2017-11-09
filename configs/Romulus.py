@@ -283,6 +283,7 @@ GPIO_CONFIG['POWER_BUTTON'] = \
 GPIO_CONFIG['RESET_BUTTON'] = \
         {'gpio_pin': 'J1', 'direction': 'both'}
 
+# TODO openbmc/openbmc#2288 - Determine if any pci resets needed
 GPIO_CONFIGS = {
     'power_config' : {
         'power_good_in' : 'SYS_PWROK_BUFF',
@@ -291,8 +292,6 @@ GPIO_CONFIGS = {
             ('BMC_POWER_UP', True),
         ],
         'reset_outs' : [
-            ('BMC_CP0_RESET_N', False),
-            ('BMC_CP0_PERST_ENABLE_R', False),
         ],
     },
     'hostctl_config' : {
