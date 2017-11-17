@@ -19,6 +19,12 @@ int gpio_writec(GPIO* gpio, char value)
 	int rc = GPIO_OK;
 	char buf[1];
 	buf[0] = value;
+
+	if (lseek(gpio->fd, 0, SEEK_SET) == -1)
+	{
+		return GPIO_ERROR;
+	}
+
 	if (write(gpio->fd, buf, 1) != 1)
 	{
 		rc = GPIO_WRITE_ERROR;
@@ -36,6 +42,12 @@ int gpio_write(GPIO* gpio, uint8_t value)
 	{
 		buf[0]='1';
 	}
+
+	if (lseek(gpio->fd, 0, SEEK_SET) == -1)
+	{
+		return GPIO_ERROR;
+	}
+
 	if (write(gpio->fd, buf, 1) != 1)
 	{
 		rc = GPIO_WRITE_ERROR;
@@ -54,6 +66,11 @@ int gpio_read(GPIO* gpio, uint8_t *value)
 	}
 	else
 	{
+		if (lseek(gpio->fd, 0, SEEK_SET) == -1)
+		{
+			return GPIO_ERROR;
+		}
+
 		if (read(gpio->fd,&buf,1) != 1)
 		{
 			r = GPIO_READ_ERROR;
