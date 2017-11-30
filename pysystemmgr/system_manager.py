@@ -115,7 +115,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
         try:
             obj_path = System.ID_LOOKUP[category][key]
             parts = obj_path.split('/')
-            if (parts[3] == 'sensors'):
+            if (parts[3] == 'sensors') or (parts[5] == 'PowerSupplyRedundancy'):
                 intf_name = INTF_SENSOR
         except Exception as e:
             print "ERROR SystemManager: "+str(e)+" not found in lookup"
