@@ -289,7 +289,7 @@ ID_LOOKUP = {
         0x10 : '<inventory_root>/system/chassis/motherboard/apss',
         0x02 : '/org/openbmc/sensors/host/OperatingSystemStatus',
         0x04 : '<inventory_root>/system/chassis/motherboard/pcielink',
-        0x0b : '/org/openbmc/sensors/host/PowerSupplyRedundancy',
+        0x0b : '/xyz/openbmc_project/sensors/chassis/PowerSupplyRedundancy',
         0xda : '/org/openbmc/sensors/host/TurboAllowed',
         0xD8 : '/org/openbmc/sensors/host/PowerSupplyDerating',
     },
