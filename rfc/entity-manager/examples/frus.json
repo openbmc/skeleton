@@ -1,0 +1,72 @@
+[
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2014-05-27T19:37:00",
+        "BOARD_PART_NUMBER": "H20078-201",
+        "BOARD_PRODUCT_NAME": "A2UL16RISER2",
+        "BOARD_SERIAL_NUMBER": "BQWL42000359",
+        "BOARD_VERSION_ID": "FRU Ver 0.01",
+        "Common Format Version": "1"
+    },
+    {
+        "Common Format Version": "0"
+    },
+    {
+        "Common Format Version": "0"
+    },
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2015-01-01T00:59:00",
+        "BOARD_PART_NUMBER": "H39380-151",
+        "BOARD_PRODUCT_NAME": "FFPANEL",
+        "BOARD_SERIAL_NUMBER": "BQWL52405743",
+        "BOARD_VERSION_ID": "FRU Ver 0.01",
+        "Common Format Version": "1"
+    },
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2017-07-20T01:49:00",
+        "BOARD_PART_NUMBER": "..........",
+        "BOARD_PRODUCT_NAME": "S2600WFT",
+        "BOARD_SERIAL_NUMBER": "............",
+        "BOARD_VERSION_ID": "FRU Ver 1.21",
+        "CHASSIS_CHASSIS_INFO_AM1": "13579",
+        "CHASSIS_CHASSIS_INFO_AM2": "24680",
+        "CHASSIS_PART_NUMBER": "67890",
+        "CHASSIS_SERIAL_NUMBER": "12345",
+        "CHASSIS_TYPE": "23",
+        "Common Format Version": "1",
+        "PRODUCT_ASSET_TAG": "abc",
+        "PRODUCT_LANGUAGE_CODE": "0",
+        "PRODUCT_MANUFACTURER": "Intel Corporation",
+        "PRODUCT_PART_NUMBER": "123456789",
+        "PRODUCT_PRODUCT_NAME": "S2600WFT",
+        "PRODUCT_PRODUCT_SERIAL_NUMBER": "123454321",
+        "PRODUCT_PRODUCT_VERSION": "...................."
+    },
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2017-07-20T01:49:00",
+        "BOARD_PART_NUMBER": "..........",
+        "BOARD_PRODUCT_NAME": "S2600WFT",
+        "BOARD_SERIAL_NUMBER": "............",
+        "BOARD_VERSION_ID": "FRU Ver 1.21",
+        "CHASSIS_CHASSIS_INFO_AM1": "13579",
+        "CHASSIS_CHASSIS_INFO_AM2": "24680",
+        "CHASSIS_PART_NUMBER": "67890",
+        "CHASSIS_SERIAL_NUMBER": "12345",
+        "CHASSIS_TYPE": "23",
+        "Common Format Version": "1",
+        "PRODUCT_ASSET_TAG": "abc",
+        "PRODUCT_LANGUAGE_CODE": "0",
+        "PRODUCT_MANUFACTURER": "Intel Corporation",
+        "PRODUCT_PART_NUMBER": "123456789",
+        "PRODUCT_PRODUCT_NAME": "S2600WFT",
+        "PRODUCT_PRODUCT_SERIAL_NUMBER": "123454321",
+        "PRODUCT_PRODUCT_VERSION": "...................."
+    }
+]

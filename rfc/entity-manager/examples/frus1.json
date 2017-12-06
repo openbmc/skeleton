@@ -1,0 +1,83 @@
+[
+    {
+        "Common Format Version": "1",
+        "PRODUCT_ASSET_TAG": "",
+        "PRODUCT_LANGUAGE_CODE": "25",
+        "PRODUCT_MANUFACTURER": "SAMSUNG ELECTRO-MECHANICS CO.,LTD",
+        "PRODUCT_PART_NUMBER": "H79286-001",
+        "PRODUCT_PRODUCT_NAME": "PSSF132202A",
+        "PRODUCT_PRODUCT_SERIAL_NUMBER": "CNS1322A4SG1U0112",
+        "PRODUCT_PRODUCT_VERSION": "S02"
+    },
+    {
+        "Common Format Version": "1",
+        "PRODUCT_ASSET_TAG": "",
+        "PRODUCT_LANGUAGE_CODE": "25",
+        "PRODUCT_MANUFACTURER": "SAMSUNG ELECTRO-MECHANICS CO.,LTD",
+        "PRODUCT_PART_NUMBER": "H79286-001",
+        "PRODUCT_PRODUCT_NAME": "PSSF132202A",
+        "PRODUCT_PRODUCT_SERIAL_NUMBER": "CNS1322A4SG1U0425",
+        "PRODUCT_PRODUCT_VERSION": "S02"
+    },
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2016-08-27T10:30:00",
+        "BOARD_PART_NUMBER": "H88399-200",
+        "BOARD_PRODUCT_NAME": "F1UL16RISER1",
+        "BOARD_SERIAL_NUMBER": "BQWK63400247",
+        "BOARD_VERSION_ID": "FRU Ver 0.02",
+        "Common Format Version": "1"
+    },
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2016-08-27T10:30:00",
+        "BOARD_PART_NUMBER": "H88399-200",
+        "BOARD_PRODUCT_NAME": "F1UL16RISER2",
+        "BOARD_SERIAL_NUMBER": "BQWK63400247",
+        "BOARD_VERSION_ID": "FRU Ver 0.02",
+        "Common Format Version": "1"
+    },
+    {
+        "Common Format Version": "0"
+    },
+    {
+        "Common Format Version": "0"
+    },
+    {
+        "Common Format Version": "0"
+    },
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2016-09-22T02:16:00",
+        "BOARD_PART_NUMBER": "G28538-252",
+        "BOARD_PRODUCT_NAME": "FFPANEL",
+        "BOARD_SERIAL_NUMBER": "BQRU60201108",
+        "BOARD_VERSION_ID": "FRU Ver 0.01",
+        "Common Format Version": "1"
+    },
+    {
+        "BOARD_LANGUAGE_CODE": "0",
+        "BOARD_MANUFACTURER": "Intel Corporation",
+        "BOARD_MANUFACTURE_DATE": "2017-07-20T01:49:00",
+        "BOARD_PART_NUMBER": "..........",
+        "BOARD_PRODUCT_NAME": "S2600WFT",
+        "BOARD_SERIAL_NUMBER": "............",
+        "BOARD_VERSION_ID": "FRU Ver 1.21",
+        "CHASSIS_CHASSIS_INFO_AM1": "13579",
+        "CHASSIS_CHASSIS_INFO_AM2": "24680",
+        "CHASSIS_PART_NUMBER": "67890",
+        "CHASSIS_SERIAL_NUMBER": "12345",
+        "CHASSIS_TYPE": "23",
+        "Common Format Version": "1",
+        "PRODUCT_ASSET_TAG": "abc",
+        "PRODUCT_LANGUAGE_CODE": "0",
+        "PRODUCT_MANUFACTURER": "Intel Corporation",
+        "PRODUCT_PART_NUMBER": "123456789",
+        "PRODUCT_PRODUCT_NAME": "S2600WFT",
+        "PRODUCT_PRODUCT_SERIAL_NUMBER": "123454321",
+        "PRODUCT_PRODUCT_VERSION": "...................."
+    }
+]
