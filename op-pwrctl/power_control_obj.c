@@ -479,8 +479,8 @@ on_bus_acquired(GDBusConnection *connection,
 	pgood_timeout_start = 0;
 	int poll_interval = atoi(cmd->argv[1]);
 	int pgood_timeout = atoi(cmd->argv[2]);
-	if(poll_interval < 1000 || pgood_timeout <5) {
-		g_print("ERROR PowerControl: poll_interval < 1000 or pgood_timeout < 5\n");
+	if(poll_interval < 500 || pgood_timeout <5) {
+		g_print("ERROR PowerControl: poll_interval < 500 or pgood_timeout < 5\n");
 	} else {
 		control_set_poll_interval(control,poll_interval);
 		control_power_set_pgood_timeout(control_power,pgood_timeout);
