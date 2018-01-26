@@ -28,7 +28,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                     uuid = data
                 else:
                     print "ERROR:  UUID is not formatted correctly: " + data
-        except:
+        except Exception:
             print "ERROR: Unable to open uuid file: " + MACHINE_ID
 
         return uuid
@@ -37,7 +37,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         super(ChassisControlObject, self).__init__(
             conn=bus,
             object_path=name)
-        ## load utilized objects
+        # load utilized objects
         self.dbus_objects = {
             'power_control': {
                 'bus_name': 'org.openbmc.control.Power',
@@ -154,7 +154,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         intf = self.getInterface('power_control')
         return intf.getPowerState()
 
-    ## Signal handler
+    # Signal handler
 
     def SystemStateHandler(self, state_name):
         if state_name in ["HOST_POWERED_OFF", "HOST_POWERED_ON"]:

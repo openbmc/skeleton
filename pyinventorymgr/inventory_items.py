@@ -40,7 +40,7 @@ class InventoryItem(DbusProperties):
 
         self.SetMultiple(INTF_NAME, data)
 
-        ## this will load properties from cache
+        # this will load properties from cache
         PropertyCacher.load(name, INTF_NAME, self.properties)
 
     @dbus.service.method(
@@ -104,8 +104,8 @@ if __name__ == '__main__':
         obj = InventoryItem(bus, obj_path, FRUS[f])
         obj_parent.add(obj_path, obj)
 
-        ## TODO:  this is a hack to update bmc inventory item with version
-        ## should be done by flash object
+        # TODO:  this is a hack to update bmc inventory item with version
+        # should be done by flash object
         if (FRUS[f]['fru_type'] == "BMC"):
             version = getVersion()
             obj.update({'version': version})

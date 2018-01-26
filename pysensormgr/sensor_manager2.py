@@ -44,13 +44,14 @@ class SensorManager(DbusProperties, DbusObjectManager):
         else:
             print "ERROR: Sensor not found: "+path
 
+
 if __name__ == '__main__':
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = get_dbus()
     root_sensor = SensorManager(bus, OBJ_PATH)
 
-    ## instantiate non-polling sensors
-    ## these don't need to be in separate process
+    # instantiate non-polling sensors
+    # these don't need to be in separate process
     if has_system:
         for (id, the_sensor) in System.MISC_SENSORS.items():
             sensor_class = the_sensor['class']
