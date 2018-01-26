@@ -30,14 +30,16 @@ def doExtract(members, files):
 def save_fw_env():
     fw_env = "/etc/fw_env.config"
     lines = 0
-    files=[]
+    files = []
     envcfg = open(fw_env, 'r')
     try:
         for line in envcfg.readlines():
             # ignore lines that are blank or start with #
-            if (line.startswith("#")): continue
-            if (not len(line.strip())): continue
-            fn = line.partition("\t")[0];
+            if (line.startswith("#")):
+                continue
+            if (not len(line.strip())):
+                continue
+            fn = line.partition("\t")[0]
             files.append(fn)
             lines += 1
     finally:
@@ -45,6 +47,7 @@ def save_fw_env():
     if (lines < 1 or lines > 2 or (lines == 2 and files[0] != files[1])):
             raise Exception("Error parsing %s\n" % fw_env)
     shutil.copyfile(files[0], os.path.join(UPDATE_PATH, "image-u-boot-env"))
+
 
 class BmcFlashControl(DbusProperties, DbusObjectManager):
     def __init__(self, bus, name):
@@ -85,13 +88,13 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
         self.Set(DBUS_NAME, "filename", filename)
         pass
 
-    ## Signal handler
+    # Signal handler
     def download_error_handler(self, filename):
         if (filename == self.Get(DBUS_NAME, "filename")):
             self.Set(DBUS_NAME, "status", "Download Error")
 
     def download_complete_handler(self, outfile, filename):
-        ## do update
+        # do update
         if (filename != self.Get(DBUS_NAME, "filename")):
             return
 
@@ -100,7 +103,7 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
         self.Set(DBUS_NAME, "status", "Download Complete")
         copy_files = {}
 
-        ## determine needed files
+        # determine needed files
         if not self.Get(DBUS_NAME, "update_kernel_and_apps"):
             copy_files["image-bmc"] = True
         else:
@@ -110,7 +113,7 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
         if self.Get(DBUS_NAME, "restore_application_defaults"):
             copy_files["image-rwfs"] = True
 
-        ## make sure files exist in archive
+        # make sure files exist in archive
         try:
             tar = tarfile.open(outfile, "r")
             files = {}
@@ -178,7 +181,7 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
             self.Set(DBUS_NAME, "status", "Image ready to apply.")
             if (self.Get(DBUS_NAME, "auto_apply")):
                 self.Apply()
-        except:
+        except Exception:
             self.Set(DBUS_NAME, "auto_apply", False)
             try:
                 subprocess.check_output([
@@ -218,7 +221,7 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
         if self.update_process:
             try:
                 self.update_process.kill()
-            except:
+            except Exception:
                 pass
         for file in os.listdir(UPDATE_PATH):
             if file.startswith('image-'):
@@ -285,13 +288,13 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
                 progress.close()
                 os.unlink(progress.name)
                 self.progress_name = None
-            except:
+            except Exception:
                 pass
             raise
 
         try:
             progress.close()
-        except:
+        except Exception:
             pass
 
     @dbus.service.method(

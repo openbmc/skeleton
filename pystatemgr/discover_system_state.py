@@ -69,11 +69,13 @@ def getProperty(bus, objs, key, prop):
     intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
     return intf.Get(objs[key]['interface_name'], prop)
 
+
 def setProperty(bus, objs, key, prop, prop_value):
     obj = bus.get_object(
         objs[key]['bus_name'], objs[key]['object_name'])
     intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
     return intf.Set(objs[key]['interface_name'], prop, prop_value)
+
 
 bus = dbus.SystemBus()
 pgood = getProperty(bus, dbus_objects, 'power', 'pgood')

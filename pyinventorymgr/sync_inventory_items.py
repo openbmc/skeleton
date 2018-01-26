@@ -71,6 +71,7 @@ def get_bmc_mac_address(bus, prop):
             mproxy = obj.get_dbus_method('Get', PROP_INTF_NAME)
             return mproxy(INV_INTF_NAME, prop)
 
+
 # Get Network Interface object.
 def get_network_interface_object(bus):
     mapper = obmc.mapper.Mapper(bus)
@@ -125,7 +126,7 @@ def get_sys_mac(obj):
     sys_mac = ''
     try:
         sys_mac = subprocess.check_output(["fw_printenv", "-n", "ethaddr"])
-    except:
+    except Exception:
         # Handle when mac does not exist in u-boot
         return sys_mac
     return sys_mac
@@ -158,6 +159,7 @@ def set_sys_uuid(uuid):
         # rc = subprocess.call(["reboot"])
     else:
         print "Error setting uuid"
+
 
 if __name__ == '__main__':
     arg = argparse.ArgumentParser()

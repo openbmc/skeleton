@@ -184,7 +184,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
         return r
 
     @dbus.service.method(DBUS_NAME, in_signature='',
-            out_signature='ssa(sb)a(sb)a(sbb)ssssa(sb)')
+                         out_signature='ssa(sb)a(sb)a(sbb)ssssa(sb)')
     def getGpioConfiguration(self):
         power_config = System.GPIO_CONFIGS.get('power_config', {})
         power_good_in = power_config.get('power_good_in', '')
@@ -198,8 +198,9 @@ class SystemManager(DbusProperties, DbusObjectManager):
         fsi_enable = hostctl_config.get('fsi_enable', '')
         cronus_sel = hostctl_config.get('cronus_sel', '')
         optionals = hostctl_config.get('optionals', [])
-        r = [power_good_in, latch_out, power_up_outs, reset_outs, pci_reset_outs,\
-             fsi_data, fsi_clk, fsi_enable, cronus_sel, optionals]
+        r = [power_good_in, latch_out, power_up_outs, reset_outs,
+             pci_reset_outs, fsi_data, fsi_clk, fsi_enable, cronus_sel,
+             optionals]
         print "Power GPIO config: " + str(r)
         return r
 

@@ -14,6 +14,7 @@ import dbus.mainloop.glib
 DBUS_NAME = 'org.openbmc.HostIpmi'
 OBJ_NAME = '/org/openbmc/HostIpmi/1'
 
+
 def header(seq, netfn, lun, cmd):
     return (
         'seq:   0x%02x\nnetfn: 0x%02x\n\nlun: 0x%02d\ncmd:   0x%02x\n') % (
@@ -25,6 +26,7 @@ def print_request(seq, netfn, lun, cmd, data):
     str += 'data:  [%s]' % ', '.join(['0x%02x' % x for x in data])
     print str
 
+
 def print_response(seq, netfn, lun, cmd, cc, data):
     str = header(seq, netfn, lun, cmd)
     str += 'cc:    0x%02x\ndata:  [%s]' % (
@@ -32,9 +34,10 @@ def print_response(seq, netfn, lun, cmd, cc, data):
             )
     print str
 
+
 class IpmiDebug(dbus.service.Object):
-    def __init__(self,bus,name):
-        dbus.service.Object.__init__(self,bus,name)
+    def __init__(self, bus, name):
+        dbus.service.Object.__init__(self, bus, name)
 
     @dbus.service.signal(DBUS_NAME, "yyyyay")
     def ReceivedMessage(self, seq, netfn, lun, cmd, data):
@@ -50,6 +53,7 @@ class IpmiDebug(dbus.service.Object):
     @dbus.service.method(DBUS_NAME)
     def setAttention(self):
         print "IPMI SMS_ATN set"
+
 
 class ConsoleReader(object):
     def __init__(self, ipmi_obj):
@@ -83,6 +87,7 @@ class ConsoleReader(object):
         self.seq += 1
         self.ipmi_obj.ReceivedMessage(self.seq, data[0], 0, data[1], data[2:])
 
+
 def main():
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
     bus = dbus.SystemBus()
@@ -94,8 +99,9 @@ def main():
     name = dbus.service.BusName(DBUS_NAME, bus)
 
     print ("Enter IPMI packet as hex values. First three bytes will be used"
-            "as netfn and cmd.\nlun will be zero.")
+           "as netfn and cmd.\nlun will be zero.")
     mainloop.run()
+
 
 if __name__ == '__main__':
     sys.exit(main())
