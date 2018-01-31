@@ -76,7 +76,8 @@ descriptors = {
         'interface_name': 'xyz.openbmc_project.State.Boot.Progress',
         'property': 'BootProgress',
     },
-    'state' : ['bmcstate', 'chassisstate', 'hoststate']
+    'state' : ['bmcstate', 'chassisstate', 'hoststate'],
+    'status' : ['bmcstate', 'chassisstate', 'hoststate'],
 }
 
 def run_set_property(dbus_bus, dbus_iface, descriptor, args):
