@@ -10,7 +10,7 @@
 		</method>
 		<method name="getSpeed">
 			<arg name="speed" type="i" direction="out"/>
-		</method>			
+		</method>
 		<method name="setSpeed">
 			<arg name="speed" type="i" direction="in"/>
 		</method>
@@ -94,10 +94,7 @@
 		<property name="heatbeat" type="i" access="read"/>
 		<signal name="Heartbeat">
                         <arg name="bus_name" type="s"/>
-                </signal>
-		<signal name="GotoSystemState">
-			<arg name="state_name" type="s"/>
-		</signal>
+               </signal>
 		<signal name="Started"/>
 	</interface>
 	<interface name="org.openbmc.control.Bmc">
@@ -149,7 +146,7 @@
 			<arg name="message" type="s"/>
 			<arg name="rc" type="i"/>
 		</signal>
-	</interface>	
+	</interface>
 	<interface name="org.openbmc.Flash">
 		<method name="update">
 			<arg name="filename" type="s" direction="in"/>
@@ -199,7 +196,7 @@
 		</method>
 		<method name="simPress"/>
 		<method name="simLongPress"/>
-	
+
                 <property name="state" type="b" access="read"/>
 		<signal name="Released"/>
 		<signal name="Pressed"/>
@@ -212,7 +209,7 @@
 		<method name="setOff"/>
 		<method name="setBlinkSlow"/>
 		<method name="setBlinkFast"/>
-		
+
                 <property name="color" type="i" access="read"/>
 		<property name="function" type="s" access="read"/>
 		<property name="state" type="s" access="read"/>
@@ -232,4 +229,4 @@
 			<arg direction="out" type="x" />
 		</method>
 	</interface>
-</node>	
+</node>
