@@ -177,9 +177,7 @@ on_boot(ControlHost *host,
 	if(rc != GPIO_OK)
 	{
 		g_print("ERROR HostControl: GPIO sequence failed (rc=%d)\n",rc);
-	} else {
-		control_emit_goto_system_state(control,"HOST_BOOTING");
-	}
+    }
 	gpio_close(fsi_clk);
 	gpio_close(fsi_data);
 	gpio_close(fsi_enable);
