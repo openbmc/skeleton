@@ -71,13 +71,11 @@ poll_pgood(gpointer user_data)
 			if(pgood_state == 0)
 			{
 				control_power_emit_power_lost(control_power);
-				control_emit_goto_system_state(control,"HOST_POWERED_OFF");
 				g_pci_reset_held = 1;
 			}
 			else
 			{
 				control_power_emit_power_good(control_power);
-				control_emit_goto_system_state(control,"HOST_POWERED_ON");
 			}
 
 			for(i = 0; i < g_gpio_configs.power_gpio.num_reset_outs; i++)
@@ -267,11 +265,6 @@ on_set_power_state(ControlPower *pwr,
 		do {
 			int i;
 			uint8_t power_up_out;
-			if(state == 1) {
-				control_emit_goto_system_state(control,"HOST_POWERING_ON");
-			} else {
-				control_emit_goto_system_state(control,"HOST_POWERING_OFF");
-			}
 			for (i = 0; i < power_gpio->num_power_up_outs; i++) {
 				GPIO *power_pin = &power_gpio->power_up_outs[i];
 				error = gpio_open(power_pin);
