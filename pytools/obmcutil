@@ -12,7 +12,6 @@ import time
 from subprocess import Popen
 
 import obmc_system_config
-import obmc.system
 
 descriptors = {
     'power': {
