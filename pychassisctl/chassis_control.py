@@ -49,11 +49,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                 'object_name': '/org/openbmc/HostServices',
                 'interface_name': 'org.openbmc.HostServices'
             },
-            'settings': {
-                'bus_name': 'org.openbmc.settings.Host',
-                'object_name': '/org/openbmc/settings/host0',
-                'interface_name': 'org.freedesktop.DBus.Properties'
-            },
             'systemd': {
                 'bus_name': 'org.freedesktop.systemd1',
                 'object_name': '/org/freedesktop/systemd1',
@@ -82,8 +77,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                                 dbus_interface="org.openbmc.Watchdog",
                                 signal_name="WatchdogError")
 
-        bus.add_signal_receiver(self.SystemStateHandler,
-                                signal_name="GotoSystemState")
 
     def getInterface(self, name):
         o = self.dbus_objects[name]
@@ -155,15 +148,6 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
         return intf.getPowerState()
 
     ## Signal handler
-
-    def SystemStateHandler(self, state_name):
-        if state_name in ["HOST_POWERED_OFF", "HOST_POWERED_ON"]:
-            intf = self.getInterface('settings')
-            intf.Set("org.openbmc.settings.Host", "system_state", state_name)
-
-        if (state_name == "HOST_POWERED_OFF" and self.Get(DBUS_NAME,
-                                                          "reboot") == 1):
-            self.powerOn()
 
     def power_button_signal_handler(self):
         # toggle power, power-on / soft-power-off
