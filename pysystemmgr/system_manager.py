@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-import gobject
+# TODO: openbmc/openbmc#2994 remove python 2 support
+try:  # python 2
+    import gobject
+except ImportError:  # python 3
+    from gi.repository import GObject as gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
@@ -21,7 +25,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
             object_path=obj_name)
         self.bus = bus
 
-        print "SystemManager Init Done"
+        print("SystemManager Init Done")
 
     @dbus.service.method(DBUS_NAME, in_signature='s', out_signature='sis')
     def gpioInit(self, name):
@@ -31,7 +35,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
         if name not in System.GPIO_CONFIG:
             # TODO: Better error handling
             msg = "ERROR: "+name+" not found in GPIO config table"
-            print msg
+            print(msg)
             raise Exception(msg)
         else:
 
@@ -44,7 +48,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
                     gpio_num = obmc.system.convertGpio(gpio['gpio_pin'])
                 else:
                     msg = "ERROR: SystemManager - GPIO lookup failed for "+name
-                    print msg
+                    print(msg)
                     raise Exception(msg)
 
             if (gpio_num != -1):
@@ -69,7 +73,7 @@ class SystemManager(DbusProperties, DbusObjectManager):
         r = [power_good_in, latch_out, power_up_outs, reset_outs,
              pci_reset_outs, fsi_data, fsi_clk, fsi_enable, cronus_sel,
              optionals]
-        print "Power GPIO config: " + str(r)
+        print("Power GPIO config: " + str(r))
         return r
 
 
@@ -81,7 +85,7 @@ if __name__ == '__main__':
     obj.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME, bus)
 
-    print "Running SystemManager"
+    print("Running SystemManager")
     mainloop.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

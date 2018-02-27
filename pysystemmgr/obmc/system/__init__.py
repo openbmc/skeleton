@@ -18,8 +18,8 @@ GPIO_BASE = find_gpio_base()
 
 
 def convertGpio(name):
-    offset = int(filter(str.isdigit, name))
-    port = filter(str.isalpha, name.upper())
+    offset = int(''.join(list(filter(str.isdigit, name))))
+    port = list(filter(str.isalpha, name.upper()))
     a = ord(port[-1]) - ord('A')
     if len(port) > 1:
         a += 26

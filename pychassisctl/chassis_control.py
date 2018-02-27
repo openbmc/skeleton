@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-import gobject
+# TODO: openbmc/openbmc#2994 remove python 2 support
+try:  # python 2
+    import gobject
+except ImportError:  # python 3
+    from gi.repository import GObject as gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
@@ -27,9 +31,9 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                 if (len(data) == 32):
                     uuid = data
                 else:
-                    print "ERROR:  UUID is not formatted correctly: " + data
+                    print("ERROR:  UUID is not formatted correctly: " + data)
         except Exception:
-            print "ERROR: Unable to open uuid file: " + MACHINE_ID
+            print("ERROR: Unable to open uuid file: " + MACHINE_ID)
 
         return uuid
 
@@ -86,7 +90,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
     def powerOn(self):
-        print "Turn on power and boot"
+        print("Turn on power and boot")
         self.Set(DBUS_NAME, "reboot", 0)
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
@@ -96,7 +100,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
     def powerOff(self):
-        print "Turn off power"
+        print("Turn off power")
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
         f.call_async('obmc-chassis-hard-poweroff@0.target', 'replace')
@@ -105,7 +109,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
     def softPowerOff(self):
-        print "Soft off power"
+        print("Soft off power")
         intf = self.getInterface('systemd')
         f = getattr(intf, 'StartUnit')
         f.call_async('obmc-host-shutdown@0.target', 'replace')
@@ -114,7 +118,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
     def reboot(self):
-        print "Rebooting"
+        print("Rebooting")
         if self.getPowerState() == POWER_OFF:
             self.powerOn()
         else:
@@ -125,7 +129,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
     @dbus.service.method(DBUS_NAME,
                          in_signature='', out_signature='')
     def softReboot(self):
-        print "Soft Rebooting"
+        print("Soft Rebooting")
         if self.getPowerState() == POWER_OFF:
             self.powerOn()
         else:
@@ -158,14 +162,14 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
             self.softPowerOff()
 
     def long_power_button_signal_handler(self):
-        print "Long-press button, hard power off"
+        print("Long-press button, hard power off")
         self.powerOff()
 
     def softreset_button_signal_handler(self):
         self.softReboot()
 
     def host_watchdog_signal_handler(self):
-        print "Watchdog Error, Going to quiesce"
+        print("Watchdog Error, Going to quiesce")
         self.quiesce()
 
 
@@ -179,7 +183,7 @@ if __name__ == '__main__':
     obj.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME, bus)
 
-    print "Running ChassisControlService"
+    print("Running ChassisControlService")
     mainloop.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

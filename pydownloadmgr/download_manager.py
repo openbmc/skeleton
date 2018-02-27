@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 import os
-import gobject
+# TODO: openbmc/openbmc#2994 remove python 2 support
+try:  # python 2
+    import gobject
+except ImportError:  # python 3
+    from gi.repository import GObject as gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
@@ -30,7 +34,7 @@ class DownloadManagerObject(dbus.service.Object):
 
     @dbus.service.signal(DBUS_NAME, signature='ss')
     def DownloadComplete(self, outfile, filename):
-        print "Download Complete: "+outfile
+        print("Download Complete: "+outfile)
         return outfile
 
     @dbus.service.signal(DBUS_NAME, signature='s')
@@ -40,7 +44,7 @@ class DownloadManagerObject(dbus.service.Object):
     def TftpDownloadHandler(self, ip, filename, path=None):
         try:
             filename = str(filename)
-            print "Downloading: "+filename+" from "+ip
+            print("Downloading: "+filename+" from "+ip)
             outfile = FLASH_DOWNLOAD_PATH+"/"+os.path.basename(filename)
             rc = subprocess.call(
                 ["tftp", "-l", outfile, "-r", filename, "-g", ip])
@@ -50,7 +54,7 @@ class DownloadManagerObject(dbus.service.Object):
                 self.DownloadError(filename)
 
         except Exception as e:
-            print "ERROR DownloadManager: "+str(e)
+            print("ERROR DownloadManager: "+str(e))
             self.DownloadError(filename)
 
     # TODO: this needs to be deprecated.
@@ -58,7 +62,7 @@ class DownloadManagerObject(dbus.service.Object):
     def DownloadHandler(self, url, filename, path=None):
         try:
             filename = str(filename)
-            print "Downloading: "+filename+" from "+url
+            print("Downloading: "+filename+" from "+url)
             outfile = FLASH_DOWNLOAD_PATH+"/"+os.path.basename(filename)
             subprocess.call(
                 ["tftp", "-l", outfile, "-r", filename, "-g", url])
@@ -67,7 +71,7 @@ class DownloadManagerObject(dbus.service.Object):
             intf.update(outfile)
 
         except Exception as e:
-            print "ERROR DownloadManager: "+str(e)
+            print("ERROR DownloadManager: "+str(e))
             obj = bus.get_object("org.openbmc.control.Flash", path)
             intf = dbus.Interface(obj, "org.openbmc.Flash")
             intf.error("Download Error: "+filename)
@@ -80,7 +84,7 @@ if __name__ == '__main__':
     mainloop = gobject.MainLoop()
     name = dbus.service.BusName(DBUS_NAME, bus)
 
-    print "Running Download Manager"
+    print("Running Download Manager")
     mainloop.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

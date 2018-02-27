@@ -2,7 +2,11 @@
 
 import os
 import sys
-import gobject
+# TODO: openbmc/openbmc#2994 remove python 2 support
+try:  # python 2
+    import gobject
+except ImportError:  # python 3
+    from gi.repository import GObject as gobject
 import dbus
 import dbus.service
 import dbus.mainloop.glib
@@ -88,7 +92,7 @@ if __name__ == '__main__':
             try:
                 inv = json.load(f)
             except ValueError:
-                print "Invalid JSON detected in " + INVENTORY_FILE
+                print("Invalid JSON detected in " + INVENTORY_FILE)
             else:
                 FRUS = inv
     else:
@@ -98,7 +102,7 @@ if __name__ == '__main__':
         except ImportError:
             pass
 
-    for f in FRUS.keys():
+    for f in list(FRUS.keys()):
         import obmc.inventory
         obj_path = f.replace("<inventory_root>", obmc.inventory.INVENTORY_ROOT)
         obj = InventoryItem(bus, obj_path, FRUS[f])
@@ -112,7 +116,7 @@ if __name__ == '__main__':
 
     obj_parent.unmask_signals()
     name = dbus.service.BusName(DBUS_NAME, bus)
-    print "Running Inventory Manager"
+    print("Running Inventory Manager")
     mainloop.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
