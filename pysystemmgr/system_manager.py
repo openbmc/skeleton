@@ -16,7 +16,8 @@ import obmc.system
 
 DBUS_NAME = 'org.openbmc.managers.System'
 OBJ_NAME = '/org/openbmc/managers/System'
-
+INTF_SENSOR = 'org.openbmc.SensorValue'
+INTF_ITEM = 'org.openbmc.InventoryItem'
 
 class SystemManager(DbusProperties, DbusObjectManager):
     def __init__(self, bus, obj_name):
@@ -26,6 +27,29 @@ class SystemManager(DbusProperties, DbusObjectManager):
         self.bus = bus
 
         print("SystemManager Init Done")
+
+    def doObjectLookup(self, category, key):
+        obj_path = ""
+        intf_name = INTF_SENSOR
+        try:
+            obj_path = System.ID_LOOKUP[category][key]
+            parts = obj_path.split('/')
+            if (parts[3] != 'sensors'):
+                print ("ERROR SystemManager: SENSOR only supported type")
+                intf_name = ""
+        except Exception as e:
+            print ("ERROR SystemManager: "+str(e)+" not found in lookup")
+
+        return [obj_path, intf_name]
+
+    @dbus.service.method(DBUS_NAME, in_signature='ss', out_signature='(ss)')
+    def getObjectFromId(self, category, key):
+        return self.doObjectLookup(category, key)
+
+    @dbus.service.method(DBUS_NAME, in_signature='sy', out_signature='(ss)')
+    def getObjectFromByteId(self, category, key):
+        byte = int(key)
+        return self.doObjectLookup(category, byte)
 
     @dbus.service.method(DBUS_NAME, in_signature='s', out_signature='sis')
     def gpioInit(self, name):
