@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <openbmc_intf.h>
 #include <gpio.h>
 #include <openbmc.h>
@@ -120,6 +121,7 @@ on_bus_acquired(GDBusConnection *connection,
 	if(rc != GPIO_OK)
 	{
 		printf("ERROR PowerButton: GPIO setup (rc=%d)\n",rc);
+		exit(-1);
 	}
 }
 
