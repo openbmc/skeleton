@@ -19,8 +19,8 @@ DBUS_NAME = 'org.openbmc.control.BmcFlash'
 OBJ_NAME = '/org/openbmc/control/flash/bmc'
 DOWNLOAD_INTF = 'org.openbmc.managers.Download'
 
-BMC_DBUS_NAME = 'org.openbmc.control.Bmc'
-BMC_OBJ_NAME = '/org/openbmc/control/bmc0'
+BMC_DBUS_NAME = 'xyz.openbmc_project.State.BMC'
+BMC_OBJ_NAME = '/xyz/openbmc_project/state/bmc0'
 
 UPDATE_PATH = '/run/initramfs'
 
@@ -317,8 +317,10 @@ class BmcFlashControl(DbusProperties, DbusObjectManager):
             "copy-files-to-ram copy-base-filesystem-to-ram"])
         self.Set(DBUS_NAME, "status", "Switch to update mode in progress")
         o = bus.get_object(BMC_DBUS_NAME, BMC_OBJ_NAME)
-        intf = dbus.Interface(o, BMC_DBUS_NAME)
-        intf.warmReset()
+        intf = dbus.Interface(o, "org.freedesktop.DBus.Properties")
+        intf.Set(BMC_DBUS_NAME,
+                 "RequestedBMCTransition",
+                 "xyz.openbmc_project.State.BMC.Transition.Reboot")
 
 
 if __name__ == '__main__':
