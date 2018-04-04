@@ -462,11 +462,13 @@ on_bus_acquired(GDBusConnection *connection,
 
 	if(read_gpios(connection, &g_gpio_configs) != TRUE) {
 		g_print("ERROR PowerControl: could not read power GPIO configuration\n");
+		exit(-1);
 	}
 
 	int rc = set_up_gpio(connection, &g_gpio_configs.power_gpio, control_power);
 	if(rc != GPIO_OK) {
 		g_print("ERROR PowerControl: GPIO setup (rc=%d)\n",rc);
+		exit(-1);
 	}
 	//start poll
 	pgood_timeout_start = 0;
@@ -474,6 +476,7 @@ on_bus_acquired(GDBusConnection *connection,
 	int pgood_timeout = atoi(cmd->argv[2]);
 	if(poll_interval < 500 || pgood_timeout <5) {
 		g_print("ERROR PowerControl: poll_interval < 500 or pgood_timeout < 5\n");
+		exit(-1);
 	} else {
 		control_set_poll_interval(control,poll_interval);
 		control_power_set_pgood_timeout(control_power,pgood_timeout);
