@@ -113,7 +113,7 @@ led_function_router(sd_bus_message *msg, void *user_data,
 	const char *led_function = sd_bus_message_get_member(msg);
 	if(led_function == NULL)
 	{
-		fprintf(stderr, "Null LED function specificed for : [%s]\n",led_name);
+		fprintf(stderr, "Null LED function specified for : [%s]\n",led_name);
 		return sd_bus_reply_method_return(msg, "i", rc);
 	}
 
