@@ -319,7 +319,7 @@ static int fan_function_router(sd_bus_message *msg, void *user_data,
 	/* Get the Operation. */
 	const char *fan_function = sd_bus_message_get_member(msg);
 	if (fan_function == NULL) {
-		fprintf(stderr, "fanctl: Null FAN function specificed\n");
+		fprintf(stderr, "fanctl: Null FAN function specified\n");
 		return sd_bus_reply_method_return(msg, "i", rc);
 	}
 
