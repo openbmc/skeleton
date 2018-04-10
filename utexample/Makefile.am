@@ -1,0 +1,11 @@
+AM_DEFAULT_SOURCE_EXT = .cpp
+
+sbin_PROGRAMS = testd
+
+testd_SOURCES = main.cpp reboot.cpp mac.cpp
+testd_CXXFLAGS = -I$(top_srcdir) $(SDBUSPLUS_CFLAGS) $(PHOSPHOR_DBUS_INTERFACES_CFLAGS)
+testd_LDFLAGS = $(SDBUSPLUS_LIBS) $(PHOSPHOR_DBUS_INTERFACES_LIBS)
+
+SUBDIRS = . test
+
+ACLOCAL_AMFLAGS = -I m4
