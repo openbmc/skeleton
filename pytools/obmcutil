@@ -288,7 +288,10 @@ def main():
     try:
         return run_all_commands(dbus_bus, descriptors[args.recipe], args)
     except dbus.exceptions.DBusException as e:
-        print >> sys.stderr, "DBus error occurred: {}".format(e.get_dbus_message())
+        if e.get_dbus_message() == "The name xyz.openbmc_project.State.BMC was not provided by any .service files":
+            print >> sys.stderr, "BMC not ready yet. Try again later"
+        else:
+            print >> sys.stderr, "DBus error occurred: {}".format(e.get_dbus_message())
     finally:
         dbus_bus.close()
 
