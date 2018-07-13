@@ -5,46 +5,48 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <errno.h>
+
 #include <openbmc_intf.h>
 #include <openbmc.h>
-#include <gpio.h>
-#include <gpio_configs.h>
 
 /* ------------------------------------------------------------------------- */
 static const gchar* dbus_object_path = "/org/openbmc/control";
 static const gchar* instance_name = "host0";
 static const gchar* dbus_name = "org.openbmc.control.Host";
 
-static GpioConfigs g_gpio_configs;
-
 static GDBusObjectManagerServer *manager = NULL;
 
-static GPIO* fsi_data;
-static GPIO* fsi_clk;
-static GPIO* fsi_enable;
-static GPIO* cronus_sel;
-static size_t num_optionals;
-static GPIO* optionals;
-static gboolean* optional_pols;
+#define PPC_BIT32(bit)          (0x80000000UL >> (bit))
 
-/* Bit bang patterns */
+#define FSI_EXTERNAL_MODE_PATH	"/sys/devices/platform/gpio-fsi/external_mode"
+#define FSI_SCAN_PATH		"/sys/devices/platform/gpio-fsi/fsi0/rescan"
 
-//putcfam pu 281c 30000000 -p0 (Primary Side Select)
-static const char* primary = "000011111111110101111000111001100111111111111111111111111111101111111111";
-//putcfam pu 281c B0000000 -p0
-static const char* go = "000011111111110101111000111000100111111111111111111111111111101101111111";
-//putcfam pu 0x281c 30900000 (Golden Side Select)
-static const char* golden = "000011111111110101111000111001100111101101111111111111111111101001111111";
+/* TODO: Change this over to the cfam path once the cfam chardev patches have landed */
+#define FSI_RAW_PATH		"/sys/devices/platform/gpio-fsi/fsi0/slave@00:00/raw"
 
-/* Setup attentions */
-//putcfam pu 0x081C 20000000
-static const char* attnA = "000011111111111101111110001001101111111111111111111111111111110001111111";
-//putcfam pu 0x100D 40000000
-static const char* attnB = "000011111111111011111100101001011111111111111111111111111111110001111111";
-//putcfam pu 0x100B FFFFFFFF
-static const char* attnC = "000011111111111011111101001000000000000000000000000000000000001011111111";
+#define FSI_SCAN_DELAY_US	10000
 
+/* Attention registers */
+#define FSI_A_SI1S		0x081c
+#define TRUE_MASK		0x100d
+#define INTERRUPT_STATUS_REG	0x100b
 
+/* SBE boot register and values */
+#define SBE_VITAL		0x281c
+#define SBE_WARMSTART		PPC_BIT32(0)
+#define SBE_HW_TRIGGER		PPC_BIT32(2)
+#define SBE_UPDATE_1ST_NIBBLE	PPC_BIT32(3)
+#define SBE_IMAGE_SELECT	PPC_BIT32(8)
+#define SBE_UPDATE_3RD_NIBBLE	PPC_BIT32(11)
+
+/* Once the side is selected and attention bits are set, this starts the SBE */
+#define START_SBE		(SBE_WARMSTART | SBE_HW_TRIGGER | SBE_UPDATE_1ST_NIBBLE)
+
+/* Primary is first side. Golden is second side */
+#define PRIMARY_SIDE		(SBE_HW_TRIGGER | SBE_UPDATE_1ST_NIBBLE)
+#define GOLDEN_SIDE		(SBE_HW_TRIGGER | SBE_UPDATE_1ST_NIBBLE | \
+				 SBE_IMAGE_SELECT | SBE_UPDATE_3RD_NIBBLE)
 
 static gboolean
 on_init(Control *control,
@@ -55,136 +57,126 @@ on_init(Control *control,
 	return TRUE;
 }
 
-int
-fsi_bitbang(const char* pattern)
+static gint
+fsi_putcfam(int fd, uint64_t addr64, uint32_t val_host)
 {
-	int rc=GPIO_OK;
-	int i;
-	for(i=0;i<strlen(pattern);i++) {
-		rc = gpio_writec(fsi_data,pattern[i]);
-		if(rc!=GPIO_OK) { break; }
-		rc = gpio_clock_cycle(fsi_clk,1);
-		if(rc!=GPIO_OK) { break; }
+	int rc;
+	uint32_t val = htobe32(val_host);
+	/* Map FSI to FSI_BYTE, as the 'raw' kernel interface expects this */
+	uint32_t addr = (addr64 & 0x7ffc00) | ((addr64 & 0x3ff) << 2);
+
+	rc = lseek(fd, addr, SEEK_SET);
+	if (rc < 0) {
+		g_print("ERROR HostControl: cfam seek failed (0x%08x): %s\n", addr,
+				strerror(errno));
+		return errno;
+	};
+
+	rc = write(fd, &val, sizeof(val));
+	if (rc < 0) {
+		g_print("ERROR HostControl: cfam write failed: %s\n",
+				strerror(errno));
+		return errno;
 	}
-	return rc;
+
+	return 0;
 }
 
-int
-fsi_standby()
+static int fsi_rescan(void)
 {
-	int rc=GPIO_OK;
-	rc = gpio_write(fsi_data,1);
-	if(rc!=GPIO_OK) { return rc; }
-	rc = gpio_clock_cycle(fsi_clk,5000);
-	if(rc!=GPIO_OK) { return rc; }
-	return rc;
-}
+	char *one = "1";
+	int fd, rc;
 
+	fd = open(FSI_SCAN_PATH, O_WRONLY);
+	if (fd < 0) {
+		g_print("ERROR HostControl: Failed to open path '%s': %s\n",
+				FSI_SCAN_PATH, strerror(errno));
+		return errno;
+	}
+	rc = write(fd, one, sizeof(one));
+	close(fd);
+	if (rc < 0) {
+		g_print("ERROR HostControl: Failed to perform FSI scan: %s\n",
+				strerror(errno));
+		return errno;
+	}
+	g_print("HostControl: Performing FSI scan (delay %d us)\n",
+			FSI_SCAN_DELAY_US);
+	usleep(FSI_SCAN_DELAY_US);
+
+	return 0;
+}
 
 static gboolean
 on_boot(ControlHost *host,
 		GDBusMethodInvocation *invocation,
 		gpointer user_data)
 {
-	int rc = GPIO_OK;
+	int rc, cfam_fd;
 	GDBusProxy *proxy;
 	GError *error = NULL;
 	GDBusConnection *connection =
 		g_dbus_object_manager_server_get_connection(manager);
 
-	if (!(fsi_data && fsi_clk && fsi_enable && cronus_sel)) {
-		g_print("ERROR invalid GPIO configuration, will not boot\n");
-		return FALSE;
-	}
 	if(control_host_get_debug_mode(host)==1) {
+		int fd;
+		char *one = "1";
 		g_print("Enabling debug mode; not booting host\n");
-		rc |= gpio_open(fsi_enable);
-		rc |= gpio_open(cronus_sel);
-		rc |= gpio_write(fsi_enable,1);
-		rc |= gpio_write(cronus_sel,0);
-		if(rc!=GPIO_OK) {
-			g_print("ERROR enabling debug mode: %d\n",rc);
+		fd = open(FSI_EXTERNAL_MODE_PATH, O_RDWR);
+		if (fd < 0) {
+			g_print("ERROR HostControl: Failed to open path '%s'\n",
+					FSI_EXTERNAL_MODE_PATH);
+			return TRUE;
 		}
+		rc = write(fd, one, sizeof(one));
+		if (rc < 0) {
+			g_print("ERROR HostControl: Failed to enable debug mode '%s'\n",
+					FSI_EXTERNAL_MODE_PATH);
+		}
+		close(fd);
 		return TRUE;
 	}
 	g_print("Booting host\n");
+
+	rc = fsi_rescan();
+	if (rc < 0)
+		return FALSE;
+
+	cfam_fd = open(FSI_RAW_PATH, O_RDWR);
+	if (cfam_fd < 0) {
+		g_print("ERROR HostControl: Failed to open '%s'\n", FSI_RAW_PATH);
+		return FALSE;
+	}
+
 	Control* control = object_get_control((Object*)user_data);
 	control_host_complete_boot(host,invocation);
 	do {
-		rc = gpio_open(fsi_clk);
-		rc |= gpio_open(fsi_data);
-		rc |= gpio_open(fsi_enable);
-		rc |= gpio_open(cronus_sel);
-		for (size_t i = 0; i < num_optionals; ++i) {
-			rc |= gpio_open(&optionals[i]);
-		}
-		if(rc!=GPIO_OK) { break; }
-
-		//setup dc pins
-		rc = gpio_write(cronus_sel,1);
-		rc |= gpio_write(fsi_enable,1);
-		rc |= gpio_write(fsi_clk,1);
-		for (size_t i = 0; i < num_optionals; ++i) {
-			rc |= gpio_write(&optionals[i], optional_pols[i]);
-		}
-		if(rc!=GPIO_OK) { break; }
-
-		//data standy state
-		rc = fsi_standby();
-
-		//clear out pipes
-		rc |= gpio_write(fsi_data,0);
-		rc |= gpio_clock_cycle(fsi_clk,256);
-		rc |= gpio_write(fsi_data,1);
-		rc |= gpio_clock_cycle(fsi_clk,50);
-		if(rc!=GPIO_OK) { break; }
-
-		rc = fsi_bitbang(attnA);
-		rc |= fsi_standby();
-
-		rc |= fsi_bitbang(attnB);
-		rc |= fsi_standby();
-
-		rc |= fsi_bitbang(attnC);
-		rc |= fsi_standby();
-		if(rc!=GPIO_OK) { break; }
+		rc = fsi_putcfam(cfam_fd, FSI_A_SI1S, 0x20000000);
+		rc |= fsi_putcfam(cfam_fd, TRUE_MASK, 0x40000000);
+		rc |= fsi_putcfam(cfam_fd, INTERRUPT_STATUS_REG, 0xFFFFFFFF);
+		if(rc) { break; }
 
 		const gchar* flash_side = control_host_get_flash_side(host);
 		g_print("Using %s side of the bios flash\n",flash_side);
 		if(strcmp(flash_side,"primary")==0) {
-			rc |= fsi_bitbang(primary);
+			rc |= fsi_putcfam(cfam_fd, SBE_VITAL, PRIMARY_SIDE);
 		} else if(strcmp(flash_side,"golden") == 0) {
-			rc |= fsi_bitbang(golden);
+			rc |= fsi_putcfam(cfam_fd, SBE_VITAL, GOLDEN_SIDE);
 		} else {
 			g_print("ERROR: Invalid flash side: %s\n",flash_side);
 			rc = 0xff;
 
 		}
-		rc |= fsi_standby();
-		if(rc!=GPIO_OK) { break; }
+		if(rc) { break; }
 
-		rc = fsi_bitbang(go);
-
-		rc |= gpio_write(fsi_data,1); /* Data standby state */
-		rc |= gpio_clock_cycle(fsi_clk,2);
-
-		rc |= gpio_write(fsi_clk,0); /* hold clk low for clock mux */
-		rc |= gpio_write(fsi_enable,0);
-		rc |= gpio_clock_cycle(fsi_clk,16);
-		rc |= gpio_write(fsi_clk,0); /* Data standby state */
-
+		rc = fsi_putcfam(cfam_fd, SBE_VITAL, START_SBE);
 	} while(0);
-	if(rc != GPIO_OK)
+	if(rc)
 	{
-		g_print("ERROR HostControl: GPIO sequence failed (rc=%d)\n",rc);
-    }
-	gpio_close(fsi_clk);
-	gpio_close(fsi_data);
-	gpio_close(fsi_enable);
-	gpio_close(cronus_sel);
-	for (size_t i = 0; i < num_optionals; ++i) {
-		gpio_close(&optionals[i]);
+		g_print("ERROR HostControl: SBE sequence failed (rc=%d)\n",rc);
 	}
+	/* Close file descriptor */
+	close(cfam_fd);
 
 	control_host_emit_booted(host);
 
@@ -230,27 +222,6 @@ on_bus_acquired(GDBusConnection *connection,
 	g_dbus_object_manager_server_set_connection(manager, connection);
 	g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 	g_object_unref(object);
-
-	if(read_gpios(connection, &g_gpio_configs) != TRUE) {
-		g_print("ERROR Hostctl: could not read GPIO configuration\n");
-		return;
-	}
-
-	fsi_data = &g_gpio_configs.hostctl_gpio.fsi_data;
-	fsi_clk = &g_gpio_configs.hostctl_gpio.fsi_clk;
-	fsi_enable = &g_gpio_configs.hostctl_gpio.fsi_enable;
-	cronus_sel = &g_gpio_configs.hostctl_gpio.cronus_sel;
-	num_optionals = g_gpio_configs.hostctl_gpio.num_optionals;
-	optionals = g_gpio_configs.hostctl_gpio.optionals;
-	optional_pols = g_gpio_configs.hostctl_gpio.optional_pols;
-
-	gpio_init(connection, fsi_data);
-	gpio_init(connection, fsi_clk);
-	gpio_init(connection, fsi_enable);
-	gpio_init(connection, cronus_sel);
-	for (int i = 0; i < num_optionals; ++i) {
-		gpio_init(connection, &optionals[i]);
-	}
 }
 
 static void
@@ -267,7 +238,6 @@ on_name_lost(GDBusConnection *connection,
 		gpointer user_data)
 {
 	// g_print ("Lost the name %s\n", name);
-	free_gpios(&g_gpio_configs);
 }
 
 gint

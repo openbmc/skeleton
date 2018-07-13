@@ -121,7 +121,7 @@ gboolean read_gpios(GDBusConnection *connection, GpioConfigs *gpios)
 	}
 
 	gpios->power_gpio.num_pci_reset_outs = g_variant_iter_n_children(pci_reset_outs_iter);
-	g_print("Power GPIO %d pci reset outputs\n", gpios->power_gpio.num_pci_reset_outs);
+	g_print("Power GPIO %zd pci reset outputs\n", gpios->power_gpio.num_pci_reset_outs);
 	gpios->power_gpio.pci_reset_outs = g_malloc0_n(gpios->power_gpio.num_pci_reset_outs,
 			sizeof(GPIO));
 	gpios->power_gpio.pci_reset_pols = g_malloc0_n(gpios->power_gpio.num_pci_reset_outs,
