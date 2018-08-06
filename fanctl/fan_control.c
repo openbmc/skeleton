@@ -52,8 +52,9 @@ int get_connection(sd_bus *bus, char *connection, const char *obj_path)
 				"GetObject",
 				&bus_error,
 				&m,
-				"s",
-				obj_path);
+				"ss",
+				obj_path,
+				"");
 	if (rc < 0) {
 		fprintf(stderr,
 			"Failed to GetObject: %s\n", bus_error.message);
@@ -90,13 +91,12 @@ int set_dbus_sensor(sd_bus *bus, const char *obj_path, int val)
 		goto finish;
 	}
 
-	rc = sd_bus_call_method(bus,
+	rc = sd_bus_set_property(bus,
 				connection,
 				obj_path,
-				"org.openbmc.SensorValue",
-				"setValue",
+				"xyz.openbmc_project.Control.FanSpeed",
+				"Target",
 				&bus_error,
-				&response,
 				"i",
 				val);
 	if (rc < 0)
@@ -112,8 +112,8 @@ finish:
 	return rc;
 }
 
-/* Read sensor value from "org.openbmc.Sensors" */
-int read_dbus_sensor(sd_bus *bus, const char *obj_path)
+/* Read sensor value from "xyz.openbmc_projects.Sensors" */
+int read_dbus_sensor(sd_bus *bus, const char *obj_path, const char *property)
 {
 	char connection[DBUS_MAX_NAME_LEN];
 	sd_bus_error bus_error = SD_BUS_ERROR_NULL;
@@ -132,14 +132,14 @@ int read_dbus_sensor(sd_bus *bus, const char *obj_path)
 		goto finish;
 	}
 
-	rc = sd_bus_call_method(bus,
+	rc = sd_bus_get_property(bus,
 				connection,
 				obj_path,
-				"org.openbmc.SensorValue",
-				"getValue",
+				"xyz.openbmc_project.Sensor.Value",
+				property,
 				&bus_error,
 				&response,
-				NULL);
+				"i");
 	if (rc < 0) {
 		val = 0;
 		fprintf(stderr,
@@ -148,7 +148,7 @@ int read_dbus_sensor(sd_bus *bus, const char *obj_path)
 		goto finish;
 	}
 
-	rc = sd_bus_message_read(response, "v","i", &val);
+	rc = sd_bus_message_read(response, "i", &val);
 	if (rc < 0) {
 		val = 0;
 		fprintf(stderr,
@@ -165,7 +165,7 @@ finish:
 	return val;
 }
 
-/* set fan speed with /org/openbmc/sensors/speed/fan* object */
+/* set fan speed with /xyz/openbmc_project/sensors/fan_tach/fan* object */
 static int fan_set_speed(sd_bus *bus, int fan_id, uint8_t fan_speed)
 {
 	char obj_path[DBUS_MAX_NAME_LEN];
@@ -175,7 +175,7 @@ static int fan_set_speed(sd_bus *bus, int fan_id, uint8_t fan_speed)
 		return -1;
 
 	snprintf(obj_path, sizeof(obj_path),
-		"/org/openbmc/sensors/speed/fan%d", fan_id);
+		"/xyz/openbmc_project/sensors/fan_tach/fan%d_0", fan_id);
 	rc = set_dbus_sensor(bus, obj_path, fan_speed);
 	if (rc < 0)
 		fprintf(stderr, "fanctl: Failed to set fan[%d] speed[%d]\n",
@@ -215,13 +215,10 @@ static int fan_get_speed(sd_bus *bus, int fan_id)
 	int fan_speed;
 
 	/* get fan tach */
-	/* The object path is specific to Barreleye */
 	snprintf(obj_path, sizeof(obj_path),
-		"/org/openbmc/sensors/tach/fan%dH", fan_id);
-	fan_tach_H = read_dbus_sensor(bus, obj_path);
-	snprintf(obj_path, sizeof(obj_path),
-		"/org/openbmc/sensors/tach/fan%dL", fan_id);
-	fan_tach_L = read_dbus_sensor(bus, obj_path);
+		"/xyz/openbmc_project/sensors/fan_tach/fan%d_0", fan_id);
+	fan_tach_H = read_dbus_sensor(bus, obj_path, "MaxValue");
+	fan_tach_L = read_dbus_sensor(bus, obj_path, "MinValue");
 
 	/* invalid sensor value is -1 */
 	if (fan_tach_H <= 0 || fan_tach_L <= 0)
@@ -243,7 +240,8 @@ int fan_set_present(sd_bus *bus, int fan_id, int val)
 	char connection[DBUS_MAX_NAME_LEN];
 
 	snprintf(obj_path, sizeof(obj_path),
-		"/org/openbmc/inventory/system/chassis/fan%d", fan_id);
+		"/xyz/openbmc_project/inventory/system/chassis/motherboard/fan%d/fan%d_0",
+		fan_id, fan_id);
 
 	rc = get_connection(bus, connection, obj_path);
 	if (rc < 0) {
@@ -252,15 +250,14 @@ int fan_set_present(sd_bus *bus, int fan_id, int val)
 		goto finish;
 	}
 
-	rc = sd_bus_call_method(bus,
+	rc = sd_bus_set_property(bus,
 				connection,
 				obj_path,
-				"org.openbmc.InventoryItem",
-				"setPresent",
+				"xyz.openbmc_project.State.Decorator.OperationalStatus",
+				"Functional",
 				&bus_error,
-				&response,
-				"s",
-				(val == 1 ? "True" : "False"));
+				"b",
+				val);
 	if(rc < 0)
 		fprintf(stderr,
 			"fanctl: Failed to update fan presence via dbus: %s\n",
