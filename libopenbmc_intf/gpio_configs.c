@@ -220,12 +220,4 @@ void free_gpios(GpioConfigs *gpios) {
 	g_free(gpios->power_gpio.pci_reset_outs);
 	g_free(gpios->power_gpio.pci_reset_pols);
 	g_free(gpios->power_gpio.pci_reset_holds);
-
-	g_free(gpios->hostctl_gpio.fsi_data.name);
-	g_free(gpios->hostctl_gpio.fsi_clk.name);
-	g_free(gpios->hostctl_gpio.fsi_enable.name);
-	g_free(gpios->hostctl_gpio.cronus_sel.name);
-	for (i = 0; i < gpios->hostctl_gpio.num_optionals; ++i) {
-		g_free(gpios->hostctl_gpio.optionals[i].name);
-	}
 }
