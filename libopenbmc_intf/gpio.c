@@ -13,6 +13,7 @@
 #include "gpio.h"
 #include "gpio_json.h"
 
+#define GPIO_PORT_OFFSET 8
 #define GPIO_BASE_PATH "/sys/class/gpio"
 
 cJSON* gpio_json = NULL;
@@ -105,10 +106,68 @@ int gpio_clock_cycle(GPIO* gpio, int num_clks) {
 	return r;
 }
 
-int convert_gpio_to_num(const char* gpio)
+int get_gpio_base()
 {
 	/* TODO */
 	return 0;
+}
+
+/**
+ * Converts the GPIO port/offset nomenclature value
+ * to a number.  Supports the ASPEED method where
+ * num = base + (port * 8) + offset, and the port is an
+ * A-Z character that converts to 0 to 25.  The base
+ * is obtained form the hardware.
+ *
+ * For example: "A5" -> 5,  "Z7" -> 207
+ *
+ * @param[in] gpio - the GPIO name
+ *
+ * @return int - the GPIO number or < 0 if not found
+ */
+int convert_gpio_to_num(const char* gpio)
+{
+	static int gpio_base = -1;
+	if (gpio_base == -1)
+	{
+		gpio_base = get_gpio_base();
+		if (gpio_base < 0)
+		{
+			return gpio_base;
+		}
+	}
+
+	size_t len = strlen(gpio);
+	if (len < 2)
+	{
+		fprintf(stderr, ("Invalid GPIO name %s\n", gpio));
+		return -1;
+	}
+
+	/* Read the offset from the last character */
+	if (!isdigit(gpio[len-1]))
+	{
+		fprintf(stderr, "Invalid GPIO offset in GPIO %s\n", gpio);
+		return -1;
+	}
+
+	int offset = gpio[len-1] - '0';
+
+	/* Read the port from the second to last character */
+	if (!isalpha(gpio[len-2]))
+	{
+		fprintf(stderr, "Invalid GPIO port in GPIO %s\n", gpio);
+		return -1;
+	}
+	int port = toupper(gpio[len-2]) - 'A';
+
+	/* Check for a 2 character port, like AA */
+	if ((len == 3) && isalpha(gpio[len-3]))
+	{
+		port += 26 * (toupper(gpio[len-3]) - 'A' + 1);
+	}
+
+	return gpio_base + (port * GPIO_PORT_OFFSET) + offset;
 }
 
 /**
