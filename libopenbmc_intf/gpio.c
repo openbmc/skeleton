@@ -11,7 +11,11 @@
 #include <sys/mman.h>
 #include "openbmc_intf.h"
 #include "gpio.h"
+#include "gpio_json.h"
 
+#define GPIO_BASE_PATH "/sys/class/gpio"
+
+cJSON* gpio_json = NULL;
 
 int gpio_writec(GPIO* gpio, char value)
 {
@@ -101,42 +105,113 @@ int gpio_clock_cycle(GPIO* gpio, int num_clks) {
 	return r;
 }
 
+int convert_gpio_to_num(const char* gpio)
+{
+	/* TODO */
+	return 0;
+}
+
+/**
+ * Returns the cJSON pointer to the GPIO definition
+ * for the GPIO passed in.
+ *
+ * @param[in] gpio_name - the GPIO name, like BMC_POWER_UP
+ *
+ * @return cJSON* - pointer to the cJSON object or NULL
+ *				  if not found.
+ */
+cJSON* get_gpio_def(const char* gpio_name)
+{
+	if (gpio_json == NULL)
+	{
+		gpio_json = load_json();
+		if (gpio_json == NULL)
+		{
+			return NULL;
+		}
+	}
+
+	cJSON* gpio_defs = cJSON_GetObjectItem(gpio_json, "gpio_definitions");
+	g_assert(gpio_defs != NULL);
+
+	cJSON* def;
+	cJSON_ArrayForEach(def, gpio_defs)
+	{
+		cJSON* name = cJSON_GetObjectItem(def, "name");
+		g_assert(name != NULL);
+
+		if (strcmp(name->valuestring, gpio_name) == 0)
+		{
+			return def;
+		}
+	}
+	return NULL;
+}
+
+/**
+ * Frees the gpio_json memory
+ *
+ * Can be called once when callers are done calling making calls
+ * to gpio_init() so that the JSON only needs to be loaded once.
+ */
+void gpio_inits_done()
+{
+	cJSON_Delete(gpio_json);
+	gpio_json = NULL;
+}
+
+/**
+ * Fills in the dev, direction, and num elements in
+ * the GPIO structure.
+ *
+ * @param gpio - the GPIO structure to fill in
+ *
+ * @return GPIO_OK if successful
+ */
+int gpio_get_params(GPIO* gpio)
+{
+	gpio->dev = g_strdup(GPIO_BASE_PATH);
+
+	const cJSON* def = get_gpio_def(gpio->name);
+	if (def == NULL)
+	{
+		fprintf(stderr, "Unable to find GPIO %s in the JSON\n", gpio->name);
+		return GPIO_LOOKUP_ERROR;
+	}
+
+	const cJSON* dir = cJSON_GetObjectItem(def, "direction");
+	g_assert(dir != NULL);
+	gpio->direction = g_strdup(dir->valuestring);
+
+	/* Must use either 'num', like 87, or 'pin', like "A5" */
+	const cJSON* num = cJSON_GetObjectItem(def, "num");
+	if ((num != NULL) && cJSON_IsNumber(num))
+	{
+		gpio->num = num->valueint;
+	}
+	else
+	{
+		const cJSON* pin = cJSON_GetObjectItem(def, "pin");
+		g_assert(pin != NULL);
+
+		gpio->num = convert_gpio_to_num(pin->valuestring);
+		if (gpio->num < 0)
+		{
+			return GPIO_LOOKUP_ERROR;
+		}
+	}
+	return GPIO_OK;
+}
+
 // Gets the gpio device path from gpio manager object
 int gpio_init(GDBusConnection *connection, GPIO* gpio)
 {
-	int rc = GPIO_OK;
-	GDBusProxy *proxy;
-	GError *error;
-	GVariant *result;
-
-	error = NULL;
-	g_assert_no_error (error);
-	error = NULL;
-	proxy = g_dbus_proxy_new_sync (connection,
-                                 G_DBUS_PROXY_FLAGS_NONE,
-                                 NULL,                      /* GDBusInterfaceInfo */
-                                 "org.openbmc.managers.System", /* name */
-                                 "/org/openbmc/managers/System", /* object path */
-                                 "org.openbmc.managers.System",        /* interface */
-                                 NULL, /* GCancellable */
-                                 &error);
-	if (error != NULL) {
-		return GPIO_LOOKUP_ERROR;
+	int rc = gpio_get_params(gpio);
+	if (rc != GPIO_OK)
+	{
+	    return rc;
 	}
 
-	result = g_dbus_proxy_call_sync (proxy,
-                                   "gpioInit",
-                                   g_variant_new ("(s)", gpio->name),
-                                   G_DBUS_CALL_FLAGS_NONE,
-                                   -1,
-                                   NULL,
-                                   &error);
-
-	if (error != NULL) {
-		return GPIO_LOOKUP_ERROR;
-	}
-	g_assert (result != NULL);
-	g_variant_get (result, "(&si&s)", &gpio->dev,&gpio->num,&gpio->direction);
 	g_print("GPIO Lookup:  %s = %d,%s\n",gpio->name,gpio->num,gpio->direction);
 
 	//export and set direction
