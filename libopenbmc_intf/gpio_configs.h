@@ -44,19 +44,8 @@ typedef struct PowerGpio {
 	gboolean *pci_reset_holds;
 } PowerGpio;
 
-typedef struct HostctlGpio {
-	GPIO fsi_data;
-	GPIO fsi_clk;
-	GPIO fsi_enable;
-	GPIO cronus_sel;
-	size_t num_optionals;
-	GPIO* optionals;
-	gboolean* optional_pols;
-} HostctlGpio;
-
 typedef struct GpioConfigs {
 	PowerGpio power_gpio;
-	HostctlGpio hostctl_gpio;
 } GpioConfigs;
 
 /* Read system configuration for GPIOs. */
