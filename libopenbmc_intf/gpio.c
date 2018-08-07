@@ -9,6 +9,7 @@
 #include <argp.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <dirent.h>
 #include "openbmc_intf.h"
 #include "gpio.h"
 #include "gpio_json.h"
@@ -106,10 +107,97 @@ int gpio_clock_cycle(GPIO* gpio, int num_clks) {
 	return r;
 }
 
+/**
+ * Determine the GPIO base number for the system.  It is found in
+ * the 'base' file in the /sys/class/gpiochipX/ directory where the
+ * /sys/class/gpiochipX/label file has a '1e780000.gpio' in it.
+ *
+ * Note: This method is ASPEED specific.  Could add support for
+ * additional ones in the future.
+ *
+ * @return int - the GPIO base number, or < 0 if not found
+ */
 int get_gpio_base()
 {
-	/* TODO */
-	return 0;
+	int gpio_base = -1;
+
+	DIR* dir = opendir(GPIO_BASE_PATH);
+	if (dir == NULL)
+	{
+		fprintf(stderr, "Unable to open directory %s\n",
+				GPIO_BASE_PATH);
+		return -1;
+	}
+
+	struct dirent* entry;
+	while ((entry = readdir(dir)) != NULL)
+	{
+		/* Look in the gpiochip<X> directories for a file called 'label' */
+		/* that contains '1e780000.gpio', then in that directory read */
+		/* the GPIO base out of the 'base' file. */
+
+		if (strncmp(entry->d_name, "gpiochip", 8) != 0)
+		{
+			continue;
+		}
+
+		gboolean is_bmc = FALSE;
+		char* label_name;
+		asprintf(&label_name, "%s/%s/label",
+				GPIO_BASE_PATH, entry->d_name);
+
+		FILE* fd = fopen(label_name, "r");
+		free(label_name);
+
+		if (!fd)
+		{
+			continue;
+		}
+
+		char label[14];
+		if (fgets(label, 14, fd) != NULL)
+		{
+			if (strcmp(label, "1e780000.gpio") == 0)
+			{
+				is_bmc = TRUE;
+			}
+		}
+		fclose(fd);
+
+		if (!is_bmc)
+		{
+			continue;
+		}
+
+		char* base_name;
+		asprintf(&base_name, "%s/%s/base",
+				GPIO_BASE_PATH, entry->d_name);
+
+		fd = fopen(base_name, "r");
+		free(base_name);
+
+		if (!fd)
+		{
+			continue;
+		}
+
+		if (fscanf(fd, "%d", &gpio_base) != 1)
+		{
+			gpio_base = -1;
+		}
+		fclose(fd);
+
+		/* We found the right file. No need to continue. */
+		break;
+	}
+	closedir(dir);
+
+	if (gpio_base == -1)
+	{
+		fprintf(stderr, "Could not find GPIO base\n");
+	}
+
+	return gpio_base;
 }
 
 /**
