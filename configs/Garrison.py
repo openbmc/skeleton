@@ -377,7 +377,6 @@ GPIO_CONFIGS = {
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
 	0x5f : { 'class' : 'BootCountSensor' },
-	0x05 : { 'class' : 'BootProgressSensor' },
 	0xb5 : { 'class' : 'OperatingSystemStatusSensor' },
 }
 
