@@ -385,6 +385,8 @@ set_up_gpio(GDBusConnection *connection,
 		}
 	}
 
+	gpio_inits_done();
+
 	rc = gpio_open(&power_gpio->power_good_in);
 	if(rc != GPIO_OK) {
 		return rc;
