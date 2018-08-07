@@ -126,6 +126,7 @@ get_presence(GDBusConnection* connection, GPIO* gpio, uint8_t* present)
 	{
 		printf("ERROR pcie_slot_present: GPIO error %s (rc=%d)\n",gpio->name,rc);
 	}
+	gpio_inits_done();
 	return rc;
 }
 
