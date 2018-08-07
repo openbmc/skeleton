@@ -301,7 +301,6 @@ ID_LOOKUP = {
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
     0x07 : { 'class' : 'BootCountSensor' },
-    0x03 : { 'class' : 'BootProgressSensor' },
     0x02 : { 'class' : 'OperatingSystemStatusSensor' },
     # Garrison value is used, Not in P9 XML yet.
     0x0b : { 'class' : 'PowerSupplyRedundancySensor'},

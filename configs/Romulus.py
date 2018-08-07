@@ -249,7 +249,6 @@ ID_LOOKUP = {
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
     0x8b : { 'class' : 'BootCountSensor' },
-    0x02 : { 'class' : 'BootProgressSensor' },
     0x91 : { 'class' : 'OperatingSystemStatusSensor' },
 }
 
