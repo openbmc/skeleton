@@ -7,7 +7,7 @@ VERSION=1
 LIBOBMC=$(SONAME).$(VERSION)
 INCLUDES=openbmc_intf.h openbmc.h gpio.h gpio_configs.h
 
-LDLIBS+=$(shell pkg-config --libs $(PACKAGE_DEPS))
+LDLIBS+=$(shell pkg-config --libs $(PACKAGE_DEPS)) -lcjson
 ALL_CFLAGS+=$(shell pkg-config --cflags $(PACKAGE_DEPS)) -fPIC -Werror $(CFLAGS)
 
 all: $(SONAME)
@@ -18,7 +18,7 @@ all: $(SONAME)
 $(SONAME): $(LIBOBMC)
 	ln -sf $^ $@
 
-$(LIBOBMC): lib%.so.$(VERSION): %.o gpio.o gpio_configs.o
+$(LIBOBMC): lib%.so.$(VERSION): %.o gpio.o gpio_configs.o gpio_json.o
 	$(CC) -shared $(CFLAGS) $(LDFLAGS) -Wl,-soname,$(SONAME) \
 		-o $@ $^ $(LDLIBS)
 
