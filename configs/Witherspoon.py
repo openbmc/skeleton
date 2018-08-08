@@ -300,7 +300,6 @@ ID_LOOKUP = {
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
-    0x07 : { 'class' : 'BootCountSensor' },
     # Garrison value is used, Not in P9 XML yet.
     0x0b : { 'class' : 'PowerSupplyRedundancySensor'},
     0xda : { 'class' : 'TurboAllowedSensor' },

@@ -387,7 +387,6 @@ GPIO_CONFIGS = {
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
-	0x09 : { 'class' : 'BootCountSensor' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
