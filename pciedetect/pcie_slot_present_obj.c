@@ -108,11 +108,11 @@ exit:
 }
 
 int
-get_presence(GDBusConnection* connection, GPIO* gpio, uint8_t* present)
+get_presence(GPIO* gpio, uint8_t* present)
 {
 	int rc = GPIO_OK;
 	do {
-		rc = gpio_init(connection,gpio);
+		rc = gpio_init(gpio);
 		if(rc != GPIO_OK) { break; }
 		uint8_t gpio_val;
 		rc = gpio_open(gpio);
@@ -204,7 +204,7 @@ main(gint argc, gchar *argv[])
 		do {
 			rc = get_object(c,sys_proxy,&slots[i],&obj_info);
 			if(rc) { break; }
-			rc = get_presence(c,&slots[i],&present);
+			rc = get_presence(&slots[i],&present);
 			//if (rc) { break; }
 			// TODO: send correct state
 			if(present == 0) {
