@@ -49,7 +49,7 @@ typedef struct GpioConfigs {
 } GpioConfigs;
 
 /* Read system configuration for GPIOs. */
-gboolean read_gpios(GDBusConnection *connection, GpioConfigs *gpios);
+gboolean read_gpios(GpioConfigs *gpios);
 /* Frees internal buffers. Does not free parameter. Does not close GPIOs. */
 void free_gpios(GpioConfigs *gpios);
 
