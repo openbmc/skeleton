@@ -245,66 +245,6 @@ ID_LOOKUP = {
     'GPIO_PRESENT' : {}
 }
 
-GPIO_CONFIG = {}
-GPIO_CONFIG['SOFTWARE_PGOOD'] = \
-        {'gpio_pin': 'R1', 'direction': 'out'}
-GPIO_CONFIG['BMC_POWER_UP'] = \
-        {'gpio_pin': 'D1', 'direction': 'out'}
-GPIO_CONFIG['SYS_PWROK_BUFF'] = \
-        {'gpio_pin': 'D2', 'direction': 'in'}
-GPIO_CONFIG['BMC_WD_CLEAR_PULSE_N'] = \
-        {'gpio_pin': 'N5', 'direction': 'out'}
-GPIO_CONFIG['CHECKSTOP'] = \
-        {'gpio_pin': 'J2', 'direction': 'falling'}
-GPIO_CONFIG['BMC_CP0_RESET_N'] = \
-        {'gpio_pin': 'A1', 'direction': 'out'}
-GPIO_CONFIG['BMC_CP0_PERST_ENABLE_R'] = \
-        {'gpio_pin': 'A3', 'direction': 'out'}
-GPIO_CONFIG['FSI_DATA'] = \
-        {'gpio_pin': 'AA2', 'direction': 'out'}
-GPIO_CONFIG['FSI_CLK'] = \
-        {'gpio_pin': 'AA0', 'direction': 'out'}
-GPIO_CONFIG['FSI_ENABLE'] = \
-        {'gpio_pin': 'D0', 'direction': 'out'}
-
-# DBG_CP0_MUX_SEL
-GPIO_CONFIG['CRONUS_SEL'] = \
-        {'gpio_pin': 'A6', 'direction': 'out'}
-GPIO_CONFIG['BMC_THROTTLE'] = \
-        {'gpio_pin': 'J3', 'direction': 'out'}
-GPIO_CONFIG['IDBTN']       = \
-        {'gpio_pin': 'Q7', 'direction': 'out'}
-
-# PM_FP_PWRBTN_IN_L
-GPIO_CONFIG['POWER_BUTTON'] = \
-        {'gpio_pin': 'I3', 'direction': 'both'}
-
-# PM_NMIBTN_IN_L
-GPIO_CONFIG['RESET_BUTTON'] = \
-        {'gpio_pin': 'J1', 'direction': 'both'}
-
-# TODO openbmc/openbmc#2288 - Determine if any pci resets needed
-GPIO_CONFIGS = {
-    'power_config' : {
-        'power_good_in' : 'SYS_PWROK_BUFF',
-        'power_up_outs' : [
-            ('SOFTWARE_PGOOD', True),
-            ('BMC_POWER_UP', True),
-        ],
-        'reset_outs' : [
-        ],
-    },
-    'hostctl_config' : {
-        'fsi_data' : 'FSI_DATA',
-        'fsi_clk' : 'FSI_CLK',
-        'fsi_enable' : 'FSI_ENABLE',
-        'cronus_sel' : 'CRONUS_SEL',
-        'optionals' : [
-        ],
-    },
-}
-
-
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
