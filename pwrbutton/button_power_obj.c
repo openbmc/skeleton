@@ -113,7 +113,7 @@ on_bus_acquired(GDBusConnection *connection,
 	// get gpio device paths
 	int rc = GPIO_OK;
 	do {
-		rc = gpio_init(connection,&gpio_button);
+		rc = gpio_init(&gpio_button);
 		gpio_inits_done();
 		if(rc != GPIO_OK) { break; }
 		rc = gpio_open_interrupt(&gpio_button,on_button_interrupt,object);

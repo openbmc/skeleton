@@ -346,9 +346,7 @@ on_get_power_state(ControlPower *pwr,
 }
 
 static int
-set_up_gpio(GDBusConnection *connection,
-		PowerGpio *power_gpio,
-		ControlPower* control_power)
+set_up_gpio(PowerGpio *power_gpio, ControlPower* control_power)
 {
 	int error = GPIO_OK;
 	int rc;
@@ -357,29 +355,29 @@ set_up_gpio(GDBusConnection *connection,
 
 	// get gpio device paths
 	if(power_gpio->latch_out.name != NULL) {  /* latch is optional */
-		rc = gpio_init(connection, &power_gpio->latch_out);
+		rc = gpio_init(&power_gpio->latch_out);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
-	rc = gpio_init(connection, &power_gpio->power_good_in);
+	rc = gpio_init(&power_gpio->power_good_in);
 	if(rc != GPIO_OK) {
 		error = rc;
 	}
 	for(int i = 0; i < power_gpio->num_power_up_outs; i++) {
-		rc = gpio_init(connection, &power_gpio->power_up_outs[i]);
+		rc = gpio_init(&power_gpio->power_up_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
 	for(int i = 0; i < power_gpio->num_reset_outs; i++) {
-		rc = gpio_init(connection, &power_gpio->reset_outs[i]);
+		rc = gpio_init(&power_gpio->reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
 	for(int i = 0; i < power_gpio->num_pci_reset_outs; i++) {
-		rc = gpio_init(connection, &power_gpio->pci_reset_outs[i]);
+		rc = gpio_init(&power_gpio->pci_reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
@@ -462,12 +460,12 @@ on_bus_acquired(GDBusConnection *connection,
 	g_dbus_object_manager_server_export(manager, G_DBUS_OBJECT_SKELETON(object));
 	g_object_unref(object);
 
-	if(read_gpios(connection, &g_gpio_configs) != TRUE) {
+	if(read_gpios(&g_gpio_configs) != TRUE) {
 		g_print("ERROR PowerControl: could not read power GPIO configuration\n");
 		exit(-1);
 	}
 
-	int rc = set_up_gpio(connection, &g_gpio_configs.power_gpio, control_power);
+	int rc = set_up_gpio(&g_gpio_configs.power_gpio, control_power);
 	if(rc != GPIO_OK) {
 		g_print("ERROR PowerControl: GPIO setup (rc=%d)\n",rc);
 		exit(-1);
