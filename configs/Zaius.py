@@ -312,59 +312,6 @@ ID_LOOKUP = {
     'GPIO_PRESENT' : {}
 }
 
-GPIO_CONFIG = {}
-GPIO_CONFIG['SOFTWARE_PGOOD'] = \
-        {'gpio_pin': 'R1', 'direction': 'out'}
-GPIO_CONFIG['BMC_POWER_UP'] = \
-        {'gpio_pin': 'D1', 'direction': 'out'}
-GPIO_CONFIG['SYS_PWROK_BUFF'] = \
-        {'gpio_pin': 'D2', 'direction': 'in'}
-GPIO_CONFIG['PHY_RST_N'] = \
-        {'gpio_pin': 'D3', 'direction': 'out'}
-GPIO_CONFIG['HDD_PWR_EN'] = \
-        {'gpio_pin': 'D4', 'direction': 'out'}
-GPIO_CONFIG['CP0_DEVICES_RESET_N'] = \
-        {'gpio_pin': 'A1', 'direction': 'out'}
-GPIO_CONFIG['BMC_CP0_PERST_ENABLE'] = \
-        {'gpio_pin': 'A3', 'direction': 'out'}
-GPIO_CONFIG['BMC_UCD_LATCH_LE'] = \
-        {'gpio_pin': 'B4', 'direction': 'out'}
-GPIO_CONFIG['FSI_ENABLE'] = \
-        {'gpio_pin': 'D0', 'direction': 'out'}
-GPIO_CONFIG['CRONUS_SEL'] = \
-        {'gpio_pin': 'P6', 'direction': 'out'}
-# FIXME: net name is FP_PWR_BTN_N in schematic
-GPIO_CONFIG['POWER_BUTTON'] = \
-        {'gpio_pin': 'I3', 'direction': 'both'}
-# FIXME: net name is FP_RST_BTN_N in schematic
-GPIO_CONFIG['RESET_BUTTON'] = \
-        {'gpio_pin': 'AA0', 'direction': 'both'}
-GPIO_CONFIG['PE_MEZZB_PRSNT_N'] = \
-        {'gpio_pin': 'P7', 'direction': 'in'}
-GPIO_CONFIG['CHECKSTOP'] = \
-        {'gpio_pin': 'F7', 'direction': 'falling'}
-
-GPIO_CONFIGS = {
-    'power_config' : {
-        'latch_out': 'BMC_UCD_LATCH_LE',
-        'power_good_in' : 'SYS_PWROK_BUFF',
-        'power_up_outs' : [
-            ('SOFTWARE_PGOOD', True),
-            ('BMC_POWER_UP', True),
-        ],
-        'reset_outs' : [
-        ],
-    },
-    'hostctl_config' : {
-        'fsi_data' : 'FSI_DATA',
-        'fsi_clk' : 'FSI_CLK',
-        'fsi_enable' : 'FSI_ENABLE',
-        'cronus_sel' : 'CRONUS_SEL',
-        'optionals' : [
-        ],
-    },
-}
-
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
