@@ -309,7 +309,6 @@ GPIO_CONFIGS = {
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
     0x8b : { 'class' : 'BootCountSensor' },
-    0x91 : { 'class' : 'OperatingSystemStatusSensor' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
