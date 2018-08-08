@@ -183,7 +183,7 @@ void read_power_gpios(GpioConfigs* gpios, const cJSON* gpio_configs)
 	}
 }
 
-gboolean read_gpios(GDBusConnection *connection, GpioConfigs *gpios)
+gboolean read_gpios(GpioConfigs *gpios)
 {
 	cJSON* json = load_json();
 	if (json == NULL)

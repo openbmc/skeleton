@@ -24,7 +24,7 @@ typedef struct {
 #define GPIO_WRITE_ERROR  0x10
 #define GPIO_LOOKUP_ERROR 0x20
 
-int gpio_init(GDBusConnection*, GPIO*);
+int gpio_init(GPIO*);
 void gpio_close(GPIO*);
 int  gpio_open(GPIO*);
 int gpio_open_interrupt(GPIO*, GIOFunc, gpointer);

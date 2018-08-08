@@ -355,7 +355,7 @@ int gpio_get_params(GPIO* gpio)
 }
 
 // Gets the gpio device path from gpio manager object
-int gpio_init(GDBusConnection *connection, GPIO* gpio)
+int gpio_init(GPIO* gpio)
 {
 	int rc = gpio_get_params(gpio);
 	if (rc != GPIO_OK)
