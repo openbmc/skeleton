@@ -6,6 +6,7 @@ import argparse
 
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
+import json
 import os
 import signal
 import time
@@ -79,6 +80,8 @@ descriptors = {
     'state' : ['bmcstate', 'chassisstate', 'hoststate'],
     'status' : ['bmcstate', 'chassisstate', 'hoststate'],
 }
+
+GPIO_DEFS_FILE = '/etc/default/obmc/gpio/gpio_defs.json'
 
 def run_set_property(dbus_bus, dbus_iface, descriptor, args):
     mainloop = gobject.MainLoop()
@@ -210,40 +213,37 @@ def run_chassiskill(args):
     # explicitly added as a valid command to argparse in main()
     assert can_chassiskill()
 
-    # Multi-dimensional fetch is now exception-safe
-    gpios = obmc_system_config.GPIO_CONFIGS['power_config']['power_up_outs']
+    data = {}
+    with open(GPIO_DEFS_FILE, 'r') as json_input:
+        data = json.load(json_input)
 
-    gc = obmc_system_config.GPIO_CONFIG
+    gpios = data['gpio_configs']['power_config']['power_up_outs']
+    defs = data['gpio_definitions']
 
     for gpio in gpios:
-        function = gpio[0]
 
-        if function not in gc or 'gpio_pin' not in gc[function]:
-            print >> sys.stderr, "Missing or invalid definition for '{}' in system GPIO_CONFIG".format(function)
+        definition = filter(lambda g: g['name'] == gpio['name'], defs)
+        if len(definition) == 0:
+            print >> sys.stderr, "Missing definition for GPIO {}".format(gpio['name'])
             continue
 
-        name = gc[function]['gpio_pin']
+        pin = str(definition[0]['pin'])
+        active_low = not gpio['polarity']
 
-        # The second element of the tuples stashed in 'power_up_outs'
-        # represents the boolean condition of the statement 'active high'. To
-        # mirror the code at [1] we instead need the condition of the statement
-        # 'active low', thus we negate gpio[1].
-        #
-        # [1] https://github.com/openbmc/skeleton/blob/93b84e42834893313616f96c70743369f26a7190/op-pwrctl/power_control_obj.c#L283
-        active_low = not gpio[1]
-
-        if not gpio_deassert(name, active_low, args):
+        if not gpio_deassert(pin, active_low, args):
             return False
 
     return True
 
 def can_chassiskill():
-    gcs = obmc_system_config.GPIO_CONFIGS
 
-    if 'power_config' in gcs:
-        if 'power_up_outs' in gcs['power_config']:
-            # Just to be sure
-            return len(gcs['power_config']) > 0
+    try:
+        with open(GPIO_DEFS_FILE, 'r') as json_input:
+            data = json.load(json_input)
+            gpios = data['gpio_configs']['power_config']['power_up_outs']
+            return len(gpios) > 0
+    except:
+        pass
 
     return False
 
