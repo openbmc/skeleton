@@ -301,7 +301,6 @@ ID_LOOKUP = {
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
     # Garrison value is used, Not in P9 XML yet.
-    0xD8 : { 'class' : 'PowerSupplyDeratingSensor' },
 }
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
