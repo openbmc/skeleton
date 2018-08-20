@@ -370,7 +370,6 @@ GPIO_CONFIGS = {
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {
     # Garrison value is used, Not in P9 XML yet.
-    0x0b : { 'class' : 'PowerSupplyRedundancySensor'},
     0xD8 : { 'class' : 'PowerSupplyDeratingSensor' },
 }
 
