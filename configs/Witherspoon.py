@@ -371,7 +371,6 @@ GPIO_CONFIGS = {
 MISC_SENSORS = {
     # Garrison value is used, Not in P9 XML yet.
     0x0b : { 'class' : 'PowerSupplyRedundancySensor'},
-    0xda : { 'class' : 'TurboAllowedSensor' },
     0xD8 : { 'class' : 'PowerSupplyDeratingSensor' },
 }
 
