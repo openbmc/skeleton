@@ -1,0 +1,8 @@
+Code-Review+1: Matt Spinler <spinler@us.ibm.com>
+Code-Review+2: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Verified+1: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-by: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-at: Wed, 22 Aug 2018 01:08:08 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/11787
+Project: openbmc/skeleton
+Branch: refs/heads/master
