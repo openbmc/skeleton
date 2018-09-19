@@ -3,7 +3,6 @@ GDBUS_APPS = bmcctl \
 	     op-flasher \
 	     op-hostctl \
 	     op-pwrctl \
-	     pciedetect \
 	     pwrbutton \
 	     rstbutton
 
