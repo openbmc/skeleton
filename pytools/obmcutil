@@ -10,10 +10,11 @@ import json
 import os
 import signal
 import time
+from glob import glob
+from os.path import join
 from subprocess import Popen
 
 import obmc_system_config
-import obmc.system
 
 descriptors = {
     'power': {
@@ -82,6 +83,32 @@ descriptors = {
 }
 
 GPIO_DEFS_FILE = '/etc/default/obmc/gpio/gpio_defs.json'
+
+
+def find_gpio_base(path="/sys/class/gpio/"):
+    pattern = "gpiochip*"
+    for gc in glob(join(path, pattern)):
+        with open(join(gc, "label")) as f:
+            label = f.readline().strip()
+        if label == "1e780000.gpio":
+            with open(join(gc, "base")) as f:
+                return int(f.readline().strip())
+    # trigger a file not found exception
+    open(join(path, "gpiochip"))
+
+
+GPIO_BASE = find_gpio_base()
+
+
+def convertGpio(name):
+    offset = int(''.join(list(filter(str.isdigit, name))))
+    port = list(filter(str.isalpha, name.upper()))
+    a = ord(port[-1]) - ord('A')
+    if len(port) > 1:
+        a += 26
+    base = a * 8 + GPIO_BASE
+    return base + offset
+
 
 def run_set_property(dbus_bus, dbus_iface, descriptor, args):
     mainloop = gobject.MainLoop()
@@ -186,7 +213,7 @@ def run_all_commands(dbus_bus, recipe, args):
     return True
 
 def gpio_set_value(gpio_name, active_low, asserted):
-    gpio_id = obmc.system.convertGpio(gpio_name)
+    gpio_id = convertGpio(gpio_name)
     gpio_value_path = "/sys/class/gpio/gpio{}/value".format(gpio_id)
 
     with open(gpio_value_path, 'w') as gpio:
