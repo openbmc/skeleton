@@ -3,8 +3,9 @@
 import sys
 import os
 import getopt
+from glob import glob
+from os.path import join
 import obmc_system_config as System
-import obmc.system
 
 
 def printUsage():
@@ -24,6 +25,32 @@ if (len(sys.argv) < 2):
 sys.argv.pop(0)
 
 GPIO_SYSFS = '/sys/class/gpio/'
+
+
+def find_gpio_base(path="/sys/class/gpio/"):
+	pattern = "gpiochip*"
+	for gc in glob(join(path, pattern)):
+		with open(join(gc, "label")) as f:
+			label = f.readline().strip()
+		if label == "1e780000.gpio":
+			with open(join(gc, "base")) as f:
+				return int(f.readline().strip())
+	# trigger a file not found exception
+	open(join(path, "gpiochip"))
+
+
+GPIO_BASE = find_gpio_base()
+
+
+def convertGpio(name):
+	offset = int(''.join(list(filter(str.isdigit, name))))
+	port = list(filter(str.isalpha, name.upper()))
+	a = ord(port[-1]) - ord('A')
+	if len(port) > 1:
+		a += 26
+	base = a * 8 + GPIO_BASE
+	return base + offset
+
 
 class Gpio:
 	def __init__(self,gpio_num):
@@ -116,9 +143,9 @@ if __name__ == '__main__':
  		elif opt in ("-v"):
 			value = arg
 		elif opt in ("-p"):
-			gpio_name = obmc.system.convertGpio(arg)
+			gpio_name = convertGpio(arg)
 		elif opt in ("-l"):
-			gpio_name = obmc.system.convertGpio(arg)
+			gpio_name = convertGpio(arg)
 			print gpio_name
 			exit(0) 
 
@@ -135,7 +162,7 @@ if __name__ == '__main__':
 		if (gpio_info.has_key('gpio_num')):
 			gpio_name = str(gpio_info['gpio_num'])
 		else:
-			gpio_name = str(obmc.system.convertGpio(gpio_info['gpio_pin']))
+			gpio_name = str(convertGpio(gpio_info['gpio_pin']))
 		print "GPIO ID: "+gpio_name+"; DIRECTION: "+direction
 
 
