@@ -1,0 +1,12 @@
+[Unit]
+Description=Gpio daemon
+
+[Service]
+Restart=always
+RestartSec=2
+ExecStart=/usr/sbin/gpiodaemon
+StartLimitInterval=0
+Type=simple
+
+[Install]
+WantedBy=default.target
