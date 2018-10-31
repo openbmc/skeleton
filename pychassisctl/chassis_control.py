@@ -119,9 +119,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                          in_signature='', out_signature='')
     def reboot(self):
         print("Rebooting")
-        if self.getPowerState() == POWER_OFF:
-            self.powerOn()
-        else:
+        if self.getPowerState() != POWER_OFF:
             self.Set(DBUS_NAME, "reboot", 1)
             self.powerOff()
         return None
@@ -130,9 +128,7 @@ class ChassisControlObject(DbusProperties, DbusObjectManager):
                          in_signature='', out_signature='')
     def softReboot(self):
         print("Soft Rebooting")
-        if self.getPowerState() == POWER_OFF:
-            self.powerOn()
-        else:
+        if self.getPowerState() != POWER_OFF:
             self.Set(DBUS_NAME, "reboot", 1)
             self.softPowerOff()
         return None
