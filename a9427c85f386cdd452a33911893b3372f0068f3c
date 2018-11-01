@@ -1,0 +1,9 @@
+Code-Review+1: Kurt Taylor <kurt.r.taylor@gmail.com>
+Code-Review+1: Jeremy Kerr <jk@ozlabs.org>
+Code-Review+2: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Verified+1: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-by: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-at: Thu, 01 Nov 2018 13:12:36 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/15072
+Project: openbmc/skeleton
+Branch: refs/heads/master
