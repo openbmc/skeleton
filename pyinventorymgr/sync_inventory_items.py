@@ -149,6 +149,15 @@ def sync_mac(obj, inv_mac, sys_mac):
         intf.Set(MAC_INTF_NAME, "MACAddress", inv_mac)
 
 
+# Get the value of the uuid on the system (from u-boot)
+def get_sys_uuid(obj):
+    sys_uuid = ''
+    try:
+        sys_mac = subprocess.check_output(["fw_printenv", "-n", "uuid"])
+    except Exception:
+        # Handle when uuid does not exist in u-boot
+        return sys_uuid
+    return sys_uuid
 # Set sys uuid, this reboots the BMC for the value to take effect
 def set_sys_uuid(uuid):
     rc = subprocess.call(["fw_setenv", "uuid", uuid])
@@ -187,9 +196,9 @@ if __name__ == '__main__':
             inv_uuid = get_uuid(bus, prop_name)
             if inv_uuid:
                 inv_uuid = uuid.UUID(inv_uuid)
-                chs_obj = bus.get_object(CHS_DBUS_NAME, CHS_OBJ_NAME)
-                chs_uuid = get_sys_uuid(chs_obj)
-                if inv_uuid != sys_uuid:
-                    set_sys_uuid(inv_uuid)
+            chs_obj = bus.get_object(CHS_DBUS_NAME, CHS_OBJ_NAME)
+            sys_uuid = get_sys_uuid(chs_obj)
+            if inv_uuid != sys_uuid:
+                set_sys_uuid(str(inv_uuid))
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
