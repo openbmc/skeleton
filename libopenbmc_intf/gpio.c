@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,97 +15,56 @@
 #include "gpio.h"
 #include "gpio_json.h"
 
+#include <sys/ioctl.h>
+#include <linux/gpio.h>
+
 #define GPIO_PORT_OFFSET 8
 #define GPIO_BASE_PATH "/sys/class/gpio"
 
 cJSON* gpio_json = NULL;
 
-int gpio_writec(GPIO* gpio, char value)
-{
-	g_assert (gpio != NULL);
-	int rc = GPIO_OK;
-	char buf[1];
-	buf[0] = value;
-
-	if (lseek(gpio->fd, 0, SEEK_SET) == -1)
-	{
-		return GPIO_ERROR;
-	}
-
-	if (write(gpio->fd, buf, 1) != 1)
-	{
-		rc = GPIO_WRITE_ERROR;
-	}
-	return rc;
-}
-
 int gpio_write(GPIO* gpio, uint8_t value)
 {
 	g_assert (gpio != NULL);
-	int rc = GPIO_OK;
-	char buf[1];
-	buf[0] = '0';
-	if (value==1)
-	{
-		buf[0]='1';
-	}
+	struct gpiohandle_data data;
+    memset(&data, 0, sizeof(data));
+	data.values[0] = value;
 
-	if (lseek(gpio->fd, 0, SEEK_SET) == -1)
+	if (gpio->fd <= 0)
 	{
 		return GPIO_ERROR;
 	}
 
-	if (write(gpio->fd, buf, 1) != 1)
+	if (ioctl(gpio->fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data) < 0)
 	{
-		rc = GPIO_WRITE_ERROR;
+		g_print("Failed SET_LINE_VALUES ioctl: GPIO=%s; value=%d: \n",
+				gpio->name, value);
+		return GPIO_WRITE_ERROR;
 	}
-	return rc;
+
+	return GPIO_OK;
 }
 
 int gpio_read(GPIO* gpio, uint8_t *value)
 {
 	g_assert (gpio != NULL);
-	char buf[1];
-	int r = GPIO_OK;
+	struct gpiohandle_data data;
+	memset(&data, 0, sizeof(data));
+
 	if (gpio->fd <= 0)
 	{
-		r = GPIO_ERROR;
+		return GPIO_ERROR;
 	}
-	else
-	{
-		if (lseek(gpio->fd, 0, SEEK_SET) == -1)
-		{
-			return GPIO_ERROR;
-		}
 
-		if (read(gpio->fd,&buf,1) != 1)
-		{
-			r = GPIO_READ_ERROR;
-		} else {
-			if (buf[0]=='1') {
-				*value = 1;
-			} else {
-				*value = 0;
-			}
-		}
+	if (ioctl(gpio->fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data) < 0)
+	{
+		g_print("Failed GET_LINE_VALUES ioctl: GPIO=%s\n",gpio->name);
+		return GPIO_READ_ERROR;
 	}
-	return r;
-}
-int gpio_clock_cycle(GPIO* gpio, int num_clks) {
-	g_assert (gpio != NULL);
-        int i=0;
-	int r=GPIO_OK;
-        for (i=0;i<num_clks;i++) {
-                if (gpio_writec(gpio,'0') == -1) {
-			r = GPIO_WRITE_ERROR;
-			break;
-		}
-		if (gpio_writec(gpio,'1') == -1) {
-			r = GPIO_WRITE_ERROR;
-			break;
-		}
-        }
-	return r;
+
+	*value = data.values[0];
+
+	return GPIO_OK;
 }
 
 /**
@@ -215,16 +175,6 @@ int get_gpio_base()
  */
 int convert_gpio_to_num(const char* gpio)
 {
-	static int gpio_base = -1;
-	if (gpio_base == -1)
-	{
-		gpio_base = get_gpio_base();
-		if (gpio_base < 0)
-		{
-			return gpio_base;
-		}
-	}
-
 	size_t len = strlen(gpio);
 	if (len < 2)
 	{
@@ -255,7 +205,7 @@ int convert_gpio_to_num(const char* gpio)
 		port += 26 * (toupper(gpio[len-3]) - 'A' + 1);
 	}
 
-	return gpio_base + (port * GPIO_PORT_OFFSET) + offset;
+	return (port * GPIO_PORT_OFFSET) + offset;
 }
 
 /**
@@ -354,142 +304,70 @@ int gpio_get_params(GPIO* gpio)
 	return GPIO_OK;
 }
 
-// Gets the gpio device path from gpio manager object
-int gpio_init(GPIO* gpio)
-{
-	int rc = gpio_get_params(gpio);
-	if (rc != GPIO_OK)
-	{
-	    return rc;
-	}
-
-	g_print("GPIO Lookup:  %s = %d,%s\n",gpio->name,gpio->num,gpio->direction);
-
-	//export and set direction
-	char dev[254];
-	char data[4];
-	int fd;
-	do {
-		struct stat st;
-
-		sprintf(dev,"%s/gpio%d/value",gpio->dev,gpio->num);
-		//check if gpio is exported, if not export
-    		int result = stat(dev, &st);
-    		if (result)
-		{
-			sprintf(dev,"%s/export",gpio->dev);
-			fd = open(dev, O_WRONLY);
-			if (fd == GPIO_ERROR) {
-				rc = GPIO_OPEN_ERROR;
-				break;
-			}
-			sprintf(data,"%d",gpio->num);
-			rc = write(fd,data,strlen(data));
-			close(fd);
-			if (rc != strlen(data)) {
-				rc = GPIO_WRITE_ERROR;
-				break;
-			}
-		}
-		const char* file = "edge";
-		const char* direction = gpio->direction;
-		if (strcmp(direction, "in") == 0)
-		{
-			file = "direction";
-		}
-		else if (strcmp(direction, "out") == 0)
-		{
-			file = "direction";
-
-			// Read current value, so we can set 'high' or 'low'.
-			// Setting direction directly to 'out' is the same as
-			// setting to 'low' which can change the value in the
-			// GPIO.
-			uint8_t value = 0;
-			rc = gpio_open(gpio);
-			if (rc) break;
-			rc = gpio_read(gpio, &value);
-			if (rc) break;
-			gpio_close(gpio);
-
-			direction = (value ? "high" : "low");
-		}
-		sprintf(dev,"%s/gpio%d/%s",gpio->dev,gpio->num,file);
-		fd = open(dev,O_WRONLY);
-		if (fd == GPIO_ERROR) {
-			rc = GPIO_WRITE_ERROR;
-			break;
-		}
-		rc = write(fd,direction,strlen(direction));
-		if (rc != strlen(direction)) {
-			rc = GPIO_WRITE_ERROR;
-			break;
-		}
-
-		close(fd);
-		rc = GPIO_OK;
-	} while(0);
-
-	return rc;
-}
-
-
-
-
-char* get_gpio_dev(GPIO* gpio)
-{
-	char* buf;
-	asprintf(&buf, "%s/gpio%d/value", gpio->dev, gpio->num);
-	return buf;
-}
-
 int gpio_open_interrupt(GPIO* gpio, GIOFunc func, gpointer user_data)
 {
-	int rc = GPIO_OK;
-	char buf[255];
-	sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
-	gpio->fd = open(buf, O_RDONLY | O_NONBLOCK );
 	gpio->irq_inited = false;
-	if (gpio->fd == -1)
-	{
-		rc = GPIO_OPEN_ERROR;
-	}
-	else
-	{
-		GIOChannel* channel = g_io_channel_unix_new( gpio->fd);
-		guint id = g_io_add_watch( channel, G_IO_PRI, func, user_data );
-	}
-	return rc;
+	gpio_open(gpio, O_RDONLY | O_NONBLOCK);
+
+	GIOChannel* channel = g_io_channel_unix_new(gpio->fd);
+	guint id = g_io_add_watch(channel, G_IO_PRI, func, user_data);
+
+	return GPIO_OK;
 }
 
-int gpio_open(GPIO* gpio)
+int gpio_open(GPIO* gpio, int flags)
 {
 	g_assert (gpio != NULL);
-	// open gpio for writing or reading
-	char buf[254];
-	int rc = 0;
-	gpio->fd = -1;
-	if (gpio->direction == NULL) {
-		return GPIO_OPEN_ERROR;
-	}
-	if (strcmp(gpio->direction,"in")==0)
-	{
-		sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
-		gpio->fd = open(buf, O_RDONLY);
-	}
-	else
-	{
-		sprintf(buf, "%s/gpio%d/value", gpio->dev, gpio->num);
-		gpio->fd = open(buf, O_RDWR);
 
-	}
-	if (gpio->fd == -1) {
+	char buf[255];
+	// May not always be the case that it will be gpiochip0...hopefully this
+	// is all going away before that need comes.
+	sprintf(buf, "/dev/gpiochip0");
+	gpio->fd = open(buf, flags);
+	if (gpio->fd == -1)
+	{
 		return GPIO_OPEN_ERROR;
 	}
+
+	struct gpiohandle_request req;
+    memset(&req, 0, sizeof(req));
+	strncpy(req.consumer_label, "skeleton-gpio",  sizeof(req.consumer_label));
+
+	// open gpio for writing or reading
+	if (gpio->direction == NULL)
+	{
+		return GPIO_OPEN_ERROR;
+	}
+	req.flags = (strcmp(gpio->direction,"in") == 0) ? GPIOHANDLE_REQUEST_INPUT
+													: GPIOHANDLE_REQUEST_OUTPUT;
+
+	req.lineoffsets[0] = gpio->num;
+	req.lines = 1;
+
+	if (strcmp(gpio->direction,"out") == 0)
+    {
+		// Not sure this is right to asusme it is always high on output...
+        req.default_values[0] = 1;
+    }
+	int rc = ioctl(gpio->fd, GPIO_GET_LINEHANDLE_IOCTL, &req);
+	if (rc < 0)
+	{
+		g_print("Failed GPIO_GET_LINEHANDLE ioctl: GPIO=%s\n",gpio->name);
+		return GPIO_OPEN_ERROR;
+	}
+	gpio_close(gpio);
+	gpio->fd = req.fd;
+
 	return GPIO_OK;
 }
 
 void gpio_close(GPIO* gpio)
 {
-	close(gpio->fd);
+	if(gpio->fd < 0)
+		return;
+	if(close(gpio->fd) < 0)
+	{
+		g_print("Failed closing GPIO (%s): errno: %s\n", gpio->name, strerror(errno));
+	}
+	gpio->fd = -1;
 }
