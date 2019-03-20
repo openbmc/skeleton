@@ -2,9 +2,7 @@ GDBUS_APPS = bmcctl \
 	     flashbios \
 	     op-flasher \
 	     op-hostctl \
-	     op-pwrctl \
-	     pwrbutton \
-	     rstbutton
+	     op-pwrctl
 
 SUBDIRS = fanctl \
 	  ledctl \
