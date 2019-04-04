@@ -2,5 +2,5 @@ from distutils.core import setup
 
 setup(name='pytools',
       version='1.0',
-      scripts=['obmcutil', 'gpioutil'],
+      scripts=['gpioutil'],
       )
