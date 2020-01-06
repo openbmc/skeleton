@@ -20,10 +20,10 @@ static GDBusObjectManagerServer *manager = NULL;
 #define PPC_BIT32(bit)          (0x80000000UL >> (bit))
 
 #define FSI_EXTERNAL_MODE_PATH	"/sys/devices/platform/gpio-fsi/external_mode"
-#define FSI_SCAN_PATH		"/sys/devices/platform/gpio-fsi/fsi0/rescan"
+#define FSI_SCAN_PATH		"/sys/class/fsi-master/fsi0/rescan"
 
 /* TODO: Change this over to the cfam path once the cfam chardev patches have landed */
-#define FSI_RAW_PATH		"/sys/devices/platform/gpio-fsi/fsi0/slave@00:00/raw"
+#define FSI_RAW_PATH		"/sys/class/fsi-master/fsi0/slave@00:00/raw"
 
 #define FSI_SCAN_DELAY_US	10000
 
