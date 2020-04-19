@@ -52,9 +52,8 @@ poll_pgood(gpointer user_data)
 	}
 	uint8_t pgood_state;
 
-	int rc = gpio_open(&g_gpio_configs.power_gpio.power_good_in, 0);
+	int rc = gpio_open(&g_gpio_configs.power_gpio.power_good_in);
 	if(rc != GPIO_OK) {
-		gpio_close(&g_gpio_configs.power_gpio.power_good_in);
 		g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
 				g_gpio_configs.power_gpio.power_good_in.name, rc);
 		return FALSE;
@@ -82,16 +81,15 @@ poll_pgood(gpointer user_data)
 			for(i = 0; i < g_gpio_configs.power_gpio.num_reset_outs; i++)
 			{
 				GPIO *reset_out = &g_gpio_configs.power_gpio.reset_outs[i];
-				reset_state = pgood_state ^ g_gpio_configs.power_gpio.reset_pols[i];
-				rc = gpio_open(reset_out, reset_state);
+				rc = gpio_open(reset_out);
 				if(rc != GPIO_OK)
 				{
-					gpio_close(reset_out);
 					g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
 							reset_out->name, rc);
 					continue;
 				}
 
+				reset_state = pgood_state ^ g_gpio_configs.power_gpio.reset_pols[i];
 				g_print("PowerControl: pgood: %d, setting reset %s to %d\n",
 						(int)pgood_state, reset_out->name, (int)reset_state);
 				gpio_write(reset_out, reset_state);
@@ -113,16 +111,15 @@ poll_pgood(gpointer user_data)
 						continue;
 					}
 				}
-				reset_state = pgood_state ^ g_gpio_configs.power_gpio.pci_reset_pols[i];
-				rc = gpio_open(pci_reset_out, reset_state);
+				rc = gpio_open(pci_reset_out);
 				if(rc != GPIO_OK)
 				{
-					gpio_close(pci_reset_out);
 					g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
 							pci_reset_out->name, rc);
 					continue;
 				}
 
+				reset_state = pgood_state ^ g_gpio_configs.power_gpio.pci_reset_pols[i];
 				g_print("PowerControl: pgood: %d, setting pci reset %s to %d\n",
 						(int)pgood_state, pci_reset_out->name, (int)reset_state);
 				gpio_write(pci_reset_out, reset_state);
@@ -205,10 +202,9 @@ on_boot_progress(GDBusConnection *connection,
 	if (ignore)
 		return;
 
-	rc = gpio_open(&g_gpio_configs.power_gpio.power_good_in, 0);
+	rc = gpio_open(&g_gpio_configs.power_gpio.power_good_in);
 	if(rc != GPIO_OK)
 	{
-		gpio_close(&g_gpio_configs.power_gpio.power_good_in);
 		g_print("ERROR PowerControl: on_boot_progress(): GPIO open error (gpio=%s,rc=%d)\n",
 			g_gpio_configs.power_gpio.power_good_in.name, rc);
 		return;
@@ -224,16 +220,15 @@ on_boot_progress(GDBusConnection *connection,
 
 		if(!g_gpio_configs.power_gpio.pci_reset_holds[i])
 			continue;
-		reset_state = pgood_state ^ g_gpio_configs.power_gpio.pci_reset_pols[i];
-		rc = gpio_open(pci_reset_out, reset_state);
+		rc = gpio_open(pci_reset_out);
 		if(rc != GPIO_OK)
 		{
-			gpio_close(pci_reset_out);
 			g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
 					pci_reset_out->name, rc);
 			continue;
 		}
 
+		reset_state = pgood_state ^ g_gpio_configs.power_gpio.pci_reset_pols[i];
 		g_print("PowerControl: pgood: %d, setting pci reset %s to %d\n",
 				(int)pgood_state, pci_reset_out->name, (int)reset_state);
 		gpio_write(pci_reset_out, reset_state);
@@ -272,19 +267,17 @@ on_set_power_state(ControlPower *pwr,
 			uint8_t power_up_out;
 			for (i = 0; i < power_gpio->num_power_up_outs; i++) {
 				GPIO *power_pin = &power_gpio->power_up_outs[i];
-				power_up_out = state ^ !power_gpio->power_up_pols[i];
-				error = gpio_open(power_pin, power_up_out);
+				error = gpio_open(power_pin);
 				if(error != GPIO_OK) {
-					gpio_close(power_pin);
 					g_print("ERROR PowerControl: GPIO open error (gpio=%s,rc=%d)\n",
 							power_gpio->power_up_outs[i].name, error);
 					continue;
 				}
+				power_up_out = state ^ !power_gpio->power_up_pols[i];
 				g_print("PowerControl: setting power up %s to %d\n",
 						power_gpio->power_up_outs[i].name, (int)power_up_out);
 				error = gpio_write(power_pin, power_up_out);
 				if(error != GPIO_OK) {
-					gpio_close(power_pin);
 					continue;
 				}
 				gpio_close(power_pin);
@@ -301,17 +294,16 @@ on_set_power_state(ControlPower *pwr,
 		 * power pins' states. This commits the changes to the latch states. */
 		if (power_gpio->latch_out.name != NULL) {
 			int rc;
-			uint8_t latch_value = 1;
-			rc = gpio_open(&power_gpio->latch_out, latch_value);
+			uint8_t latch_value = 0;
+			rc = gpio_open(&power_gpio->latch_out);
 			if (rc != GPIO_OK) {
 				/* Failures are non-fatal. */
-				gpio_close(&power_gpio->latch_out);
 				g_print("PowerControl ERROR failed to open latch %s rc=%d\n",
 						power_gpio->latch_out.name, rc);
 				return TRUE;
 			}
 			/* Make the latch transparent for as brief of a time as possible. */
-			rc = gpio_write(&power_gpio->latch_out, latch_value--);
+			rc = gpio_write(&power_gpio->latch_out, 1);
 			if (rc != GPIO_OK) {
 				g_print("PowerControl ERROR failed to assert latch %s rc=%d\n",
 						power_gpio->latch_out.name, rc);
@@ -319,7 +311,7 @@ on_set_power_state(ControlPower *pwr,
 				g_print("PowerControl asserted latch %s\n",
 						power_gpio->latch_out.name);
 			}
-			rc = gpio_write(&power_gpio->latch_out, latch_value);
+			rc = gpio_write(&power_gpio->latch_out, 0);
 			if (rc != GPIO_OK) {
 				g_print("PowerControl ERROR failed to clear latch %s rc=%d\n",
 						power_gpio->latch_out.name, rc);
@@ -363,29 +355,29 @@ set_up_gpio(PowerGpio *power_gpio, ControlPower* control_power)
 
 	// get gpio device paths
 	if(power_gpio->latch_out.name != NULL) {  /* latch is optional */
-		rc = gpio_get_params(&power_gpio->latch_out);
+		rc = gpio_init(&power_gpio->latch_out);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
-	rc = gpio_get_params(&power_gpio->power_good_in);
+	rc = gpio_init(&power_gpio->power_good_in);
 	if(rc != GPIO_OK) {
 		error = rc;
 	}
 	for(int i = 0; i < power_gpio->num_power_up_outs; i++) {
-		rc = gpio_get_params(&power_gpio->power_up_outs[i]);
+		rc = gpio_init(&power_gpio->power_up_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
 	for(int i = 0; i < power_gpio->num_reset_outs; i++) {
-		rc = gpio_get_params(&power_gpio->reset_outs[i]);
+		rc = gpio_init(&power_gpio->reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
 	for(int i = 0; i < power_gpio->num_pci_reset_outs; i++) {
-		rc = gpio_get_params(&power_gpio->pci_reset_outs[i]);
+		rc = gpio_init(&power_gpio->pci_reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
@@ -393,14 +385,12 @@ set_up_gpio(PowerGpio *power_gpio, ControlPower* control_power)
 
 	gpio_inits_done();
 
-	rc = gpio_open(&power_gpio->power_good_in, 0);
+	rc = gpio_open(&power_gpio->power_good_in);
 	if(rc != GPIO_OK) {
-		gpio_close(&power_gpio->power_good_in);
 		return rc;
 	}
 	rc = gpio_read(&power_gpio->power_good_in, &pgood_state);
 	if(rc != GPIO_OK) {
-		gpio_close(&power_gpio->power_good_in);
 		return rc;
 	}
 	gpio_close(&power_gpio->power_good_in);
