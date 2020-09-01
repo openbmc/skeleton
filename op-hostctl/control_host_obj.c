@@ -93,7 +93,7 @@ static int fsi_rescan(void)
 				FSI_SCAN_PATH, strerror(errno));
 		return errno;
 	}
-	rc = write(fd, one, sizeof(one));
+	rc = write(fd, one, sizeof(*one));
 	close(fd);
 	if (rc < 0) {
 		g_print("ERROR HostControl: Failed to perform FSI scan: %s\n",
@@ -128,7 +128,7 @@ on_boot(ControlHost *host,
 					FSI_EXTERNAL_MODE_PATH);
 			return TRUE;
 		}
-		rc = write(fd, one, sizeof(one));
+		rc = write(fd, one, sizeof(*one));
 		if (rc < 0) {
 			g_print("ERROR HostControl: Failed to enable debug mode '%s'\n",
 					FSI_EXTERNAL_MODE_PATH);
