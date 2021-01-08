@@ -174,7 +174,7 @@ int convert_gpio_to_num(const char* gpio)
 	size_t len = strlen(gpio);
 	if (len < 2)
 	{
-		fprintf(stderr, ("Invalid GPIO name %s\n", gpio));
+		fprintf(stderr, "Invalid GPIO name %s\n", gpio);
 		return -1;
 	}
 
