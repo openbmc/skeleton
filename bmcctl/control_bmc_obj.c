@@ -25,7 +25,9 @@ static gboolean on_warm_reset(ControlBmc *bmc,
     /* Wait a while before reboot, so the caller can be responded.
      */
     const char *reboot_command = "/bin/sh -c 'sleep 3;reboot'&";
-    system(reboot_command);
+    if(system(reboot_command) < 0){
+        return FALSE;
+    }
 
     control_bmc_complete_warm_reset(bmc, invocation);
     return TRUE;
