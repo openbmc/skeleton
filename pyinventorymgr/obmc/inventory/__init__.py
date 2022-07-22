@@ -1,1 +1,1 @@
-INVENTORY_ROOT = '/org/openbmc/inventory'
+INVENTORY_ROOT = "/org/openbmc/inventory"
