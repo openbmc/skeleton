@@ -1,0 +1,7 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-by: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Submitted-at: Wed, 12 Oct 2022 14:47:43 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/skeleton/+/57853
+Project: openbmc/skeleton
+Branch: refs/heads/master
