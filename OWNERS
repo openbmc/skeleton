@@ -32,18 +32,13 @@
 # data within them will be kept sorted.
 
 owners:
-- bradleyb@fuzziesquirrel.com
 - joel@jms.id.au
 
 reviewers:
-- bradleyb@fuzziesquirrel.com
 
 matchers:
 
 openbmc:
-- name: Brad Bishop
-  email: bradleyb@fuzziesquirrel.com
-  discord: radsquirrel
 - name: Joel Stanley
   email: joel@jms.id.au
   discord: joel
