@@ -1,0 +1,8 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+1: Matt Spinler <spinler@us.ibm.com>
+Code-Review+2: Patrick Williams <patrick@stwcx.xyz>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Thu, 13 Oct 2022 15:33:50 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/skeleton/+/57898
+Project: openbmc/skeleton
+Branch: refs/heads/master
