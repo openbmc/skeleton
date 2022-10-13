@@ -32,6 +32,7 @@
 # data within them will be kept sorted.
 
 owners:
+- anoo@us.ibm.com
 - joel@jms.id.au
 
 reviewers:
@@ -39,6 +40,9 @@ reviewers:
 matchers:
 
 openbmc:
+- name: Adriana Kobylak
+  email: anoo@us.ibm.com
+  discord: anoo
 - name: Joel Stanley
   email: joel@jms.id.au
   discord: joel
