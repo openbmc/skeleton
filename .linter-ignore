@@ -1,0 +1,9 @@
+configs/Lanyang.py
+configs/Witherspoon.py
+configs/Zaius.py
+pyflashbmc/bmc_update.py
+pyinventorymgr/inventory_items.py
+pyinventorymgr/sync_inventory_items.py
+pyipmitest/ipmi_debug.py
+pysystemmgr/system_manager.py
+pytools/gpioutil
