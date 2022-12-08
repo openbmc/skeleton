@@ -1,0 +1,7 @@
+Code-Review+2: Adriana Kobylak <anoo@linux.ibm.com>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Submitted-by: Adriana Kobylak <anoo@linux.ibm.com>
+Submitted-at: Thu, 08 Dec 2022 22:13:26 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/skeleton/+/59387
+Project: openbmc/skeleton
+Branch: refs/heads/master
