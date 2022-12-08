@@ -1,13 +1,14 @@
 # GPIO JSON format
 
 GPIO definitions are stored in '/etc/default/obmc/gpio/gpio_defs.json' on the
-BMC.  That file has 2 sections - 'gpio_configs' and 'gpio_definitions'.
+BMC. That file has 2 sections - 'gpio_configs' and 'gpio_definitions'.
 
 ## gpio_configs
 
 This section contains the GPIOs used in power control.
 
 It looks like:
+
 ```
 "gpio_configs": {
     "power_config": {
@@ -44,6 +45,7 @@ It looks like:
 This section contains The GPIO pins and directions.
 
 It looks like:
+
 ```
     "gpio_definitions": [
         {
@@ -66,4 +68,3 @@ It looks like:
         }
     ]
 ```
-
