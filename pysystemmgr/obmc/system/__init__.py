@@ -1,5 +1,5 @@
-from os.path import join
 from glob import glob
+from os.path import join
 
 
 def find_gpio_base(path="/sys/class/gpio/"):

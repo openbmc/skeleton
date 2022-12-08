@@ -593,12 +593,15 @@ ID_LOOKUP = {
         0x32: "/org/openbmc/sensors/host/OperatingSystemStatus",
     },
     "GPIO_PRESENT": {
-        "SLOT0_RISER_PRESENT":
-            "<inventory_root>/system/chassis/io_board/pcie_slot0_riser",
-        "SLOT1_RISER_PRESENT":
-            "<inventory_root>/system/chassis/io_board/pcie_slot1_riser",
-        "SLOT2_RISER_PRESENT":
-            "<inventory_root>/system/chassis/io_board/pcie_slot2_riser",
+        "SLOT0_RISER_PRESENT": (
+            "<inventory_root>/system/chassis/io_board/pcie_slot0_riser"
+        ),
+        "SLOT1_RISER_PRESENT": (
+            "<inventory_root>/system/chassis/io_board/pcie_slot1_riser"
+        ),
+        "SLOT2_RISER_PRESENT": (
+            "<inventory_root>/system/chassis/io_board/pcie_slot2_riser"
+        ),
         "SLOT0_PRESENT": "<inventory_root>/system/chassis/io_board/pcie_slot0",
         "SLOT1_PRESENT": "<inventory_root>/system/chassis/io_board/pcie_slot1",
         "SLOT2_PRESENT": "<inventory_root>/system/chassis/io_board/pcie_slot2",

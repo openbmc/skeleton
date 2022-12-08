@@ -78,10 +78,12 @@ ID_LOOKUP = {
         0x32: "/org/openbmc/sensors/host/OperatingSystemStatus",
     },
     "GPIO_PRESENT": {
-        "SLOT0_PRESENT":
-            "<inventory_root>/system/chassis/motherboard/pciecard_x16",
-        "SLOT1_PRESENT":
-            "<inventory_root>/system/chassis/motherboard/pciecard_x8",
+        "SLOT0_PRESENT": (
+            "<inventory_root>/system/chassis/motherboard/pciecard_x16"
+        ),
+        "SLOT1_PRESENT": (
+            "<inventory_root>/system/chassis/motherboard/pciecard_x8"
+        ),
     },
 }
 
