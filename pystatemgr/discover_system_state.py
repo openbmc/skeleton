@@ -2,7 +2,6 @@
 
 import dbus
 
-
 dbus_objects = {
     "power": {
         "bus_name": "org.openbmc.control.Power",

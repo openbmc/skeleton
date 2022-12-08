@@ -5,10 +5,11 @@ try:  # python 2
     import gobject
 except ImportError:  # python 3
     from gi.repository import GObject as gobject
+
 import dbus
-import dbus.service
 import dbus.mainloop.glib
-from obmc.dbuslib.bindings import get_dbus, DbusProperties, DbusObjectManager
+import dbus.service
+from obmc.dbuslib.bindings import DbusObjectManager, DbusProperties, get_dbus
 
 DBUS_NAME = "org.openbmc.control.Chassis"
 OBJ_NAME = "/org/openbmc/control/chassis0"

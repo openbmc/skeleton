@@ -7,12 +7,13 @@ try:  # python 2
     import gobject
 except ImportError:  # python 3
     from gi.repository import GObject as gobject
-import dbus
-import dbus.service
-import dbus.mainloop.glib
-import subprocess
-from obmc.dbuslib.bindings import get_dbus
 
+import subprocess
+
+import dbus
+import dbus.mainloop.glib
+import dbus.service
+from obmc.dbuslib.bindings import get_dbus
 
 FLASH_DOWNLOAD_PATH = "/tmp"
 DBUS_NAME = "org.openbmc.managers.Download"
