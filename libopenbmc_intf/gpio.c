@@ -19,6 +19,7 @@
 
 #define GPIO_PORT_OFFSET 8
 #define GPIO_BASE_PATH "/sys/class/gpio"
+#define DEV_NAME "/dev/gpiochip0"
 
 cJSON* gpio_json = NULL;
 
@@ -284,24 +285,51 @@ int gpio_get_params(GPIO* gpio)
 	const cJSON* num = cJSON_GetObjectItem(def, "num");
 	if ((num != NULL) && cJSON_IsNumber(num))
 	{
-		gpio->num = num->valueint;
+		// When the "num" key is used, we will assume
+		// that the system has gpiochip0 and that each
+		// bank has the same amount of pins
+
+		struct gpiochip_info info;
+		int fd, ret;
+		// Open the device
+		fd = open(DEV_NAME, O_RDONLY);
+		if (fd < 0)
+		{
+			fprintf(stderr, "Unable to open %s: %s\n",
+					DEV_NAME, strerror(errno));
+			return GPIO_LOOKUP_ERROR;
+		}
+
+		// Query GPIO chip info
+		ret = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &info);
+		if (ret == -1)
+		{
+			fprintf(stderr, "Unable to get chip info from ioctl: %s\n",
+					strerror(errno));
+			close(fd);
+			return GPIO_LOOKUP_ERROR;
+		}
+
+		close(fd);
+		printf("Number of pins per bank: %d\n", info.lines);
+
+		gpio->num = (num->valueint) % info.lines;
+		gpio->chip_id = (num->valueint) / info.lines;
 	}
 	else
 	{
 		const cJSON* pin = cJSON_GetObjectItem(def, "pin");
 		g_assert(pin != NULL);
-
+		// For the purposes of skeleton and the projects that use it,
+		// it should be safe to assume that chip_id will always be 0 if the "pin"
+		// key is used.
+		gpio->chip_id = 0;
 		gpio->num = convert_gpio_to_num(pin->valuestring);
 		if (gpio->num < 0)
 		{
 			return GPIO_LOOKUP_ERROR;
 		}
 	}
-	// TODO: For the purposes of skeleton and the projects that use it,
-	// it should be safe to assume this will always be 0. Eventually skeleton
-	// should be going away, but if the need arises before then this may need
-	// to be updated to handle non-zero cases.
-	gpio->chip_id = 0;
 	return GPIO_OK;
 }
 
