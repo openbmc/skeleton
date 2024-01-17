@@ -19,6 +19,7 @@
 
 #define GPIO_PORT_OFFSET 8
 #define GPIO_BASE_PATH "/sys/class/gpio"
+#define DEV_NAME "/dev/gpiochip0"
 
 cJSON* gpio_json = NULL;
 
@@ -295,7 +296,36 @@ int gpio_get_params(GPIO* gpio)
 	const cJSON* num = cJSON_GetObjectItem(def, "num");
 	if ((num != NULL) && cJSON_IsNumber(num))
 	{
-		gpio->num = num->valueint;
+		// When the "num" key is used, we will assume
+		// that the system has gpiochip0 and that each
+		// bank has the same amount of pins
+
+		struct gpiochip_info info;
+		int fd, ret;
+		// Open the device
+		fd = open(DEV_NAME, O_RDONLY);
+		if (fd < 0)
+		{
+			fprintf(stderr, "Unable to open %s: %s\n",
+					DEV_NAME, strerror(errno));
+			return GPIO_LOOKUP_ERROR;
+		}
+
+		// Query GPIO chip info
+		ret = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &info);
+		if (ret == -1)
+		{
+			fprintf(stderr, "Unable to get chip info from ioctl: %s\n",
+					strerror(errno));
+			close(fd);
+			return GPIO_LOOKUP_ERROR;
+		}
+
+		close(fd);
+		printf("Number of pins per bank: %d\n", info.lines);
+
+		gpio->num = (num->valueint) % info.lines;
+		gpio->chip_id = (num->valueint) / info.lines;
 	}
 	else
 	{
