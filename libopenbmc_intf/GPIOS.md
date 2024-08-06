@@ -9,33 +9,35 @@ This section contains the GPIOs used in power control.
 
 It looks like:
 
-```
-"gpio_configs": {
-    "power_config": {
+```json
+{
+    "gpio_configs": {
+        "power_config": {
 
-        #See code in op-pwrctl for details
+            #See code in op-pwrctl for details
 
-        #Required
-        "power_good_in": "...",
+            #Required
+            "power_good_in": "...",
 
-        #Required
-        "power_up_outs": [
-            {"name": "...", "polarity": true/false},
-            {"name": "...", "polarity": true/false}
-        ],
+            #Required
+            "power_up_outs": [
+                {"name": "...", "polarity": true/false},
+                {"name": "...", "polarity": true/false}
+            ],
 
-        #Optional
-        "reset_outs": [
-            {"name": "...", "polarity": true/false}
-        ],
+            #Optional
+            "reset_outs": [
+                {"name": "...", "polarity": true/false}
+            ],
 
-        #Optional
-        "latch_out": "...",
+            #Optional
+            "latch_out": "...",
 
-        #Optional
-        "pci_reset_outs": [
-            {"name": "...", "polarity": true/false, "hold": true/false}
-        ]
+            #Optional
+            "pci_reset_outs": [
+                {"name": "...", "polarity": true/false, "hold": true/false}
+            ]
+        }
     }
 }
 ```
@@ -46,8 +48,9 @@ This section contains The GPIO pins and directions.
 
 It looks like:
 
-```
-    "gpio_definitions": [
+```json
+{
+"gpio_definitions": [
         {
 
             #The name to look up this entry.
@@ -67,4 +70,5 @@ It looks like:
             ...
         }
     ]
+}
 ```
