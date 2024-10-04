@@ -66,7 +66,7 @@ poll_pgood(gpointer user_data)
 		//if changed, set property and emit signal
 		if(pgood_state != control_power_get_pgood(control_power))
 		{
-			int i;
+			size_t i;
 			uint8_t reset_state;
 			control_power_set_pgood(control_power, pgood_state);
 			if(pgood_state == 0)
@@ -160,6 +160,13 @@ on_boot_progress(GDBusConnection *connection,
 		GVariant *parameters,
 		gpointer user_data)
 {
+	(void) connection;
+	(void) sender_name;
+	(void) object_path;
+	(void) interface_name;
+	(void) signal_name;
+	(void) user_data;
+
 	gchar *interface;
 	GVariantIter *properties;
 	GVariantIter *dummy;
@@ -169,7 +176,7 @@ on_boot_progress(GDBusConnection *connection,
 	uint8_t pgood_state;
 	uint8_t reset_state;
 	int rc;
-	int i;
+	size_t i;
 	int ignore;
 
 	if(!parameters)
@@ -249,7 +256,7 @@ on_set_power_state(ControlPower *pwr,
 		guint state,
 		gpointer user_data)
 {
-	Control* control = object_get_control((Object*)user_data);
+	(void) user_data;
 	PowerGpio *power_gpio = &g_gpio_configs.power_gpio;
 	if(state > 1)
 	{
@@ -260,7 +267,7 @@ on_set_power_state(ControlPower *pwr,
 	}
 	// return from method call
 	control_power_complete_set_power_state(pwr,invocation);
-	if(state == control_power_get_state(pwr))
+	if(state == (guint) control_power_get_state(pwr))
 	{
 		g_print("Power already at requested state: %d\n",state);
 	}
@@ -268,7 +275,7 @@ on_set_power_state(ControlPower *pwr,
 	{
 		int error = 0;
 		do {
-			int i;
+			size_t i;
 			uint8_t power_up_out;
 			for (i = 0; i < power_gpio->num_power_up_outs; i++) {
 				GPIO *power_pin = &power_gpio->power_up_outs[i];
@@ -336,6 +343,7 @@ on_init(Control *control,
 		GDBusMethodInvocation *invocation,
 		gpointer user_data)
 {
+	(void) user_data;
 	pgood_timeout_start = 0;
 	//guint poll_interval = control_get_poll_interval(control);
 	//g_timeout_add(poll_interval, poll_pgood, user_data);
@@ -348,6 +356,7 @@ on_get_power_state(ControlPower *pwr,
 		GDBusMethodInvocation *invocation,
 		gpointer user_data)
 {
+	(void) user_data;
 	guint pgood = control_power_get_pgood(pwr);
 	control_power_complete_get_power_state(pwr,invocation,pgood);
 	return TRUE;
@@ -358,7 +367,7 @@ set_up_gpio(PowerGpio *power_gpio, ControlPower* control_power)
 {
 	int error = GPIO_OK;
 	int rc;
-	int i;
+	size_t i;
 	uint8_t pgood_state;
 
 	// get gpio device paths
@@ -372,19 +381,19 @@ set_up_gpio(PowerGpio *power_gpio, ControlPower* control_power)
 	if(rc != GPIO_OK) {
 		error = rc;
 	}
-	for(int i = 0; i < power_gpio->num_power_up_outs; i++) {
+	for(i = 0; i < power_gpio->num_power_up_outs; i++) {
 		rc = gpio_get_params(&power_gpio->power_up_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
-	for(int i = 0; i < power_gpio->num_reset_outs; i++) {
+	for(i = 0; i < power_gpio->num_reset_outs; i++) {
 		rc = gpio_get_params(&power_gpio->reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
 		}
 	}
-	for(int i = 0; i < power_gpio->num_pci_reset_outs; i++) {
+	for(i = 0; i < power_gpio->num_pci_reset_outs; i++) {
 		rc = gpio_get_params(&power_gpio->pci_reset_outs[i]);
 		if(rc != GPIO_OK) {
 			error = rc;
@@ -416,6 +425,7 @@ on_bus_acquired(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
+	(void) name;
 	ObjectSkeleton *object;
 	cmdline *cmd = user_data;
 	if(cmd->argc < 3)
@@ -499,6 +509,9 @@ on_name_acquired(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
+	(void) connection;
+	(void) name;
+	(void) user_data;
 }
 
 static void
@@ -506,6 +519,9 @@ on_name_lost(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
+	(void) connection;
+	(void) name;
+	(void) user_data;
 	free_gpios(&g_gpio_configs);
 }
 
