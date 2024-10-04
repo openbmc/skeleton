@@ -1,3 +1,7 @@
+/build*/
+/subprojects/*
+!/subprojects/*.wrap
+
 *.exe
 *.o
 *.so
