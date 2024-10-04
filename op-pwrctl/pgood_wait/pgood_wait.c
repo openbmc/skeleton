@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
+#include <unistd.h>
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
+
+/* Copied from phosphor-objmgr to make the code compile. */
+static const int mapper_busy_retries = 5;
+static const uint64_t mapper_busy_delay_interval_usec = 1000000;
 
 static void quit(int r, void *loop)
 {
@@ -27,6 +32,8 @@ static void quit(int r, void *loop)
 
 static int callback(sd_bus_message *m, void *user, sd_bus_error *error)
 {
+	(void) error;
+
 	sd_event *loop = user;
 	int r;
 	char *property = NULL;
