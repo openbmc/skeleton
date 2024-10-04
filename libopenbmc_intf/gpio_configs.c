@@ -95,7 +95,7 @@ void read_power_gpios(GpioConfigs* gpios, const cJSON* gpio_configs)
 			g_assert(polarity != NULL);
 			gpios->power_gpio.power_up_pols[i] = polarity->valueint;
 
-			g_print("Power GPIO power_up[%d] = %s active %s\n",
+			g_print("Power GPIO power_up[%zd] = %s active %s\n",
 					i, gpios->power_gpio.power_up_outs[i].name,
 					gpios->power_gpio.power_up_pols[i] ? "HIGH" : "LOW");
 			i++;
@@ -129,7 +129,7 @@ void read_power_gpios(GpioConfigs* gpios, const cJSON* gpio_configs)
 			g_assert(polarity != NULL);
 			gpios->power_gpio.reset_pols[i] = polarity->valueint;
 
-			g_print("Power GPIO reset[%d] = %s active %s\n", i,
+			g_print("Power GPIO reset[%zd] = %s active %s\n", i,
 					gpios->power_gpio.reset_outs[i].name,
 					gpios->power_gpio.reset_pols[i] ? "HIGH" : "LOW");
 			i++;
@@ -174,7 +174,7 @@ void read_power_gpios(GpioConfigs* gpios, const cJSON* gpio_configs)
 			g_assert(hold != NULL);
 			gpios->power_gpio.pci_reset_holds[i] = polarity->valueint;
 
-			g_print("Power GPIO pci reset[%d] = %s active %s, hold %s\n", i,
+			g_print("Power GPIO pci reset[%zd] = %s active %s, hold %s\n", i,
 					gpios->power_gpio.pci_reset_outs[i].name,
 					gpios->power_gpio.pci_reset_pols[i] ? "HIGH" : "LOW",
 					gpios->power_gpio.pci_reset_holds[i] ? "Yes" : "No");
@@ -201,7 +201,7 @@ gboolean read_gpios(GpioConfigs *gpios)
 }
 
 void free_gpios(GpioConfigs *gpios) {
-	int i;
+	size_t i;
 	g_free(gpios->power_gpio.latch_out.name);
 	g_free(gpios->power_gpio.power_good_in.name);
 	for(i = 0; i < gpios->power_gpio.num_power_up_outs; i++) {

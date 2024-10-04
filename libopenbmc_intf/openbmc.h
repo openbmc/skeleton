@@ -8,13 +8,13 @@
 #define DBUS_TYPE  G_BUS_TYPE_SYSTEM
 
 // Macros
-#define GET_VARIANT(v)         g_variant_get_variant(v) 
+#define GET_VARIANT(v)         g_variant_get_variant(v)
 #define GET_VARIANT_D(v)       g_variant_get_double(g_variant_get_variant(v))
 #define GET_VARIANT_U(v)       g_variant_get_uint32(g_variant_get_variant(v))
 #define GET_VARIANT_B(v)       g_variant_get_byte(g_variant_get_variant(v))
-#define NEW_VARIANT_D(v)       g_variant_new_variant(g_variant_new_double(v)) 
-#define NEW_VARIANT_U(v)       g_variant_new_variant(g_variant_new_uint32(v)) 
-#define NEW_VARIANT_B(v)       g_variant_new_variant(g_variant_new_byte(v)) 
+#define NEW_VARIANT_D(v)       g_variant_new_variant(g_variant_new_double(v))
+#define NEW_VARIANT_U(v)       g_variant_new_variant(g_variant_new_uint32(v))
+#define NEW_VARIANT_B(v)       g_variant_new_variant(g_variant_new_byte(v))
 #define VARIANT_COMPARE(x,y)   g_variant_compare(GET_VARIANT(x),GET_VARIANT(y))
 
 #ifdef __arm__
@@ -36,11 +36,14 @@ static inline uint32_t devmem_read(void* addr)
  //       write_reg(reg,val);
 //}
 #else
-static inline uint32_t devmem(uint32_t val, uint32_t reg)
+static inline void devmem(uint32_t val, uint32_t reg)
 {
+	(void) val;
+	(void) reg;
 }
 static inline uint32_t devmem_read(void* addr)
 {
+	(void) addr;
 	return 0;
 }
 
@@ -50,7 +53,7 @@ typedef struct {
 	gint argc;
 	gchar **argv;
 	GMainLoop *loop;
-	gpointer user_data;	
+	gpointer user_data;
 
 } cmdline;
 

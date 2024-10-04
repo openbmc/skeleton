@@ -88,6 +88,7 @@ int get_gpio_base()
 	struct dirent* entry;
 	while ((entry = readdir(dir)) != NULL)
 	{
+
 		/* Look in the gpiochip<X> directories for a file called 'label' */
 		/* that contains '1e780000.gpio', then in that directory read */
 		/* the GPIO base out of the 'base' file. */
@@ -99,8 +100,13 @@ int get_gpio_base()
 
 		gboolean is_bmc = FALSE;
 		char* label_name;
-		asprintf(&label_name, "%s/%s/label",
+		int rc = asprintf(&label_name, "%s/%s/label",
 				GPIO_BASE_PATH, entry->d_name);
+
+		if (!rc)
+		{
+			continue;
+		}
 
 		FILE* fd = fopen(label_name, "r");
 		free(label_name);
@@ -126,8 +132,13 @@ int get_gpio_base()
 		}
 
 		char* base_name;
-		asprintf(&base_name, "%s/%s/base",
+		rc = asprintf(&base_name, "%s/%s/base",
 				GPIO_BASE_PATH, entry->d_name);
+
+		if (!rc)
+		{
+			continue;
+		}
 
 		fd = fopen(base_name, "r");
 		free(base_name);
@@ -291,11 +302,12 @@ int gpio_get_params(GPIO* gpio)
 		const cJSON* pin = cJSON_GetObjectItem(def, "pin");
 		g_assert(pin != NULL);
 
-		gpio->num = convert_gpio_to_num(pin->valuestring);
-		if (gpio->num < 0)
+		int pin_id = convert_gpio_to_num(pin->valuestring);
+		if (pin_id < 0)
 		{
 			return GPIO_LOOKUP_ERROR;
 		}
+		gpio->num = (size_t) pin_id;
 	}
 	// TODO: For the purposes of skeleton and the projects that use it,
 	// it should be safe to assume this will always be 0. Eventually skeleton

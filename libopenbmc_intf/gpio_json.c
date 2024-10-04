@@ -29,7 +29,7 @@ cJSON* load_json()
 	}
 
 	fseek(fd, 0, SEEK_END);
-	long size = ftell(fd);
+	size_t size = (size_t) ftell(fd);
 	rewind(fd);
 
 	char* data = malloc(size + 1);
@@ -39,7 +39,7 @@ cJSON* load_json()
 	if (rc != size)
 	{
 		free(data);
-		fprintf(stderr, "Only read %d out of %ld bytes of GPIO file %s\n",
+		fprintf(stderr, "Only read %zd out of %zd bytes of GPIO file %s\n",
 				rc, size, GPIO_FILE);
 		return NULL;
 	}
