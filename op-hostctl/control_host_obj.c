@@ -53,6 +53,7 @@ on_init(Control *control,
 		GDBusMethodInvocation *invocation,
 		gpointer user_data)
 {
+	(void) user_data;
 	control_complete_init(control,invocation);
 	return TRUE;
 }
@@ -112,11 +113,8 @@ on_boot(ControlHost *host,
 		GDBusMethodInvocation *invocation,
 		gpointer user_data)
 {
+	(void) user_data;
 	int rc, cfam_fd;
-	GDBusProxy *proxy;
-	GError *error = NULL;
-	GDBusConnection *connection =
-		g_dbus_object_manager_server_get_connection(manager);
 
 	if(control_host_get_debug_mode(host)==1) {
 		int fd;
@@ -148,7 +146,6 @@ on_boot(ControlHost *host,
 		return FALSE;
 	}
 
-	Control* control = object_get_control((Object*)user_data);
 	control_host_complete_boot(host,invocation);
 	do {
 		rc = fsi_putcfam(cfam_fd, FSI_A_SI1S, 0x20000000);
@@ -188,6 +185,9 @@ on_bus_acquired(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
+	(void) name;
+	(void) user_data;
+
 	ObjectSkeleton *object;
 	//g_print ("Acquired a message bus connection: %s\n",name);
 	manager = g_dbus_object_manager_server_new(dbus_object_path);
@@ -229,6 +229,9 @@ on_name_acquired(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
+	(void) connection;
+	(void) name;
+	(void) user_data;
 	// g_print ("Acquired the name %s\n", name);
 }
 
@@ -237,6 +240,9 @@ on_name_lost(GDBusConnection *connection,
 		const gchar *name,
 		gpointer user_data)
 {
+	(void) connection;
+	(void) name;
+	(void) user_data;
 	// g_print ("Lost the name %s\n", name);
 }
 
