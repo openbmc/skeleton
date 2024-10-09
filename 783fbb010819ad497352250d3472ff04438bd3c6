@@ -1,0 +1,8 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+1: Andrew Geissler <geissonator@yahoo.com>
+Code-Review+2: Adriana Kobylak <anoo@us.ibm.com>
+Submitted-by: Patrick Williams <patrick@stwcx.xyz>
+Submitted-at: Wed, 09 Oct 2024 21:05:01 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/skeleton/+/75089
+Project: openbmc/skeleton
+Branch: refs/heads/master
