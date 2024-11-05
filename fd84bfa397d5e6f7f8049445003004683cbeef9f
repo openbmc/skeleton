@@ -16,6 +16,24 @@
       "message": "Would this break existing systems that use the alphanumeric reference?",
       "revId": "fd84bfa397d5e6f7f8049445003004683cbeef9f",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5877b00_fe790acf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1001538
+      },
+      "writtenOn": "2024-11-05T20:44:21Z",
+      "side": 1,
+      "message": "No, since if the alphanumerical reference is being used, you should use \"pin.\" This only changes \"num\" which only takes numerical integers.",
+      "parentUuid": "ffd75d99_49e9da6d",
+      "revId": "fd84bfa397d5e6f7f8049445003004683cbeef9f",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }
