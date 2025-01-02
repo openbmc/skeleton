@@ -111,5 +111,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

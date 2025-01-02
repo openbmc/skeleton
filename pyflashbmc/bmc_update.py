@@ -349,5 +349,3 @@ if __name__ == "__main__":
 
     print("Running Bmc Flash Control")
     mainloop.run()
-
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

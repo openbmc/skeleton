@@ -90,5 +90,3 @@ ID_LOOKUP = {
 # Miscellaneous non-poll sensor with system specific properties.
 # The sensor id is the same as those defined in ID_LOOKUP['SENSOR'].
 MISC_SENSORS = {}
-
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

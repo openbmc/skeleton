@@ -539,5 +539,3 @@ ID_LOOKUP = {
 MISC_SENSORS = {
     # Garrison value is used, Not in P9 XML yet.
 }
-
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

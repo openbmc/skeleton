@@ -115,5 +115,3 @@ else:
             "RequestedHostTransition",
             "xyz.openbmc_project.State.Host.Transition.On",
         )
-
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
