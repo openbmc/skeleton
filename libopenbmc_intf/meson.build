@@ -14,7 +14,7 @@ libopenbmc_intf = library(
     'gpio_json.c',
     openbmc_intf_src,
     # The gdbus generated code cannot be compiled with -Wpedantic.
-    c_args : '-Wno-pedantic',
+    c_args: '-Wno-pedantic',
     dependencies: [cjson_dep, gio_unix_dep, glib_dep],
     version: meson.project_version(),
     install: true,
